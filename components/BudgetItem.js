@@ -1,17 +1,23 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect } from 'react';
+import useInput from '../hooks/useInput';
+import { BudgetContext } from '../context/GlobalState';
+import useDebounce from '../hooks/useDebounce';
 
-export const useInput = init => {
-  const [input, setInput] = useState(init);
-  const handleInputChange = e => setInput(e.currentTarget.value);
-  return [input, handleInputChange];
-};
+const BudgetItem = ({ label, value }) => {
+  const [total, changeTotal] = useInput(value);
+  const { dispatch } = useContext(BudgetContext);
+  const debouncedTotal = useDebounce(total, 1000);
 
-const BudgetItem = ({ label, type, id, value }) => {
-  const [total, changeTotal] = useInput(value || '');
+  useEffect(() => {
+    dispatch({ type: 'updateBudget', payload: { category: label, value: debouncedTotal || 0 } });
+  }, [dispatch, label, debouncedTotal]);
   return (
-    <label htmlFor={id}>
-      {label}: <input id={id} type={type} value={total} onChange={changeTotal} />
-    </label>
+    <>
+      <label htmlFor={label}>
+        {label}: <input id={label} type="number" value={total} onChange={changeTotal} />
+      </label>
+      <br />
+    </>
   );
 };
 export default BudgetItem;

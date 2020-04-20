@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Head from '../components/head';
 import Budget from '../components/Budget';
+import GlobalState from '../context/GlobalState';
 
 const Home = () => (
-  <div>
+  <GlobalState>
     <Head title="Budget Trace" />
     <h1>Budget Trace</h1>
     <Budget />
-  </div>
+  </GlobalState>
 );
 
 export default Home;
