@@ -2,27 +2,37 @@ import React, { useEffect, useContext } from 'react';
 import { BudgetContext } from '../context/GlobalState';
 import useDebounce from '../hooks/useDebounce';
 import useInput from '../hooks/useInput';
-import BudgetItem from './BudgetItem';
+import BudgetCategory from './BudgetCategory';
 
 const Budget = () => {
   const { state, dispatch } = useContext(BudgetContext);
   const { total, toBeBudgeted, budget } = state;
-  const [totalSavings, setTotalSavings] = useInput(total);
+  const [totalSavings, onChangeTotalSavings] = useInput(total);
+  const [newCategory, onChangeNewCategory, setNewCategory] = useInput('');
   const debouncedTotal = useDebounce(totalSavings, 1000);
   useEffect(() => {
     dispatch({ type: 'updateTotal', payload: debouncedTotal });
   }, [debouncedTotal, dispatch]);
   return (
     <div>
-      <label htmlFor="total">
-        Total: <input name="total" type="number" value={totalSavings} onChange={setTotalSavings} />
-      </label>
+      Total: <input name="total" type="number" value={totalSavings} onChange={onChangeTotalSavings} />
       <p>To Be Budgeted: {toBeBudgeted}</p>
-      {budget.map(category => (
-        <BudgetItem key={category.category} value={category.value} label={category.category} />
-      ))}
+      {renderCategories(budget)}
+      New Category: <input name="newCategory" type="text" value={newCategory} onChange={onChangeNewCategory} />
+      <button
+        type="button"
+        onClick={() => {
+          dispatch({ type: 'addBudgetCategory', payload: { category: newCategory, value: 0 } });
+          setNewCategory('');
+        }}
+      >
+        Add Category
+      </button>
     </div>
   );
 };
+function renderCategories(budget) {
+  return budget.map(item => <BudgetCategory key={item.category} value={item.value} label={item.category} />);
+}
 
 export default Budget;

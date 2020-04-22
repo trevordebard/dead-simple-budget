@@ -3,7 +3,7 @@ import useInput from '../hooks/useInput';
 import { BudgetContext } from '../context/GlobalState';
 import useDebounce from '../hooks/useDebounce';
 
-const BudgetItem = ({ label, value }) => {
+const BudgetCategory = ({ label, value }) => {
   const [total, changeTotal] = useInput(value);
   const { dispatch } = useContext(BudgetContext);
   const debouncedTotal = useDebounce(total, 1000);
@@ -16,8 +16,13 @@ const BudgetItem = ({ label, value }) => {
       <label htmlFor={label}>
         {label}: <input id={label} type="number" value={total} onChange={changeTotal} />
       </label>
+      <input
+        type="button"
+        value="delete"
+        onClick={() => dispatch({ type: 'removeBudgetCategory', payload: { category: label } })}
+      />
       <br />
     </>
   );
 };
-export default BudgetItem;
+export default BudgetCategory;
