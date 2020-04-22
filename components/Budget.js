@@ -1,11 +1,11 @@
-import React, { useEffect, useContext } from 'react';
-import { BudgetContext } from '../context/GlobalState';
+import React, { useEffect } from 'react';
 import useDebounce from '../hooks/useDebounce';
 import useInput from '../hooks/useInput';
 import BudgetCategory from './BudgetCategory';
+import useBudget from '../hooks/useBudget';
 
 const Budget = () => {
-  const { state, dispatch } = useContext(BudgetContext);
+  const { state, dispatch } = useBudget();
   const { total, toBeBudgeted, budget } = state;
   const [totalSavings, onChangeTotalSavings] = useInput(total);
   const [newCategory, onChangeNewCategory, setNewCategory] = useInput('');

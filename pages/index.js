@@ -1,14 +1,14 @@
 import React from 'react';
 import Head from '../components/head';
 import Budget from '../components/Budget';
-import GlobalState from '../context/GlobalState';
+import BudgetState from '../context/BudgetState';
 
 const Home = () => (
-  <GlobalState>
+  <BudgetState>
     <Head title="Budget Trace" />
     <h1>Budget Trace</h1>
     <Budget />
-  </GlobalState>
+  </BudgetState>
 );
 
 export default Home;
