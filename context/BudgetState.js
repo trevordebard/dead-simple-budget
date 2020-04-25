@@ -16,6 +16,7 @@ export const BudgetContext = React.createContext({ state: null, dispatch: null }
 
 const BudgetState = props => {
   const [accountState, dispatch] = useReducer(budgetReducer, initalState);
+
   return <BudgetContext.Provider value={{ dispatch, state: accountState }}>{props.children}</BudgetContext.Provider>;
 };
 

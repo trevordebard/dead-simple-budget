@@ -1,15 +1,20 @@
 import { sumBudget } from '../lib/budgetUtils';
 
+export const BudgetActions = {
+  UPDATE_TOTAL: 'updateTotal',
+  UPDATE_CATEGORY: 'updateBudget',
+  ADD_CATEGORY: 'addBudgetCategory',
+  REMOVE_CATEGORY: 'removeBudgetCategory',
+};
 export default (state, action) => {
   switch (action.type) {
-    case 'updateTotal':
+    case BudgetActions.UPDATE_TOTAL:
       return {
         ...state,
         total: action.payload,
         toBeBudgeted: action.payload - state.budget.reduce(sumBudget, 0),
       };
-    case 'updateBudget': {
-      console.log('updating budget');
+    case BudgetActions.UPDATE_CATEGORY: {
       const categoryIndex = state.budget.findIndex(el => el?.category === action?.payload?.category);
       const newBudget = [
         ...state.budget.slice(0, categoryIndex),
@@ -23,13 +28,13 @@ export default (state, action) => {
         toBeBudgeted,
       };
     }
-    case 'addBudgetCategory':
+    case BudgetActions.ADD_CATEGORY:
       console.log(action);
       return {
         ...state,
         budget: [...state.budget, action.payload],
       };
-    case 'removeBudgetCategory': {
+    case BudgetActions.REMOVE_CATEGORY: {
       console.log(action);
       const newBudget = state.budget.filter(el => el.category !== action.payload.category);
       const toBeBudgeted = calcToBeBudgeted(newBudget, state);

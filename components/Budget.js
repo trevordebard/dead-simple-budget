@@ -5,14 +5,14 @@ import BudgetCategory from './BudgetCategory';
 import useBudget from '../hooks/useBudget';
 
 const Budget = () => {
-  const { state, dispatch } = useBudget();
+  const { state, addCategory, updateAccountBalance } = useBudget();
   const { total, toBeBudgeted, budget } = state;
   const [totalSavings, onChangeTotalSavings] = useInput(total);
   const [newCategory, onChangeNewCategory, setNewCategory] = useInput('');
   const debouncedTotal = useDebounce(totalSavings, 1000);
   useEffect(() => {
-    dispatch({ type: 'updateTotal', payload: debouncedTotal });
-  }, [debouncedTotal, dispatch]);
+    updateAccountBalance(debouncedTotal);
+  }, [debouncedTotal, updateAccountBalance]);
   return (
     <div>
       Total: <input name="total" type="number" value={totalSavings} onChange={onChangeTotalSavings} />
@@ -22,7 +22,7 @@ const Budget = () => {
       <button
         type="button"
         onClick={() => {
-          dispatch({ type: 'addBudgetCategory', payload: { category: newCategory, value: 0 } });
+          addCategory(newCategory);
           setNewCategory('');
         }}
       >

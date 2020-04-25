@@ -5,22 +5,18 @@ import useBudget from '../hooks/useBudget';
 
 const BudgetCategory = ({ label, value }) => {
   const [total, changeTotal] = useInput(value);
-  const { dispatch } = useBudget();
+  const { updateBudgetCategory, removeCategory } = useBudget();
   const debouncedTotal = useDebounce(total, 1000);
 
   useEffect(() => {
-    dispatch({ type: 'updateBudget', payload: { category: label, value: debouncedTotal || 0 } });
-  }, [dispatch, label, debouncedTotal]);
+    updateBudgetCategory(label, debouncedTotal);
+  }, [debouncedTotal, label, updateBudgetCategory]);
   return (
     <>
       <label htmlFor={label}>
         {label}: <input id={label} type="number" value={total} onChange={changeTotal} />
       </label>
-      <input
-        type="button"
-        value="delete"
-        onClick={() => dispatch({ type: 'removeBudgetCategory', payload: { category: label } })}
-      />
+      <input type="button" value="delete" onClick={() => removeCategory(label)} />
       <br />
     </>
   );
