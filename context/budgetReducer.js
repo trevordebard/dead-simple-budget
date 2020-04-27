@@ -5,6 +5,7 @@ export const BudgetActions = {
   UPDATE_CATEGORY: 'updateBudget',
   ADD_CATEGORY: 'addBudgetCategory',
   REMOVE_CATEGORY: 'removeBudgetCategory',
+  ADD_TRANSACTION: 'addTransaction',
 };
 export default (state, action) => {
   switch (action.type) {
@@ -42,6 +43,25 @@ export default (state, action) => {
         ...state,
         budget: newBudget,
         toBeBudgeted,
+      };
+    }
+    case BudgetActions.ADD_TRANSACTION: {
+      // 1. Update category with current amount +/- transaction amount
+      // 2. Update amount in savings with +/- transaction amount
+      // TODO: 3. Append transaction to transactions array
+      const newBudget = state.budget.map(el => {
+        console.log(el);
+        if (el.category === action.payload.category) {
+          console.log(el.category);
+          return { ...el, value: el.value - action.payload.amount };
+        }
+        return el;
+      });
+      console.log('new Budget', newBudget);
+      return {
+        ...state,
+        budget: newBudget,
+        total: state.total - action.payload.amount,
       };
     }
     default:

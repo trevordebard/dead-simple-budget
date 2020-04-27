@@ -18,13 +18,29 @@ const useBudget = () => {
 
   const updateBudgetCategory = useCallback(
     (category, value) => {
-      dispatch({ type: BudgetActions.UPDATE_CATEGORY, payload: { category, value: value || 0 } });
+      dispatch({ type: BudgetActions.UPDATE_CATEGORY, payload: { category, value } });
     },
     [dispatch]
   );
+  const getCategory = category => {
+    const categoryIndex = state.budget.findIndex(el => el?.category === category);
+    return state.budget[categoryIndex];
+  };
   const removeCategory = category => {
     dispatch({ type: BudgetActions.REMOVE_CATEGORY, payload: { category } });
   };
-  return { state, dispatch, addCategory, updateAccountBalance, updateBudgetCategory, removeCategory };
+  const addTransaction = (label, amount, category = 'unknown', date = null) => {
+    dispatch({ type: BudgetActions.ADD_TRANSACTION, payload: { label, amount, category, date } });
+  };
+  return {
+    state,
+    dispatch,
+    addCategory,
+    updateAccountBalance,
+    updateBudgetCategory,
+    removeCategory,
+    addTransaction,
+    getCategory,
+  };
 };
 export default useBudget;
