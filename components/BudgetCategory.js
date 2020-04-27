@@ -1,20 +1,18 @@
-import React, { useEffect } from 'react';
-import useInput from '../hooks/useInput';
-import useDebounce from '../hooks/useDebounce';
+import React from 'react';
 import useBudget from '../hooks/useBudget';
 
-const BudgetCategory = ({ label, value }) => {
-  const [total, changeTotal] = useInput(value);
-  const { updateBudgetCategory, removeCategory } = useBudget();
-  const debouncedTotal = useDebounce(total, 1000);
-
-  useEffect(() => {
-    updateBudgetCategory(label, debouncedTotal);
-  }, [debouncedTotal, label, updateBudgetCategory]);
+const BudgetCategory = ({ label }) => {
+  const { updateBudgetCategory, removeCategory, getCategory } = useBudget();
   return (
     <>
       <label htmlFor={label}>
-        {label}: <input id={label} type="number" value={total} onChange={changeTotal} />
+        {label}:{' '}
+        <input
+          id={label}
+          type="number"
+          value={getCategory(label).value}
+          onChange={e => updateBudgetCategory(label, e.target.value)}
+        />
       </label>
       <input type="button" value="delete" onClick={() => removeCategory(label)} />
       <br />

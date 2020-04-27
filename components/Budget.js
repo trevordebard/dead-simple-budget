@@ -1,22 +1,16 @@
 import React, { useEffect } from 'react';
-import useDebounce from '../hooks/useDebounce';
 import useInput from '../hooks/useInput';
 import BudgetCategory from './BudgetCategory';
 import useBudget from '../hooks/useBudget';
 
 const Budget = () => {
-  const { state, addCategory, updateAccountBalance } = useBudget();
+  const { state, addCategory, updateAccountBalance, updateBudgetCategory } = useBudget();
   const { total, toBeBudgeted, budget } = state;
-  const [totalSavings, onChangeTotalSavings] = useInput(total);
   const [newCategory, onChangeNewCategory, setNewCategory] = useInput('');
-  const debouncedTotal = useDebounce(totalSavings, 1000);
-  useEffect(() => {
-    updateAccountBalance(debouncedTotal);
-  }, [debouncedTotal, updateAccountBalance]);
   return (
     <div>
-      Total: <input name="total" type="number" value={totalSavings} onChange={onChangeTotalSavings} />
-      <p>To Be Budgeted: {toBeBudgeted}</p>
+      Total: <input name="total" type="number" value={total} onChange={e => updateAccountBalance(e.target.value)} />
+      <p style={{ color: 'red' }}>To Be Budgeted: {toBeBudgeted}</p>
       {renderCategories(budget)}
       New Category: <input name="newCategory" type="text" value={newCategory} onChange={onChangeNewCategory} />
       <button
@@ -28,6 +22,7 @@ const Budget = () => {
       >
         Add Category
       </button>
+      <br />
     </div>
   );
 };
