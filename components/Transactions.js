@@ -11,7 +11,7 @@ const Transactions = () => {
     <>
       <h1>Transactions</h1>
       {transactions.map(transaction => (
-        <p>
+        <p key={`${transaction.label}-${transaction.amount}`}>
           {transaction.label}:{transaction.amount}
         </p>
       ))}
@@ -50,7 +50,9 @@ const NewTransaction = () => {
         Date: <input name="date" type="text" value={date} onChange={handleDateChange} />
         <select name="category" value={category || categories[0]} onChange={handleCategoryChange}>
           {categories.map(name => (
-            <option value={name}>{name}</option>
+            <option key={name} value={name}>
+              {name}
+            </option>
           ))}
         </select>
         <input type="submit" value="Add" />
