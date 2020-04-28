@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import useInput from '../hooks/useInput';
 import BudgetCategory from './BudgetCategory';
 import useBudget from '../hooks/useBudget';
 
 const Budget = () => {
-  const { state, addCategory, updateAccountBalance, updateBudgetCategory } = useBudget();
+  const { state, addCategory, updateAccountBalance } = useBudget();
   const { total, toBeBudgeted, budget } = state;
   const [newCategory, onChangeNewCategory, setNewCategory] = useInput('');
   return (
