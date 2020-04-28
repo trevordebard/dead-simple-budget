@@ -48,12 +48,13 @@ export default (state, action) => {
     case BudgetActions.ADD_TRANSACTION: {
       // 1. Update category with current amount +/- transaction amount
       // 2. Update amount in savings with +/- transaction amount
-      // TODO: 3. Append transaction to transactions array
+      // 3. Append transaction to transactions array
+      const { category, label, amount, date } = action.payload;
       const newBudget = state.budget.map(el => {
         console.log(el);
-        if (el.category === action.payload.category) {
+        if (el.category === category) {
           console.log(el.category);
-          return { ...el, value: el.value - action.payload.amount };
+          return { ...el, value: el.value - amount };
         }
         return el;
       });
@@ -61,7 +62,8 @@ export default (state, action) => {
       return {
         ...state,
         budget: newBudget,
-        total: state.total - action.payload.amount,
+        total: state.total - amount,
+        transactions: [...state.transactions, { label, amount, date, category }],
       };
     }
     default:

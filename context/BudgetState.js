@@ -9,11 +9,11 @@ const budget = [
 ];
 
 const transactions = [
-  { name: 'Podunk Bar LLC', category: 'Bars', amount: 30 },
-  { name: `Restaurants R Us`, category: 'Eating Out', amount: 50 },
-  { name: 'Walmart', category: 'Groceries', amount: 120 },
-  { name: `Converted`, amount: 1000 },
-  { name: `Ignore This Category`, category: 'ignore', amount: 3000 },
+  { label: 'Podunk Bar LLC', category: 'Bars', amount: 30 },
+  { label: `Restaurants R Us`, category: 'Eating Out', amount: 50 },
+  { label: 'Walmart', category: 'Groceries', amount: 120 },
+  { label: `Converted`, amount: 1000 },
+  { label: `Ignore This Category`, category: 'ignore', amount: 3000 },
 ];
 const initalState = {
   total: 2500,

@@ -1,35 +1,58 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import useBudget from '../hooks/useBudget';
 import useInput from '../hooks/useInput';
+import { getCategories } from '../lib/budgetUtils';
 
 const Transactions = () => {
-  console.log('placeholder');
+  const {
+    state: { transactions },
+  } = useBudget();
   return (
     <>
       <h1>Transactions</h1>
+      {transactions.map(transaction => (
+        <p>
+          {transaction.label}:{transaction.amount}
+        </p>
+      ))}
       <NewTransaction />
     </>
   );
 };
 
 const NewTransaction = () => {
-  const { addTransaction } = useBudget();
-  const [label, handleLabelChange] = useInput();
-  const [amount, handleAmountChange] = useInput();
-  const [date, handleDateChange] = useInput();
-  const [category, handleCategoryChange] = useInput();
+  const { addTransaction, state } = useBudget();
+  const [label, handleLabelChange, setLabel] = useInput('');
+  const [amount, handleAmountChange, setAmount] = useInput('');
+  const [date, handleDateChange, setDate] = useInput('');
+  const [category, handleCategoryChange, setCategory] = useInput('');
+  const [categories, setCategories] = useState([]);
+  useEffect(() => {
+    setCategories(getCategories(state.budget));
+  }, [state, state.budget]);
+  useEffect(() => {
+    setCategory(categories[0]);
+  }, [categories, setCategory]);
   const handleSubmit = e => {
     e.preventDefault();
     addTransaction(label, amount, category, date);
+    setLabel('');
+    setAmount('');
+    setDate('');
+    setCategory(categories[0]);
     console.log('submitted!');
   };
   return (
     <>
       <form onSubmit={handleSubmit}>
-        Label: <input name="label" type="text" value={label} onChange={handleLabelChange} />
+        Label: <input name="label" value={label} onChange={handleLabelChange} />
         Amount: <input name="amount" type="text" value={amount} onChange={handleAmountChange} />
         Date: <input name="date" type="text" value={date} onChange={handleDateChange} />
-        Category: <input name="category" type="text" value={category} onChange={handleCategoryChange} />
+        <select name="category" value={category || categories[0]} onChange={handleCategoryChange}>
+          {categories.map(name => (
+            <option value={name}>{name}</option>
+          ))}
+        </select>
         <input type="submit" value="Add" />
       </form>
     </>
