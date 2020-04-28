@@ -1,6 +1,7 @@
 import { useContext, useCallback } from 'react';
 import { BudgetContext } from '../context/BudgetState';
 import { BudgetActions } from '../context/budgetReducer';
+import { getCategories } from '../lib/budgetUtils';
 
 const useBudget = () => {
   const { state, dispatch } = useContext(BudgetContext);
@@ -15,7 +16,6 @@ const useBudget = () => {
     },
     [dispatch]
   );
-
   const updateBudgetCategory = useCallback(
     (category, value) => {
       dispatch({ type: BudgetActions.UPDATE_CATEGORY, payload: { category, value } });
@@ -29,6 +29,7 @@ const useBudget = () => {
   const removeCategory = category => {
     dispatch({ type: BudgetActions.REMOVE_CATEGORY, payload: { category } });
   };
+  const categoryNames = getCategories(state.budget);
   const addTransaction = (label, amount, category = 'unknown', date = null) => {
     dispatch({ type: BudgetActions.ADD_TRANSACTION, payload: { label, amount, category, date } });
   };
@@ -41,6 +42,7 @@ const useBudget = () => {
     removeCategory,
     addTransaction,
     getCategory,
+    categoryNames,
   };
 };
 export default useBudget;
