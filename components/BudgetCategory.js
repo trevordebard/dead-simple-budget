@@ -2,7 +2,7 @@ import React from 'react';
 import useBudget from '../hooks/useBudget';
 
 const BudgetCategory = ({ label }) => {
-  const { updateStack, removeStack, getCategory } = useBudget();
+  const { updateStack, removeStack, getStack } = useBudget();
   return (
     <>
       <label htmlFor={label}>
@@ -10,7 +10,7 @@ const BudgetCategory = ({ label }) => {
         <input
           id={label}
           type="number"
-          value={getCategory(label).value}
+          value={getStack(label).value}
           onChange={e => updateStack(label, e.target.value)}
         />
       </label>

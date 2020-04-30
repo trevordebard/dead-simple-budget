@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import useBudget from '../hooks/useBudget';
 import useInput from '../hooks/useInput';
-import { getCategories } from '../lib/budgetUtils';
+import { getStackLabels } from '../lib/budgetUtils';
 
 const Transactions = () => {
   const {
@@ -11,8 +11,8 @@ const Transactions = () => {
     <>
       <h1>Transactions</h1>
       {transactions.map(transaction => (
-        <p key={`${transaction.label}-${transaction.amount}`}>
-          {transaction.label}:{transaction.amount}
+        <p key={`${transaction.description}-${transaction.amount}`}>
+          {transaction.description}:{transaction.amount}
         </p>
       ))}
       <NewTransaction />
@@ -22,34 +22,34 @@ const Transactions = () => {
 
 const NewTransaction = () => {
   const { addTransaction, state } = useBudget();
-  const [label, handleLabelChange, setLabel] = useInput('');
+  const [description, handleLabelChange, setDescription] = useInput('');
   const [amount, handleAmountChange, setAmount] = useInput('');
   const [date, handleDateChange, setDate] = useInput('');
-  const [category, handleCategoryChange, setCategory] = useInput('');
-  const [categories, setCategories] = useState([]);
+  const [stack, handleCategoryChange, setStack] = useInput('');
+  const [stackLabels, setStackLabels] = useState([]);
+
   useEffect(() => {
-    setCategories(getCategories(state.stacks));
+    setStackLabels(getStackLabels(state.stacks));
   }, [state, state.stacks]);
   useEffect(() => {
-    setCategory(categories[0]);
-  }, [categories, setCategory]);
+    setStack(stackLabels[0]);
+  }, [stackLabels, setStack]);
   const handleSubmit = e => {
     e.preventDefault();
-    addTransaction(label, amount, category, date);
-    setLabel('');
+    addTransaction(description, amount, stack, date);
+    setDescription('');
     setAmount('');
     setDate('');
-    setCategory(categories[0]);
-    console.log('submitted!');
+    setStack(stackLabels[0]);
   };
   return (
     <>
       <form onSubmit={handleSubmit}>
-        Label: <input name="label" value={label} onChange={handleLabelChange} />
+        Description: <input name="description" value={description} onChange={handleLabelChange} />
         Amount: <input name="amount" type="text" value={amount} onChange={handleAmountChange} />
         Date: <input name="date" type="text" value={date} onChange={handleDateChange} />
-        <select name="category" value={category || categories[0]} onChange={handleCategoryChange}>
-          {categories.map(name => (
+        <select name="stack" value={stack || stackLabels[0]} onChange={handleCategoryChange}>
+          {stackLabels.map(name => (
             <option key={name} value={name}>
               {name}
             </option>

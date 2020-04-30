@@ -27,7 +27,7 @@ const Budget = () => {
   );
 };
 function renderCategories(stacks) {
-  return stacks.map(item => <BudgetCategory key={item.category} value={item.value} label={item.category} />);
+  return stacks.map(item => <BudgetCategory key={item.label} value={item.value} label={item.label} />);
 }
 
 export default Budget;
