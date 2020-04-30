@@ -28,8 +28,8 @@ const NewTransaction = () => {
   const [category, handleCategoryChange, setCategory] = useInput('');
   const [categories, setCategories] = useState([]);
   useEffect(() => {
-    setCategories(getCategories(state.budget));
-  }, [state, state.budget]);
+    setCategories(getCategories(state.stacks));
+  }, [state, state.stacks]);
   useEffect(() => {
     setCategory(categories[0]);
   }, [categories, setCategory]);

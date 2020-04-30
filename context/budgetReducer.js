@@ -2,9 +2,9 @@ import { sumBudget } from '../lib/budgetUtils';
 
 export const BudgetActions = {
   UPDATE_TOTAL: 'updateTotal',
-  UPDATE_CATEGORY: 'updateBudget',
-  ADD_CATEGORY: 'addBudgetCategory',
-  REMOVE_CATEGORY: 'removeBudgetCategory',
+  UPDATE_STACK: 'updateBudget',
+  ADD_STACK: 'addBudgetCategory',
+  REMOVE_STACK: 'removeBudgetCategory',
   ADD_TRANSACTION: 'addTransaction',
 };
 export default (state, action) => {
@@ -13,44 +13,43 @@ export default (state, action) => {
       return {
         ...state,
         total: action.payload,
-        toBeBudgeted: action.payload - state.budget.reduce(sumBudget, 0),
+        toBeBudgeted: action.payload - state.stacks.reduce(sumBudget, 0),
       };
-    case BudgetActions.UPDATE_CATEGORY: {
-      const categoryIndex = state.budget.findIndex(el => el?.category === action?.payload?.category);
-      const newBudget = [
-        ...state.budget.slice(0, categoryIndex),
+    case BudgetActions.UPDATE_STACK: {
+      const categoryIndex = state.stacks.findIndex(el => el?.category === action?.payload?.category);
+      const newStacks = [
+        ...state.stacks.slice(0, categoryIndex),
         { category: action.payload.category, value: action.payload.value },
-        ...state.budget.slice(categoryIndex + 1),
+        ...state.stacks.slice(categoryIndex + 1),
       ];
-      const toBeBudgeted = calcToBeBudgeted(newBudget, state);
+      const toBeBudgeted = calcToBeBudgeted(newStacks, state);
       return {
         ...state,
-        budget: newBudget,
+        stacks: newStacks,
         toBeBudgeted,
       };
     }
-    case BudgetActions.ADD_CATEGORY:
-      console.log(action);
+    case BudgetActions.ADD_STACK:
+      console.log(state);
       return {
         ...state,
-        budget: [...state.budget, action.payload],
+        stacks: [...state.stacks, action.payload],
       };
-    case BudgetActions.REMOVE_CATEGORY: {
-      console.log(action);
-      const newBudget = state.budget.filter(el => el.category !== action.payload.category);
-      const toBeBudgeted = calcToBeBudgeted(newBudget, state);
+    case BudgetActions.REMOVE_STACK: {
+      const newStacks = state.stacks.filter(el => el.category !== action.payload.category);
+      const toBeBudgeted = calcToBeBudgeted(newStacks, state);
       return {
         ...state,
-        budget: newBudget,
+        stacks: newStacks,
         toBeBudgeted,
       };
     }
     case BudgetActions.ADD_TRANSACTION: {
       // 1. Update category with current amount +/- transaction amount
       // 2. Update amount in savings with +/- transaction amount
-      // 3. Append transaction to transactions array
+      // TODO: 3. Append transaction to transactions array
       const { category, label, amount, date } = action.payload;
-      const newBudget = state.budget.map(el => {
+      const newStacks = state.stacks.map(el => {
         console.log(el);
         if (el.category === category) {
           console.log(el.category);
@@ -58,10 +57,9 @@ export default (state, action) => {
         }
         return el;
       });
-      console.log('new Budget', newBudget);
       return {
         ...state,
-        budget: newBudget,
+        stacks: newStacks,
         total: state.total - amount,
         transactions: [...state.transactions, { label, amount, date, category }],
       };
@@ -71,8 +69,8 @@ export default (state, action) => {
   }
 };
 
-function calcToBeBudgeted(newBudget, state) {
-  const moneyAllocated = newBudget.reduce(sumBudget, 0);
+function calcToBeBudgeted(newStacks, state) {
+  const moneyAllocated = newStacks.reduce(sumBudget, 0);
   console.log(moneyAllocated);
   const toBeBudgeted = state.total - moneyAllocated;
   return toBeBudgeted;
