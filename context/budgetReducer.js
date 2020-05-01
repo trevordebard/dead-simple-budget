@@ -19,7 +19,7 @@ export default (state, action) => {
       const labelIndex = state.stacks.findIndex(el => el?.label === action?.payload?.label);
       const newStacks = [
         ...state.stacks.slice(0, labelIndex),
-        { label: action.payload.label, value: action.payload.value },
+        { _id: state.stacks[labelIndex]._id, label: action.payload.label, value: action.payload.value },
         ...state.stacks.slice(labelIndex + 1),
       ];
       const toBeBudgeted = calcToBeBudgeted(newStacks, state);

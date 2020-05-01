@@ -48,10 +48,10 @@ const NewTransaction = () => {
         Description: <input name="description" value={description} onChange={handleLabelChange} />
         Amount: <input name="amount" type="text" value={amount} onChange={handleAmountChange} />
         Date: <input name="date" type="text" value={date} onChange={handleDateChange} />
-        <select name="stack" value={stack || stackLabels[0]} onChange={handleCategoryChange}>
-          {stackLabels.map(name => (
-            <option key={name} value={name}>
-              {name}
+        <select name="stack" value={stack || state.stacks[0]} onChange={handleCategoryChange}>
+          {state.stacks.map(stackEl => (
+            <option key={stackEl._id} value={stackEl.label}>
+              {stackEl.label}
             </option>
           ))}
         </select>
