@@ -1,4 +1,7 @@
 import mongoose from 'mongoose';
+// Register models in case they have not been registered
+import './models/UserModel';
+import './models/TransactionModel';
 
 const connection = {};
 
