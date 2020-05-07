@@ -19,8 +19,9 @@ export default async (req, res) => {
     }
     // TODO: This should take a username or budget id once that is set up
     case 'GET': {
-      const data = await User.findOne({ _id: '5eaf5db927c42a6f3714db5d' })
+      const data = await User.findOne({ _id: '5eb34a25f56c9892e1923fad' })
         .populate('transactions')
+        .populate('budget')
         .exec();
       res.status(200).json({ success: true, data });
       break;
