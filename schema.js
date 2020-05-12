@@ -3,8 +3,8 @@ import { schemaComposer } from 'graphql-compose';
 import TransactionModel from './models/TransactionModel';
 import UserModel from './models/UserModel';
 
-let schema = {};
 const buildSchema = async () => {
+  let schema = {};
   // Check if schema has been built
   if (schemaComposer.has('User')) {
     console.log('Schema exists');
@@ -48,4 +48,4 @@ const buildSchema = async () => {
   schema = schemaComposer.buildSchema();
   return schema;
 };
-export default { buildSchema };
+export const schema = buildSchema();
