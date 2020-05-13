@@ -1,7 +1,8 @@
 import { ApolloServer } from 'apollo-server-micro';
 import connect from '../../database';
-import { schema } from '../../schema';
+import { buildSchema } from '../../schema';
 
+const schema = buildSchema();
 connect();
 
 const apollo = new ApolloServer({ schema });

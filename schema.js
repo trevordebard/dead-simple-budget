@@ -2,8 +2,9 @@ import composeWithMongoose from 'graphql-compose-mongoose';
 import { schemaComposer } from 'graphql-compose';
 import TransactionModel from './models/TransactionModel';
 import UserModel from './models/UserModel';
+import BudgetModel from './models/BudgetModel';
 
-const buildSchema = async () => {
+const buildSchema = () => {
   let schema = {};
   // Check if schema has been built
   if (schemaComposer.has('User')) {
@@ -13,6 +14,7 @@ const buildSchema = async () => {
   console.log('Building schema');
   const UserTC = composeWithMongoose(UserModel, {});
   const TransactionTC = composeWithMongoose(TransactionModel, {});
+  const BudgetTC = composeWithMongoose(BudgetModel, {});
   UserTC.addRelation('transactions', {
     resolver: () => TransactionTC.getResolver('findMany'),
     prepareArgs: {
@@ -20,6 +22,15 @@ const buildSchema = async () => {
     },
     projection: {
       transactions: true,
+    },
+  });
+  UserTC.addRelation('budget', {
+    resolver: () => BudgetTC.getResolver('findOne'),
+    prepareArgs: {
+      _userId: source => source._id || [],
+    },
+    projection: {
+      budget: true,
     },
   });
 
@@ -33,6 +44,11 @@ const buildSchema = async () => {
     transactionMany: TransactionTC.getResolver('findMany'),
     transactionCount: TransactionTC.getResolver('count'),
     transactionPagination: TransactionTC.getResolver('pagination'),
+    budgetById: BudgetTC.getResolver('findById'),
+    budgetOne: BudgetTC.getResolver('findOne'),
+    budgetMany: BudgetTC.getResolver('findMany'),
+    budgetCount: BudgetTC.getResolver('count'),
+    budgetPagination: BudgetTC.getResolver('pagination'),
   });
 
   schemaComposer.Mutation.addFields({
@@ -48,4 +64,5 @@ const buildSchema = async () => {
   schema = schemaComposer.buildSchema();
   return schema;
 };
-export const schema = buildSchema();
+
+export { buildSchema };
