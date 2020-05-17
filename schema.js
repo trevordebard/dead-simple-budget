@@ -60,6 +60,7 @@ const buildSchema = () => {
     userRemoveById: UserTC.getResolver('removeById'),
     userRemoveOne: UserTC.getResolver('removeOne'),
     userRemoveMany: UserTC.getResolver('removeMany'),
+    budgetUpdateById: BudgetTC.getResolver('updateById'),
   });
   schema = schemaComposer.buildSchema();
   return schema;
