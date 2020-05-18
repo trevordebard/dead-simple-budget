@@ -25,11 +25,9 @@ const Budget = () => {
       <br />
     </div>
   );
+  function renderCategories(stacks) {
+    return stacks.map(item => <BudgetCategory key={`${item.label}}`} value={item.value} label={item.label} />);
+  }
 };
-function renderCategories(stacks) {
-  return stacks.map(item => (
-    <BudgetCategory key={item._id || `${item.label}-${Date.now()}`} value={item.value} label={item.label} />
-  ));
-}
 
 export default Budget;

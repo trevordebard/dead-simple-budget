@@ -11,14 +11,19 @@ const UserQuery = gql`
   query user {
     userById(_id: "5eb34a25f56c9892e1923fad") {
       email
+      _id
       transactions {
+        _userId
         description
         amount
       }
       budget {
+        _userId
+        _id
         total
         toBeBudgeted
         stacks {
+          _id
           label
           value
         }
