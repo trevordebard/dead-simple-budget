@@ -53,6 +53,8 @@ const buildSchema = () => {
 
   schemaComposer.Mutation.addFields({
     userCreateOne: UserTC.getResolver('createOne'),
+    budgetCreateOne: BudgetTC.getResolver('createOne'),
+    transactionCreateOne: TransactionTC.getResolver('createOne'),
     userCreateMany: UserTC.getResolver('createMany'),
     userUpdateById: UserTC.getResolver('updateById'),
     userUpdateOne: UserTC.getResolver('updateOne'),
