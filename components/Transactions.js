@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
+import { useForm } from 'react-hook-form';
 import useBudget from '../hooks/useBudget';
-import useInput from '../hooks/useInput';
-import { getStackLabels } from '../lib/budgetUtils';
 
 const ADD_TRANSACTION = gql`
   mutation($record: CreateOneTransactionInput!) {
@@ -34,44 +33,30 @@ const Transactions = () => {
 };
 
 const NewTransaction = () => {
+  const { register, handleSubmit, watch, errors } = useForm();
   const { state } = useBudget();
-  const [description, handleLabelChange, setDescription] = useInput('');
-  const [amount, handleAmountChange, setAmount] = useInput(0);
-  const [date, handleDateChange, setDate] = useInput('');
-  const [stack, handleCategoryChange, setStack] = useInput('');
-  const [stackLabels, setStackLabels] = useState([]);
   const [addTransaction] = useMutation(ADD_TRANSACTION);
 
-  useEffect(() => {
-    setStackLabels(getStackLabels(state.stacks));
-  }, [state, state.stacks]);
-  useEffect(() => {
-    setStack(stackLabels[0]);
-  }, [stackLabels, setStack]);
-  const handleSubmit = e => {
-    e.preventDefault();
+  const onSubmit = data => {
+    const { description, amount, stack } = data;
     addTransaction({
       variables: { record: { description, amount: parseFloat(amount), stack, _userId: state._userId } },
     });
-    setDescription('');
-    setAmount('');
-    setDate('');
-    setStack(stackLabels[0]);
   };
   return (
     <>
-      <form onSubmit={handleSubmit}>
-        Description: <input name="description" value={description} onChange={handleLabelChange} />
-        Amount: <input name="amount" type="number" value={amount} onChange={handleAmountChange} />
-        Date: <input name="date" type="text" value={date} onChange={handleDateChange} />
-        <select name="stack" value={stack || state.stacks[0]} onChange={handleCategoryChange}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        Description: <input name="description" defaultValue="" ref={register} />
+        Amount: <input name="amount" ref={register} />
+        Date: <input name="date" ref={register} />
+        <select name="stack" ref={register}>
           {state.stacks.map(stackEl => (
             <option key={stackEl._id || `${stackEl.label}-${Date.now()}`} value={stackEl.label}>
               {stackEl.label}
             </option>
           ))}
         </select>
-        <input type="submit" value="Add" />
+        <input type="submit" />
       </form>
     </>
   );
