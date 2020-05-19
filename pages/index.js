@@ -9,7 +9,7 @@ import { withApollo } from '../lib/withApollo';
 
 const UserQuery = gql`
   query user {
-    userById(_id: "5eb34a25f56c9892e1923fad") {
+    userById(_id: "5ec1d97edd768b5259f24b50") {
       email
       _id
       transactions {
