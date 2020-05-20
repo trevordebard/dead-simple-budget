@@ -1,6 +1,6 @@
 import React from 'react';
 import gql from 'graphql-tag';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/client';
 import Head from '../components/head';
 import Budget from '../components/Budget';
 import Transactions from '../components/Transactions';
