@@ -1,11 +1,11 @@
 import React from 'react';
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation, useQuery, gql } from '@apollo/client';
 import { useForm, ErrorMessage } from 'react-hook-form';
 import { ADD_TRANSACTION } from '../lib/queries/ADD_TRANSACTION';
 import { GET_TRANSACTIONS } from '../lib/queries/GET_TRANSACTIONS';
 
 const Transactions = () => {
-  const { data, loading, client } = useQuery(GET_TRANSACTIONS);
+  const { data, loading } = useQuery(GET_TRANSACTIONS);
   console.log(data);
   if (!loading) {
     const { transactionMany: transactions } = data;
@@ -24,8 +24,31 @@ const Transactions = () => {
   return <p>loading...</p>;
 };
 
+// TODO: There has to be a better way to get stack labels.
+// maybe when authentication is set up this will be easier?
+// maybe add a type policy to user with custom field "stackLabels" ??
+const GET_STACK_LABELS = gql`
+  query GET_STACK_LABELS {
+    userById(_id: "5ec1d97edd768b5259f24b50") {
+      budget {
+        stacks {
+          _id
+          label
+        }
+      }
+    }
+  }
+`;
+
 const NewTransaction = () => {
   const { register, handleSubmit, errors, reset } = useForm();
+  const { data: userData, loading: userDataLoading } = useQuery(GET_STACK_LABELS);
+  const labels = [];
+  // TODO: find a better way to get labels to prevent multiple calls to this on submit
+  if (!userDataLoading) {
+    console.log('not loading');
+    userData.userById.budget.stacks.forEach(({ label }) => labels.push(label));
+  }
   const [addTransaction] = useMutation(ADD_TRANSACTION, {
     update: (cache, { data }) => {
       const dataResult = cache.readQuery({ query: GET_TRANSACTIONS });
@@ -63,20 +86,16 @@ const NewTransaction = () => {
         <label htmlFor="date">
           Date: <input name="date" ref={register} />
         </label>
-        <select name="stack" ref={register}>
-          <option value="Eating Out">Eating Out</option>
-          <option value="Rent">Rent</option>
-        </select>
-        {/* <select name="stack" ref={register({ required: true })}>
-          {state.stacks.map(stackEl => (
-            <option key={stackEl._id || `${stackEl.label}-${Date.now()}`} value={stackEl.label}>
-              {stackEl.label}
+        <select name="stack" ref={register({ required: true })}>
+          {labels.map(label => (
+            <option key={`${label}-${Date.now()}`} value={label}>
+              {label}
             </option>
           ))}
           <ErrorMessage errors={errors} name="stack">
             {({ message }) => <span style={{ color: 'red' }}>{message} </span>}
           </ErrorMessage>
-        </select> */}
+        </select>
         <input type="submit" />
       </form>
     </>
