@@ -1,14 +1,14 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useQuery } from '@apollo/client';
 import Head from '../components/head';
 import Budget from '../components/Budget';
 import Transactions from '../components/Transactions';
 import BudgetState from '../context/BudgetState';
 import { withApollo } from '../lib/withApollo';
-import { UserQuery } from '../lib/queries/UserQuery';
+import { GET_USER } from '../lib/queries/GET_USER';
 
-const Home = props => {
-  const data = useQuery(UserQuery);
+const Home = () => {
+  const data = useQuery(GET_USER);
   if (!data.loading) {
     const budgetData = data.data.userById;
     return (
@@ -22,4 +22,4 @@ const Home = props => {
   }
   return <p>Loading...</p>;
 };
-export default withApollo({ ssr: true })(Home);
+export default withApollo(Home);
