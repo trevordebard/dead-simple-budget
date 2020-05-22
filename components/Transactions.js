@@ -1,15 +1,16 @@
-import React from 'react';
-import { useMutation } from '@apollo/client';
-import gql from 'graphql-tag';
+import React, { useEffect } from 'react';
+import { useMutation, useQuery, gql } from '@apollo/client';
 import { useForm, ErrorMessage } from 'react-hook-form';
 import useBudget from '../hooks/useBudget';
+import { ADD_TRANSACTION } from '../lib/queries/ADD_TRANSACTION';
+import { UserQuery } from '../lib/queries/UserQuery';
 
-const ADD_TRANSACTION = gql`
-  mutation($record: CreateOneTransactionInput!) {
-    transactionCreateOne(record: $record) {
-      record {
+const GET_TRANSACTIONS = gql`
+  {
+    userOne {
+      transactions @client {
         description
-        date
+        amount
       }
     }
   }
@@ -19,6 +20,8 @@ const Transactions = () => {
   const {
     state: { transactions },
   } = useBudget();
+  const { data } = useQuery(GET_TRANSACTIONS);
+  console.log(data);
   return (
     <>
       <h1>Transactions</h1>
@@ -40,6 +43,7 @@ const NewTransaction = () => {
     const { description, amount, stack } = data;
     addTransaction({
       variables: { record: { description, amount: parseFloat(amount), stack, _userId: state._userId } },
+      refetchQueries: { query: UserQuery },
     });
     reset();
   };
