@@ -37,11 +37,11 @@ const buildSchema = () => {
   // const TransactionTC = composeWithMongoose(Transaction, {});
   schemaComposer.Query.addFields({
     userById: UserTC.getResolver('findById'),
-    userOne: UserTC.getResolver('findOne'),
+    userOne: UserTC.getResolver('findOne', [authMiddleware]),
     userPagination: UserTC.getResolver('pagination'),
     transactionById: TransactionTC.getResolver('findById'),
     transactionOne: TransactionTC.getResolver('findOne'),
-    transactionMany: TransactionTC.getResolver('findMany'),
+    transactionMany: TransactionTC.getResolver('findMany', [authMiddleware]),
     transactionCount: TransactionTC.getResolver('count'),
     transactionPagination: TransactionTC.getResolver('pagination'),
     budgetById: BudgetTC.getResolver('findById'),
@@ -64,6 +64,21 @@ const buildSchema = () => {
     userRemoveMany: UserTC.getResolver('removeMany'),
     budgetUpdateById: BudgetTC.getResolver('updateById'),
   });
+  async function authMiddleware(resolve, source, args, context, info) {
+    const { cookie } = context;
+    console.log(context);
+    // the password is correct, set a cookie on the response
+    cookie('session', 'yellow', {
+      // cookie is valid for all subpaths of my domain
+      path: '/',
+      // this cookie won't be readable by the browser
+      httpOnly: true,
+      // and won't be usable outside of my domain
+      sameSite: 'strict',
+    });
+    return resolve(source, args, context, info);
+    throw new Error('You must be authorized');
+  }
   schema = schemaComposer.buildSchema();
   return schema;
 };
