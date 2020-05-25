@@ -5,7 +5,6 @@ import { schemaComposer } from 'graphql-compose';
 import TransactionModel from './models/TransactionModel';
 import UserModel from './models/UserModel';
 import BudgetModel from './models/BudgetModel';
-import cookies from './auth/cookies';
 
 const buildSchema = () => {
   let schema = {};
@@ -57,13 +56,29 @@ const buildSchema = () => {
     return next(rp);
   });
   UserTC.addResolver({
+    kind: 'query',
+    name: 'me',
+    type: UserTC.getResolver('findById').getType(),
+    resolve: async payload => {
+      const {
+        context: { userId },
+      } = payload;
+      console.log(userId);
+      if (userId) {
+        return UserModel.findById({ _id: userId });
+      }
+      // TODO: Redirect to login page because user id was not passed through context, so it is probably not set in cookies
+      throw new Error('No user found');
+    },
+  });
+  UserTC.addResolver({
     kind: 'mutation',
     name: 'login',
     args: {
       email: 'String!',
       password: 'String!',
     },
-    type: 'UpdateByIdUserPayload',
+    type: UserTC.getResolver('updateById').getType(),
     resolve: async payload => {
       console.log(payload);
       const {
@@ -102,6 +117,7 @@ const buildSchema = () => {
   // const TransactionTC = composeWithMongoose(Transaction, {});
   schemaComposer.Query.addFields({
     userById: UserTC.getResolver('findById'),
+    me: UserTC.getResolver('me'),
     userOne: UserTC.getResolver('findOne', [authMiddleware]),
     userPagination: UserTC.getResolver('pagination'),
     transactionById: TransactionTC.getResolver('findById'),
