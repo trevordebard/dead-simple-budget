@@ -122,6 +122,7 @@ const buildSchema = () => {
     userPagination: UserTC.getResolver('pagination'),
     transactionById: TransactionTC.getResolver('findById'),
     transactionOne: TransactionTC.getResolver('findOne'),
+    transactionMany: TransactionTC.getResolver('findMany'),
     transactionPagination: TransactionTC.getResolver('pagination'),
     budgetById: BudgetTC.getResolver('findById'),
     budgetOne: BudgetTC.getResolver('findOne'),
