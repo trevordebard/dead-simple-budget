@@ -1,4 +1,5 @@
 import { ApolloServer } from 'apollo-server-micro';
+import jwt from 'jsonwebtoken';
 import connect from '../../database';
 import { buildSchema } from '../../schema';
 import cookie from '../../auth/cookies';
@@ -7,9 +8,21 @@ const schema = buildSchema();
 connect();
 
 function context(ctx) {
+  const { token } = ctx.req.cookies;
+  let userId;
+  if (token) {
+    try {
+      const data = jwt.verify(token, process.env.JWT_SECRET);
+      userId = data.userId;
+    } catch (e) {
+      console.error('USER ATTEMPTED TO SUPPLY INVALID TOKEN');
+      console.error(e);
+    }
+  }
   return {
     cookie: ctx.res.cookie,
     isMe: true,
+    userId,
   };
 }
 const apollo = new ApolloServer({
