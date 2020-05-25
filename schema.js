@@ -20,7 +20,9 @@ const buildSchema = () => {
   UserTC.addRelation('transactions', {
     resolver: () => TransactionTC.getResolver('findMany'),
     prepareArgs: {
-      _userId: source => source._id || [],
+      filter: source => ({
+        _userId: source.id,
+      }),
     },
     projection: {
       transactions: true,
@@ -29,7 +31,9 @@ const buildSchema = () => {
   UserTC.addRelation('budget', {
     resolver: () => BudgetTC.getResolver('findOne'),
     prepareArgs: {
-      _userId: source => source._id || [],
+      filter: source => ({
+        _userId: source.id,
+      }),
     },
     projection: {
       budget: true,
@@ -107,8 +111,7 @@ const buildSchema = () => {
       return {
         recordId: user._id,
         record: {
-          email: user.email,
-          password: user.password,
+          ...user,
         },
       };
     },
