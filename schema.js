@@ -1,8 +1,11 @@
 import composeWithMongoose from 'graphql-compose-mongoose';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 import { schemaComposer } from 'graphql-compose';
 import TransactionModel from './models/TransactionModel';
 import UserModel from './models/UserModel';
 import BudgetModel from './models/BudgetModel';
+import cookies from './auth/cookies';
 
 const buildSchema = () => {
   let schema = {};
@@ -34,6 +37,68 @@ const buildSchema = () => {
     },
   });
 
+  // When a user is created, send JWT as cookie with the resolver
+  // TODO: Check if duplicate user was created before sending back token
+  // In other words, prevent duplicate email addresses, and handle case where signup is not successfull
+  UserTC.wrapResolverResolve('createOne', next => async rp => {
+    rp.beforeRecordMutate = async (doc, { context: { cookie } }) => {
+      const token = jwt.sign({ userId: doc._id }, process.env.JWT_SECRET, {
+        expiresIn: '24h',
+      });
+      cookie('token', token, {
+        path: '/',
+        // this cookie won't be readable by the browser
+        httpOnly: true,
+        // and won't be usable outside of my domain
+        sameSite: 'strict',
+      });
+      return doc;
+    };
+    return next(rp);
+  });
+  UserTC.addResolver({
+    kind: 'mutation',
+    name: 'login',
+    args: {
+      email: 'String!',
+      password: 'String!',
+    },
+    type: 'UpdateByIdUserPayload',
+    resolve: async payload => {
+      console.log(payload);
+      const {
+        args,
+        context: { cookie },
+      } = payload;
+      let user = null;
+      user = await UserModel.findOne({ email: args.email });
+      if (!user) {
+        throw new Error('User does not exist.');
+      }
+      const passwordMatches = await bcrypt.compare(args.password, user.password);
+      if (!passwordMatches) {
+        throw new Error('User not found!');
+      }
+      const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
+        expiresIn: '24h',
+      });
+      cookie('token', token, {
+        path: '/',
+        // this cookie won't be readable by the browser
+        httpOnly: true,
+        // and won't be usable outside of my domain
+        sameSite: 'strict',
+      });
+      return {
+        recordId: user._id,
+        record: {
+          email: user.email,
+          password: user.password,
+        },
+      };
+    },
+  });
+
   // const TransactionTC = composeWithMongoose(Transaction, {});
   schemaComposer.Query.addFields({
     userById: UserTC.getResolver('findById'),
@@ -41,35 +106,27 @@ const buildSchema = () => {
     userPagination: UserTC.getResolver('pagination'),
     transactionById: TransactionTC.getResolver('findById'),
     transactionOne: TransactionTC.getResolver('findOne'),
-    transactionMany: TransactionTC.getResolver('findMany', [authMiddleware]),
-    transactionCount: TransactionTC.getResolver('count'),
     transactionPagination: TransactionTC.getResolver('pagination'),
     budgetById: BudgetTC.getResolver('findById'),
     budgetOne: BudgetTC.getResolver('findOne'),
-    budgetMany: BudgetTC.getResolver('findMany'),
-    budgetCount: BudgetTC.getResolver('count'),
     budgetPagination: BudgetTC.getResolver('pagination'),
   });
 
   schemaComposer.Mutation.addFields({
-    userCreateOne: UserTC.getResolver('createOne'),
+    userCreateOne: UserTC.getResolver('createOne', [authMiddleware, hashPassword]),
     budgetCreateOne: BudgetTC.getResolver('createOne'),
     transactionCreateOne: TransactionTC.getResolver('createOne'),
-    userCreateMany: UserTC.getResolver('createMany'),
     userUpdateById: UserTC.getResolver('updateById'),
-    userUpdateOne: UserTC.getResolver('updateOne'),
-    userUpdateMany: UserTC.getResolver('updateMany'),
     userRemoveById: UserTC.getResolver('removeById'),
-    userRemoveOne: UserTC.getResolver('removeOne'),
-    userRemoveMany: UserTC.getResolver('removeMany'),
     budgetUpdateById: BudgetTC.getResolver('updateById'),
+    userLogin: UserTC.getResolver('login', [authMiddleware]),
   });
+
+  // TODO: Build this out to provide actual authentication
   async function authMiddleware(resolve, source, args, context, info) {
     const { cookie } = context;
-    console.log(context);
     // the password is correct, set a cookie on the response
-    cookie('session', 'yellow', {
-      // cookie is valid for all subpaths of my domain
+    cookie('session', 'hi', {
       path: '/',
       // this cookie won't be readable by the browser
       httpOnly: true,
@@ -78,6 +135,14 @@ const buildSchema = () => {
     });
     return resolve(source, args, context, info);
     throw new Error('You must be authorized');
+  }
+  async function hashPassword(resolve, source, args, context, info) {
+    const { password } = args.record;
+    console.log('password', password);
+    const hashedPass = await bcrypt.hash(password, 10);
+
+    args.record.password = hashedPass;
+    return resolve(source, args, context, info);
   }
   schema = schemaComposer.buildSchema();
   return schema;
