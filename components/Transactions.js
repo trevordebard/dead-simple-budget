@@ -3,12 +3,11 @@ import { useMutation, useQuery, gql } from '@apollo/client';
 import { useForm, ErrorMessage } from 'react-hook-form';
 import { ADD_TRANSACTION } from '../lib/queries/ADD_TRANSACTION';
 import { GET_TRANSACTIONS } from '../lib/queries/GET_TRANSACTIONS';
+import useTransactions from '../hooks/useTransactions';
 
 const Transactions = () => {
-  const { data, loading } = useQuery(GET_TRANSACTIONS);
-  console.log(data);
+  const { transactions, loading } = useTransactions();
   if (!loading) {
-    const { transactionMany: transactions } = data;
     return (
       <>
         <h1>Transactions</h1>
@@ -17,7 +16,7 @@ const Transactions = () => {
             {transaction.description}:{transaction.amount}
           </p>
         ))}
-        <NewTransaction user={data._userId} />
+        <NewTransaction />
       </>
     );
   }
