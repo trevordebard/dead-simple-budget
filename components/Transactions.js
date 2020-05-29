@@ -10,11 +10,12 @@ const Transactions = () => {
     return (
       <>
         <h1>Transactions</h1>
-        {transactions.map(transaction => (
-          <p key={`${transaction.description}-${transaction.amount}`}>
-            {transaction.description}:{transaction.amount}
-          </p>
-        ))}
+        {transactions &&
+          transactions.map(transaction => (
+            <p key={`${transaction._id}`}>
+              {transaction.description}:{transaction.amount}
+            </p>
+          ))}
         <NewTransaction />
       </>
     );
