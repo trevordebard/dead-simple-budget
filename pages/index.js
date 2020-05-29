@@ -11,7 +11,7 @@ import useUser from '../hooks/useUser';
 const Home = () => {
   const data = useQuery(GET_USER);
   const { user, loading: userLoading } = useUser();
-  if (!userLoading) {
+  if (!userLoading && data.data) {
     const budgetData = data.data.userById;
     return (
       <BudgetState initialState={budgetData}>
