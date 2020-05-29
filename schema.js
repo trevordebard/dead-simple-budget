@@ -17,6 +17,20 @@ const buildSchema = () => {
   const UserTC = composeWithMongoose(UserModel, {});
   const TransactionTC = composeWithMongoose(TransactionModel, {});
   const BudgetTC = composeWithMongoose(BudgetModel, {});
+  // Make _userId optional so that mutation will not fail immediately if graphql query does not include value
+  // Value will be retrieved from context in resolver
+  // Mongoose still will require _userId, thus query will fail if user is not logged in
+  TransactionTC.getResolver('createOne')
+    .getArgTC('record')
+    .makeOptional(['_userId']);
+  TransactionTC.wrapResolverResolve('createOne', next => async rp => {
+    rp.beforeRecordMutate = async (doc, { context: { userId } }) => {
+      doc._userId = userId;
+      return doc;
+    };
+    return next(rp);
+  });
+
   UserTC.addRelation('transactions', {
     resolver: () => TransactionTC.getResolver('findMany'),
     prepareArgs: {
@@ -58,6 +72,7 @@ const buildSchema = () => {
       return doc;
     };
     return next(rp);
+    j;
   });
   UserTC.addResolver({
     kind: 'query',
@@ -67,6 +82,7 @@ const buildSchema = () => {
       const {
         context: { userId },
       } = payload;
+      console.log('hi');
       console.log(userId);
       if (userId) {
         return UserModel.findById({ _id: userId });
