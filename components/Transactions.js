@@ -1,7 +1,6 @@
 import React from 'react';
-import { useMutation, useQuery, gql } from '@apollo/client';
+import { useQuery, gql } from '@apollo/client';
 import { useForm, ErrorMessage } from 'react-hook-form';
-import { ADD_TRANSACTION } from '../lib/queries/ADD_TRANSACTION';
 import { GET_TRANSACTIONS } from '../lib/queries/GET_TRANSACTIONS';
 import useTransactions from '../hooks/useTransactions';
 
@@ -42,27 +41,18 @@ const GET_STACK_LABELS = gql`
 const NewTransaction = () => {
   const { register, handleSubmit, errors, reset } = useForm();
   const { data: userData, loading: userDataLoading } = useQuery(GET_STACK_LABELS);
+  const { addTransaction } = useTransactions();
   const labels = [];
+
   // TODO: find a better way to get labels to prevent multiple calls to this on submit
   if (!userDataLoading) {
-    console.log('not loading');
+    console.log('not loading called');
     userData.userById.budget.stacks.forEach(({ label }) => labels.push(label));
   }
-  const [addTransaction] = useMutation(ADD_TRANSACTION, {
-    update: (cache, { data }) => {
-      const dataResult = cache.readQuery({ query: GET_TRANSACTIONS });
-      cache.writeQuery({
-        query: GET_TRANSACTIONS,
-        data: {
-          transactionMany: [...dataResult.transactionMany, data.transactionCreateOne.record],
-        },
-      });
-    },
-  });
   const onSubmit = data => {
     const { description, amount, stack } = data;
     addTransaction({
-      variables: { record: { description, amount: parseFloat(amount), stack, _userId: '5ec1d97edd768b5259f24b50' } },
+      variables: { record: { description, amount: parseFloat(amount), stack } },
       refetchQueries: { query: GET_TRANSACTIONS },
     });
     reset();
