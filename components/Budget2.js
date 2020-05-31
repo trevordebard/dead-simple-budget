@@ -1,6 +1,6 @@
 import React from 'react';
 import { useForm, ErrorMessage } from 'react-hook-form';
-import { useMutation, gql } from '@apollo/client';
+import { useMutation, gql, resetApolloContext } from '@apollo/client';
 import useBudget2 from '../hooks/useBudget2';
 
 const UPDATE_STACK = gql`
@@ -15,9 +15,22 @@ const UPDATE_STACK = gql`
     }
   }
 `;
+const ADD_STACK = gql`
+  mutation($budgetId: MongoID!, $newStackLabel: String!, $newStackValue: Float) {
+    budgetPushToStacks(budgetId: $budgetId, newStackLabel: $newStackLabel, newStackValue: $newStackValue) {
+      total
+      toBeBudgeted
+      stacks {
+        label
+        value
+      }
+    }
+  }
+`;
 function Budget2() {
   const { data, loading } = useBudget2();
-  const { register, handleSubmit, errors } = useForm();
+  const { register, handleSubmit, errors, reset } = useForm();
+  const [addStack] = useMutation(ADD_STACK);
   const [updateStack] = useMutation(UPDATE_STACK);
   if (loading) {
     return <p>Loading...</p>;
@@ -37,8 +50,26 @@ function Budget2() {
         </label>
         <p style={{ color: 'red' }}>To Be Budgeted: {data?.toBeBudgeted}</p>
         {renderStacks(data?.stacks, data._id)}
+        <hr></hr>
+        <label htmlFor="newStack">
+          New Stack: <input name="newStack" ref={register} />
+          <ErrorMessage errors={errors} name="total">
+            {({ message }) => <span style={{ color: 'red' }}>{message} </span>}
+          </ErrorMessage>
+          <button
+            type="button"
+            onClick={handleSubmit(payload => {
+              reset({ newStack: '' });
+              addStack({
+                variables: { newStackLabel: payload.newStack, budgetId: data._id },
+                refetchQueries: ['GET_BUDGET'], // Eventually change to update cache
+              });
+            })}
+          >
+            Add Stack
+          </button>
+        </label>
       </form>
-      <hr></hr>
       <br />
     </div>
   );
