@@ -2,7 +2,7 @@ import React from 'react';
 
 import { useForm, ErrorMessage } from 'react-hook-form';
 import styled from 'styled-components';
-import { useMutation, gql, useQuery } from '@apollo/client';
+import { useMutation, gql } from '@apollo/client';
 import useUser from '../hooks/useUser';
 
 const Form = styled.form`

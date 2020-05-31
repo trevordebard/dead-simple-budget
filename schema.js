@@ -82,8 +82,6 @@ const buildSchema = () => {
       const {
         context: { userId },
       } = payload;
-      console.log('hi');
-      console.log(userId);
       if (userId) {
         return UserModel.findById({ _id: userId });
       }
@@ -161,6 +159,7 @@ const buildSchema = () => {
   // TODO: Build this out to provide actual authentication
   async function authMiddleware(resolve, source, args, context, info) {
     const { cookie } = context;
+
     // the password is correct, set a cookie on the response
     cookie('session', 'hi', {
       path: '/',
