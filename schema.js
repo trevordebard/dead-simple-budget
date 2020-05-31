@@ -87,6 +87,20 @@ const buildSchema = () => {
       return BudgetModel.findOne({ _id: args.budgetId }); // return the record
     },
   });
+  BudgetTC.addResolver({
+    name: 'pushToStacks',
+    type: BudgetTC,
+    kind: 'mutation',
+    args: { budgetId: 'MongoID!', newStackLabel: 'String!', newStackValue: 'Float' },
+    resolve: async ({ args }) => {
+      const user = await BudgetModel.update(
+        { _id: args.budgetId },
+        { $push: { stacks: { label: args.newStackLabel, value: args.newStackValue || 0 } } }
+      );
+      if (!user) return null; // or gracefully return an error etc...
+      return BudgetModel.findOne({ _id: args.budgetId }); // return the record
+    },
+  });
   UserTC.addResolver({
     kind: 'query',
     name: 'me',
@@ -168,6 +182,7 @@ const buildSchema = () => {
     budgetUpdateById: BudgetTC.getResolver('updateById'),
     userLogin: UserTC.getResolver('login', [authMiddleware]),
     budgetUpdateStack: BudgetTC.getResolver('updateStack'),
+    budgetPushToStacks: BudgetTC.getResolver('pushToStacks'),
   });
 
   // TODO: Build this out to provide actual authentication
