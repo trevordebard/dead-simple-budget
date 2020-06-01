@@ -27,11 +27,24 @@ const ADD_STACK = gql`
     }
   }
 `;
+const REMOVE_STACK = gql`
+  mutation($budgetId: MongoID!, $label: String!) {
+    budgetRemoveStack(budgetId: $budgetId, label: $label) {
+      total
+      toBeBudgeted
+      stacks {
+        label
+        value
+      }
+    }
+  }
+`;
 function Budget2() {
   const { data, loading } = useBudget2();
   const { register, handleSubmit, errors, reset } = useForm();
   const [addStack] = useMutation(ADD_STACK);
   const [updateStack] = useMutation(UPDATE_STACK);
+  const [removeStack] = useMutation(REMOVE_STACK);
   if (loading) {
     return <p>Loading...</p>;
   }
@@ -83,13 +96,14 @@ function Budget2() {
           value={item.value}
           errors={errors}
           updateStack={updateStack}
+          removeStack={removeStack}
         />
       </div>
     ));
   }
 }
 
-const BudgetStack = ({ label, register, budgetId, value, errors, updateStack }) => (
+const BudgetStack = ({ label, register, budgetId, value, errors, updateStack, removeStack }) => (
   <>
     <label htmlFor={label}>
       {label}:{' '}
@@ -110,6 +124,19 @@ const BudgetStack = ({ label, register, budgetId, value, errors, updateStack }) 
         defaultValue={value}
         ref={register}
       />
+      <button
+        type="button"
+        onClick={e => {
+          removeStack({
+            variables: {
+              budgetId,
+              label,
+            },
+          });
+        }}
+      >
+        Delete
+      </button>
       <ErrorMessage errors={errors} name="total">
         {({ message }) => <span style={{ color: 'red' }}>{message} </span>}
       </ErrorMessage>
