@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm, ErrorMessage } from 'react-hook-form';
-import { useMutation, gql, resetApolloContext } from '@apollo/client';
+import { useMutation, gql } from '@apollo/client';
 import useBudget2 from '../hooks/useBudget2';
 
 const UPDATE_STACK = gql`
@@ -55,17 +55,13 @@ function Budget2() {
     <div>
       <p>Budget2!</p>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <label htmlFor="total">
-            Total: <input name="total" defaultValue={data?.total} ref={register} />
-            <ErrorMessage errors={errors} name="total">
-              {({ message }) => <span style={{ color: 'red' }}>{message} </span>}
-            </ErrorMessage>
-          </label>
-        </div>
-        <div>
-          <p style={{ color: 'red' }}>To Be Budgeted: {data?.toBeBudgeted}</p>
-        </div>
+        <label htmlFor="total">
+          Total: <input name="total" defaultValue={data?.total} ref={register} />
+          <ErrorMessage errors={errors} name="total">
+            {({ message }) => <span style={{ color: 'red' }}>{message} </span>}
+          </ErrorMessage>
+        </label>
+        <p style={{ color: 'red' }}>To Be Budgeted: {data?.toBeBudgeted}</p>
         {renderStacks(data?.stacks, data._id)}
         <div style={{ marginTop: '10px' }}>
           <label htmlFor="newStack">
@@ -108,45 +104,51 @@ function Budget2() {
   }
 }
 
-const BudgetStack = ({ label, register, budgetId, value, errors, updateStack, removeStack }) => (
-  <>
-    <label htmlFor={label}>
-      {label}:{' '}
-      <input
-        name={label}
-        onChange={e => console.log(e.target.value)}
-        onFocus={e => console.log(e.target.value)}
-        type="number"
-        onBlur={e => {
-          updateStack({
-            variables: {
-              budgetId,
-              label,
-              value: parseFloat(e.target.value),
-            },
-          });
-        }}
-        defaultValue={value}
-        ref={register}
-      />
-      <button
-        type="button"
-        onClick={e => {
-          removeStack({
-            variables: {
-              budgetId,
-              label,
-            },
-          });
-        }}
-      >
-        Delete
-      </button>
-      <ErrorMessage errors={errors} name="total">
-        {({ message }) => <span style={{ color: 'red' }}>{message} </span>}
-      </ErrorMessage>
-    </label>
-  </>
-);
+const BudgetStack = ({ label, register, budgetId, value, errors, updateStack, removeStack }) => {
+  const [prevValue, setPrevValue] = useState(value);
+  return (
+    <>
+      <label htmlFor={label}>
+        {label}:{' '}
+        <input
+          name={label}
+          type="number"
+          onBlur={e => {
+            const newVal = parseFloat(e.target.value);
+            // Prevent api call if vlaue didn't change
+            if (newVal !== prevValue) {
+              updateStack({
+                variables: {
+                  budgetId,
+                  label,
+                  value: newVal,
+                },
+              });
+              setPrevValue(newVal);
+            }
+          }}
+          defaultValue={value}
+          ref={register}
+        />
+        <button
+          type="button"
+          onClick={e => {
+            removeStack({
+              variables: {
+                budgetId,
+                label,
+              },
+            });
+          }}
+        >
+          Delete
+        </button>
+        <ErrorMessage errors={errors} name="total">
+          {({ message }) => <span style={{ color: 'red' }}>{message} </span>}
+        </ErrorMessage>
+      </label>
+    </>
+  );
+};
 
 export default Budget2;
