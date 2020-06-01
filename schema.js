@@ -73,6 +73,12 @@ const buildSchema = () => {
     };
     return next(rp);
   });
+  BudgetTC.addFields({
+    toBeBudgeted: {
+      type: 'Float',
+    },
+    otherVirtual: 'Int',
+  });
   BudgetTC.addResolver({
     name: 'updateStack',
     type: BudgetTC,
