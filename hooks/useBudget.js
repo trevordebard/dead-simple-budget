@@ -1,5 +1,41 @@
-import { gql, useQuery } from '@apollo/client';
+import { gql, useQuery, useMutation } from '@apollo/client';
 
+const UPDATE_STACK = gql`
+  mutation($budgetId: MongoID!, $label: String!, $value: Float!) {
+    budgetUpdateStack(budgetId: $budgetId, label: $label, value: $value) {
+      total
+      toBeBudgeted
+      stacks {
+        value
+        label
+      }
+    }
+  }
+`;
+const ADD_STACK = gql`
+  mutation($budgetId: MongoID!, $newStackLabel: String!, $newStackValue: Float) {
+    budgetPushToStacks(budgetId: $budgetId, newStackLabel: $newStackLabel, newStackValue: $newStackValue) {
+      total
+      toBeBudgeted
+      stacks {
+        label
+        value
+      }
+    }
+  }
+`;
+const REMOVE_STACK = gql`
+  mutation($budgetId: MongoID!, $label: String!) {
+    budgetRemoveStack(budgetId: $budgetId, label: $label) {
+      total
+      toBeBudgeted
+      stacks {
+        label
+        value
+      }
+    }
+  }
+`;
 const GET_BUDGET = gql`
   query GET_BUDGET {
     me {
@@ -21,8 +57,11 @@ const GET_BUDGET = gql`
 
 const useBudget = () => {
   const { data, loading, error } = useQuery(GET_BUDGET);
+  const [addStack] = useMutation(ADD_STACK, { refetchQueries: ['GET_BUDGET'] });
+  const [updateStack] = useMutation(UPDATE_STACK, { refetchQueries: ['GET_BUDGET'] });
+  const [removeStack] = useMutation(REMOVE_STACK, { refetchQueries: ['GET_BUDGET'] });
 
-  return { loading, data: data?.me.budget, error };
+  return { loading, data: data?.me.budget, error, addStack, updateStack, removeStack };
 };
 
 export default useBudget;

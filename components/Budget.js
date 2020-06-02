@@ -1,50 +1,10 @@
 import React, { useState } from 'react';
 import { useForm, ErrorMessage } from 'react-hook-form';
-import { useMutation, gql } from '@apollo/client';
 import useBudget from '../hooks/useBudget';
 
-const UPDATE_STACK = gql`
-  mutation($budgetId: MongoID!, $label: String!, $value: Float!) {
-    budgetUpdateStack(budgetId: $budgetId, label: $label, value: $value) {
-      total
-      toBeBudgeted
-      stacks {
-        value
-        label
-      }
-    }
-  }
-`;
-const ADD_STACK = gql`
-  mutation($budgetId: MongoID!, $newStackLabel: String!, $newStackValue: Float) {
-    budgetPushToStacks(budgetId: $budgetId, newStackLabel: $newStackLabel, newStackValue: $newStackValue) {
-      total
-      toBeBudgeted
-      stacks {
-        label
-        value
-      }
-    }
-  }
-`;
-const REMOVE_STACK = gql`
-  mutation($budgetId: MongoID!, $label: String!) {
-    budgetRemoveStack(budgetId: $budgetId, label: $label) {
-      total
-      toBeBudgeted
-      stacks {
-        label
-        value
-      }
-    }
-  }
-`;
-function Budget2() {
-  const { data, loading, error } = useBudget();
+function Budget() {
+  const { data, loading, error, addStack, updateStack, removeStack } = useBudget();
   const { register, handleSubmit, errors, reset } = useForm();
-  const [addStack] = useMutation(ADD_STACK, { refetchQueries: ['GET_BUDGET'] });
-  const [updateStack] = useMutation(UPDATE_STACK, { refetchQueries: ['GET_BUDGET'] });
-  const [removeStack] = useMutation(REMOVE_STACK, { refetchQueries: ['GET_BUDGET'] });
 
   if (loading) {
     return <p>Loading...</p>;
@@ -58,7 +18,6 @@ function Budget2() {
   };
   return (
     <>
-      <p>Budget2!</p>
       <form onSubmit={handleSubmit(onSubmit)}>
         <label htmlFor="total">
           Total: <input name="total" defaultValue={data?.total} ref={register} />
@@ -156,4 +115,4 @@ const BudgetStack = ({ label, register, budgetId, value, errors, updateStack, re
   );
 };
 
-export default Budget2;
+export default Budget;
