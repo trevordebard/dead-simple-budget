@@ -20,9 +20,9 @@ const GET_BUDGET = gql`
 `;
 
 const useBudget2 = () => {
-  const { data, loading } = useQuery(GET_BUDGET);
-  console.log(data);
-  return { loading, data: data?.me.budget };
+  const { data, loading, error } = useQuery(GET_BUDGET);
+
+  return { loading, data: data?.me.budget, error };
 };
 
 export default useBudget2;

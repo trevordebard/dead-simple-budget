@@ -40,19 +40,24 @@ const REMOVE_STACK = gql`
   }
 `;
 function Budget2() {
-  const { data, loading } = useBudget2();
+  const { data, loading, error } = useBudget2();
   const { register, handleSubmit, errors, reset } = useForm();
-  const [addStack] = useMutation(ADD_STACK);
-  const [updateStack] = useMutation(UPDATE_STACK);
-  const [removeStack] = useMutation(REMOVE_STACK);
+  const [addStack] = useMutation(ADD_STACK, { refetchQueries: ['GET_BUDGET'] });
+  const [updateStack] = useMutation(UPDATE_STACK, { refetchQueries: ['GET_BUDGET'] });
+  const [removeStack] = useMutation(REMOVE_STACK, { refetchQueries: ['GET_BUDGET'] });
+
   if (loading) {
     return <p>Loading...</p>;
+  }
+  if (error) {
+    console.error(error);
+    return <p>error...</p>;
   }
   const onSubmit = payload => {
     console.log(payload);
   };
   return (
-    <div>
+    <>
       <p>Budget2!</p>
       <form onSubmit={handleSubmit(onSubmit)}>
         <label htmlFor="total">
@@ -85,7 +90,7 @@ function Budget2() {
         </div>
       </form>
       <br />
-    </div>
+    </>
   );
   function renderStacks(stacks, budgetId) {
     return stacks?.map(item => (
