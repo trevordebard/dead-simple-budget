@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useForm, ErrorMessage } from 'react-hook-form';
 import { useMutation, gql } from '@apollo/client';
-import useBudget2 from '../hooks/useBudget2';
+import useBudget from '../hooks/useBudget';
 
 const UPDATE_STACK = gql`
   mutation($budgetId: MongoID!, $label: String!, $value: Float!) {
@@ -40,7 +40,7 @@ const REMOVE_STACK = gql`
   }
 `;
 function Budget2() {
-  const { data, loading, error } = useBudget2();
+  const { data, loading, error } = useBudget();
   const { register, handleSubmit, errors, reset } = useForm();
   const [addStack] = useMutation(ADD_STACK, { refetchQueries: ['GET_BUDGET'] });
   const [updateStack] = useMutation(UPDATE_STACK, { refetchQueries: ['GET_BUDGET'] });
