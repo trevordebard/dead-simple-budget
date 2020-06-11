@@ -1,5 +1,4 @@
 import React from 'react';
-import { useQuery, gql } from '@apollo/client';
 import { useForm, ErrorMessage } from 'react-hook-form';
 import { GET_TRANSACTIONS } from '../lib/queries/GET_TRANSACTIONS';
 import useTransactions from '../hooks/useTransactions';
@@ -23,33 +22,10 @@ const Transactions = () => {
   return <p>loading...</p>;
 };
 
-// TODO: There has to be a better way to get stack labels.
-// maybe when authentication is set up this will be easier?
-// maybe add a type policy to user with custom field "stackLabels" ??
-const GET_STACK_LABELS = gql`
-  query GET_STACK_LABELS {
-    userById(_id: "5ec1d97edd768b5259f24b50") {
-      budget {
-        stacks {
-          _id
-          label
-        }
-      }
-    }
-  }
-`;
-
 const NewTransaction = () => {
   const { register, handleSubmit, errors, reset } = useForm();
-  const { data: userData, loading: userDataLoading } = useQuery(GET_STACK_LABELS);
-  const { addTransaction } = useTransactions();
-  const labels = [];
+  const { addTransaction, stackLabels } = useTransactions();
 
-  // TODO: find a better way to get labels to prevent multiple calls to this on submit
-  if (!userDataLoading) {
-    console.log('not loading called');
-    userData.userById.budget.stacks.forEach(({ label }) => labels.push(label));
-  }
   const onSubmit = data => {
     const { description, amount, stack } = data;
     addTransaction({
@@ -77,11 +53,12 @@ const NewTransaction = () => {
           Date: <input name="date" ref={register} />
         </label>
         <select name="stack" ref={register({ required: true })}>
-          {labels.map(label => (
-            <option key={`${label}-${Date.now()}`} value={label}>
-              {label}
-            </option>
-          ))}
+          {stackLabels &&
+            stackLabels.map(label => (
+              <option key={`${label}-${Date.now()}`} value={label}>
+                {label}
+              </option>
+            ))}
           <ErrorMessage errors={errors} name="stack">
             {({ message }) => <span style={{ color: 'red' }}>{message} </span>}
           </ErrorMessage>
