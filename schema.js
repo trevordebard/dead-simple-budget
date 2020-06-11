@@ -77,7 +77,9 @@ const buildSchema = () => {
     toBeBudgeted: {
       type: 'Float',
     },
-    otherVirtual: 'Int',
+    stackLabels: {
+      type: '[String]',
+    },
   });
   BudgetTC.addResolver({
     name: 'updateStack',

@@ -24,4 +24,9 @@ BudgetSchema.virtual('toBeBudgeted').get(function() {
   }
   return this.total - moneyAllocated;
 });
+BudgetSchema.virtual('stackLabels').get(function() {
+  const stackLabels = [];
+  this.stacks.forEach(el => stackLabels.push(el.label));
+  return stackLabels;
+});
 export default mongoose.models.Budget || mongoose.model('Budget', BudgetSchema);
