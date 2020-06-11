@@ -27,24 +27,21 @@ const Nav = () => {
   return <NavContainer>{loggedIn ? <LoggedInNav email={user.email} /> : <LoggedOutNav />}</NavContainer>;
 };
 
-const LoggedInNav = ({ email }) => {
-  console.log(email);
-  return (
-    <ul>
-      <li>{email}</li>
-      <li>
-        <Link href="/">
-          <a>Home</a>
-        </Link>
-      </li>
-      <li>
-        <Link href="/transactions">
-          <a>Transactions</a>
-        </Link>
-      </li>
-    </ul>
-  );
-};
+const LoggedInNav = ({ email }) => (
+  <ul>
+    <li>{email}</li>
+    <li>
+      <Link href="/">
+        <a>Home</a>
+      </Link>
+    </li>
+    <li>
+      <Link href="/transactions">
+        <a>Transactions</a>
+      </Link>
+    </li>
+  </ul>
+);
 const LoggedOutNav = () => (
   <ul>
     <li>

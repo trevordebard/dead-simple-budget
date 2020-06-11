@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { useMutation } from '@apollo/client';
 import { ADD_USER } from '../lib/queries/ADD_USER';
 
+// TODO: Refactory to use custom input components
 const Form = styled.form`
   label {
     display: block;
@@ -27,7 +28,6 @@ const Signup = () => {
   const [addUser] = useMutation(ADD_USER);
   const onSubmit = data => {
     const { email, password } = data;
-    console.log(email, password);
     addUser({
       variables: { record: { email, password } },
     });

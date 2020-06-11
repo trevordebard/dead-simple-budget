@@ -35,7 +35,6 @@ const LOGIN = gql`
 const Login = () => {
   const { register, handleSubmit, errors, reset } = useForm();
   const { user, loading: userLoading, loggedIn } = useUser();
-  console.log(loggedIn);
 
   const [loginUser, { loading: loginLoading }] = useMutation(LOGIN);
   const onSubmit = payload => {
@@ -46,7 +45,6 @@ const Login = () => {
     return <p>Loading...</p>;
   }
   if (loggedIn) {
-    console.log(user);
     return <p>{user?.email} is logged in!</p>;
   }
   return (

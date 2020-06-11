@@ -146,7 +146,6 @@ const buildSchema = () => {
     },
     type: UserTC.getResolver('updateById').getType(),
     resolve: async payload => {
-      console.log(payload);
       const {
         args,
         context: { cookie },
@@ -224,7 +223,6 @@ const buildSchema = () => {
   }
   async function hashPassword(resolve, source, args, context, info) {
     const { password } = args.record;
-    console.log('password', password);
     const hashedPass = await bcrypt.hash(password, 10);
 
     args.record.password = hashedPass;
