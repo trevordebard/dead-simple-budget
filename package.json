@@ -6,7 +6,7 @@
     "start": "next start"
   },
   "dependencies": {
-    "@apollo/client": "^3.0.0-beta.50",
+    "@apollo/client": "^3.0.0-rc.3",
     "@apollo/react-ssr": "^4.0.0-beta.1",
     "apollo-server-micro": "^2.13.0",
     "bcrypt": "^4.0.1",
