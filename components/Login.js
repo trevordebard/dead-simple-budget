@@ -37,8 +37,11 @@ const Login = () => {
   const { register, handleSubmit, errors, reset } = useForm();
   const { user, loading: userLoading, loggedIn } = useUser();
 
-  const [loginUser, { loading: loginLoading }] = useMutation(LOGIN, { onCompleted: () => Router.push('/') });
-  const onSubmit = payload => {
+  const [loginUser, { loading: loginLoading, error: loginError }] = useMutation(LOGIN, {
+    onCompleted: () => Router.push('/'),
+    onError: err => console.error(err.message),
+  });
+  const onSubmit = async payload => {
     loginUser({ variables: { email: payload.email, password: payload.password } });
     reset();
   };
@@ -66,6 +69,7 @@ const Login = () => {
           {({ message }) => <span style={{ color: 'red' }}>{message} </span>}
         </ErrorMessage>
         <input type="submit" disabled={loginLoading} value={loginLoading ? 'Loading...' : 'Submit'}></input>
+        {loginError && <p style={{ color: 'red' }}>There was an error logging in. Please try again!</p>}
       </Form>
     </>
   );
