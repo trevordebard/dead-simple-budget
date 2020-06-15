@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import useBudget from '../hooks/useBudget';
 import Input from './Input';
 import BudgetStack from './BudgetStack';
+import RequireLogin from './RequireLogin';
 
 function Budget() {
   const { data, loading, error, addStack, updateStack, removeStack } = useBudget();
@@ -62,4 +63,4 @@ function Budget() {
   }
 }
 
-export default Budget;
+export default RequireLogin(Budget);

@@ -2,7 +2,7 @@ import React from 'react';
 import Head from '../components/head';
 import Budget from '../components/Budget';
 import Transactions from '../components/Transactions';
-import { withApollo } from '../lib/withApollo';
+import RequireLogin from '../components/RequireLogin';
 
 const Home = () => (
   <>
@@ -13,4 +13,4 @@ const Home = () => (
     <Transactions />
   </>
 );
-export default withApollo(Home);
+export default RequireLogin(Home);

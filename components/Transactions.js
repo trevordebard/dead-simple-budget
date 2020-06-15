@@ -2,6 +2,7 @@ import React from 'react';
 import { useForm, ErrorMessage } from 'react-hook-form';
 import { GET_TRANSACTIONS } from '../lib/queries/GET_TRANSACTIONS';
 import useTransactions from '../hooks/useTransactions';
+import RequireLogin from './RequireLogin';
 
 const Transactions = () => {
   const { transactions, loading } = useTransactions();
@@ -68,4 +69,4 @@ const NewTransaction = () => {
     </>
   );
 };
-export default Transactions;
+export default RequireLogin(Transactions);
