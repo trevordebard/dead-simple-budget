@@ -3,6 +3,7 @@ import React from 'react';
 import { useForm, ErrorMessage } from 'react-hook-form';
 import styled from 'styled-components';
 import { useMutation, gql } from '@apollo/client';
+import Router from 'next/router';
 import useUser from '../hooks/useUser';
 
 const Form = styled.form`
@@ -36,7 +37,7 @@ const Login = () => {
   const { register, handleSubmit, errors, reset } = useForm();
   const { user, loading: userLoading, loggedIn } = useUser();
 
-  const [loginUser, { loading: loginLoading }] = useMutation(LOGIN);
+  const [loginUser, { loading: loginLoading }] = useMutation(LOGIN, { onCompleted: () => Router.push('/') });
   const onSubmit = payload => {
     loginUser({ variables: { email: payload.email, password: payload.password } });
     reset();
