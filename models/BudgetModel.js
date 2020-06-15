@@ -26,7 +26,12 @@ BudgetSchema.virtual('toBeBudgeted').get(function() {
 });
 BudgetSchema.virtual('stackLabels').get(function() {
   const stackLabels = [];
-  this.stacks.forEach(el => stackLabels.push(el.label));
+  try {
+    this.stacks.forEach(el => stackLabels.push(el.label));
+  } catch (e) {
+    console.error('Unable to calculate stack labels. Verify your query included stacks {label}');
+    return new Error('Unable to get stack labels');
+  }
   return stackLabels;
 });
 export default mongoose.models.Budget || mongoose.model('Budget', BudgetSchema);

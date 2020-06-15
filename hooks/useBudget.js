@@ -57,9 +57,12 @@ const GET_BUDGET = gql`
 
 const useBudget = () => {
   const { data, loading, error } = useQuery(GET_BUDGET);
-  const [addStack] = useMutation(ADD_STACK, { refetchQueries: ['GET_BUDGET'] });
+  // TODO: Update stack label cache on addStack
+  // For some reason GET_STACK_LABELS is not refetched on add stack, but it is on remove stack ???
+  // Not looking deep into this since this will all be changed once I start working with cache more effectively
+  const [addStack] = useMutation(ADD_STACK, { refetchQueries: ['GET_BUDGET', 'GET_STACK_LABELS'] });
   const [updateStack] = useMutation(UPDATE_STACK, { refetchQueries: ['GET_BUDGET'] });
-  const [removeStack] = useMutation(REMOVE_STACK, { refetchQueries: ['GET_BUDGET'] });
+  const [removeStack] = useMutation(REMOVE_STACK, { refetchQueries: ['GET_BUDGET', 'GET_STACK_LABELS'] });
 
   return { loading, data: data?.me.budget, error, addStack, updateStack, removeStack };
 };
