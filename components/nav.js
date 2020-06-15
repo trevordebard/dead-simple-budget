@@ -23,7 +23,10 @@ const NavContainer = styled.nav`
   }
 `;
 const Nav = () => {
-  const { user, loggedIn } = useUser();
+  const { user, loggedIn, loading } = useUser();
+  if (loading) {
+    return null;
+  }
   return <NavContainer>{loggedIn ? <LoggedInNav email={user.email} /> : <LoggedOutNav />}</NavContainer>;
 };
 
