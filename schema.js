@@ -137,6 +137,21 @@ const buildSchema = () => {
       throw new Error('No user found');
     },
   });
+
+  UserTC.addResolver({
+    kind: 'mutation',
+    name: 'logout',
+    type: UserTC.getResolver('updateById').getType(),
+    resolve: ({ context }) =>
+      context.res.cookie('token', '', {
+        path: '/',
+        // this cookie won't be readable by the browser
+        httpOnly: true,
+        // and won't be usable outside of my domain
+        sameSite: 'strict',
+      }),
+  });
+
   UserTC.addResolver({
     kind: 'mutation',
     name: 'login',
@@ -198,6 +213,7 @@ const buildSchema = () => {
     userRemoveById: UserTC.getResolver('removeById'),
     budgetUpdateById: BudgetTC.getResolver('updateById'),
     userLogin: UserTC.getResolver('login'),
+    userLogout: UserTC.getResolver('logout'),
     budgetUpdateStack: BudgetTC.getResolver('updateStack'),
     budgetPushToStacks: BudgetTC.getResolver('pushToStacks'),
     budgetRemoveStack: BudgetTC.getResolver('removeStack'),

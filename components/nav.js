@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
+import { useMutation, gql } from '@apollo/client';
 import useUser from '../hooks/useUser';
 
 const NavContainer = styled.nav`
@@ -21,6 +22,9 @@ const NavContainer = styled.nav`
   a {
     text-decoration: none;
   }
+  p {
+    margin: 0;
+  }
 `;
 const Nav = () => {
   const { user, loggedIn, loading } = useUser();
@@ -29,22 +33,37 @@ const Nav = () => {
   }
   return <NavContainer>{loggedIn ? <LoggedInNav email={user.email} /> : <LoggedOutNav />}</NavContainer>;
 };
+const LOGOUT = gql`
+  mutation LOGOUT {
+    userLogout {
+      record {
+        email
+      }
+    }
+  }
+`;
+const LoggedInNav = ({ email }) => {
+  const [logout] = useMutation(LOGOUT);
+  return (
+    <ul>
+      <li>{email}</li>
+      <li>
+        <Link href="/">
+          <a>Home</a>
+        </Link>
+      </li>
+      <li>
+        <Link href="/transactions">
+          <a>Transactions</a>
+        </Link>
+      </li>
+      <li>
+        <p onClick={() => logout()}>Logout</p>
+      </li>
+    </ul>
+  );
+};
 
-const LoggedInNav = ({ email }) => (
-  <ul>
-    <li>{email}</li>
-    <li>
-      <Link href="/">
-        <a>Home</a>
-      </Link>
-    </li>
-    <li>
-      <Link href="/transactions">
-        <a>Transactions</a>
-      </Link>
-    </li>
-  </ul>
-);
 const LoggedOutNav = () => (
   <ul>
     <li>
