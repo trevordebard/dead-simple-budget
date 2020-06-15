@@ -58,11 +58,11 @@ const buildSchema = () => {
   // TODO: Check if duplicate user was created before sending back token
   // In other words, prevent duplicate email addresses, and handle case where signup is not successfull
   UserTC.wrapResolverResolve('createOne', next => async rp => {
-    rp.beforeRecordMutate = async (doc, { context: { cookie } }) => {
+    rp.beforeRecordMutate = async (doc, { context }) => {
       const token = jwt.sign({ userId: doc._id }, process.env.JWT_SECRET, {
         expiresIn: '24h',
       });
-      cookie('token', token, {
+      context.res.cookie('token', token, {
         path: '/',
         // this cookie won't be readable by the browser
         httpOnly: true,
@@ -146,10 +146,7 @@ const buildSchema = () => {
     },
     type: UserTC.getResolver('updateById').getType(),
     resolve: async payload => {
-      const {
-        args,
-        context: { cookie },
-      } = payload;
+      const { args, context } = payload;
       let user = null;
       user = await UserModel.findOne({ email: args.email });
       if (!user) {
@@ -162,7 +159,7 @@ const buildSchema = () => {
       const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
         expiresIn: '24h',
       });
-      cookie('token', token, {
+      context.res.cookie('token', token, {
         path: '/',
         // this cookie won't be readable by the browser
         httpOnly: true,
@@ -181,7 +178,7 @@ const buildSchema = () => {
   // const TransactionTC = composeWithMongoose(Transaction, {});
   schemaComposer.Query.addFields({
     userById: UserTC.getResolver('findById'),
-    me: UserTC.getResolver('me'),
+    me: UserTC.getResolver('me', [authMiddleware]),
     userOne: UserTC.getResolver('findOne', [authMiddleware]),
     userPagination: UserTC.getResolver('pagination'),
     transactionById: TransactionTC.getResolver('findById'),
@@ -200,26 +197,26 @@ const buildSchema = () => {
     userUpdateById: UserTC.getResolver('updateById'),
     userRemoveById: UserTC.getResolver('removeById'),
     budgetUpdateById: BudgetTC.getResolver('updateById'),
-    userLogin: UserTC.getResolver('login', [authMiddleware]),
+    userLogin: UserTC.getResolver('login'),
     budgetUpdateStack: BudgetTC.getResolver('updateStack'),
     budgetPushToStacks: BudgetTC.getResolver('pushToStacks'),
     budgetRemoveStack: BudgetTC.getResolver('removeStack'),
   });
 
-  // TODO: Build this out to provide actual authentication
   async function authMiddleware(resolve, source, args, context, info) {
-    const { cookie } = context;
-
-    // the password is correct, set a cookie on the response
-    cookie('session', 'hi', {
-      path: '/',
-      // this cookie won't be readable by the browser
-      httpOnly: true,
-      // and won't be usable outside of my domain
-      sameSite: 'strict',
-    });
+    const { token } = context.req.cookies;
+    if (token) {
+      try {
+        const data = jwt.verify(token, process.env.JWT_SECRET);
+        context.userId = data.userId;
+      } catch (e) {
+        console.error('USER ATTEMPTED TO SUPPLY INVALID TOKEN');
+        throw new Error('USER ATTEMPTED TO SUPPLY INVALID TOKEN');
+      }
+    } else {
+      throw new Error('No token provided');
+    }
     return resolve(source, args, context, info);
-    throw new Error('You must be authorized');
   }
   async function hashPassword(resolve, source, args, context, info) {
     const { password } = args.record;
