@@ -2,28 +2,54 @@ import React from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
 import { useMutation, gql } from '@apollo/client';
+import { useRouter } from 'next/dist/client/router';
 import useUser from '../hooks/useUser';
 
-const NavContainer = styled.nav`
-  nav {
-    text-align: center;
+const NavContainer = styled.div`
+  display: grid;
+  grid-template-columns: 200px 5fr 1fr;
+  border-bottom: 1px solid #eaeaea;
+  padding: 4px 16px;
+  p,
+  h1 {
+    margin: 0;
   }
-  ul {
-    display: flex;
-    justify-content: flex-end;
-  }
-  nav > ul {
-    padding: 4px 16px;
-  }
-  li {
-    display: flex;
-    padding: 6px 8px;
-  }
+  p,
   a {
+    padding: 5px;
     text-decoration: none;
   }
-  p {
-    margin: 0;
+`;
+const Logo = styled.div`
+  grid-column: 1 / 2;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  h1 {
+    cursor: pointer;
+  }
+`;
+const Tabs = styled.div`
+  grid-column: 2 / 3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .active {
+    color: green;
+  }
+`;
+
+const Account = styled.div`
+  grid-column: 3 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  /*TODO: Not wasting time styling because eventually this component should be an icon with dropdown to logout, see settings, etc*/
+  button {
+    background: none;
+    border: none;
+    font-family: inherit;
   }
 `;
 const Nav = () => {
@@ -43,45 +69,52 @@ const LOGOUT = gql`
   }
 `;
 const LoggedInNav = ({ email }) => {
+  const router = useRouter();
+  console.log(router.pathname);
   const [logout] = useMutation(LOGOUT);
   return (
-    <ul>
-      <li>{email}</li>
-      <li>
+    <>
+      <Logo>
+        {' '}
         <Link href="/">
-          <a>Home</a>
+          <h1>Budget Trace</h1>
         </Link>
-      </li>
-      <li>
+      </Logo>
+      <Tabs>
+        <Link href="/budget">
+          <a className={router.pathname === '/budget' ? 'active' : ''}>Budget</a>
+        </Link>
         <Link href="/transactions">
-          <a>Transactions</a>
+          <a className={router.pathname === '/transactions' ? 'active' : ''}>Transactions</a>
         </Link>
-      </li>
-      <li>
-        <p onClick={() => logout()}>Logout</p>
-      </li>
-    </ul>
+      </Tabs>
+      <Account>
+        <p>{email}</p>
+        <button type="button" onClick={() => logout()}>
+          Logout
+        </button>
+      </Account>
+    </>
   );
 };
 
 const LoggedOutNav = () => (
-  <ul>
-    <li>
+  <>
+    <Logo>
       <Link href="/">
-        <a>Home</a>
+        <h1>Budget Trace</h1>
       </Link>
-    </li>
-    <li>
+    </Logo>
+    <Tabs />
+    <Account>
       <Link href="/login">
         <a>Login</a>
       </Link>
-    </li>
-    <li>
       <Link href="/signup">
         <a>Signup</a>
       </Link>
-    </li>
-  </ul>
+    </Account>
+  </>
 );
 
 export default Nav;
