@@ -13,6 +13,7 @@ const NavContainer = styled.div`
   a {
     text-decoration: none;
   }
+  padding: 10px;
 `;
 const LogoWrapper = styled.div`
   grid-column: 1 / 2;
@@ -31,10 +32,9 @@ const Account = styled.div`
   flex-wrap: wrap;
   /*TODO: Not wasting time styling because eventually this component should be an icon with dropdown to logout, see settings, etc*/
   button {
-    background: none;
-    border: none;
     font-family: inherit;
-    padding: 0px;
+    border: none;
+    cursor: pointer;
   }
 `;
 const Nav = () => {

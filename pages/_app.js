@@ -39,6 +39,27 @@ const GlobalStyle = createGlobalStyle`
     margin: 0;
     padding: 0;
   }
+
+  ul {
+    list-style: none;
+  }
+  input,
+  textarea,
+  select,
+  button {
+    color: inherit; 
+    font: inherit; 
+    letter-spacing: inherit; 
+  }
+  input,
+  textarea,
+  button {
+    border: 1px solid gray; 
+  }
+  button, input[type='button'] {
+    border-radius: 0; 
+    background-color: transparent;
+  }
 `;
 
 const AppLayout = styled.div`
