@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/dist/client/router';
 import { withApollo } from '../lib/withApollo';
 import Nav from '../components/nav';
+import Head from '../components/head';
 
 const GlobalStyle = createGlobalStyle`
   :root {
@@ -38,6 +39,7 @@ const GlobalStyle = createGlobalStyle`
   hr {
     margin: 0;
     padding: 0;
+    font-family: 'Roboto', sans-serif;
   }
 
   ul {
@@ -98,6 +100,7 @@ function MyApp({ Component, pageProps, apollo }) {
   return (
     <>
       <GlobalStyle />
+      <Head />
       <ApolloProvider client={apollo}>
         <AppLayout>
           <NavWrapper>
