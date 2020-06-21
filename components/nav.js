@@ -7,8 +7,8 @@ import useUser from '../hooks/useUser';
 
 const NavContainer = styled.div`
   display: grid;
-  grid-template-columns: 200px 5fr 1fr;
-  border-bottom: 1px solid #eaeaea;
+  grid-template-columns: 200px 1fr;
+  border-bottom: 1px solid var(--lineColor);
   padding: 4px 16px;
   p,
   h1 {
@@ -29,18 +29,8 @@ const Logo = styled.div`
     cursor: pointer;
   }
 `;
-const Tabs = styled.div`
-  grid-column: 2 / 3;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  .active {
-    color: green;
-  }
-`;
 
 const Account = styled.div`
-  grid-column: 3 / -1;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -75,19 +65,11 @@ const LoggedInNav = ({ email }) => {
   return (
     <>
       <Logo>
-        {' '}
         <Link href="/">
           <h1>Budget Trace</h1>
         </Link>
       </Logo>
-      <Tabs>
-        <Link href="/budget">
-          <a className={router.pathname === '/budget' ? 'active' : ''}>Budget</a>
-        </Link>
-        <Link href="/transactions">
-          <a className={router.pathname === '/transactions' ? 'active' : ''}>Transactions</a>
-        </Link>
-      </Tabs>
+
       <Account>
         <p>{email}</p>
         <button type="button" onClick={() => logout()}>
@@ -105,7 +87,6 @@ const LoggedOutNav = () => (
         <h1>Budget Trace</h1>
       </Link>
     </Logo>
-    <Tabs />
     <Account>
       <Link href="/login">
         <a>Login</a>

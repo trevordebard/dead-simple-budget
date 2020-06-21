@@ -27,7 +27,8 @@ function Budget() {
     });
   };
   return (
-    <>
+    <div>
+      <h1>Budget</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
         Total: <Input register={register} name="total" defaultValue={data?.total} errors={errors} />
         <p style={{ color: 'red' }}>To Be Budgeted: {data?.toBeBudgeted}</p>
@@ -44,7 +45,7 @@ function Budget() {
         </div>
       </form>
       <br />
-    </>
+    </div>
   );
   function renderStacks(stacks, budgetId) {
     return stacks.map(item => (

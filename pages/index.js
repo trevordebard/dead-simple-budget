@@ -7,7 +7,6 @@ import RequireLogin from '../components/RequireLogin';
 const Home = () => (
   <>
     <Head title="Budget Trace" />
-    <h1>Budget Trace</h1>
     <Budget />
     <hr />
     <Transactions />

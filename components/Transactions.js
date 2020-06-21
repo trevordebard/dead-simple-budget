@@ -8,8 +8,7 @@ const Transactions = () => {
   const { transactions, loading } = useTransactions();
   if (!loading) {
     return (
-      <>
-        <h1>Transactions</h1>
+      <div>
         {transactions &&
           transactions.map(transaction => (
             <p key={`${transaction._id}`}>
@@ -17,7 +16,7 @@ const Transactions = () => {
             </p>
           ))}
         <NewTransaction />
-      </>
+      </div>
     );
   }
   return <p>loading...</p>;
