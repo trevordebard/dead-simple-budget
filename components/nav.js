@@ -4,23 +4,17 @@ import styled from 'styled-components';
 import { useMutation, gql } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
 import useUser from '../hooks/useUser';
+import Logo from './Logo.svg';
 
 const NavContainer = styled.div`
   display: grid;
   grid-template-columns: 200px 1fr;
   border-bottom: 1px solid var(--lineColor);
-  padding: 4px 16px;
-  p,
-  h1 {
-    margin: 0;
-  }
-  p,
   a {
-    padding: 5px;
     text-decoration: none;
   }
 `;
-const Logo = styled.div`
+const LogoWrapper = styled.div`
   grid-column: 1 / 2;
   display: flex;
   align-items: center;
@@ -40,6 +34,7 @@ const Account = styled.div`
     background: none;
     border: none;
     font-family: inherit;
+    padding: 0px;
   }
 `;
 const Nav = () => {
@@ -64,11 +59,11 @@ const LoggedInNav = ({ email }) => {
   const [logout] = useMutation(LOGOUT);
   return (
     <>
-      <Logo>
+      <LogoWrapper>
         <Link href="/">
-          <h1>Budget Trace</h1>
+          <Logo />
         </Link>
-      </Logo>
+      </LogoWrapper>
 
       <Account>
         <p>{email}</p>
@@ -82,11 +77,11 @@ const LoggedInNav = ({ email }) => {
 
 const LoggedOutNav = () => (
   <>
-    <Logo>
+    <LogoWrapper>
       <Link href="/">
         <h1>Budget Trace</h1>
       </Link>
-    </Logo>
+    </LogoWrapper>
     <Account>
       <Link href="/login">
         <a>Login</a>

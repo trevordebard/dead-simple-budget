@@ -21,6 +21,24 @@ const GlobalStyle = createGlobalStyle`
     margin: 0;
     padding: 0;
   }
+  body,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  ul,
+  ol,
+  li,
+  p,
+  pre,
+  blockquote,
+  figure,
+  hr {
+    margin: 0;
+    padding: 0;
+  }
 `;
 
 const AppLayout = styled.div`
@@ -45,7 +63,6 @@ const Tabs = styled.div`
   justify-content: flex-start;
   border-right: 1px solid var(--lineColor);
   a {
-    padding: 5px;
     font-size: 26px;
     text-decoration: none;
     color: black;
