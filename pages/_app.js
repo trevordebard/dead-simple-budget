@@ -1,18 +1,19 @@
 import { ApolloProvider } from '@apollo/client';
 import styled, { createGlobalStyle } from 'styled-components';
-import Link from 'next/link';
-import { useRouter } from 'next/dist/client/router';
 import { withApollo } from '../lib/withApollo';
 import Nav from '../components/nav';
 import Head from '../components/head';
+import LeftSidebar from '../components/LeftSidebar';
 
 const GlobalStyle = createGlobalStyle`
   :root {
-    --purp: #8E44AD;
+    --purp: hsl(282, 44%, 47%);
+    --purp-15: hsl(282, 44%, 47%, 15%);
     --blue: #2DADBA;
     --yellow: #FAEA7A;
     --green: hsl(152, 55,44);
     --lineColor: #EAEAEA;
+    --fontColor: hsl(211, 39%, 23%);
   }
   * {
     box-sizing: border-box;
@@ -21,6 +22,7 @@ const GlobalStyle = createGlobalStyle`
     height: 100vh;
     margin: 0;
     padding: 0;
+    color: var(--fontColor);
   }
   body,
   h1,
@@ -41,7 +43,6 @@ const GlobalStyle = createGlobalStyle`
     padding: 0;
     font-family: 'Roboto', sans-serif;
   }
-
   ul {
     list-style: none;
   }
@@ -75,28 +76,11 @@ const NavWrapper = styled.div`
   grid-column: 1 / -1;
 `;
 const Content = styled.div`
+  padding-top: 30px;
   grid-column: 2 / 3;
-`;
-const Tabs = styled.div`
-  max-width: 300px;
-  grid-column: 1 / 2;
-  grid-row-end: span 2;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  border-right: 1px solid var(--lineColor);
-  a {
-    font-size: 26px;
-    text-decoration: none;
-    color: black;
-  }
-  .active {
-    color: green;
-  }
 `;
 
 function MyApp({ Component, pageProps, apollo }) {
-  const router = useRouter();
   return (
     <>
       <GlobalStyle />
@@ -106,14 +90,7 @@ function MyApp({ Component, pageProps, apollo }) {
           <NavWrapper>
             <Nav />
           </NavWrapper>
-          <Tabs>
-            <Link href="/budget">
-              <a className={router.pathname === '/budget' ? 'active' : ''}>Budget</a>
-            </Link>
-            <Link href="/transactions">
-              <a className={router.pathname === '/transactions' ? 'active' : ''}>Transactions</a>
-            </Link>
-          </Tabs>
+          <LeftSidebar />
           <Content>
             <Component {...pageProps} />
           </Content>
