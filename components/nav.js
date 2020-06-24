@@ -5,6 +5,7 @@ import { useMutation, gql } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
 import useUser from '../hooks/useUser';
 import Logo from './Logo.svg';
+import { Button } from './styled';
 
 const NavContainer = styled.div`
   display: grid;
@@ -30,13 +31,6 @@ const Account = styled.div`
   align-items: center;
   justify-content: flex-end;
   flex-wrap: wrap;
-  /*TODO: Not wasting time styling because eventually this component should be an icon with dropdown to logout, see settings, etc*/
-  button {
-    font-family: inherit;
-    border: none;
-    cursor: pointer;
-    background: transparent;
-  }
 `;
 const Nav = () => {
   const { user, loggedIn, loading } = useUser();
@@ -68,9 +62,9 @@ const LoggedInNav = ({ email }) => {
 
       <Account>
         <p>{email}</p>
-        <button type="button" onClick={() => logout()}>
+        <Button transparent onClick={() => logout()}>
           Logout
-        </button>
+        </Button>
       </Account>
     </>
   );

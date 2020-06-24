@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import { useRouter } from 'next/dist/client/router';
 
+// TODO: This should probably use the Button style
 const TabItem = styled.li`
   min-width: 170px;
   width: 80%;

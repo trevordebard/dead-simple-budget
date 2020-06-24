@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import Input from './Input';
+import { ListRow } from './styled';
 
 const StackInput = styled(Input)`
   text-align: right;
@@ -10,20 +11,10 @@ const StackInput = styled(Input)`
   max-width: 120px;
 `;
 
-const BudgetStackWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  border-bottom: 1px solid var(--lineColor);
-  padding: 5px;
-  :hover {
-    background-color: var(--green10);
-  }
-`;
 const BudgetStack = ({ label, register, budgetId, value, errors, updateStack, removeStack }) => {
   const [prevValue, setPrevValue] = useState(value);
   return (
-    <BudgetStackWrapper>
+    <ListRow>
       <p>{label}: </p>
       <StackInput
         name={label}
@@ -57,7 +48,7 @@ const BudgetStack = ({ label, register, budgetId, value, errors, updateStack, re
           });
         }}
       /> */}
-    </BudgetStackWrapper>
+    </ListRow>
   );
 };
 export default BudgetStack;

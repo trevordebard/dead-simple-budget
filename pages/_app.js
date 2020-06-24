@@ -7,15 +7,19 @@ import LeftSidebar from '../components/LeftSidebar';
 
 const GlobalStyle = createGlobalStyle`
   :root {
+    font-size: 10px;
     --purp: hsl(282, 44%, 47%);
     --purp-15: hsl(282, 44%, 47%, 15%);
-    --blue: #2DADBA;
+    --aqua: #2DADBA;
     --yellow: #FAEA7A;
     --green: hsl(152, 55%,44%);
     --green10: hsl(152, 55%,44%, 10%);
     --lineColor: #EAEAEA;
     --fontColor: hsl(211, 39%, 23%);
     --fontColor60: hsl(211, 39%, 23%, 60%);
+    --primary: var(--purp);
+    --action: var(--aqua);
+    --neutral: var(--fontColor);
   }
   * {
     box-sizing: border-box;
@@ -44,6 +48,7 @@ const GlobalStyle = createGlobalStyle`
     margin: 0;
     padding: 0;
     font-family: 'Roboto', sans-serif;
+    font-size: 1.6rem;
   }
   ul {
     list-style: none;
