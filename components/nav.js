@@ -35,6 +35,7 @@ const Account = styled.div`
     font-family: inherit;
     border: none;
     cursor: pointer;
+    background: transparent;
   }
 `;
 const Nav = () => {

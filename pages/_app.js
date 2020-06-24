@@ -11,9 +11,11 @@ const GlobalStyle = createGlobalStyle`
     --purp-15: hsl(282, 44%, 47%, 15%);
     --blue: #2DADBA;
     --yellow: #FAEA7A;
-    --green: hsl(152, 55,44);
+    --green: hsl(152, 55%,44%);
+    --green10: hsl(152, 55%,44%, 10%);
     --lineColor: #EAEAEA;
     --fontColor: hsl(211, 39%, 23%);
+    --fontColor60: hsl(211, 39%, 23%, 60%);
   }
   * {
     box-sizing: border-box;
@@ -60,8 +62,8 @@ const GlobalStyle = createGlobalStyle`
     border: 1px solid gray; 
   }
   button, input[type='button'] {
-    border-radius: 0; 
-    background-color: transparent;
+    /* border-radius: 0;  */
+    /* background-color: transparent; */
   }
 `;
 
@@ -78,6 +80,9 @@ const NavWrapper = styled.div`
 const Content = styled.div`
   padding-top: 30px;
   grid-column: 2 / 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 function MyApp({ Component, pageProps, apollo }) {
