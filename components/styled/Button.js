@@ -17,7 +17,7 @@ const Button = styled.button`
         background-color: var(--primary);
       `;
     }
-    if (props.action) {
+    if (props.isAction) {
       return css`
         background-color: var(--action);
       `;

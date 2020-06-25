@@ -59,7 +59,7 @@ function Budget() {
             <span style={{ fontWeight: '500' }}>${data.total}</span>
             <span style={{ fontWeight: '400', color: 'var(--fontColor60)' }}> in account</span>
           </HeaderFive>
-          <h3 register={register}>
+          <h3>
             <span style={{ fontWeight: '500' }}>${data.toBeBudgeted}</span>
             <span style={{ fontWeight: '400', color: 'var(--fontColor60)' }}> to be budgeted</span>
           </h3>
@@ -74,7 +74,7 @@ function Budget() {
             errors={errors}
             placeholder="Stack Name"
           />
-          <Button action type="button" register={register} name="addStack" onClick={handleSubmit(onAddStack)}>
+          <Button isAction type="button" register={register} name="addStack" onClick={handleSubmit(onAddStack)}>
             Add Stack
           </Button>
         </AddStackWrapper>
