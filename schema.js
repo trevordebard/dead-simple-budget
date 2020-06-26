@@ -24,8 +24,8 @@ const buildSchema = () => {
     .getArgTC('record')
     .makeOptional(['_userId']);
   TransactionTC.wrapResolverResolve('createOne', next => async rp => {
-    rp.beforeRecordMutate = async (doc, { context: { userId } }) => {
-      doc._userId = userId;
+    rp.beforeRecordMutate = async (doc, { context }) => {
+      doc._userId = context.userId;
       return doc;
     };
     return next(rp);
@@ -208,7 +208,7 @@ const buildSchema = () => {
   schemaComposer.Mutation.addFields({
     userCreateOne: UserTC.getResolver('createOne', [authMiddleware, hashPassword]),
     budgetCreateOne: BudgetTC.getResolver('createOne'),
-    transactionCreateOne: TransactionTC.getResolver('createOne'),
+    transactionCreateOne: TransactionTC.getResolver('createOne', [authMiddleware]),
     userUpdateById: UserTC.getResolver('updateById'),
     userRemoveById: UserTC.getResolver('removeById'),
     budgetUpdateById: BudgetTC.getResolver('updateById'),
