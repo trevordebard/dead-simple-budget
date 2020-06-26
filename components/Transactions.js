@@ -1,5 +1,4 @@
-import React from 'react';
-import { useForm, ErrorMessage } from 'react-hook-form';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -7,15 +6,18 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Input from './Input';
-import { HeaderOne } from './styled';
+import { HeaderOne, Button } from './styled';
 import RequireLogin from './RequireLogin';
 import useTransactions from '../hooks/useTransactions';
-import { GET_TRANSACTIONS } from '../lib/queries/GET_TRANSACTIONS';
+import NewTransaction from './NewTransaction';
 
 const TransactionWrapper = styled.div`
   width: 100%;
+  overflow-y: scroll;
+  text-align: center;
   table {
     min-width: 450px;
+    height: 600px;
     th,
     td {
       font-size: 1.6rem;
@@ -30,55 +32,44 @@ const TransactionWrapper = styled.div`
   h1 {
     text-align: center;
   }
+  input,
+  select {
+    padding: 5px;
+    font-size: 1.6rem;
+  }
 `;
 const Transactions = () => {
   const { transactions, loading } = useTransactions();
-  console.log(transactions);
+  const [edit, setEdit] = useState(false);
   if (!loading) {
     return (
       <TransactionWrapper>
         <HeaderOne>Transactions</HeaderOne>
+        <Button onClick={() => setEdit(!edit)} primary>
+          +
+        </Button>
         <Table>
           <TableHead>
             <TableRow>
               <TableCell>Description</TableCell>
               <TableCell align="right">Amount</TableCell>
+              <TableCell>Stack</TableCell>
               <TableCell style={{ minWidth: '115px' }} variant="head" align="right">
                 Date
               </TableCell>
+              <TableCell></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
+            {edit && <NewTransaction />}
             {transactions &&
               transactions.map(transaction => (
                 <TableRow key={transaction._id}>
                   <TableCell>{transaction.description}</TableCell>
                   <TableCell align="right">${transaction.amount}</TableCell>
-                  <TableCell align="right">Jan 01 9999</TableCell>
-                </TableRow>
-              ))}
-            {transactions &&
-              transactions.map(transaction => (
-                <TableRow key={transaction._id}>
-                  <TableCell>{transaction.description}</TableCell>
-                  <TableCell align="right">${transaction.amount}</TableCell>
-                  <TableCell align="right">Jan 01 9999</TableCell>
-                </TableRow>
-              ))}
-            {transactions &&
-              transactions.map(transaction => (
-                <TableRow key={transaction._id}>
-                  <TableCell>{transaction.description}</TableCell>
-                  <TableCell align="right">${transaction.amount}</TableCell>
-                  <TableCell align="right">Jan 01 9999</TableCell>
-                </TableRow>
-              ))}
-            {transactions &&
-              transactions.map(transaction => (
-                <TableRow key={transaction._id}>
-                  <TableCell>{transaction.description}</TableCell>
-                  <TableCell align="right">${transaction.amount}</TableCell>
-                  <TableCell align="right">Jan 01 9999</TableCell>
+                  <TableCell>{transaction.stack}</TableCell>
+                  <TableCell align="right">{new Date(transaction.date).toLocaleDateString() || '9999/9/9'}</TableCell>
+                  <TableCell></TableCell>
                 </TableRow>
               ))}
           </TableBody>
@@ -96,52 +87,6 @@ const Temp = () => {
       <Input placeholder="Amount" type="text" />
       <Input placeholder="Date" type="text" />
       <Input placeholder="Submit" type="text" />
-    </>
-  );
-};
-const NewTransaction = () => {
-  const { register, handleSubmit, errors, reset } = useForm();
-  const { addTransaction, stackLabels } = useTransactions();
-
-  const onSubmit = data => {
-    const { description, amount, stack } = data;
-    addTransaction({
-      variables: { record: { description, amount: parseFloat(amount), stack } },
-      refetchQueries: { query: GET_TRANSACTIONS },
-    });
-    reset();
-  };
-  return (
-    <>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <label htmlFor="description">
-          Description: <input name="description" defaultValue="" ref={register({ required: 'Required' })} />
-          <ErrorMessage errors={errors} name="description">
-            {({ message }) => <span style={{ color: 'red' }}>{message} </span>}
-          </ErrorMessage>
-        </label>
-        <label htmlFor="amount">
-          Amount: <input name="amount" ref={register({ required: 'Required' })} />
-          <ErrorMessage errors={errors} name="amount">
-            {({ message }) => <span style={{ color: 'red' }}>{message} </span>}
-          </ErrorMessage>
-        </label>
-        <label htmlFor="date">
-          Date: <input name="date" ref={register} />
-        </label>
-        <select name="stack" ref={register({ required: true })}>
-          {stackLabels &&
-            stackLabels.map(label => (
-              <option key={`${label}-${Date.now()}`} value={label}>
-                {label}
-              </option>
-            ))}
-          <ErrorMessage errors={errors} name="stack">
-            {({ message }) => <span style={{ color: 'red' }}>{message} </span>}
-          </ErrorMessage>
-        </select>
-        <input type="submit" />
-      </form>
     </>
   );
 };
