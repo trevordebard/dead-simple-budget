@@ -11,6 +11,7 @@ const Button = styled.button`
   border-radius: 45px;
   border: 0px;
   cursor: pointer;
+  width: ${props => props.width || 'auto'};
   ${props => {
     if (props.primary) {
       return css`
@@ -28,6 +29,6 @@ const Button = styled.button`
         color: var(--fontColor);
       `;
     }
-  }}
+  }};
 `;
 export default Button;

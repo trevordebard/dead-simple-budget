@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import styled from 'styled-components';
@@ -7,7 +7,8 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import { HeaderOne, Button } from './styled';
+import TableContainer from '@material-ui/core/TableContainer';
+import { HeaderOne } from './styled';
 import RequireLogin from './RequireLogin';
 import useTransactions from '../hooks/useTransactions';
 import NewTransaction from './NewTransaction';
@@ -23,22 +24,42 @@ const RowTools = styled.div`
     }
   }
 `;
+
 const TransactionWrapper = styled.div`
-  max-width: 100vw;
-  overflow-y: scroll;
-  text-align: center;
+  max-width: 100%;
   max-height: 70vh;
-  @media only screen and (max-width: 600px) {
-    width: 100vw;
-    th,
-    td {
-      padding: 0.2rem;
-    }
+  display: grid;
+  grid-template-columns: 3fr auto;
+  grid-auto-rows: min-content;
+  grid-template-areas:
+    'title .'
+    'table actions';
+  @media only screen and (max-width: 850px) {
+    grid-template-areas:
+      'title'
+      'table'
+      'actions';
   }
+`;
+
+const Title = styled.div`
+  grid-area: title;
+  text-align: center;
+`;
+
+const Actions = styled.div`
+  grid-area: actions;
+`;
+
+const TableWrapper = styled(TableContainer)`
+  grid-area: table;
+  min-width: 450px;
+  max-height: 80vh;
   table {
-    max-width: 100vw;
+    overflow-y: scroll;
     th,
-    td {
+    td,
+    input {
       font-size: 1.4rem;
     }
   }
@@ -50,56 +71,59 @@ const TransactionWrapper = styled.div`
       }
     }
   }
-  h1 {
-    text-align: center;
-  }
-  input,
-  select {
-    padding: 5px;
-    font-size: 1.6rem;
+  @media only screen and (max-width: 800px) {
+    min-width: 350px;
+    grid-template-columns: 1fr;
+    max-height: 440px;
+    th,
+    td {
+      padding: 0.2rem;
+    }
   }
 `;
 const Transactions = () => {
   const { transactions, loading } = useTransactions();
-  const [edit, setEdit] = useState(false);
   if (!loading) {
     return (
       <TransactionWrapper>
-        <HeaderOne>Transactions</HeaderOne>
-        <Button onClick={() => setEdit(!edit)} primary>
-          +
-        </Button>
-        <Table size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell>Description</TableCell>
-              <TableCell align="right">Amount</TableCell>
-              <TableCell align="right">Stack</TableCell>
-              <TableCell style={{ minWidth: '115px' }} variant="head" align="right">
-                Date
-              </TableCell>
-              <TableCell></TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {edit && <NewTransaction />}
-            {transactions &&
-              transactions.map(transaction => (
-                <TableRow key={transaction._id}>
-                  <TableCell>{transaction.description}</TableCell>
-                  <TableCell align="right">${transaction.amount}</TableCell>
-                  <TableCell align="right">{transaction.stack}</TableCell>
-                  <TableCell align="right">{new Date(transaction.date).toLocaleDateString() || '9999/9/9'}</TableCell>
-                  <TableCell style={{ padding: '0px' }}>
-                    <RowTools>
-                      <EditIcon />
-                      <DeleteIcon />
-                    </RowTools>
-                  </TableCell>
-                </TableRow>
-              ))}
-          </TableBody>
-        </Table>
+        <Title>
+          <HeaderOne style={{ gridArea: 'title' }}>Transactions</HeaderOne>
+        </Title>
+        <TableWrapper>
+          <Table stickyHeader style={{ gridArea: 'table' }} size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell>Description</TableCell>
+                <TableCell align="right">Amount</TableCell>
+                <TableCell align="right">Stack</TableCell>
+                <TableCell sortDirection="desc" style={{ minWidth: '115px' }} variant="head" align="right">
+                  Date
+                </TableCell>
+                <TableCell></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {transactions &&
+                transactions.map(transaction => (
+                  <TableRow key={transaction._id}>
+                    <TableCell>{transaction.description}</TableCell>
+                    <TableCell align="right">${transaction.amount}</TableCell>
+                    <TableCell align="right">{transaction.stack}</TableCell>
+                    <TableCell align="right">{new Date(transaction.date).toLocaleDateString() || '9999/9/9'}</TableCell>
+                    <TableCell style={{ padding: '0px' }}>
+                      <RowTools>
+                        <EditIcon />
+                        <DeleteIcon />
+                      </RowTools>
+                    </TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+        </TableWrapper>
+        <Actions>
+          <NewTransaction style={{ gridArea: 'actions', backgroundColor: 'green' }} />
+        </Actions>
       </TransactionWrapper>
     );
   }

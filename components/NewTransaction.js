@@ -1,12 +1,27 @@
 import React from 'react';
-import TableCell from '@material-ui/core/TableCell';
-import TableRow from '@material-ui/core/TableRow';
 
 import { useForm, ErrorMessage } from 'react-hook-form';
-import CheckIcon from '@material-ui/icons/Check';
+import styled from 'styled-components';
 import { GET_TRANSACTIONS } from '../lib/queries/GET_TRANSACTIONS';
 import useTransactions from '../hooks/useTransactions';
+import { Button, HeaderFour } from './styled';
 
+const NewtransactionWrapper = styled.form`
+  display: flex;
+  flex-direction: column;
+  margin: 1rem;
+  max-width: 60rem;
+  input,
+  select {
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 0;
+  }
+  button {
+    margin-top: 10px;
+    height: 3rem;
+  }
+`;
 const NewTransaction = () => {
   const { register, handleSubmit, errors, reset, getValues } = useForm();
   const { addTransaction, stackLabels } = useTransactions();
@@ -22,47 +37,30 @@ const NewTransaction = () => {
   };
 
   return (
-    <TableRow onSubmit={handleSubmit(onSubmit)}>
-      <TableCell>
-        <input
-          name="description"
-          defaultValue=""
-          ref={register({ required: 'Required' })}
-          style={{ width: '100%' }}
-          type="text"
-          placeholder="Description"
-        />
-      </TableCell>
-      <TableCell>
-        <input
-          name="amount"
-          ref={register({ required: 'Required' })}
-          style={{ width: '100%' }}
-          type="number"
-          pattern="\d*"
-          placeholder="$"
-        />
-      </TableCell>
-      <TableCell align="right">
-        <select name="stack" ref={register({ required: true })}>
-          {stackLabels &&
-            stackLabels.map(label => (
-              <option key={`${label}-${Date.now()}`} value={label}>
-                {label}
-              </option>
-            ))}
-          <ErrorMessage errors={errors} name="stack">
-            {({ message }) => <span style={{ color: 'red' }}>{message} </span>}
-          </ErrorMessage>
-        </select>
-      </TableCell>
-      <TableCell align="right">
-        <input id="date" type="date" name="date" ref={register} />
-      </TableCell>
-      <TableCell align="left">
-        <CheckIcon onClick={e => onSubmit()} style={{ cursor: 'pointer' }} />
-      </TableCell>
-    </TableRow>
+    <NewtransactionWrapper onSubmit={handleSubmit(onSubmit)}>
+      <HeaderFour>New Transaction</HeaderFour>
+      <input
+        name="description"
+        defaultValue=""
+        ref={register({ required: 'Required' })}
+        type="text"
+        placeholder="Description"
+      />
+      <input name="amount" ref={register({ required: 'Required' })} type="number" pattern="\d*" placeholder="Amount" />
+      <select name="stack" ref={register({ required: true })}>
+        {stackLabels &&
+          stackLabels.map(label => (
+            <option key={`${label}-${Date.now()}`} value={label}>
+              {label}
+            </option>
+          ))}
+        <ErrorMessage errors={errors} name="stack">
+          {({ message }) => <span style={{ color: 'red' }}>{message} </span>}
+        </ErrorMessage>
+      </select>
+      <input id="date" type="date" name="date" ref={register} />
+      <Button isAction>Add</Button>
+    </NewtransactionWrapper>
   );
 };
 export default NewTransaction;

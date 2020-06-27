@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 import { useRouter } from 'next/dist/client/router';
+import { Button } from './styled';
 
 // TODO: This should probably use the Button style
 const TabItem = styled.li`
@@ -23,39 +25,37 @@ const TabItem = styled.li`
     ${props => !props.active && 'background-color: var(--purp-15)'};
   }
 `;
-const Tabs = styled.div`
-  @media only screen and (max-width: 600px) {
-    grid-column: 1 / -1;
-    width: 100%;
-    flex-direction: row;
-    max-width: 100%;
-  }
-  max-width: 300px;
-  grid-column: 1 / 2;
-  border-right: 1px solid var(--lineColor);
-  padding-top: 30px;
-  ul {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-`;
+const Tabs = styled.div``;
 const LeftSidebar = () => {
   const router = useRouter();
+  const [isTabListVisible, setIsTabListVisible] = useState(true);
+  const matches = useMediaQuery('(max-width:800px)');
+  useEffect(() => {
+    if (!matches) {
+      setIsTabListVisible(false);
+    }
+  }, [matches]);
   return (
     <Tabs>
-      <ul>
-        <Link href="/budget">
-          <TabItem active={router.pathname === '/budget'}>
-            <a>Budget</a>
-          </TabItem>
-        </Link>
-        <Link href="/transactions">
-          <TabItem active={router.pathname === '/transactions'}>
-            <a>Transactions</a>
-          </TabItem>
-        </Link>
-      </ul>
+      {matches && (
+        <Button transparent onClick={() => setIsTabListVisible(!isTabListVisible)}>
+          Menu
+        </Button>
+      )}
+      {(!matches || isTabListVisible) && (
+        <ul>
+          <Link href="/budget">
+            <TabItem active={router.pathname === '/budget'}>
+              <a>Budget</a>
+            </TabItem>
+          </Link>
+          <Link href="/transactions">
+            <TabItem active={router.pathname === '/transactions'}>
+              <a>Transactions</a>
+            </TabItem>
+          </Link>
+        </ul>
+      )}
     </Tabs>
   );
 };

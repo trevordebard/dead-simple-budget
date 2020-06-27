@@ -24,11 +24,14 @@ const GlobalStyle = createGlobalStyle`
   * {
     box-sizing: border-box;
   }
+  html,body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
   body {
-    height: 100vh;
-    width: 100vw;
+    height: calc(100vh-30px);
     margin: 0;
-    padding: 0;
+    padding: 5px;
     color: var(--fontColor);
   }
   body,
@@ -71,21 +74,41 @@ const GlobalStyle = createGlobalStyle`
 
 const AppLayout = styled.div`
   display: grid;
-  width: 100vw;
-  grid-template-columns: 1fr 3fr 1fr;
-  grid-template-rows: auto 1fr;
+  grid-template-columns: minmax(auto, 300px) 3fr minmax(auto, 300px);
+  grid-template-rows: minmax(auto, 9rem) auto;
   height: 100vh;
-  grid-column-gap: 15px;
+  @media only screen and (max-width: 800px) {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(auto, 9rem) min-content auto;
+    margin: auto 0;
+  }
 `;
 const NavWrapper = styled.div`
   grid-column: 1 / -1;
 `;
+const SidebarWrapper = styled.div`
+  max-width: 300px;
+  grid-column: 1 / 2;
+  border-right: 1px solid var(--lineColor);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  @media only screen and (max-width: 800px) {
+    grid-column: 1 / -1;
+    max-width: 100vw;
+    height: min-content;
+  }
+`;
 const Content = styled.div`
-  padding-top: 30px;
   grid-column: 2 / 3;
   display: flex;
   flex-direction: column;
   align-items: center;
+  @media only screen and (max-width: 800px) {
+    grid-column: 1;
+    max-width: 100vw !important;
+  }
 `;
 
 function MyApp({ Component, pageProps, apollo }) {
@@ -98,7 +121,9 @@ function MyApp({ Component, pageProps, apollo }) {
           <NavWrapper>
             <Nav />
           </NavWrapper>
-          <LeftSidebar />
+          <SidebarWrapper>
+            <LeftSidebar />
+          </SidebarWrapper>
           <Content>
             <Component {...pageProps} />
           </Content>
