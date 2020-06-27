@@ -1,32 +1,53 @@
 import React, { useState } from 'react';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
 import styled from 'styled-components';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Input from './Input';
 import { HeaderOne, Button } from './styled';
 import RequireLogin from './RequireLogin';
 import useTransactions from '../hooks/useTransactions';
 import NewTransaction from './NewTransaction';
 
+const RowTools = styled.div`
+  display: flex;
+  justify-content: center;
+  color: transparent;
+  svg {
+    cursor: pointer;
+    :hover {
+      color: var(--action);
+    }
+  }
+`;
 const TransactionWrapper = styled.div`
-  width: 100%;
+  max-width: 100vw;
   overflow-y: scroll;
   text-align: center;
-  table {
-    min-width: 450px;
-    height: 600px;
+  max-height: 70vh;
+  @media only screen and (max-width: 600px) {
+    width: 100vw;
     th,
     td {
-      font-size: 1.6rem;
-      padding: 1rem;
+      padding: 0.2rem;
+    }
+  }
+  table {
+    max-width: 100vw;
+    th,
+    td {
+      font-size: 1.4rem;
     }
   }
   tr {
     &:hover {
       background-color: var(--green10);
+      ${RowTools} {
+        color: var(--fontColor60);
+      }
     }
   }
   h1 {
@@ -48,12 +69,12 @@ const Transactions = () => {
         <Button onClick={() => setEdit(!edit)} primary>
           +
         </Button>
-        <Table>
+        <Table size="small">
           <TableHead>
             <TableRow>
               <TableCell>Description</TableCell>
               <TableCell align="right">Amount</TableCell>
-              <TableCell>Stack</TableCell>
+              <TableCell align="right">Stack</TableCell>
               <TableCell style={{ minWidth: '115px' }} variant="head" align="right">
                 Date
               </TableCell>
@@ -67,9 +88,14 @@ const Transactions = () => {
                 <TableRow key={transaction._id}>
                   <TableCell>{transaction.description}</TableCell>
                   <TableCell align="right">${transaction.amount}</TableCell>
-                  <TableCell>{transaction.stack}</TableCell>
+                  <TableCell align="right">{transaction.stack}</TableCell>
                   <TableCell align="right">{new Date(transaction.date).toLocaleDateString() || '9999/9/9'}</TableCell>
-                  <TableCell></TableCell>
+                  <TableCell style={{ padding: '0px' }}>
+                    <RowTools>
+                      <EditIcon />
+                      <DeleteIcon />
+                    </RowTools>
+                  </TableCell>
                 </TableRow>
               ))}
           </TableBody>
@@ -79,15 +105,5 @@ const Transactions = () => {
   }
   return <p>loading...</p>;
 };
-const Temp = () => {
-  console.log('placeholder');
-  return (
-    <>
-      <Input placeholder="Description" type="text" />
-      <Input placeholder="Amount" type="text" />
-      <Input placeholder="Date" type="text" />
-      <Input placeholder="Submit" type="text" />
-    </>
-  );
-};
+
 export default RequireLogin(Transactions);

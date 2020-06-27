@@ -26,6 +26,7 @@ const GlobalStyle = createGlobalStyle`
   }
   body {
     height: 100vh;
+    width: 100vw;
     margin: 0;
     padding: 0;
     color: var(--fontColor);
@@ -66,14 +67,11 @@ const GlobalStyle = createGlobalStyle`
   button {
     border: 1px solid gray; 
   }
-  button, input[type='button'] {
-    /* border-radius: 0;  */
-    /* background-color: transparent; */
-  }
 `;
 
 const AppLayout = styled.div`
   display: grid;
+  width: 100vw;
   grid-template-columns: 1fr 3fr 1fr;
   grid-template-rows: auto 1fr;
   height: 100vh;

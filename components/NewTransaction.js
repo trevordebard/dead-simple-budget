@@ -10,16 +10,17 @@ import useTransactions from '../hooks/useTransactions';
 const NewTransaction = () => {
   const { register, handleSubmit, errors, reset, getValues } = useForm();
   const { addTransaction, stackLabels } = useTransactions();
+
   const onSubmit = () => {
     const data = getValues();
     const { description, amount, stack, date } = data;
-
     reset();
     addTransaction({
       variables: { record: { description, amount: parseFloat(amount), stack, date } },
       refetchQueries: { query: GET_TRANSACTIONS },
     });
   };
+
   return (
     <TableRow onSubmit={handleSubmit(onSubmit)}>
       <TableCell>
@@ -42,7 +43,7 @@ const NewTransaction = () => {
           placeholder="$"
         />
       </TableCell>
-      <TableCell>
+      <TableCell align="right">
         <select name="stack" ref={register({ required: true })}>
           {stackLabels &&
             stackLabels.map(label => (
@@ -55,7 +56,7 @@ const NewTransaction = () => {
           </ErrorMessage>
         </select>
       </TableCell>
-      <TableCell>
+      <TableCell align="right">
         <input id="date" type="date" name="date" ref={register} />
       </TableCell>
       <TableCell align="left">

@@ -24,6 +24,12 @@ const TabItem = styled.li`
   }
 `;
 const Tabs = styled.div`
+  @media only screen and (max-width: 600px) {
+    grid-column: 1 / -1;
+    width: 100%;
+    flex-direction: row;
+    max-width: 100%;
+  }
   max-width: 300px;
   grid-column: 1 / 2;
   border-right: 1px solid var(--lineColor);
