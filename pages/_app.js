@@ -28,10 +28,10 @@ const GlobalStyle = createGlobalStyle`
   }
   html,body {
     max-width: 100%;
+    height: 100%;
     overflow-x: hidden;
   }
   body {
-    height: calc(100vh-30px);
     margin: 0;
     padding: 5px;
     color: var(--fontColor);
