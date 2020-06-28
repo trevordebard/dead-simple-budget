@@ -12,6 +12,7 @@ import { HeaderOne } from './styled';
 import RequireLogin from './RequireLogin';
 import useTransactions from '../hooks/useTransactions';
 import NewTransaction from './NewTransaction';
+import { smBreakpoint } from '../lib/constants';
 
 const RowTools = styled.div`
   display: flex;
@@ -34,7 +35,7 @@ const TransactionWrapper = styled.div`
   grid-template-areas:
     'title .'
     'table actions';
-  @media only screen and (max-width: 850px) {
+  @media only screen and (max-width: ${smBreakpoint}) {
     grid-template-areas:
       'title'
       'table'
@@ -71,7 +72,7 @@ const TableWrapper = styled(TableContainer)`
       }
     }
   }
-  @media only screen and (max-width: 800px) {
+  @media only screen and (max-width: ${smBreakpoint}) {
     min-width: 350px;
     grid-template-columns: 1fr;
     max-height: 440px;

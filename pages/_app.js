@@ -4,6 +4,7 @@ import { withApollo } from '../lib/withApollo';
 import Nav from '../components/nav';
 import Head from '../components/head';
 import LeftSidebar from '../components/LeftSidebar';
+import { smBreakpoint } from '../lib/constants';
 
 const GlobalStyle = createGlobalStyle`
   :root {
@@ -77,7 +78,7 @@ const AppLayout = styled.div`
   grid-template-columns: minmax(auto, 300px) 3fr minmax(auto, 300px);
   grid-template-rows: minmax(auto, 9rem) auto;
   height: 100vh;
-  @media only screen and (max-width: 800px) {
+  @media only screen and (max-width: ${smBreakpoint}) {
     grid-template-columns: 1fr;
     grid-template-rows: minmax(auto, 9rem) min-content auto;
     margin: auto 0;
@@ -94,7 +95,7 @@ const SidebarWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   text-align: center;
-  @media only screen and (max-width: 800px) {
+  @media only screen and (max-width: ${smBreakpoint}) {
     grid-column: 1 / -1;
     max-width: 100vw;
     height: min-content;
@@ -105,7 +106,7 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  @media only screen and (max-width: 800px) {
+  @media only screen and (max-width: ${smBreakpoint}) {
     grid-column: 1;
     max-width: 100vw !important;
   }

@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-
 import { useRouter } from 'next/dist/client/router';
+import { smBreakpoint } from '../lib/constants';
+
 import { Button } from './styled';
 
 // TODO: This should probably use the Button style
@@ -29,7 +30,7 @@ const Tabs = styled.div``;
 const LeftSidebar = () => {
   const router = useRouter();
   const [isTabListVisible, setIsTabListVisible] = useState(true);
-  const matches = useMediaQuery('(max-width:800px)');
+  const matches = useMediaQuery(`(max-width: ${smBreakpoint})`);
   useEffect(() => {
     if (!matches) {
       setIsTabListVisible(false);
