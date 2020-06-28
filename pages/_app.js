@@ -111,6 +111,7 @@ const Content = styled.div`
   flex-direction: column;
   align-items: center;
   margin: 1rem;
+  max-width: 1080px;
   @media only screen and (max-width: ${smBreakpoint}) {
     grid-column: 1;
     max-width: 100vw !important;
