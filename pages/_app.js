@@ -18,6 +18,7 @@ const GlobalStyle = createGlobalStyle`
     --lineColor: #EAEAEA;
     --fontColor: hsl(211, 39%, 23%);
     --fontColor60: hsl(211, 39%, 23%, 60%);
+    --backgroundSubtle: hsl(211, 39%, 23%, 3%); 
     --primary: var(--purp);
     --action: var(--aqua);
     --neutral: var(--fontColor);
@@ -99,6 +100,9 @@ const SidebarWrapper = styled.div`
     grid-column: 1 / -1;
     max-width: 100vw;
     height: min-content;
+    flex-direction: row;
+    justify-content: center;
+    background-color: var(--backgroundSubtle);
   }
 `;
 const Content = styled.div`
@@ -106,6 +110,7 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin: 1rem;
   @media only screen and (max-width: ${smBreakpoint}) {
     grid-column: 1;
     max-width: 100vw !important;

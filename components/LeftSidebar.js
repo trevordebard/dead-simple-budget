@@ -1,11 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { useRouter } from 'next/dist/client/router';
 import { smBreakpoint } from '../lib/constants';
-
-import { Button } from './styled';
 
 // TODO: This should probably use the Button style
 const TabItem = styled.li`
@@ -25,38 +22,42 @@ const TabItem = styled.li`
   :hover {
     ${props => !props.active && 'background-color: var(--purp-15)'};
   }
+  @media only screen and (max-width: ${smBreakpoint}) {
+    background-color: transparent;
+    color: ${props => (props.active ? 'var(--purp)' : 'var(--fontColor)')};
+    font-size: 1.4rem;
+    margin: 0px;
+    width: min-content;
+    font-weight: 400;
+    :hover {
+      background-color: transparent;
+    }
+  }
 `;
-const Tabs = styled.div``;
+const Tabs = styled.div`
+  @media only screen and (max-width: ${smBreakpoint}) {
+    ul {
+      display: flex;
+      justify-content: center;
+    }
+  }
+`;
 const LeftSidebar = () => {
   const router = useRouter();
-  const [isTabListVisible, setIsTabListVisible] = useState(true);
-  const matches = useMediaQuery(`(max-width: ${smBreakpoint})`);
-  useEffect(() => {
-    if (!matches) {
-      setIsTabListVisible(false);
-    }
-  }, [matches]);
   return (
     <Tabs>
-      {matches && (
-        <Button transparent onClick={() => setIsTabListVisible(!isTabListVisible)}>
-          Menu
-        </Button>
-      )}
-      {(!matches || isTabListVisible) && (
-        <ul>
-          <Link href="/budget">
-            <TabItem active={router.pathname === '/budget'}>
-              <a>Budget</a>
-            </TabItem>
-          </Link>
-          <Link href="/transactions">
-            <TabItem active={router.pathname === '/transactions'}>
-              <a>Transactions</a>
-            </TabItem>
-          </Link>
-        </ul>
-      )}
+      <ul>
+        <Link href="/budget">
+          <TabItem active={router.pathname === '/budget'}>
+            <a>Budget</a>
+          </TabItem>
+        </Link>
+        <Link href="/transactions">
+          <TabItem active={router.pathname === '/transactions'}>
+            <a>Transactions</a>
+          </TabItem>
+        </Link>
+      </ul>
     </Tabs>
   );
 };
