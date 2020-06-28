@@ -75,7 +75,7 @@ const GlobalStyle = createGlobalStyle`
 
 const AppLayout = styled.div`
   display: grid;
-  grid-template-columns: minmax(auto, 300px) 3fr minmax(auto, 300px);
+  grid-template-columns: minmax(auto, 300px) 3fr;
   grid-template-rows: minmax(auto, 9rem) auto;
   height: 100vh;
   @media only screen and (max-width: ${smBreakpoint}) {
