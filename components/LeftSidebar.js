@@ -25,6 +25,8 @@ const TabItem = styled.li`
   @media only screen and (max-width: ${smBreakpoint}) {
     background-color: transparent;
     color: ${props => (props.active ? 'var(--purp)' : 'var(--fontColor)')};
+    border-bottom: ${props => props.active && '1px solid black'};
+    border-radius: 0;
     font-size: 1.4rem;
     margin: 0px;
     width: min-content;
