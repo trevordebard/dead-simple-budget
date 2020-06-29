@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import Input from './Input';
+import Input from './FormInput';
 import { ListRow } from './styled';
 
 const StackInput = styled(Input)`

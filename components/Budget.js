@@ -2,7 +2,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import useBudget from '../hooks/useBudget';
-import Input from './Input';
+import Input from './FormInput';
 import BudgetStack from './BudgetStack';
 import RequireLogin from './RequireLogin';
 import { Button, HeaderOne, HeaderFive } from './styled';

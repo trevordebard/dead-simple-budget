@@ -1,10 +1,12 @@
 import React from 'react';
 
-import { useForm, ErrorMessage } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import { GET_TRANSACTIONS } from '../lib/queries/GET_TRANSACTIONS';
 import useTransactions from '../hooks/useTransactions';
 import { Button, HeaderFour } from './styled';
+import Input from './FormInput';
+import { formatDate } from '../lib/formatDate';
 
 const NewtransactionWrapper = styled.form`
   display: flex;
@@ -39,26 +41,36 @@ const NewTransaction = () => {
   return (
     <NewtransactionWrapper onSubmit={handleSubmit(onSubmit)}>
       <HeaderFour>New Transaction</HeaderFour>
-      <input
-        name="description"
-        defaultValue=""
-        ref={register({ required: 'Required' })}
-        type="text"
-        placeholder="Description"
+      <Input name="description" errors={errors} register={register} required type="text" placeholder="Description" />
+      <Input
+        name="amount"
+        errors={errors}
+        register={register}
+        type="number"
+        pattern="\d*"
+        placeholder="Amount"
+        required
       />
-      <input name="amount" ref={register({ required: 'Required' })} type="number" pattern="\d*" placeholder="Amount" />
-      <select name="stack" ref={register({ required: true })}>
+      <Input component="select" name="stack" defaultValue="" register={register} errors={errors} required>
+        <option style={{ color: 'green' }} disabled name="select" value="">
+          Select Stack
+        </option>
         {stackLabels &&
           stackLabels.map(label => (
             <option key={`${label}-${Date.now()}`} value={label}>
               {label}
             </option>
           ))}
-        <ErrorMessage errors={errors} name="stack">
-          {({ message }) => <span style={{ color: 'red' }}>{message} </span>}
-        </ErrorMessage>
-      </select>
-      <input id="date" type="date" name="date" ref={register} />
+        }
+      </Input>
+      <Input
+        name="date"
+        errors={errors}
+        register={register}
+        type="date"
+        defaultValue={formatDate(new Date())}
+        required
+      />
       <Button isAction>Add</Button>
     </NewtransactionWrapper>
   );
