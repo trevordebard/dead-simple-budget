@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import styled from 'styled-components';
@@ -12,6 +12,7 @@ import { HeaderOne } from './styled';
 import RequireLogin from './RequireLogin';
 import useTransactions from '../hooks/useTransactions';
 import NewTransaction from './NewTransaction';
+import EditTransaction from './EditTransaction';
 import { smBreakpoint } from '../lib/constants';
 
 const RowTools = styled.div`
@@ -72,6 +73,9 @@ const TableWrapper = styled(TableContainer)`
       }
     }
   }
+  .Mui-selected {
+    background-color: var(--green10) !important; //TODO: Figure out better overrride
+  }
   @media only screen and (max-width: ${smBreakpoint}) {
     min-width: 350px;
     grid-template-columns: 1fr;
@@ -84,6 +88,7 @@ const TableWrapper = styled(TableContainer)`
 `;
 const Transactions = () => {
   const { transactions, loading } = useTransactions();
+  const [transactionInFocus, setTransactionInFocus] = useState();
   if (!loading) {
     return (
       <TransactionWrapper>
@@ -106,7 +111,13 @@ const Transactions = () => {
             <TableBody>
               {transactions &&
                 transactions.map(transaction => (
-                  <TableRow key={transaction._id}>
+                  <TableRow
+                    key={transaction._id}
+                    selected={transaction._id === transactionInFocus}
+                    onClick={() => {
+                      setTransactionInFocus(transaction._id);
+                    }}
+                  >
                     <TableCell>{transaction.description}</TableCell>
                     <TableCell align="right">${transaction.amount}</TableCell>
                     <TableCell align="right">{transaction.stack}</TableCell>
@@ -123,7 +134,8 @@ const Transactions = () => {
           </Table>
         </TableWrapper>
         <Actions>
-          <NewTransaction style={{ gridArea: 'actions', backgroundColor: 'green' }} />
+          {!transactionInFocus && <NewTransaction style={{ gridArea: 'actions', backgroundColor: 'green' }} />}
+          {transactionInFocus && <EditTransaction transactionId={transactionInFocus} />}
         </Actions>
       </TransactionWrapper>
     );
