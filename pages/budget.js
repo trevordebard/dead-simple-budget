@@ -1,3 +1,9 @@
 import Budget from '../components/Budget';
+import Layout from '../components/Layout';
 
-export default Budget;
+const BudgetPage = () => (
+  <Layout>
+    <Budget />
+  </Layout>
+);
+export default BudgetPage;

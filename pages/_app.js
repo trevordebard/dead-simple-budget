@@ -1,10 +1,7 @@
 import { ApolloProvider } from '@apollo/client';
-import styled, { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle } from 'styled-components';
 import { withApollo } from '../lib/withApollo';
-import Nav from '../components/nav';
 import Head from '../components/head';
-import LeftSidebar from '../components/LeftSidebar';
-import { smBreakpoint } from '../lib/constants';
 
 const GlobalStyle = createGlobalStyle`
   :root {
@@ -74,67 +71,13 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-const AppLayout = styled.div`
-  display: grid;
-  grid-template-columns: minmax(auto, 300px) 3fr;
-  grid-template-rows: minmax(auto, 9rem) auto;
-  height: 100vh;
-  @media only screen and (max-width: ${smBreakpoint}) {
-    grid-template-columns: 1fr;
-    grid-template-rows: minmax(auto, 9rem) min-content auto;
-    margin: auto 0;
-  }
-`;
-const NavWrapper = styled.div`
-  grid-column: 1 / -1;
-`;
-const SidebarWrapper = styled.div`
-  max-width: 300px;
-  grid-column: 1 / 2;
-  border-right: 1px solid var(--lineColor);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  @media only screen and (max-width: ${smBreakpoint}) {
-    grid-column: 1 / -1;
-    max-width: 100vw;
-    height: min-content;
-    flex-direction: row;
-    justify-content: center;
-    background-color: var(--backgroundSubtle);
-  }
-`;
-const Content = styled.div`
-  grid-column: 2 / 3;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 1rem;
-  max-width: 1080px;
-  @media only screen and (max-width: ${smBreakpoint}) {
-    grid-column: 1;
-    max-width: 100vw !important;
-  }
-`;
-
 function MyApp({ Component, pageProps, apollo }) {
   return (
     <>
       <GlobalStyle />
       <Head />
       <ApolloProvider client={apollo}>
-        <AppLayout>
-          <NavWrapper>
-            <Nav />
-          </NavWrapper>
-          <SidebarWrapper>
-            <LeftSidebar />
-          </SidebarWrapper>
-          <Content>
-            <Component {...pageProps} />
-          </Content>
-        </AppLayout>
+        <Component {...pageProps} />>
       </ApolloProvider>
     </>
   );

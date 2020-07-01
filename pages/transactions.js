@@ -1,3 +1,9 @@
 import Transactions from '../components/Transactions';
+import Layout from '../components/Layout';
 
-export default Transactions;
+const TransactionPage = () => (
+  <Layout>
+    <Transactions />
+  </Layout>
+);
+export default TransactionPage;
