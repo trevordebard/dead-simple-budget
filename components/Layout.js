@@ -6,20 +6,27 @@ import { smBreakpoint } from '../lib/constants';
 const AppLayout = styled.div`
   display: grid;
   grid-template-columns: minmax(auto, 300px) 3fr;
-  grid-template-rows: minmax(auto, 9rem) auto;
+  grid-template-rows: min-content auto;
   height: 100vh;
+  grid-template-areas:
+    'nav nav'
+    'sidebar content';
   @media only screen and (max-width: ${smBreakpoint}) {
     grid-template-columns: 1fr;
-    grid-template-rows: minmax(auto, 9rem) min-content auto;
+    grid-template-rows: repeat(2, min-content) auto;
+    grid-template-areas:
+      'nav'
+      'sidebar'
+      'content';
     margin: auto 0;
   }
 `;
 const NavWrapper = styled.div`
-  grid-column: 1 / -1;
+  grid-area: nav;
 `;
 const SidebarWrapper = styled.div`
-  max-width: 300px;
-  grid-column: 1 / 2;
+  width: 240px;
+  grid-area: sidebar;
   border-right: 1px solid var(--lineColor);
   display: flex;
   flex-direction: column;
@@ -27,7 +34,7 @@ const SidebarWrapper = styled.div`
   text-align: center;
   @media only screen and (max-width: ${smBreakpoint}) {
     grid-column: 1 / -1;
-    max-width: 100vw;
+    width: 100vw;
     height: min-content;
     flex-direction: row;
     justify-content: center;
@@ -35,7 +42,7 @@ const SidebarWrapper = styled.div`
   }
 `;
 const Content = styled.div`
-  grid-column: 2 / 3;
+  grid-area: content;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -55,10 +62,7 @@ const Layout = ({ children }) => (
     <SidebarWrapper>
       <LeftSidebar />
     </SidebarWrapper>
-    <Content>
-      {children}
-      {/* <Component {...pageProps} /> */}
-    </Content>
+    <Content>{children}</Content>
   </AppLayout>
 );
 export default Layout;
