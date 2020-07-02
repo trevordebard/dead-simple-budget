@@ -5,7 +5,7 @@ import { useMutation, gql } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
 import useUser from '../hooks/useUser';
 import Logo from './Logo.svg';
-import { Button } from './styled';
+import { TransparentButton } from './styled';
 
 const NavContainer = styled.div`
   display: grid;
@@ -62,9 +62,9 @@ const LoggedInNav = ({ email }) => {
 
       <Account>
         <p>{email}</p>
-        <Button transparent onClick={() => logout()}>
+        <TransparentButton transparent onClick={() => logout()}>
           Logout
-        </Button>
+        </TransparentButton>
       </Account>
     </>
   );

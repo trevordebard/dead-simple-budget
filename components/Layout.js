@@ -25,13 +25,13 @@ const NavWrapper = styled.div`
   grid-area: nav;
 `;
 const SidebarWrapper = styled.div`
-  width: 240px;
   grid-area: sidebar;
   border-right: 1px solid var(--lineColor);
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+  padding: 1rem;
   @media only screen and (max-width: ${smBreakpoint}) {
     grid-column: 1 / -1;
     width: 100vw;
@@ -39,6 +39,7 @@ const SidebarWrapper = styled.div`
     flex-direction: row;
     justify-content: center;
     background-color: var(--backgroundSubtle);
+    padding: 0;
   }
 `;
 const Content = styled.div`
@@ -46,7 +47,7 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 1rem;
+  padding: 1rem;
   max-width: 1080px;
   @media only screen and (max-width: ${smBreakpoint}) {
     grid-column: 1;

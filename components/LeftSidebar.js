@@ -6,9 +6,11 @@ import { smBreakpoint } from '../lib/constants';
 import { Button } from './styled';
 
 const TabItem = styled.li`
+  + li {
+    margin-top: 1em;
+  }
   a {
     display: block;
-    margin-top: 10px;
     background-color: ${props => !props.active && 'white'};
     color: ${props => !props.active && 'var(--fontcolor)'};
     cursor: pointer;
@@ -24,6 +26,9 @@ const TabItem = styled.li`
       :hover {
         background-color: transparent;
       }
+    }
+    + li {
+      margin-top: 0;
     }
     border-bottom: ${props => props.active && '1px solid black'};
   }
@@ -57,7 +62,6 @@ const LeftSidebar = () => {
       </ul>
     </Tabs>
   );
-  j;
 };
 
 export default LeftSidebar;
