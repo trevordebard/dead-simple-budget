@@ -5,7 +5,7 @@ import useBudget from '../hooks/useBudget';
 import Input from './FormInput';
 import BudgetStack from './BudgetStack';
 import RequireLogin from './RequireLogin';
-import { Button, HeaderOne, HeaderFive } from './styled';
+import { Button } from './styled';
 
 const ToplineBudget = styled.div`
   text-align: center;
@@ -17,10 +17,6 @@ const AddStackWrapper = styled.div`
   display: grid;
   grid-template-columns: 2fr 1fr;
   padding: 10px 0px;
-  input {
-    margin: 0px 5px;
-    height: 36px;
-  }
 `;
 
 const NewStackInput = styled(Input)`
@@ -54,17 +50,15 @@ function Budget() {
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <ToplineBudget>
-          <HeaderOne>Budget</HeaderOne>
-          <HeaderFive>
+          <h1>Budget</h1>
+          <h5>
             <span style={{ fontWeight: '500' }}>${data.total}</span>
             <span style={{ fontWeight: '400', color: 'var(--fontColor60)' }}> in account</span>
-          </HeaderFive>
-          <h3>
+          </h5>
+          <h5>
             <span style={{ fontWeight: '500' }}>${data.toBeBudgeted}</span>
             <span style={{ fontWeight: '400', color: 'var(--fontColor60)' }}> to be budgeted</span>
-          </h3>
-          {/* Total: <Input register={register} name="total" defaultValue={data?.total} errors={errors} /> */}
-          {/* <p style={{ color: 'red' }}>To Be Budgeted: {data?.toBeBudgeted}</p> */}
+          </h5>
         </ToplineBudget>
         {renderStacks(data?.stacks, data._id)}
         <AddStackWrapper style={{ width: '' }}>

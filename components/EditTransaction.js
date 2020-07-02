@@ -2,7 +2,7 @@ import { useApolloClient, gql } from '@apollo/client';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useForm } from 'react-hook-form';
-import { HeaderFour, Button } from './styled';
+import { Button } from './styled';
 import Input from './FormInput';
 import useTransactions from '../hooks/useTransactions';
 import { formatDate } from '../lib/formatDate';
@@ -54,7 +54,7 @@ const EditTransaction = ({ transactionId }) => {
   }
   return (
     <NewtransactionWrapper>
-      <HeaderFour>Edit Transaction</HeaderFour>
+      <h4>Edit Transaction</h4>
       <Input
         name="description"
         errors={errors}

@@ -8,7 +8,6 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableContainer from '@material-ui/core/TableContainer';
-import { HeaderOne } from './styled';
 import RequireLogin from './RequireLogin';
 import useTransactions from '../hooks/useTransactions';
 import NewTransaction from './NewTransaction';
@@ -59,11 +58,6 @@ const TableWrapper = styled(TableContainer)`
   max-height: 80vh;
   table {
     overflow-y: scroll;
-    th,
-    td,
-    input {
-      font-size: 1.4rem;
-    }
   }
   tr {
     &:hover {
@@ -93,7 +87,7 @@ const Transactions = () => {
     return (
       <TransactionWrapper>
         <Title>
-          <HeaderOne style={{ gridArea: 'title' }}>Transactions</HeaderOne>
+          <h1 style={{ gridArea: 'title' }}>Transactions</h1>
         </Title>
         <TableWrapper>
           <Table stickyHeader style={{ gridArea: 'table' }} size="small">

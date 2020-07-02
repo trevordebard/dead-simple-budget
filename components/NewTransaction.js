@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import { GET_TRANSACTIONS } from '../lib/queries/GET_TRANSACTIONS';
 import useTransactions from '../hooks/useTransactions';
-import { Button, HeaderFour } from './styled';
+import { Button } from './styled';
 import Input from './FormInput';
 import { formatDate } from '../lib/formatDate';
 
@@ -15,13 +15,9 @@ const NewtransactionWrapper = styled.form`
   max-width: 60rem;
   input,
   select {
-    margin-top: 1rem;
-    padding: 1rem;
+    margin-top: 1em;
+    padding: 0.5rem;
     border-radius: 0;
-  }
-  button {
-    margin-top: 10px;
-    height: 3rem;
   }
 `;
 const NewTransaction = () => {
@@ -40,7 +36,7 @@ const NewTransaction = () => {
 
   return (
     <NewtransactionWrapper onSubmit={handleSubmit(onSubmit)}>
-      <HeaderFour>New Transaction</HeaderFour>
+      <h4>New Transaction</h4>
       <Input name="description" errors={errors} register={register} required type="text" placeholder="Description" />
       <Input
         name="amount"
