@@ -12,10 +12,6 @@ const NewtransactionWrapper = styled.form`
   flex-direction: column;
   margin: 1rem;
   max-width: 60rem;
-  button {
-    margin-top: 10px;
-    height: 3rem;
-  }
 `;
 
 const EditTransaction = ({ transactionId }) => {
