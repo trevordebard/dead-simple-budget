@@ -3,40 +3,35 @@ import Link from 'next/link';
 import styled from 'styled-components';
 import { useRouter } from 'next/dist/client/router';
 import { smBreakpoint } from '../lib/constants';
+import { Button } from './styled';
 
-// TODO: This should probably use the Button style
 const TabItem = styled.li`
-  min-width: 170px;
-  width: 80%;
-  height: 40px;
-  margin: 10px 0px;
-  background: ${props => (props.active ? 'var(--purp)' : 'white')};
-  border-radius: 45px;
-  color: ${props => (props.active ? 'white' : 'hsl(209, 34%, 30%)')};
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 20px;
-  font-weight: 300;
-  cursor: pointer;
-  :hover {
-    ${props => !props.active && 'background-color: var(--purp-15)'};
+  a {
+    display: block;
+    margin-top: 10px;
+    background-color: ${props => !props.active && 'white'};
+    color: ${props => !props.active && 'var(--fontcolor)'};
+    cursor: pointer;
+    :hover {
+      ${props => !props.active && 'background-color: var(--purp-15)'};
+    }
   }
   @media only screen and (max-width: ${smBreakpoint}) {
-    background-color: transparent;
-    color: ${props => (props.active ? 'var(--purp)' : 'var(--fontColor)')};
-    border-bottom: ${props => props.active && '1px solid black'};
-    border-radius: 0;
-    font-size: 1.4rem;
-    margin: 0px;
-    width: min-content;
-    font-weight: 400;
-    :hover {
+    a {
       background-color: transparent;
+      color: ${props => (props.active ? 'var(--purp)' : 'var(--fontColor)')};
+      margin: 0px;
+      :hover {
+        background-color: transparent;
+      }
     }
+    border-bottom: ${props => props.active && '1px solid black'};
   }
 `;
 const Tabs = styled.div`
+  ul {
+    min-width: 170px;
+  }
   @media only screen and (max-width: ${smBreakpoint}) {
     ul {
       display: flex;
@@ -51,17 +46,18 @@ const LeftSidebar = () => {
       <ul>
         <Link href="/budget">
           <TabItem active={router.pathname === '/budget'}>
-            <a>Budget</a>
+            <Button as="a">Budget</Button>
           </TabItem>
         </Link>
         <Link href="/transactions">
           <TabItem active={router.pathname === '/transactions'}>
-            <a>Transactions</a>
+            <Button as="a">Transactions</Button>
           </TabItem>
         </Link>
       </ul>
     </Tabs>
   );
+  j;
 };
 
 export default LeftSidebar;
