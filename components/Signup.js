@@ -11,16 +11,6 @@ const Form = styled.form`
     display: block;
     margin-bottom: 1rem;
   }
-  input,
-  select {
-    display: block;
-    padding: 0.5rem;
-    border: 1px solid black;
-    &:focus {
-      outline: 0;
-      border-color: purple;
-    }
-  }
 `;
 
 const Signup = () => {

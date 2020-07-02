@@ -13,12 +13,6 @@ const NewtransactionWrapper = styled.form`
   flex-direction: column;
   margin: 1rem;
   max-width: 60rem;
-  input,
-  select {
-    margin-top: 1em;
-    padding: 0.5rem;
-    border-radius: 0;
-  }
 `;
 const NewTransaction = () => {
   const { register, handleSubmit, errors, reset, getValues } = useForm();

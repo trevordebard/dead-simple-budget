@@ -12,12 +12,6 @@ const NewtransactionWrapper = styled.form`
   flex-direction: column;
   margin: 1rem;
   max-width: 60rem;
-  input,
-  select {
-    margin-top: 1rem;
-    padding: 1rem;
-    border-radius: 0;
-  }
   button {
     margin-top: 10px;
     height: 3rem;

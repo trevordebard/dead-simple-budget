@@ -19,12 +19,6 @@ const AddStackWrapper = styled.div`
   padding: 10px 0px;
 `;
 
-const NewStackInput = styled(Input)`
-  background-color: transparent;
-  :focus {
-    outline: 1px solid var(--purp-15);
-  }
-`;
 function Budget() {
   const { data, loading, error, addStack, updateStack, removeStack } = useBudget();
   const { register, handleSubmit, errors, reset } = useForm();
@@ -62,12 +56,7 @@ function Budget() {
         </ToplineBudget>
         {renderStacks(data?.stacks, data._id)}
         <AddStackWrapper style={{ width: '' }}>
-          <NewStackInput
-            name="newStack"
-            register={register({ required: true })}
-            errors={errors}
-            placeholder="Stack Name"
-          />
+          <Input name="newStack" register={register({ required: true })} errors={errors} placeholder="Stack Name" />
           <Button isAction type="button" register={register} name="addStack" onClick={handleSubmit(onAddStack)}>
             Add Stack
           </Button>
