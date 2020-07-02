@@ -1,34 +1,44 @@
 import styled, { css } from 'styled-components';
 
-/**
- * Accepts the following props
- * @action
- * @primary
- */
 const Button = styled.button`
-  background-color: var(--neutral);
+  background-color: var(--primary);
   color: white;
   border-radius: 45px;
   border: 0px;
+  padding: 5px 20px;
   cursor: pointer;
-  width: ${props => props.width || 'auto'};
-  ${props => {
-    if (props.primary) {
+  &:hover {
+    box-shadow: var(--level2);
+    background-color: var(--primaryLight);
+  }
+  ${({ small }) => {
+    if (small) {
       return css`
-        background-color: var(--primary);
+        font-size: var(--smallFontSize);
+        padding: 5px 15px;
       `;
     }
-    if (props.isAction) {
-      return css`
-        background-color: var(--action);
-      `;
-    }
-    if (props.transparent) {
-      return css`
-        background-color: transparent;
-        color: var(--fontColor);
-      `;
-    }
-  }};
+  }}
 `;
-export default Button;
+
+const ActionButton = styled(Button)`
+  background: var(--action);
+  &:hover {
+    background-color: var(--actionLight);
+  }
+`;
+const DangerButton = styled(Button)`
+  background: var(--danger);
+  &:hover {
+    background-color: var(--dangerLight);
+  }
+`;
+const TransparentButton = styled(Button)`
+  background: transparent;
+  color: var(--fontColor);
+  &:hover {
+    background-color: transparent;
+  }
+`;
+
+export { Button, ActionButton, DangerButton, TransparentButton };
