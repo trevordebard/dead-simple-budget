@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import styled from 'styled-components';
 import Table from '@material-ui/core/Table';
@@ -87,16 +86,16 @@ const Transactions = () => {
     return (
       <TransactionWrapper>
         <Title>
-          <h1 style={{ gridArea: 'title' }}>Transactions</h1>
+          <h1>Transactions</h1>
         </Title>
         <TableWrapper>
-          <Table stickyHeader style={{ gridArea: 'table' }} size="small">
+          <Table stickyHeader size="small">
             <TableHead>
               <TableRow>
                 <TableCell>Description</TableCell>
                 <TableCell align="right">Amount</TableCell>
                 <TableCell align="right">Stack</TableCell>
-                <TableCell sortDirection="desc" style={{ minWidth: '115px' }} variant="head" align="right">
+                <TableCell sortDirection="desc" style={{ minWidth: '115px' }} align="right">
                   Date
                 </TableCell>
                 <TableCell></TableCell>
@@ -105,21 +104,18 @@ const Transactions = () => {
             <TableBody>
               {transactions &&
                 transactions.map(transaction => (
-                  <TableRow
-                    key={transaction._id}
-                    selected={transaction._id === transactionInFocus}
-                    onClick={() => {
-                      setTransactionInFocus(transaction._id);
-                    }}
-                  >
+                  <TableRow key={transaction._id} selected={transaction._id === transactionInFocus}>
                     <TableCell>{transaction.description}</TableCell>
                     <TableCell align="right">${transaction.amount}</TableCell>
                     <TableCell align="right">{transaction.stack}</TableCell>
                     <TableCell align="right">{new Date(transaction.date).toLocaleDateString() || '9999/9/9'}</TableCell>
                     <TableCell style={{ padding: '0px' }}>
                       <RowTools>
-                        <EditIcon />
-                        <DeleteIcon />
+                        <EditIcon
+                          onClick={() => {
+                            setTransactionInFocus(transaction._id);
+                          }}
+                        />
                       </RowTools>
                     </TableCell>
                   </TableRow>
@@ -128,8 +124,10 @@ const Transactions = () => {
           </Table>
         </TableWrapper>
         <Actions>
-          {!transactionInFocus && <NewTransaction style={{ gridArea: 'actions', backgroundColor: 'green' }} />}
-          {transactionInFocus && <EditTransaction transactionId={transactionInFocus} />}
+          {!transactionInFocus && <NewTransaction />}
+          {transactionInFocus && (
+            <EditTransaction transactionId={transactionInFocus} cancelEdit={() => setTransactionInFocus(null)} />
+          )}
         </Actions>
       </TransactionWrapper>
     );

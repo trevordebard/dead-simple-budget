@@ -2,7 +2,7 @@ import { useApolloClient, gql } from '@apollo/client';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useForm } from 'react-hook-form';
-import { Button } from './styled';
+import { ActionButton, TransparentButton } from './styled';
 import FormInput from './FormInput';
 import useTransactions from '../hooks/useTransactions';
 import { formatDate } from '../lib/formatDate';
@@ -18,7 +18,7 @@ const NewtransactionWrapper = styled.form`
   }
 `;
 
-const EditTransaction = ({ transactionId }) => {
+const EditTransaction = ({ transactionId, cancelEdit }) => {
   const client = useApolloClient();
   const { register, handleSubmit, errors, reset, getValues } = useForm();
   const { addTransaction, stackLabels } = useTransactions();
@@ -86,7 +86,10 @@ const EditTransaction = ({ transactionId }) => {
         defaultValue={formatDate(cachedTransaction.date)}
         required
       />
-      <Button isAction>Save Changes</Button>
+      <ActionButton>Save Changes</ActionButton>
+      <TransparentButton discrete small underline onClick={() => cancelEdit()} style={{ alignSelf: 'center' }}>
+        Cancel
+      </TransparentButton>
     </NewtransactionWrapper>
   );
 };
