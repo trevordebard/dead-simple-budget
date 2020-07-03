@@ -17,6 +17,7 @@ const AddStackWrapper = styled.div`
   display: grid;
   grid-template-columns: 2fr 1fr;
   padding: 10px 0px;
+  grid-column-gap: 5px;
 `;
 
 function Budget() {
@@ -55,8 +56,14 @@ function Budget() {
           </h5>
         </ToplineBudget>
         {renderStacks(data?.stacks, data._id)}
-        <AddStackWrapper style={{ width: '' }}>
-          <FormInput name="newStack" register={register({ required: true })} errors={errors} placeholder="Stack Name" />
+        <AddStackWrapper>
+          <FormInput
+            name="newStack"
+            register={register({ required: true })}
+            errors={errors}
+            placeholder="Stack Name"
+            autoComplete="off"
+          />
           <Button isAction type="button" register={register} name="addStack" onClick={handleSubmit(onAddStack)}>
             Add Stack
           </Button>
