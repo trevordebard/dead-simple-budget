@@ -9,6 +9,9 @@ const StackInput = styled(FormInput)`
   background-color: transparent;
   padding: 5px 0px;
   max-width: 120px;
+  :hover {
+    background-color: var(--rowHoverDark);
+  }
 `;
 
 const BudgetStack = ({ label, register, budgetId, value, errors, updateStack, removeStack }) => {

@@ -15,7 +15,8 @@ const GlobalStyle = createGlobalStyle`
     --yellow: #FAEA7A;
     --green: hsl(152, 55%,44%);
     --lightGreen: hsl(152, 55%, 50%);
-    --green-o10: hsl(152, 55%,44%, 10%);
+    --green-h1: hsl(152, 55%, 44%, 10%);
+    --green-h2: hsl(152, 55%, 40%, 10%);
     --black:  hsl(211, 39%, 23%);
 
     --lineColor: #EAEAEA;
@@ -33,7 +34,8 @@ const GlobalStyle = createGlobalStyle`
     --danger: var(--red);
     --dangerLight: var(--redLight);
     --neutral: var(--fontColor);
-    --rowHover: var(--green-o10);
+    --rowHover: var(--green-h2);
+    --rowHoverDark: var(--green-h1);
 
     /* Elevation */
     --level1: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
