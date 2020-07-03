@@ -36,9 +36,17 @@ const DangerButton = styled(Button)`
 const TransparentButton = styled(Button)`
   background: transparent;
   color: var(--fontColor);
+  text-decoration: ${props => props.underline && 'underline'};
   &:hover {
     background-color: transparent;
   }
+  ${({ discrete }) =>
+    discrete &&
+    css`
+      padding: 0px;
+      width: min-content;
+      display: inline-block;
+    `}
 `;
 
 export { Button, ActionButton, DangerButton, TransparentButton };
