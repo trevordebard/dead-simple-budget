@@ -1,8 +1,9 @@
 import { ErrorMessage } from 'react-hook-form';
+import { Input } from './styled';
 
 const FormInput = ({ register, name, errors, required = false, ...rest }) => (
   <>
-    <input name={name} ref={register({ required: required && 'Required' })} {...rest} />
+    <Input name={name} ref={register({ required: required && 'Required' })} {...rest} />
     {errors && errors[name] && (
       <ErrorMessage errors={errors} name={name}>
         {({ message }) => <p style={{ color: 'red' }}>{message}</p>}
