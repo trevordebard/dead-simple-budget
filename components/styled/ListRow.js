@@ -8,7 +8,7 @@ const ListRow = styled.div`
   border-bottom: 1px solid var(--lineColor);
   padding: 5px;
   :hover {
-    background-color: var(--green10);
+    background-color: var(--rowHover);
   }
 `;
 

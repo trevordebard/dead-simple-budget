@@ -61,14 +61,14 @@ const TableWrapper = styled(TableContainer)`
   }
   tr {
     &:hover {
-      background-color: var(--green10);
+      background-color: var(--rowHover);
       ${RowTools} {
         color: var(--fontColor60);
       }
     }
   }
   .Mui-selected {
-    background-color: var(--green10) !important; //TODO: Figure out better overrride
+    background-color: var(--rowHover) !important; //TODO: Figure out better overrride
   }
   @media only screen and (max-width: ${smBreakpoint}) {
     min-width: 350px;

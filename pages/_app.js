@@ -14,12 +14,14 @@ const GlobalStyle = createGlobalStyle`
     --aquaLight: hsl(186, 61%, 51%);
     --yellow: #FAEA7A;
     --green: hsl(152, 55%,44%);
-    --green10: hsl(152, 55%,44%, 10%);
+    --lightGreen: hsl(152, 55%, 50%);
+    --green-o10: hsl(152, 55%,44%, 10%);
+    --black:  hsl(211, 39%, 23%);
+
     --lineColor: #EAEAEA;
     --backgroundSubtle: hsl(211, 39%, 23%, 3%);
     
-    
-    --fontColor: hsl(211, 39%, 23%);
+    --fontColor: var(--black);
     --fontColor60: hsl(211, 39%, 23%, 60%);
     --baseFontSize: 100%;
     --smallFontSize: .8em;
@@ -31,6 +33,7 @@ const GlobalStyle = createGlobalStyle`
     --danger: var(--red);
     --dangerLight: var(--redLight);
     --neutral: var(--fontColor);
+    --rowHover: var(--green-o10);
 
     /* Elevation */
     --level1: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
@@ -104,7 +107,7 @@ const GlobalStyle = createGlobalStyle`
   button {
     color: inherit; 
     font: inherit; 
-    letter-spacing: inherit; 
+    letter-spacing: inherit;
   }
 `;
 
