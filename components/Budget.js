@@ -2,7 +2,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import useBudget from '../hooks/useBudget';
-import Input from './FormInput';
+import FormInput from './FormInput';
 import BudgetStack from './BudgetStack';
 import RequireLogin from './RequireLogin';
 import { Button } from './styled';
@@ -56,7 +56,7 @@ function Budget() {
         </ToplineBudget>
         {renderStacks(data?.stacks, data._id)}
         <AddStackWrapper style={{ width: '' }}>
-          <Input name="newStack" register={register({ required: true })} errors={errors} placeholder="Stack Name" />
+          <FormInput name="newStack" register={register({ required: true })} errors={errors} placeholder="Stack Name" />
           <Button isAction type="button" register={register} name="addStack" onClick={handleSubmit(onAddStack)}>
             Add Stack
           </Button>

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useForm } from 'react-hook-form';
 import { Button } from './styled';
-import Input from './FormInput';
+import FormInput from './FormInput';
 import useTransactions from '../hooks/useTransactions';
 import { formatDate } from '../lib/formatDate';
 
@@ -45,7 +45,7 @@ const EditTransaction = ({ transactionId }) => {
   return (
     <NewtransactionWrapper>
       <h4>Edit Transaction</h4>
-      <Input
+      <FormInput
         name="description"
         errors={errors}
         register={register}
@@ -53,7 +53,7 @@ const EditTransaction = ({ transactionId }) => {
         type="text"
         defaultValue={cachedTransaction.description}
       />
-      <Input
+      <FormInput
         name="amount"
         errors={errors}
         register={register}
@@ -72,7 +72,7 @@ const EditTransaction = ({ transactionId }) => {
         value={selectedStack}
         onChange={e => setSelectedStack(e.target.value)}
       />
-      <Input
+      <FormInput
         name="date"
         errors={errors}
         register={register}

@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { GET_TRANSACTIONS } from '../lib/queries/GET_TRANSACTIONS';
 import useTransactions from '../hooks/useTransactions';
 import { Button } from './styled';
-import Input from './FormInput';
+import FormInput from './FormInput';
 import { formatDate } from '../lib/formatDate';
 
 const NewtransactionWrapper = styled.form`
@@ -31,8 +31,15 @@ const NewTransaction = () => {
   return (
     <NewtransactionWrapper onSubmit={handleSubmit(onSubmit)}>
       <h4>New Transaction</h4>
-      <Input name="description" errors={errors} register={register} required type="text" placeholder="Description" />
-      <Input
+      <FormInput
+        name="description"
+        errors={errors}
+        register={register}
+        required
+        type="text"
+        placeholder="Description"
+      />
+      <FormInput
         name="amount"
         errors={errors}
         register={register}
@@ -41,7 +48,7 @@ const NewTransaction = () => {
         placeholder="Amount"
         required
       />
-      <Input component="select" name="stack" defaultValue="" register={register} errors={errors} required>
+      <FormInput component="select" name="stack" defaultValue="" register={register} errors={errors} required>
         <option style={{ color: 'green' }} disabled name="select" value="">
           Select Stack
         </option>
@@ -52,8 +59,8 @@ const NewTransaction = () => {
             </option>
           ))}
         }
-      </Input>
-      <Input
+      </FormInput>
+      <FormInput
         name="date"
         errors={errors}
         register={register}

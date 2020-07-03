@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import Input from './FormInput';
+import FormInput from './FormInput';
 import { ListRow } from './styled';
 
-const StackInput = styled(Input)`
+const StackInput = styled(FormInput)`
   text-align: right;
   border: none;
   background-color: transparent;
@@ -36,9 +36,10 @@ const BudgetStack = ({ label, register, budgetId, value, errors, updateStack, re
           }
         }}
       />
-      {/* <Input
+      {/* <FormInput
         type="button"
         value="Delete"
+        register={register}
         onClick={e => {
           removeStack({
             variables: {
