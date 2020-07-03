@@ -18,7 +18,7 @@ const BudgetStack = ({ label, register, budgetId, value, errors, updateStack, re
   const [prevValue, setPrevValue] = useState(value);
   return (
     <ListRow>
-      <p>{label}: </p>
+      <p>{label} </p>
       <StackInput
         name={label}
         type="number"
