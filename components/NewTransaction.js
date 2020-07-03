@@ -53,7 +53,7 @@ const NewTransaction = () => {
         required
       />
       <FormSelect name="stack" defaultValue="" register={register} errors={errors} required>
-        <option style={{ color: 'green' }} disabled name="select" value="">
+        <option disabled name="select" value="">
           Select Stack
         </option>
         {stackLabels &&
