@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useForm } from 'react-hook-form';
 import { ActionButton, TransparentButton } from './styled';
-import FormInput from './FormInput';
+import FormInput, { FormSelect } from './FormInput';
 import useTransactions from '../hooks/useTransactions';
 import { formatDate } from '../lib/formatDate';
 
@@ -70,14 +70,15 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
         required
       />
 
-      <Select
+      <FormSelect
         name="amount"
         register={register}
         errors={errors}
-        options={stackLabels}
         value={selectedStack}
         onChange={e => setSelectedStack(e.target.value)}
-      />
+      >
+        {stackLabels && stackLabels.map(value => <option value={value}>{value}</option>)}
+      </FormSelect>
       <FormInput
         name="date"
         errors={errors}
@@ -94,13 +95,3 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
   );
 };
 export default EditTransaction;
-
-export function Select({ register, options, name, ...rest }) {
-  return (
-    <select name={name} ref={register} {...rest}>
-      {options.map(value => (
-        <option value={value}>{value}</option>
-      ))}
-    </select>
-  );
-}
