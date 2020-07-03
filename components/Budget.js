@@ -57,13 +57,7 @@ function Budget() {
         </ToplineBudget>
         {renderStacks(data?.stacks, data._id)}
         <AddStackWrapper>
-          <FormInput
-            name="newStack"
-            register={register({ required: true })}
-            errors={errors}
-            placeholder="Stack Name"
-            autoComplete="off"
-          />
+          <FormInput name="newStack" register={register} errors={errors} placeholder="Stack Name" autoComplete="off" />
           <Button isAction type="button" register={register} name="addStack" onClick={handleSubmit(onAddStack)}>
             Add Stack
           </Button>
