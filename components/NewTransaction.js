@@ -1,18 +1,20 @@
-import React from 'react';
-
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import { GET_TRANSACTIONS } from '../lib/queries/GET_TRANSACTIONS';
 import useTransactions from '../hooks/useTransactions';
-import { Button } from './styled';
+import { ActionButton } from './styled';
 import FormInput, { FormSelect } from './FormInput';
 import { formatDate } from '../lib/formatDate';
 
 const NewtransactionWrapper = styled.form`
   display: flex;
   flex-direction: column;
-  margin: 1rem;
+  margin: 1em;
   max-width: 60rem;
+
+  * {
+    margin-bottom: 10px;
+  }
 `;
 const NewTransaction = () => {
   const { register, handleSubmit, errors, reset, getValues } = useForm();
@@ -70,7 +72,7 @@ const NewTransaction = () => {
         defaultValue={formatDate(new Date())}
         required
       />
-      <Button isAction>Add</Button>
+      <ActionButton>Add</ActionButton>
     </NewtransactionWrapper>
   );
 };
