@@ -52,6 +52,7 @@ const EditTransaction = ({ transactionId }) => {
         required
         type="text"
         defaultValue={cachedTransaction.description}
+        autoComplete="off"
       />
       <FormInput
         name="amount"
@@ -61,6 +62,7 @@ const EditTransaction = ({ transactionId }) => {
         pattern="\d*"
         placeholder="Amount"
         defaultValue={cachedTransaction.amount}
+        autoComplete="off"
         required
       />
 

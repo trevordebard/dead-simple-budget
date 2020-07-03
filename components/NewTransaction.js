@@ -38,6 +38,7 @@ const NewTransaction = () => {
         required
         type="text"
         placeholder="Description"
+        autoComplete="off"
       />
       <FormInput
         name="amount"
@@ -46,6 +47,7 @@ const NewTransaction = () => {
         type="number"
         pattern="\d*"
         placeholder="Amount"
+        autoComplete="off"
         required
       />
       <FormInput component="select" name="stack" defaultValue="" register={register} errors={errors} required>
