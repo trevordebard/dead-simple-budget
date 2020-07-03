@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { GET_TRANSACTIONS } from '../lib/queries/GET_TRANSACTIONS';
 import useTransactions from '../hooks/useTransactions';
 import { Button } from './styled';
-import FormInput from './FormInput';
+import FormInput, { FormSelect } from './FormInput';
 import { formatDate } from '../lib/formatDate';
 
 const NewtransactionWrapper = styled.form`
@@ -50,7 +50,7 @@ const NewTransaction = () => {
         autoComplete="off"
         required
       />
-      <FormInput component="select" name="stack" defaultValue="" register={register} errors={errors} required>
+      <FormSelect name="stack" defaultValue="" register={register} errors={errors} required>
         <option style={{ color: 'green' }} disabled name="select" value="">
           Select Stack
         </option>
@@ -61,7 +61,7 @@ const NewTransaction = () => {
             </option>
           ))}
         }
-      </FormInput>
+      </FormSelect>
       <FormInput
         name="date"
         errors={errors}
