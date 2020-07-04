@@ -39,6 +39,7 @@ const TransparentButton = styled(Button)`
   text-decoration: ${props => props.underline && 'underline'};
   &:hover {
     background-color: transparent;
+    box-shadow: none;
   }
   ${({ discrete }) =>
     discrete &&
@@ -46,6 +47,9 @@ const TransparentButton = styled(Button)`
       padding: 0px;
       width: min-content;
       display: inline-block;
+      &:hover {
+        background-color: var(--primaryLight);
+      }
     `}
 `;
 
