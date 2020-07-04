@@ -1,16 +1,17 @@
-import React from 'react';
-import Head from '../components/head';
-import Budget from '../components/Budget';
-import Transactions from '../components/Transactions';
+import { useEffect } from 'react';
+import { useRouter } from 'next/router';
 
-import Layout from '../components/Layout';
+import RequireLogin from '../components/RequireLogin';
 
-const IndexPage = () => (
-  <Layout>
-    <Head title="Budget Trace" />
-    <Budget />
-    <hr />
-    <Transactions />
-  </Layout>
-);
-export default IndexPage;
+const IndexPage = props => {
+  const router = useRouter();
+  useEffect(() => {
+    if (props?.loggedIn) {
+      console.log(props);
+      router.push('/budget');
+    }
+  }, [props, router]);
+  return null;
+};
+
+export default RequireLogin(IndexPage);

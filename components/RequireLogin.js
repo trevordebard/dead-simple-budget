@@ -16,7 +16,7 @@ function RequireLogin(Component) {
     if (!loggedIn) {
       return null;
     }
-    return <Component {...props} />;
+    return <Component loggedIn {...props} />;
   };
 }
 export default RequireLogin;
