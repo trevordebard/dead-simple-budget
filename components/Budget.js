@@ -13,11 +13,11 @@ const ToplineBudget = styled.div`
 `;
 
 const AddStackWrapper = styled.div`
-  min-width: 350px;
   display: grid;
   grid-template-columns: 2fr 1fr;
   padding: 10px 0px;
   grid-column-gap: 5px;
+  white-space: nowrap;
 `;
 
 function Budget() {
