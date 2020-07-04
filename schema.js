@@ -209,6 +209,7 @@ const buildSchema = () => {
     userCreateOne: UserTC.getResolver('createOne', [authMiddleware, hashPassword]),
     budgetCreateOne: BudgetTC.getResolver('createOne'),
     transactionCreateOne: TransactionTC.getResolver('createOne', [authMiddleware]),
+    transactionUpdateById: TransactionTC.getResolver('updateById', [authMiddleware]),
     userUpdateById: UserTC.getResolver('updateById'),
     userRemoveById: UserTC.getResolver('removeById'),
     budgetUpdateById: BudgetTC.getResolver('updateById'),

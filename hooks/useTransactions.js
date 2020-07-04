@@ -16,10 +16,24 @@ const GET_STACK_LABELS = gql`
     }
   }
 `;
+export const EDIT_TRANSACTION = gql`
+  mutation($record: UpdateByIdTransactionInput!) {
+    transactionUpdateById(record: $record) {
+      record {
+        _id
+        amount
+        stack
+        description
+        date
+      }
+    }
+  }
+`;
 
 const useTransactions = () => {
   const { data, loading } = useQuery(GET_TRANSACTIONS);
   const { data: stackLabelData } = useQuery(GET_STACK_LABELS);
+  const [editTransaction] = useMutation(EDIT_TRANSACTION);
   const [addTransaction] = useMutation(ADD_TRANSACTION, {
     update: (cache, { data: resData }) => {
       const dataResult = cache.readQuery({ query: GET_TRANSACTIONS });
@@ -40,7 +54,7 @@ const useTransactions = () => {
     stackLabels = stackLabelData.me.budget.stackLabels;
   }
 
-  return { loading, transactions, addTransaction, stackLabels };
+  return { loading, transactions, addTransaction, stackLabels, editTransaction };
 };
 
 export default useTransactions;

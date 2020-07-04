@@ -21,13 +21,13 @@ const NewtransactionWrapper = styled.form`
 const EditTransaction = ({ transactionId, cancelEdit }) => {
   const client = useApolloClient();
   const { register, handleSubmit, errors, reset, getValues } = useForm();
-  const { addTransaction, stackLabels } = useTransactions();
+  const { editTransaction, stackLabels } = useTransactions();
   const [cachedTransaction, setCachedTransction] = useState();
   const [selectedStack, setSelectedStack] = useState();
+
   useEffect(() => {
     console.log(getValues());
     reset();
-    console.log(getValues());
     const data = client.readFragment({
       id: `Transaction:${transactionId}`,
       fragment: gql`
@@ -43,11 +43,27 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
     setSelectedStack(data.stack);
     setCachedTransction(data);
   }, [client, getValues, reset, transactionId]);
+
+  const onSubmit = payload => {
+    const { amount, date, stack, description } = payload;
+    editTransaction({
+      variables: {
+        record: {
+          _id: transactionId,
+          amount: parseFloat(amount),
+          date,
+          stack,
+          description,
+        },
+      },
+    });
+    cancelEdit();
+  };
   if (!cachedTransaction) {
     return <div>Error</div>;
   }
   return (
-    <NewtransactionWrapper>
+    <NewtransactionWrapper onSubmit={handleSubmit(onSubmit)}>
       <h4>Edit Transaction</h4>
       <FormInput
         name="description"
@@ -71,7 +87,7 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
       />
 
       <FormSelect
-        name="amount"
+        name="stack"
         register={register}
         errors={errors}
         value={selectedStack}
