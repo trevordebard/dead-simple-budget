@@ -25,6 +25,7 @@ const TabItem = styled.li`
       margin: 0px;
       :hover {
         background-color: transparent;
+        box-shadow: none;
       }
     }
     + li {
