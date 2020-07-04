@@ -1,18 +1,49 @@
-import React from 'react';
-
 import { useForm, ErrorMessage } from 'react-hook-form';
 import styled from 'styled-components';
 import { useMutation, gql } from '@apollo/client';
 import Router from 'next/router';
 import useUser from '../hooks/useUser';
+import { ActionButton } from './styled';
 
 const Form = styled.form`
-  label {
+  * {
     display: block;
+  }
+  label {
     margin-bottom: 1rem;
   }
 `;
 
+const LoginWrapper = styled.div`
+  display: grid;
+  place-items: center;
+  margin-top: 5rem;
+`;
+
+const Content = styled.div`
+  width: 400px;
+  max-width: 80vw;
+  h1 {
+    font-weight: 600;
+  }
+  hr {
+    width: 100%;
+    margin: 1rem;
+    border: 0;
+    height: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0);
+    border-bottom: 1px solid var(--lineColor);
+  }
+`;
+
+const Card = styled.div`
+  box-shadow: var(--level3);
+  border-radius: 5px;
+  padding: 20px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--lineColor);
+`;
 const LOGIN = gql`
   mutation($email: String!, $password: String!) {
     userLogin(email: $email, password: $password) {
@@ -42,26 +73,34 @@ const Login = () => {
     return <p>{user?.email} is logged in!</p>;
   }
   return (
-    <>
-      <Form method="POST" onSubmit={handleSubmit(onSubmit)}>
-        <label htmlFor="email">
-          Email
-          <input name="email" defaultValue="" type="email" ref={register({ required: true })} />
-        </label>
-        <ErrorMessage errors={errors} name="email">
-          {({ message }) => <span style={{ color: 'red' }}>{message} </span>}
-        </ErrorMessage>
-        <label htmlFor="password">
-          Password
-          <input name="password" defaultValue="" type="password" ref={register({ required: true })} />
-        </label>
-        <ErrorMessage errors={errors} name="password">
-          {({ message }) => <span style={{ color: 'red' }}>{message} </span>}
-        </ErrorMessage>
-        <input type="submit" disabled={loginLoading} value={loginLoading ? 'Loading...' : 'Submit'}></input>
-        {loginError && <p style={{ color: 'red' }}>There was an error logging in. Please try again!</p>}
-      </Form>
-    </>
+    <LoginWrapper>
+      <Content>
+        <Card>
+          <h1>Login</h1>
+          <hr />
+          <Form method="POST" onSubmit={handleSubmit(onSubmit)}>
+            <label htmlFor="email">
+              Email
+              <input name="email" defaultValue="" type="email" ref={register({ required: true })} />
+            </label>
+            <ErrorMessage errors={errors} name="email">
+              {({ message }) => <span style={{ color: 'red' }}>{message} </span>}
+            </ErrorMessage>
+            <label htmlFor="password">
+              Password
+              <input name="password" defaultValue="" type="password" ref={register({ required: true })} />
+            </label>
+            <ErrorMessage errors={errors} name="password">
+              {({ message }) => <span style={{ color: 'red' }}>{message} </span>}
+            </ErrorMessage>
+            <ActionButton style={{ width: '100%' }} disabled={loginLoading}>
+              {loginLoading ? 'Loading...' : 'Login'}
+            </ActionButton>
+            {loginError && <p style={{ color: 'red' }}>There was an error logging in. Please try again!</p>}
+          </Form>
+        </Card>
+      </Content>
+    </LoginWrapper>
   );
 };
 
