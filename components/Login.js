@@ -1,16 +1,14 @@
-import { useForm, ErrorMessage } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import { useMutation, gql } from '@apollo/client';
 import Router from 'next/router';
 import useUser from '../hooks/useUser';
 import { ActionButton } from './styled';
+import FormInput from './FormInput';
 
 const Form = styled.form`
   * {
     display: block;
-  }
-  label {
-    margin-bottom: 1rem;
   }
 `;
 
@@ -33,6 +31,9 @@ const Content = styled.div`
     height: 0;
     border-top: 1px solid rgba(0, 0, 0, 0);
     border-bottom: 1px solid var(--lineColor);
+  }
+  input {
+    margin-bottom: 1rem;
   }
 `;
 
@@ -79,20 +80,10 @@ const Login = () => {
           <h1>Login</h1>
           <hr />
           <Form method="POST" onSubmit={handleSubmit(onSubmit)}>
-            <label htmlFor="email">
-              Email
-              <input name="email" defaultValue="" type="email" ref={register({ required: true })} />
-            </label>
-            <ErrorMessage errors={errors} name="email">
-              {({ message }) => <span style={{ color: 'red' }}>{message} </span>}
-            </ErrorMessage>
-            <label htmlFor="password">
-              Password
-              <input name="password" defaultValue="" type="password" ref={register({ required: true })} />
-            </label>
-            <ErrorMessage errors={errors} name="password">
-              {({ message }) => <span style={{ color: 'red' }}>{message} </span>}
-            </ErrorMessage>
+            <label htmlFor="email">Email</label>
+            <FormInput register={register} errors={errors} name="email" type="email" required />
+            <label htmlFor="password">Password</label>
+            <FormInput register={register} errors={errors} name="password" type="password" required />
             <ActionButton style={{ width: '100%' }} disabled={loginLoading}>
               {loginLoading ? 'Loading...' : 'Login'}
             </ActionButton>
