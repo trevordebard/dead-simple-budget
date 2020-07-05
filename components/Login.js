@@ -77,7 +77,7 @@ const Login = () => {
     <LoginWrapper>
       <Content>
         <Card>
-          <h1>Login</h1>
+          <h2>Login</h2>
           <hr />
           <Form method="POST" onSubmit={handleSubmit(onSubmit)}>
             <label htmlFor="email">Email</label>
