@@ -1,5 +1,6 @@
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
+import { useState } from 'react';
 import { GET_TRANSACTIONS } from '../lib/queries/GET_TRANSACTIONS';
 import useTransactions from '../hooks/useTransactions';
 import { ActionButton } from './styled';
@@ -12,13 +13,38 @@ const NewtransactionWrapper = styled.form`
   margin: 1em;
   max-width: 60rem;
 
-  * {
+  > * {
     margin-bottom: 10px;
   }
 `;
+
+const TransactionTypeWrapper = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+`;
+
+const RadioButton = styled.button`
+  background: ${props => (props.active ? 'var(--neutralHover)' : 'transparent')};
+  border: 1px solid ${props => (props.active ? 'var(--neutral)' : 'var(--black)')};
+  font-weight: ${props => props.active && 'bold'};
+  padding: 5px;
+  text-align: center;
+  border-radius: 0;
+  cursor: pointer;
+  + button {
+    border-left: none;
+  }
+  :focus {
+    outline-color: var(--purp);
+    outline-style: inherit;
+  }
+`;
+
 const NewTransaction = () => {
   const { register, handleSubmit, errors, reset, getValues } = useForm();
+  console.log(getValues());
   const { addTransaction, stackLabels } = useTransactions();
+  const [transactionType, setTransactionType] = useState('withdrawal');
 
   const onSubmit = () => {
     const data = getValues();
@@ -72,7 +98,19 @@ const NewTransaction = () => {
         defaultValue={formatDate(new Date())}
         required
       />
-      <ActionButton>Add</ActionButton>
+      <TransactionTypeWrapper>
+        <RadioButton
+          type="button"
+          active={transactionType === 'withdrawal'}
+          onClick={() => setTransactionType('withdrawal')}
+        >
+          Withdrawal
+        </RadioButton>
+        <RadioButton type="button" active={transactionType === 'deposit'} onClick={() => setTransactionType('deposit')}>
+          Deposit
+        </RadioButton>
+      </TransactionTypeWrapper>
+      <ActionButton type="submit">Add</ActionButton>
     </NewtransactionWrapper>
   );
 };

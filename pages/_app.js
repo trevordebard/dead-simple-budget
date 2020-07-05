@@ -6,7 +6,7 @@ import Head from '../components/head';
 const GlobalStyle = createGlobalStyle`
   :root {
     --purp: hsl(282, 44%, 47%);
-    --purp-15: hsl(282, 44%, 47%, 15%);
+    --purp-o25: hsl(282, 44%, 47%, 25%);
     --purpLight: hsl(282, 44%, 53%);
     --red: hsl(1, 57%, 43%);
     --redLight: hsl(1, 57%, 49%);
@@ -18,6 +18,7 @@ const GlobalStyle = createGlobalStyle`
     --green-h1: hsl(152, 55%, 44%, 10%);
     --green-h2: hsl(152, 55%, 40%, 10%);
     --black:  hsl(211, 39%, 23%);
+    --black-o10:  hsl(211, 39%, 23%, 10%);
 
     --lineColor: #EAEAEA;
     --backgroundSubtle: hsl(211, 39%, 23%, 3%);
@@ -29,11 +30,13 @@ const GlobalStyle = createGlobalStyle`
     
     --primary: var(--purp);
     --primaryLight: var(--purpLight);
+    --primaryHover: var(--purp-o25);
     --action: var(--aqua);
     --actionLight: var(--aquaLight);
     --danger: var(--red);
     --dangerLight: var(--redLight);
     --neutral: var(--fontColor);
+    --neutralHover: var(--black-o10);
     --rowHover: var(--green-h2);
     --rowHoverDark: var(--green-h1);
 
