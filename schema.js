@@ -206,7 +206,7 @@ const buildSchema = () => {
   });
 
   schemaComposer.Mutation.addFields({
-    userCreateOne: UserTC.getResolver('createOne', [authMiddleware, hashPassword]),
+    userCreateOne: UserTC.getResolver('createOne', [hashPassword]),
     budgetCreateOne: BudgetTC.getResolver('createOne'),
     transactionCreateOne: TransactionTC.getResolver('createOne', [authMiddleware]),
     transactionUpdateById: TransactionTC.getResolver('updateById', [authMiddleware]),
