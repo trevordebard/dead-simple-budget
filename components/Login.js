@@ -68,7 +68,7 @@ const Login = () => {
     reset();
   };
   if (userLoading) {
-    return <p>Loading...</p>;
+    setTimeout(() => <p>Loading...</p>, 500);
   }
   if (loggedIn) {
     return <p>{user?.email} is logged in!</p>;
