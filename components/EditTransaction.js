@@ -7,7 +7,7 @@ import FormInput, { FormSelect } from './FormInput';
 import useTransactions from '../hooks/useTransactions';
 import { formatDate } from '../lib/formatDate';
 
-const NewtransactionWrapper = styled.form`
+const EditTransactionWrapper = styled.form`
   display: flex;
   flex-direction: column;
   margin: 1rem;
@@ -63,7 +63,7 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
     return <div>Error</div>;
   }
   return (
-    <NewtransactionWrapper onSubmit={handleSubmit(onSubmit)}>
+    <EditTransactionWrapper onSubmit={handleSubmit(onSubmit)}>
       <h4>Edit Transaction</h4>
       <FormInput
         name="description"
@@ -107,7 +107,7 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
       <TransparentButton discrete small underline onClick={() => cancelEdit()} style={{ alignSelf: 'center' }}>
         Cancel
       </TransparentButton>
-    </NewtransactionWrapper>
+    </EditTransactionWrapper>
   );
 };
 export default EditTransaction;
