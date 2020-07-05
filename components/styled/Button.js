@@ -47,9 +47,6 @@ const TransparentButton = styled(Button)`
       padding: 0px;
       width: min-content;
       display: inline-block;
-      &:hover {
-        background-color: var(--primaryLight);
-      }
     `}
 `;
 
