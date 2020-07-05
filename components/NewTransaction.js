@@ -51,7 +51,7 @@ const NewTransaction = () => {
     const { description, amount, stack, date } = data;
     reset();
     addTransaction({
-      variables: { record: { description, amount: parseFloat(amount), stack, date } },
+      variables: { record: { description, amount: parseFloat(amount), stack, date, type: transactionType } },
       refetchQueries: { query: GET_TRANSACTIONS },
     });
   };
