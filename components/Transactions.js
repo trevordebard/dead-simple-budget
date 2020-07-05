@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import EditIcon from '@material-ui/icons/Edit';
 import styled from 'styled-components';
 import Table from '@material-ui/core/Table';
@@ -7,11 +7,38 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableContainer from '@material-ui/core/TableContainer';
+import { ThemeProvider } from '@material-ui/core';
+import { createMuiTheme } from '@material-ui/core/styles';
 import RequireLogin from './RequireLogin';
 import useTransactions from '../hooks/useTransactions';
 import NewTransaction from './NewTransaction';
 import EditTransaction from './EditTransaction';
 import { smBreakpoint } from '../lib/constants';
+
+const theme = createMuiTheme({
+  overrides: {
+    MuiTable: {
+      root: {
+        overflowY: 'scroll',
+      },
+    },
+    MuiTableCell: {
+      sizeSmall: {
+        padding: '6px 10px',
+      },
+    },
+    MuiTableRow: {
+      root: {
+        '&:hover': {
+          backgroundColor: 'var(--rowHover)',
+        },
+        '&$selected, &$selected:hover': {
+          backgroundColor: 'var(--rowHover)',
+        },
+      },
+    },
+  },
+});
 
 const RowTools = styled.div`
   display: flex;
@@ -55,20 +82,6 @@ const TableWrapper = styled(TableContainer)`
   grid-area: table;
   min-width: 450px;
   max-height: 80vh;
-  table {
-    overflow-y: scroll;
-  }
-  tr {
-    &:hover {
-      background-color: var(--rowHover);
-      ${RowTools} {
-        color: var(--fontColor60);
-      }
-    }
-  }
-  .Mui-selected {
-    background-color: var(--rowHover) !important; //TODO: Figure out better overrride
-  }
   @media only screen and (max-width: ${smBreakpoint}) {
     min-width: 350px;
     grid-template-columns: 1fr;
@@ -89,39 +102,43 @@ const Transactions = () => {
           <h1>Transactions</h1>
         </Title>
         <TableWrapper>
-          <Table stickyHeader size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell>Description</TableCell>
-                <TableCell align="right">Amount</TableCell>
-                <TableCell align="right">Stack</TableCell>
-                <TableCell sortDirection="desc" style={{ minWidth: '115px' }} align="right">
-                  Date
-                </TableCell>
-                <TableCell></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {transactions &&
-                transactions.map(transaction => (
-                  <TableRow key={transaction._id} selected={transaction._id === transactionInFocus}>
-                    <TableCell>{transaction.description}</TableCell>
-                    <TableCell align="right">${transaction.amount}</TableCell>
-                    <TableCell align="right">{transaction.stack}</TableCell>
-                    <TableCell align="right">{new Date(transaction.date).toLocaleDateString() || '9999/9/9'}</TableCell>
-                    <TableCell style={{ padding: '0px' }}>
-                      <RowTools>
-                        <EditIcon
-                          onClick={() => {
-                            setTransactionInFocus(transaction._id);
-                          }}
-                        />
-                      </RowTools>
-                    </TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
+          <ThemeProvider theme={theme}>
+            <Table stickyHeader size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Description</TableCell>
+                  <TableCell align="right">Amount</TableCell>
+                  <TableCell align="right">Stack</TableCell>
+                  <TableCell sortDirection="desc" style={{ minWidth: '115px' }} align="right">
+                    Date
+                  </TableCell>
+                  <TableCell></TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {transactions &&
+                  transactions.map(transaction => (
+                    <TableRow key={transaction._id} selected={transaction._id === transactionInFocus}>
+                      <TableCell>{transaction.description}</TableCell>
+                      <TableCell align="right">${transaction.amount}</TableCell>
+                      <TableCell align="right">{transaction.stack}</TableCell>
+                      <TableCell align="right">
+                        {new Date(transaction.date).toLocaleDateString() || '9999/9/9'}
+                      </TableCell>
+                      <TableCell style={{ padding: '0px' }}>
+                        <RowTools>
+                          <EditIcon
+                            onClick={() => {
+                              setTransactionInFocus(transaction._id);
+                            }}
+                          />
+                        </RowTools>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            </Table>
+          </ThemeProvider>
         </TableWrapper>
         <Actions>
           {!transactionInFocus && <NewTransaction />}
