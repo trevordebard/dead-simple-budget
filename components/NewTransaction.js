@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useState } from 'react';
 import { GET_TRANSACTIONS } from '../lib/queries/GET_TRANSACTIONS';
 import useTransactions from '../hooks/useTransactions';
-import { ActionButton } from './styled';
+import { ActionButton, RadioButton } from './styled';
 import FormInput, { FormSelect } from './FormInput';
 import { formatDate } from '../lib/formatDate';
 
@@ -21,23 +21,6 @@ const NewtransactionWrapper = styled.form`
 const TransactionTypeWrapper = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-`;
-
-const RadioButton = styled.button`
-  background: ${props => (props.active ? 'var(--neutralHover)' : 'transparent')};
-  border: 1px solid ${props => (props.active ? 'var(--neutral)' : 'var(--black)')};
-  font-weight: ${props => props.active && 'bold'};
-  padding: 5px;
-  text-align: center;
-  border-radius: 0;
-  cursor: pointer;
-  + button {
-    border-left: none;
-  }
-  :focus {
-    outline-color: var(--purp);
-    outline-style: inherit;
-  }
 `;
 
 const NewTransaction = () => {
