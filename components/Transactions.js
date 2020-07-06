@@ -33,7 +33,7 @@ const theme = createMuiTheme({
           backgroundColor: 'var(--rowHover)',
         },
         '&$selected, &$selected:hover': {
-          backgroundColor: 'var(--rowHover)',
+          backgroundColor: 'var(--yellow)',
         },
       },
     },
