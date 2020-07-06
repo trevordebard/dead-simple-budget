@@ -12,6 +12,15 @@ const ToplineBudget = styled.div`
   margin-bottom: 30px; /*TODO: temporary */
 `;
 
+const Amount = styled.span`
+  font-weight: 500;
+  color: ${props => (props.danger ? 'var(--danger)' : 'var(--fontColor)')};
+`;
+const SubText = styled.span`
+  font-weight: 400;
+  color: var(--fontColor-o60);
+`;
+
 const AddStackWrapper = styled.div`
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -47,12 +56,12 @@ function Budget() {
         <ToplineBudget>
           <h1>Budget</h1>
           <h5>
-            <span style={{ fontWeight: '500' }}>${data.total}</span>
-            <span style={{ fontWeight: '400', color: 'var(--fontColor60)' }}> in account</span>
+            <Amount danger={data.total < 0}>${data.total}</Amount>
+            <SubText> in account</SubText>
           </h5>
           <h5>
-            <span style={{ fontWeight: '500' }}>${data.toBeBudgeted}</span>
-            <span style={{ fontWeight: '400', color: 'var(--fontColor60)' }}> to be budgeted</span>
+            <Amount danger={data.toBeBudgeted < 0}>${data.toBeBudgeted}</Amount>
+            <SubText> to be budgeted</SubText>
           </h5>
         </ToplineBudget>
         {renderStacks(data?.stacks, data._id)}
