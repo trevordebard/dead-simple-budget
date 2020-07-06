@@ -26,6 +26,13 @@ const buildSchema = () => {
   TransactionTC.wrapResolverResolve('createOne', next => async rp => {
     rp.beforeRecordMutate = async (doc, { context }) => {
       doc._userId = context.userId;
+      console.log('doc');
+      console.log(doc);
+      const budget = await BudgetModel.findOneAndUpdate(
+        { _userId: context.userId, 'stacks.label': doc.stack },
+        { $inc: { total: doc.amount, 'stacks.$.value': doc.amount } }
+      ).exec();
+      console.log(budget);
       return doc;
     };
     return next(rp);

@@ -42,16 +42,23 @@ const RadioButton = styled.button`
 
 const NewTransaction = () => {
   const { register, handleSubmit, errors, reset, getValues } = useForm();
-  console.log(getValues());
+  const [selectedStack, setSelectedStack] = useState('');
   const { addTransaction, stackLabels } = useTransactions();
   const [transactionType, setTransactionType] = useState('withdrawal');
 
   const onSubmit = () => {
     const data = getValues();
-    const { description, amount, stack, date } = data;
+    const { description, stack, date } = data;
+    let { amount } = data;
+
+    amount = parseFloat(amount);
+    if (transactionType === 'withdrawal') {
+      amount = -amount;
+    }
+
     reset();
     addTransaction({
-      variables: { record: { description, amount: parseFloat(amount), stack, date, type: transactionType } },
+      variables: { record: { description, amount, stack, date, type: transactionType } },
       refetchQueries: { query: GET_TRANSACTIONS },
     });
   };
@@ -78,7 +85,14 @@ const NewTransaction = () => {
         autoComplete="off"
         required
       />
-      <FormSelect name="stack" defaultValue="" register={register} errors={errors} required>
+      <FormSelect
+        name="stack"
+        value={selectedStack}
+        register={register}
+        errors={errors}
+        required
+        onChange={e => setSelectedStack(e.target.value)}
+      >
         <option disabled name="select" value="">
           Select Stack
         </option>
