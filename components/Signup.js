@@ -1,4 +1,4 @@
-import { useForm, ErrorMessage } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import { useMutation } from '@apollo/client';
 import { useRouter } from 'next/router';
@@ -45,6 +45,7 @@ const Card = styled.div`
   display: grid;
   place-items: center;
   border: 1px solid var(--lineColor);
+  background-color: white;
 `;
 
 const Signup = () => {
