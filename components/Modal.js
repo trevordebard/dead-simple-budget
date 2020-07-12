@@ -1,5 +1,6 @@
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import styled from 'styled-components';
+import { smBreakpoint } from '../lib/constants';
 
 const StyledModal = styled.div`
   position: absolute;
@@ -7,6 +8,7 @@ const StyledModal = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
+  z-index: 100;
   background-color: hsl(0, 0%, 0%, 50%);
   width: 100%;
   height: 100%;
@@ -28,6 +30,10 @@ const ModalCard = styled.div`
   min-height: 50%;
   max-height: 90%;
   background-color: white;
+  @media only screen and (max-width: ${smBreakpoint}) {
+    max-width: 90vw;
+    min-width: 70vw;
+  }
 `;
 
 const Modal = ({ children, visible, hide }) => {

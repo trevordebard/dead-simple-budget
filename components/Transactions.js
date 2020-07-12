@@ -9,11 +9,14 @@ import TableRow from '@material-ui/core/TableRow';
 import TableContainer from '@material-ui/core/TableContainer';
 import { ThemeProvider } from '@material-ui/core';
 import { createMuiTheme } from '@material-ui/core/styles';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 import RequireLogin from './RequireLogin';
 import useTransactions from '../hooks/useTransactions';
 import NewTransaction from './NewTransaction';
 import EditTransaction from './EditTransaction';
 import { smBreakpoint } from '../lib/constants';
+import Modal, { ModalCard } from './Modal';
+import { ActionButton } from './styled';
 
 const theme = createMuiTheme({
   overrides: {
@@ -64,8 +67,8 @@ const TransactionWrapper = styled.div`
   @media only screen and (max-width: ${smBreakpoint}) {
     grid-template-areas:
       'title'
-      'table'
-      'actions';
+      'actions'
+      'table';
   }
 `;
 
@@ -76,12 +79,14 @@ const Title = styled.div`
 
 const Actions = styled.div`
   grid-area: actions;
+  text-align: center;
 `;
 
 const TableWrapper = styled(TableContainer)`
   grid-area: table;
   min-width: 450px;
   max-height: 80vh;
+  margin-top: 1rem;
   @media only screen and (max-width: ${smBreakpoint}) {
     min-width: 350px;
     grid-template-columns: 1fr;
@@ -92,6 +97,7 @@ const TableWrapper = styled(TableContainer)`
     }
   }
 `;
+
 const Transactions = () => {
   const { transactions, loading } = useTransactions();
   const [transactionInFocus, setTransactionInFocus] = useState();
@@ -141,15 +147,46 @@ const Transactions = () => {
           </ThemeProvider>
         </TableWrapper>
         <Actions>
-          {!transactionInFocus && <NewTransaction />}
-          {transactionInFocus && (
-            <EditTransaction transactionId={transactionInFocus} cancelEdit={() => setTransactionInFocus(null)} />
-          )}
+          <TransactionActions transactionInFocus={transactionInFocus} setTransactionInFocus={setTransactionInFocus} />
         </Actions>
       </TransactionWrapper>
     );
   }
   return <p>loading...</p>;
+};
+
+const TransactionActions = ({ transactionInFocus, setTransactionInFocus }) => {
+  const smScreen = useMediaQuery(`(max-width:${smBreakpoint})`);
+  const [newTransactionInFocus, setNewTransactionInFocus] = useState(false);
+  if (smScreen) {
+    if (transactionInFocus) {
+      return (
+        <Modal visible={transactionInFocus || newTransactionInFocus} hide={() => setTransactionInFocus(null)}>
+          <ModalCard>
+            <EditTransaction transactionId={transactionInFocus} cancelEdit={() => setTransactionInFocus(null)} />
+          </ModalCard>
+        </Modal>
+      );
+    }
+    if (!newTransactionInFocus) {
+      return (
+        <ActionButton type="button" onClick={() => setNewTransactionInFocus(true)}>
+          Add Transaction
+        </ActionButton>
+      );
+    }
+    return (
+      <Modal visible={newTransactionInFocus} hide={() => setNewTransactionInFocus(null)}>
+        <ModalCard>
+          <NewTransaction />
+        </ModalCard>
+      </Modal>
+    );
+  }
+  if (transactionInFocus) {
+    return <EditTransaction transactionId={transactionInFocus} cancelEdit={() => setTransactionInFocus(null)} />;
+  }
+  return <NewTransaction />;
 };
 
 export default RequireLogin(Transactions);
