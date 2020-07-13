@@ -82,7 +82,6 @@ const Sink = () => {
       </Modal> */}
       <Button
         onClick={() => {
-          console.log(displayModal);
           setDisplayModal(!displayModal);
         }}
       >

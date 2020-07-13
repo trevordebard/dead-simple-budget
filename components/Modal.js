@@ -36,16 +36,12 @@ const ModalCard = styled.div`
   }
 `;
 
-const Modal = ({ children, visible, hide }) => {
-  console.log('placeholder');
-  return (
-    visible && (
-      <StyledModal>
-        <ClickAwayListener onClickAway={() => hide()}>{children}</ClickAwayListener>
-      </StyledModal>
-    )
+const Modal = ({ children, visible, hide }) =>
+  visible && (
+    <StyledModal>
+      <ClickAwayListener onClickAway={() => hide()}>{children}</ClickAwayListener>
+    </StyledModal>
   );
-};
 export default Modal;
 
 export { ModalCard };

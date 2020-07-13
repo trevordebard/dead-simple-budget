@@ -51,7 +51,6 @@ const LOGOUT = gql`
 const LoggedInNav = ({ email }) => {
   const router = useRouter();
   const client = useApolloClient();
-  console.log(router.pathname);
   const [logout] = useMutation(LOGOUT, {
     onCompleted: async () => {
       await client.clearStore();
