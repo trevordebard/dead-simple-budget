@@ -6,9 +6,10 @@ import Head from '../components/head';
 const GlobalStyle = createGlobalStyle`
   :root {
     --purp: hsl(282, 44%, 47%);
-    --purp-15: hsl(282, 44%, 47%, 15%);
+    --purp-o25: hsl(282, 44%, 47%, 25%);
     --purpLight: hsl(282, 44%, 53%);
     --red: hsl(1, 57%, 43%);
+    --red-o25: hsl(1, 57%, 43%, 25%);
     --redLight: hsl(1, 57%, 49%);
     --aqua: hsl(186, 61%, 45%);
     --aquaLight: hsl(186, 61%, 51%);
@@ -18,29 +19,33 @@ const GlobalStyle = createGlobalStyle`
     --green-h1: hsl(152, 55%, 44%, 10%);
     --green-h2: hsl(152, 55%, 40%, 10%);
     --black:  hsl(211, 39%, 23%);
+    --black-o10:  hsl(211, 39%, 23%, 10%);
 
     --lineColor: #EAEAEA;
     --backgroundSubtle: hsl(211, 39%, 23%, 3%);
     
     --fontColor: var(--black);
-    --fontColor60: hsl(211, 39%, 23%, 60%);
+    --fontColor-o60: hsl(211, 39%, 23%, 60%);
     --baseFontSize: 100%;
     --smallFontSize: .8em;
     
     --primary: var(--purp);
     --primaryLight: var(--purpLight);
+    --primaryHover: var(--purp-o25);
     --action: var(--aqua);
     --actionLight: var(--aquaLight);
     --danger: var(--red);
     --dangerLight: var(--redLight);
+    --dangerHover: var(--red-o25);
     --neutral: var(--fontColor);
+    --neutralHover: var(--black-o10);
     --rowHover: var(--green-h2);
     --rowHoverDark: var(--green-h1);
 
     /* Elevation */
     --level1: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-    --level2: box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --level3: box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --level2: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --level3: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   }
 
   html,body {

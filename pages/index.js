@@ -7,7 +7,6 @@ const IndexPage = props => {
   const router = useRouter();
   useEffect(() => {
     if (props?.loggedIn) {
-      console.log(props);
       router.push('/budget');
     }
   }, [props, router]);

@@ -1,8 +1,9 @@
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
+import { useState } from 'react';
 import { GET_TRANSACTIONS } from '../lib/queries/GET_TRANSACTIONS';
 import useTransactions from '../hooks/useTransactions';
-import { ActionButton } from './styled';
+import { ActionButton, RadioButton } from './styled';
 import FormInput, { FormSelect } from './FormInput';
 import { formatDate } from '../lib/formatDate';
 
@@ -12,20 +13,35 @@ const NewtransactionWrapper = styled.form`
   margin: 1em;
   max-width: 60rem;
 
-  * {
+  > * {
     margin-bottom: 10px;
   }
 `;
+
+const TransactionTypeWrapper = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+`;
+
 const NewTransaction = () => {
   const { register, handleSubmit, errors, reset, getValues } = useForm();
+  const [selectedStack, setSelectedStack] = useState('');
   const { addTransaction, stackLabels } = useTransactions();
+  const [transactionType, setTransactionType] = useState('withdrawal');
 
   const onSubmit = () => {
     const data = getValues();
-    const { description, amount, stack, date } = data;
+    const { description, stack, date } = data;
+    let { amount } = data;
+
+    amount = parseFloat(amount);
+    if (transactionType === 'withdrawal') {
+      amount = -amount;
+    }
+
     reset();
     addTransaction({
-      variables: { record: { description, amount: parseFloat(amount), stack, date } },
+      variables: { record: { description, amount, stack, date, type: transactionType } },
       refetchQueries: { query: GET_TRANSACTIONS },
     });
   };
@@ -52,7 +68,14 @@ const NewTransaction = () => {
         autoComplete="off"
         required
       />
-      <FormSelect name="stack" defaultValue="" register={register} errors={errors} required>
+      <FormSelect
+        name="stack"
+        value={selectedStack}
+        register={register}
+        errors={errors}
+        required
+        onChange={e => setSelectedStack(e.target.value)}
+      >
         <option disabled name="select" value="">
           Select Stack
         </option>
@@ -72,7 +95,19 @@ const NewTransaction = () => {
         defaultValue={formatDate(new Date())}
         required
       />
-      <ActionButton>Add</ActionButton>
+      <TransactionTypeWrapper>
+        <RadioButton
+          type="button"
+          active={transactionType === 'withdrawal'}
+          onClick={() => setTransactionType('withdrawal')}
+        >
+          Withdrawal
+        </RadioButton>
+        <RadioButton type="button" active={transactionType === 'deposit'} onClick={() => setTransactionType('deposit')}>
+          Deposit
+        </RadioButton>
+      </TransactionTypeWrapper>
+      <ActionButton type="submit">Add</ActionButton>
     </NewtransactionWrapper>
   );
 };

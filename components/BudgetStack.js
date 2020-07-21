@@ -6,11 +6,12 @@ import { ListRow } from './styled';
 const StackInput = styled(FormInput)`
   text-align: right;
   border: none;
-  background-color: transparent;
+  background-color: ${props => (props.danger ? 'var(--dangerHover)' : 'transparent')};
   padding: 5px 0px;
-  max-width: 120px;
+  max-width: 100px;
   :hover {
-    background-color: var(--rowHoverDark);
+    background-color: ${props => !props.danger && 'var(--rowHoverDark)'};
+    border: ${props => props.danger && '1px solid var(--danger)'};
   }
 `;
 
@@ -23,6 +24,7 @@ const BudgetStack = ({ label, register, budgetId, value, errors, updateStack, re
         name={label}
         type="number"
         defaultValue={value}
+        danger={value < 0}
         register={register}
         onBlur={e => {
           const newVal = parseFloat(e.target.value);

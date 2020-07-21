@@ -5,6 +5,7 @@ const TransactionSchema = new mongoose.Schema({
   stack: { type: String, required: true },
   date: Date,
   amount: { type: Number, required: true },
+  type: { type: String, required: true },
   _userId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,

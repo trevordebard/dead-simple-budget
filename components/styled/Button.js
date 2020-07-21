@@ -39,6 +39,7 @@ const TransparentButton = styled(Button)`
   text-decoration: ${props => props.underline && 'underline'};
   &:hover {
     background-color: transparent;
+    box-shadow: none;
   }
   ${({ discrete }) =>
     discrete &&
@@ -49,4 +50,26 @@ const TransparentButton = styled(Button)`
     `}
 `;
 
-export { Button, ActionButton, DangerButton, TransparentButton };
+// This should be used with side by side buttons
+// where only one should be selected
+const RadioButton = styled(Button)`
+  background: ${props => (props.active ? 'var(--neutral)' : 'transparent')};
+  border: 1px solid var(--neutral);
+  color: ${props => (props.active ? 'white' : 'var(--fontColor)')};
+  padding: 5px;
+  text-align: center;
+  border-radius: 0;
+  cursor: pointer;
+  + button {
+    border-left: none;
+  }
+  :focus {
+    outline-color: var(--primary);
+    outline-style: inherit;
+  }
+  :hover {
+    background: ${props => (props.active ? 'var(--neutral)' : 'var(--neutralHover)')};
+  }
+`;
+
+export { Button, ActionButton, DangerButton, TransparentButton, RadioButton };

@@ -26,6 +26,11 @@ const buildSchema = () => {
   TransactionTC.wrapResolverResolve('createOne', next => async rp => {
     rp.beforeRecordMutate = async (doc, { context }) => {
       doc._userId = context.userId;
+
+      const budget = await BudgetModel.findOneAndUpdate(
+        { _userId: context.userId, 'stacks.label': doc.stack },
+        { $inc: { total: doc.amount, 'stacks.$.value': doc.amount } }
+      ).exec();
       return doc;
     };
     return next(rp);
@@ -73,6 +78,27 @@ const buildSchema = () => {
     };
     return next(rp);
   });
+
+  UserTC.addResolver({
+    name: 'signup',
+    type: UserTC,
+    kind: 'mutation',
+    args: UserTC.getResolver('createOne').getArgs(),
+    resolve: async (source, args, context, info) => {
+      let user;
+      try {
+        user = await UserTC.getResolver('createOne').resolve(source, args, context, info);
+        await BudgetModel.create({
+          total: 0,
+          _userId: user.record._id,
+        });
+      } catch (err) {
+        return null;
+      }
+      return user;
+    },
+  });
+
   BudgetTC.addFields({
     toBeBudgeted: {
       type: 'Float',
@@ -206,7 +232,8 @@ const buildSchema = () => {
   });
 
   schemaComposer.Mutation.addFields({
-    userCreateOne: UserTC.getResolver('createOne', [authMiddleware, hashPassword]),
+    userCreateOne: UserTC.getResolver('createOne', [hashPassword]),
+    signup: UserTC.getResolver('signup', [hashPassword]),
     budgetCreateOne: BudgetTC.getResolver('createOne'),
     transactionCreateOne: TransactionTC.getResolver('createOne', [authMiddleware]),
     transactionUpdateById: TransactionTC.getResolver('updateById', [authMiddleware]),
