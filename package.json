@@ -2,8 +2,11 @@
   "name": "create-next-example-app",
   "scripts": {
     "dev": "next",
+    "deploy-dev": "npm ci && npm run build && pm2 restart budget-dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "start-dev": "next start -p 4000",
+    "start-production": "next start -p 5000"
   },
   "dependencies": {
     "@apollo/client": "^3.0.0-rc.4",
