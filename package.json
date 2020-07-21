@@ -3,6 +3,7 @@
   "scripts": {
     "dev": "next",
     "deploy-dev": "npm ci && npm run build && pm2 restart budget-dev",
+    "deploy-production": "npm ci && npm run build && pm2 restart budget-prod",
     "build": "next build",
     "start": "next start",
     "start-dev": "next start -p 4000",
