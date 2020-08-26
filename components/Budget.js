@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import useBudget from '../hooks/useBudget';
@@ -6,6 +6,8 @@ import FormInput from './FormInput';
 import BudgetStack from './BudgetStack';
 import RequireLogin from './RequireLogin';
 import { Button } from './styled';
+import Modal, { ModalCard } from './Modal';
+import EditTotal from './EditTotal';
 
 const ToplineBudget = styled.div`
   text-align: center;
@@ -15,6 +17,10 @@ const ToplineBudget = styled.div`
 const Amount = styled.span`
   font-weight: 500;
   color: ${props => (props.danger ? 'var(--danger)' : 'var(--fontColor)')};
+  :hover {
+    color: var(--action);
+    cursor: pointer;
+  }
 `;
 const SubText = styled.span`
   font-weight: 400;
@@ -32,6 +38,7 @@ const AddStackWrapper = styled.div`
 function Budget() {
   const { data, loading, error, addStack, updateStack, removeStack } = useBudget();
   const { register, handleSubmit, errors, reset } = useForm();
+  const [editTotalVisible, setEditTotalVisible] = useState(false);
 
   if (loading) {
     return <p>Loading...</p>;
@@ -56,8 +63,15 @@ function Budget() {
         <ToplineBudget>
           <h1>Budget</h1>
           <h5>
-            <Amount danger={data.total < 0}>${data.total}</Amount>
+            <Amount danger={data.total < 0} onClick={() => setEditTotalVisible(!editTotalVisible)}>
+              ${data.total}
+            </Amount>
             <SubText> in account</SubText>
+            <Modal visible={editTotalVisible} hide={() => setEditTotalVisible(false)}>
+              <ModalCard>
+                <EditTotal budgetId={data._id} total={data.total} />
+              </ModalCard>
+            </Modal>
           </h5>
           <h5>
             <Amount danger={data.toBeBudgeted < 0}>${data.toBeBudgeted}</Amount>

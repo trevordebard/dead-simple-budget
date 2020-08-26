@@ -239,7 +239,7 @@ const buildSchema = () => {
     transactionUpdateById: TransactionTC.getResolver('updateById', [authMiddleware]),
     userUpdateById: UserTC.getResolver('updateById'),
     userRemoveById: UserTC.getResolver('removeById'),
-    budgetUpdateById: BudgetTC.getResolver('updateById'),
+    budgetUpdateById: BudgetTC.getResolver('updateById', [authMiddleware]),
     userLogin: UserTC.getResolver('login'),
     userLogout: UserTC.getResolver('logout'),
     budgetUpdateStack: BudgetTC.getResolver('updateStack'),

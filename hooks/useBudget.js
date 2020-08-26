@@ -12,6 +12,18 @@ const UPDATE_STACK = gql`
     }
   }
 `;
+
+const UPDATE_TOTAL = gql`
+  mutation($budgetId: MongoID!, $total: Float!) {
+    budgetUpdateById(record: { _id: $budgetId, total: $total }) {
+      record {
+        total
+        _id
+      }
+    }
+  }
+`;
+
 const ADD_STACK = gql`
   mutation($budgetId: MongoID!, $newStackLabel: String!, $newStackValue: Float) {
     budgetPushToStacks(budgetId: $budgetId, newStackLabel: $newStackLabel, newStackValue: $newStackValue) {
@@ -63,8 +75,9 @@ const useBudget = () => {
   const [addStack] = useMutation(ADD_STACK, { refetchQueries: ['GET_BUDGET', 'GET_STACK_LABELS'] });
   const [updateStack] = useMutation(UPDATE_STACK, { refetchQueries: ['GET_BUDGET'] });
   const [removeStack] = useMutation(REMOVE_STACK, { refetchQueries: ['GET_BUDGET', 'GET_STACK_LABELS'] });
+  const [updateTotal] = useMutation(UPDATE_TOTAL, { refetchQueries: ['GET_BUDGET'] });
 
-  return { loading, data: data?.me.budget, error, addStack, updateStack, removeStack };
+  return { loading, data: data?.me.budget, error, addStack, updateStack, removeStack, updateTotal };
 };
 
 export default useBudget;
