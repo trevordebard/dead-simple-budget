@@ -6,8 +6,7 @@ import FormInput from './FormInput';
 import BudgetStack from './BudgetStack';
 import RequireLogin from './RequireLogin';
 import { Button } from './styled';
-import Modal, { ModalCard } from './Modal';
-import EditTotal from './EditTotal';
+import EditableText from './EditableText';
 
 const ToplineBudget = styled.div`
   text-align: center;
@@ -17,9 +16,14 @@ const ToplineBudget = styled.div`
 const Amount = styled.span`
   font-weight: 500;
   color: ${props => (props.danger ? 'var(--danger)' : 'var(--fontColor)')};
-  :hover {
-    color: var(--action);
-    cursor: pointer;
+  ::before {
+    content: '$';
+  }
+  span {
+    &:hover {
+      color: ${props => (props.editable ? 'var(--action)' : 'inherit')};
+      cursor: ${props => (props.editable ? 'pointer' : 'inherit')};
+    }
   }
 `;
 const SubText = styled.span`
@@ -36,7 +40,7 @@ const AddStackWrapper = styled.div`
 `;
 
 function Budget() {
-  const { data, loading, error, addStack, updateStack, removeStack } = useBudget();
+  const { data, loading, error, addStack, updateStack, removeStack, updateTotal } = useBudget();
   const { register, handleSubmit, errors, reset } = useForm();
   const [editTotalVisible, setEditTotalVisible] = useState(false);
 
@@ -63,18 +67,24 @@ function Budget() {
         <ToplineBudget>
           <h1>Budget</h1>
           <h5>
-            <Amount danger={data.total < 0} onClick={() => setEditTotalVisible(!editTotalVisible)}>
-              ${data.total}
+            <Amount editable danger={data.total < 0} onClick={() => setEditTotalVisible(!editTotalVisible)}>
+              <EditableText
+                text={data.total}
+                update={total =>
+                  updateTotal({
+                    variables: {
+                      total: parseFloat(total),
+                      budgetId: data._id,
+                    },
+                  })
+                }
+                inputType="number"
+              />
             </Amount>
             <SubText> in account</SubText>
-            <Modal visible={editTotalVisible} hide={() => setEditTotalVisible(false)}>
-              <ModalCard>
-                <EditTotal budgetId={data._id} total={data.total} />
-              </ModalCard>
-            </Modal>
           </h5>
           <h5>
-            <Amount danger={data.toBeBudgeted < 0}>${data.toBeBudgeted}</Amount>
+            <Amount danger={data.toBeBudgeted < 0}>{data.toBeBudgeted}</Amount>
             <SubText> to be budgeted</SubText>
           </h5>
         </ToplineBudget>
