@@ -71,7 +71,7 @@ const Signup = () => {
             <label htmlFor="password">Password</label>
             <FormInput register={register} errors={errors} name="password" type="password" required />
             <ActionButton style={{ width: '100%' }} disabled={loading}>
-              {loading ? 'Loading...' : 'Login'}
+              {loading ? 'Loading...' : 'Signup'}
             </ActionButton>
             {error && <p style={{ color: 'red' }}>There was an error logging in. Please try again!</p>}
           </Form>
