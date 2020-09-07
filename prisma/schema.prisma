@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model budget {
+  id           Int      @default(autoincrement()) @id
+  total        Float?   @default(dbgenerated())
+  toBeBudgeted Float?
+  userId       Int?
+  user         user?    @relation(fields: [userId], references: [id])
+  stacks       stacks[]
+}
+
+model stacks {
+  id       Int     @default(autoincrement()) @id
+  budgetId Int?
+  label    String
+  amount   Float   @default(dbgenerated())
+  budget   budget? @relation(fields: [budgetId], references: [id])
+}
+
+model transactions {
+  id          Int      @default(autoincrement()) @id
+  description String
+  stack       String
+  amount      Float
+  type        String
+  userId      Int?
+  date        DateTime
+  user        user?    @relation(fields: [userId], references: [id])
+}
+
+model user {
+  id           Int            @default(autoincrement()) @id
+  email        String         @unique
+  password     String
+  created_at   DateTime?      @default(now())
+  budget       budget[]
+  transactions transactions[]
+}
