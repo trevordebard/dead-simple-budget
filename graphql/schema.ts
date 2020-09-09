@@ -1,7 +1,20 @@
-import { schema, use } from 'nexus';
+import { use, schema } from 'nexus';
 import { prisma } from 'nexus-plugin-prisma';
+import { compare, hash } from 'bcrypt'
+import { sign } from 'jsonwebtoken'
+import { APP_SECRET, getUserId } from '../auth/utils'
+import { setCookie } from '../auth/cookies';
 
 use(prisma({ features: { crud: true } }));
+
+schema.addToContext(({ req, res }) => {
+  return {
+    //@ts-ignore
+    sendCookie: req.sendCookie,
+    req,
+    res,
+  }
+})
 
 schema.objectType({
   name: "user",
@@ -24,6 +37,7 @@ schema.objectType({
     t.model.userId()
   }
 })
+
 schema.objectType({
   name: "transactions",
   definition(t) {
@@ -43,5 +57,49 @@ schema.queryType({
     t.crud.transactions();
     t.crud.users();
     t.crud.budgets();
+    t.field('me', {
+      type: 'user',
+      resolve(_root, _args, ctx) {
+        let pris = ctx.db
+        const userId = getUserId(ctx.token)
+        let me = pris.user.findOne({ where: { id: userId } })
+        return me;
+      },
+    })
+  }
+})
+schema.objectType({
+  name: 'AuthPayload',
+  definition(t) {
+    t.string('token')
+    t.field('user', { type: 'user' })
+  },
+})
+schema.mutationType({
+  definition(t) {
+    t.field('signup', {
+      type: 'AuthPayload',
+      args: {
+        name: schema.stringArg(),
+        email: schema.stringArg({ nullable: false }),
+        password: schema.stringArg({ nullable: false }),
+      },
+      resolve: async (_parent, { name, email, password }, ctx) => {
+        const hashedPassword = await hash(password, 10)
+        const user = await ctx.db.user.create({
+          data: {
+            email,
+            password: hashedPassword,
+          },
+        })
+        const token = sign({ userId: user.id }, APP_SECRET, { expiresIn: "5 days" });
+        //@ts-ignore
+        setCookie(ctx.res, 'token', token)
+        return {
+          token,
+          user,
+        }
+      },
+    })
   }
 })

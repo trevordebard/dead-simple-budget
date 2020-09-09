@@ -2,6 +2,11 @@
 ### Do not make changes to this file directly
 
 
+type AuthPayload {
+  token: String
+  user: user
+}
+
 type budget {
   id: Int!
   toBeBudgeted: Float
@@ -25,9 +30,14 @@ The `JSON` scalar type represents JSON objects as specified by [ECMA-404](http:/
 """
 scalar Json
 
+type Mutation {
+  signup(email: String!, name: String, password: String!): AuthPayload
+}
+
 type Query {
   budget(where: budgetWhereUniqueInput!): budget
   budgets(after: budgetWhereUniqueInput, before: budgetWhereUniqueInput, first: Int, last: Int): [budget!]!
+  me: user
   transactions(after: transactionsWhereUniqueInput, before: transactionsWhereUniqueInput, first: Int, last: Int): [transactions!]!
   user(where: userWhereUniqueInput!): user
   users(after: userWhereUniqueInput, before: userWhereUniqueInput, first: Int, last: Int): [user!]!
