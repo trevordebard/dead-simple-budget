@@ -1,4 +1,3 @@
-const APP_SECRET = 'SOMESUPERSECRETKEY'
 
 function getUserId(token: any | null | undefined) {
     const userId = token.userId
@@ -9,4 +8,4 @@ function getUserId(token: any | null | undefined) {
     return userId
 }
 
-export { APP_SECRET, getUserId }
+export { getUserId }

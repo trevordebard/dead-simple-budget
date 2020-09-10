@@ -2,7 +2,7 @@ import { use, schema } from 'nexus';
 import { prisma } from 'nexus-plugin-prisma';
 import { compare, hash } from 'bcrypt'
 import { sign } from 'jsonwebtoken'
-import { APP_SECRET, getUserId } from '../auth/utils'
+import { getUserId } from '../auth/utils'
 import { setCookie } from '../auth/cookies';
 
 use(prisma({ features: { crud: true } }));
@@ -61,6 +61,7 @@ schema.queryType({
       type: 'user',
       resolve(_root, _args, ctx) {
         let pris = ctx.db
+        console.log(ctx)
         const userId = getUserId(ctx.token)
         let me = pris.user.findOne({ where: { id: userId } })
         return me;
@@ -92,7 +93,8 @@ schema.mutationType({
             password: hashedPassword,
           },
         })
-        const token = sign({ userId: user.id }, APP_SECRET, { expiresIn: "5 days" });
+        const token = sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: "5 days" });
+        console.log(token)
         //@ts-ignore
         setCookie(ctx.res, 'token', token)
         return {

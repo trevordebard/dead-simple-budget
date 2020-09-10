@@ -1,13 +1,12 @@
 import app, { server, use } from 'nexus';
 import { auth } from 'nexus-plugin-jwt-auth'
 import '../../graphql/schema';
-import { APP_SECRET } from '../../auth/utils'
 
 const protectedPaths = [
   'Query.me',
 ]
 use(auth({
-  appSecret: APP_SECRET,
+  appSecret: process.env.JWT_SECRET,
   protectedPaths,
   useCookie: true,
   cookieName: 'token',
