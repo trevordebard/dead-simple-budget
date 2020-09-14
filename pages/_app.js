@@ -1,6 +1,6 @@
 import { ApolloProvider } from '@apollo/client';
 import { createGlobalStyle } from 'styled-components';
-import { withApollo } from '../lib/withApollo';
+import { useApollo } from '../lib/apolloClient';
 import Head from '../components/head';
 
 const GlobalStyle = createGlobalStyle`
@@ -118,16 +118,18 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-function MyApp({ Component, pageProps, apollo }) {
+function MyApp({ Component, pageProps }) {
+  const apolloClient = useApollo(pageProps.initialApolloState);
+
   return (
     <>
       <GlobalStyle />
       <Head />
-      <ApolloProvider client={apollo}>
+      <ApolloProvider client={apolloClient}>
         <Component {...pageProps} />
       </ApolloProvider>
     </>
   );
 }
 
-export default withApollo(MyApp);
+export default MyApp;

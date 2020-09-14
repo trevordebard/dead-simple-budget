@@ -61,7 +61,6 @@ schema.queryType({
       type: 'user',
       resolve(_root, _args, ctx) {
         let pris = ctx.db
-        console.log(ctx)
         const userId = getUserId(ctx.token)
         let me = pris.user.findOne({ where: { id: userId } })
         return me;
@@ -94,8 +93,7 @@ schema.mutationType({
           },
         })
         const token = sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: "5 days" });
-        console.log(token)
-        //@ts-ignore
+        // @ts-ignore
         setCookie(ctx.res, 'token', token)
         return {
           token,

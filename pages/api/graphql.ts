@@ -7,9 +7,6 @@ const protectedPaths = [
 ]
 use(auth({
   appSecret: process.env.JWT_SECRET,
-  protectedPaths,
-  useCookie: true,
-  cookieName: 'token',
 }))
 
 app.settings.change({
@@ -18,4 +15,9 @@ app.settings.change({
   },
 });
 app.assemble();
+
+// const handler = (req, res) => {
+//   console.log('cookies!', req.cookies)
+//   return app.server.handlers.graphql(req, res)
+// }
 export default app.server.handlers.graphql
