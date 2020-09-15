@@ -7,6 +7,7 @@ const protectedPaths = [
 ]
 use(auth({
   appSecret: process.env.JWT_SECRET,
+  protectedPaths
 }))
 
 app.settings.change({

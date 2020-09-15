@@ -55,7 +55,7 @@ const Signup = () => {
   const onSubmit = data => {
     const { email, password } = data;
     addUser({
-      variables: { record: { email, password } },
+      variables: { email, password },
     });
     reset();
   };
