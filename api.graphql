@@ -59,6 +59,7 @@ input stacksWhereUniqueInput {
 
 type transactions {
   amount: Float!
+  date: DateTime!
   description: String!
   id: Int!
   stack: String!

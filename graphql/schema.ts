@@ -47,6 +47,7 @@ schema.objectType({
     t.model.stack()
     t.model.type()
     t.model.userId()
+    t.model.date()
   }
 })
 
