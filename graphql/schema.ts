@@ -103,6 +103,12 @@ schema.mutationType({
           data: {
             email,
             password: hashedPassword,
+            budget: {
+              create: {
+                total: 0,
+                toBeBudgeted: 0,
+              }
+            }
           },
         })
         const token = sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: "5 days" });
