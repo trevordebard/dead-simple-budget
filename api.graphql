@@ -31,6 +31,7 @@ The `JSON` scalar type represents JSON objects as specified by [ECMA-404](http:/
 scalar Json
 
 type Mutation {
+  login(email: String!, password: String!): AuthPayload
   signup(email: String!, name: String, password: String!): AuthPayload
 }
 
@@ -61,7 +62,6 @@ type user {
   created_at: DateTime
   email: String!
   id: Int!
-  password: String!
   transactions(after: transactionsWhereUniqueInput, before: transactionsWhereUniqueInput, first: Int, last: Int): [transactions!]!
 }
 

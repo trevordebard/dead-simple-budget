@@ -22,7 +22,6 @@ schema.objectType({
     t.model.id();
     t.model.created_at();
     t.model.email();
-    t.model.password();
     t.model.budget();
     t.model.transactions();
   }
@@ -99,6 +98,43 @@ schema.mutationType({
           token,
           user,
         }
+      },
+    })
+  }
+})
+schema.extendType({
+  type: "Mutation",
+  definition(t) {
+    t.field('login', {
+      type: 'AuthPayload',
+      args: {
+        email: schema.stringArg({ nullable: false }),
+        password: schema.stringArg({ nullable: false }),
+      },
+      resolve: async (_parent, { email, password }, ctx) => {
+        //Check if user exists
+        let user;
+        try {
+          user = await ctx.db.user.findOne({
+            where: {
+              email: email
+            }
+          });
+        } catch (e) {
+          console.error(e)
+          throw new Error(`There was a problem finding user with email: ${email}`)
+        }
+        const passwordMatches = await compare(password, user.password)
+        if (passwordMatches) {
+          const token = sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: "5 days" });
+          // @ts-ignore
+          setCookie(ctx.res, 'token', token)
+          return {
+            user
+          }
+        }
+        console.error(`Email: ${email} attempted login with incorrect password.`)
+        throw new Error(`There was a problem finding user with email: ${email}`)
       },
     })
   }
