@@ -9,6 +9,7 @@ type AuthPayload {
 
 type budget {
   id: Int!
+  stacks(after: stacksWhereUniqueInput, before: stacksWhereUniqueInput, first: Int, last: Int): [stacks!]!
   toBeBudgeted: Float
   total: Float
   userId: Int
@@ -39,9 +40,21 @@ type Query {
   budget(where: budgetWhereUniqueInput!): budget
   budgets(after: budgetWhereUniqueInput, before: budgetWhereUniqueInput, first: Int, last: Int): [budget!]!
   me: user
+  stacks(after: stacksWhereUniqueInput, before: stacksWhereUniqueInput, first: Int, last: Int): [stacks!]!
   transactions(after: transactionsWhereUniqueInput, before: transactionsWhereUniqueInput, first: Int, last: Int): [transactions!]!
   user(where: userWhereUniqueInput!): user
   users(after: userWhereUniqueInput, before: userWhereUniqueInput, first: Int, last: Int): [user!]!
+}
+
+type stacks {
+  amount: Float!
+  budgetId: Int!
+  id: Int!
+  label: String!
+}
+
+input stacksWhereUniqueInput {
+  id: Int
 }
 
 type transactions {

@@ -34,7 +34,8 @@ schema.objectType({
     t.model.toBeBudgeted()
     t.model.total()
     t.model.userId()
-  }
+    t.model.stacks()
+  },
 })
 
 schema.objectType({
@@ -49,6 +50,17 @@ schema.objectType({
   }
 })
 
+schema.objectType({
+  name: "stacks",
+  definition(t) {
+    t.model.id()
+    t.model.label()
+    t.model.amount()
+    t.model.budgetId()
+  }
+
+})
+
 schema.queryType({
   definition(t) {
     t.crud.user();
@@ -56,12 +68,13 @@ schema.queryType({
     t.crud.transactions();
     t.crud.users();
     t.crud.budgets();
+    t.crud.stacks();
     t.field('me', {
       type: 'user',
-      resolve(_root, _args, ctx) {
+      async resolve(_root, _args, ctx) {
         let pris = ctx.db
         const userId = getUserId(ctx.token)
-        let me = pris.user.findOne({ where: { id: userId } })
+        let me = await pris.user.findOne({ where: { id: userId } })
         return me;
       },
     })

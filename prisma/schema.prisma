@@ -17,11 +17,11 @@ model budget {
 }
 
 model stacks {
-  id       Int     @default(autoincrement()) @id
-  budgetId Int?
+  id       Int    @default(autoincrement()) @id
+  budgetId Int
   label    String
-  amount   Float   @default(dbgenerated())
-  budget   budget? @relation(fields: [budgetId], references: [id])
+  amount   Float  @default(dbgenerated())
+  budget   budget @relation(fields: [budgetId], references: [id])
 }
 
 model transactions {
