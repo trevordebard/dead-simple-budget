@@ -1,14 +1,13 @@
 import { gql, useQuery, useMutation } from '@apollo/client';
 
 const UPDATE_STACK = gql`
-  mutation($budgetId: MongoID!, $label: String!, $value: Float!) {
-    budgetUpdateStack(budgetId: $budgetId, label: $label, value: $value) {
-      total
-      toBeBudgeted
-      stacks {
-        value
-        label
-      }
+  mutation($budgetId: Int!, $label: String!, $amount: Float!) {
+    updateOnestacks(
+      data: { amount: { set: $amount } }
+      where: { budgetId_label_idx: { budgetId: $budgetId, label: $label } }
+    ) {
+      label
+      amount
     }
   }
 `;
@@ -68,7 +67,7 @@ const useBudget = () => {
   // For some reason GET_STACK_LABELS is not refetched on add stack, but it is on remove stack ???
   // Not looking deep into this since this will all be changed once I start working with cache more effectively
   const [addStack] = useMutation(ADD_STACK);
-  const [updateStack] = useMutation(UPDATE_STACK, { refetchQueries: ['GET_BUDGET'] });
+  const [updateStack] = useMutation(UPDATE_STACK);
   const [removeStack] = useMutation(REMOVE_STACK, { refetchQueries: ['GET_BUDGET', 'GET_STACK_LABELS'] });
   const [updateTotal] = useMutation(UPDATE_TOTAL);
 

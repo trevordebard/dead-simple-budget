@@ -15,29 +15,29 @@ const StackInput = styled(FormInput)`
   }
 `;
 
-const BudgetStack = ({ label, register, budgetId, value, errors, updateStack, removeStack }) => {
-  const [prevValue, setPrevValue] = useState(value);
+const BudgetStack = ({ label, register, budgetId, amount, errors, updateStack, removeStack }) => {
+  const [prevAmount, setPrevAmount] = useState(amount);
   return (
     <ListRow>
       <p>{label} </p>
       <StackInput
         name={label}
         type="number"
-        defaultValue={value}
-        danger={value < 0}
+        defaultValue={amount}
+        danger={amount < 0}
         register={register}
         onBlur={e => {
           const newVal = parseFloat(e.target.value);
           // Prevent api call if vlaue didn't change
-          if (newVal !== prevValue) {
+          if (newVal !== prevAmount) {
             updateStack({
               variables: {
                 budgetId,
                 label,
-                value: newVal,
+                amount: newVal,
               },
             });
-            setPrevValue(newVal);
+            setPrevAmount(newVal);
           }
         }}
       />

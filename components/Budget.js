@@ -105,7 +105,7 @@ function Budget() {
           label={item.label}
           register={register}
           budgetId={budgetId}
-          value={item.value}
+          amount={item.amount}
           errors={errors}
           updateStack={updateStack}
           removeStack={removeStack}
