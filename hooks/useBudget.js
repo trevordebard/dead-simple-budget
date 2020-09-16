@@ -48,19 +48,21 @@ const REMOVE_STACK = gql`
     }
   }
 `;
+
 const GET_BUDGET = gql`
   query GET_BUDGET {
     me {
-      _id
+      id
+      email
       budget {
-        _userId
-        _id
+        id
+        userId
         total
         toBeBudgeted
         stacks {
-          _id
+          id
           label
-          value
+          amount
         }
       }
     }
@@ -77,7 +79,7 @@ const useBudget = () => {
   const [removeStack] = useMutation(REMOVE_STACK, { refetchQueries: ['GET_BUDGET', 'GET_STACK_LABELS'] });
   const [updateTotal] = useMutation(UPDATE_TOTAL, { refetchQueries: ['GET_BUDGET'] });
 
-  return { loading, data: data?.me.budget, error, addStack, updateStack, removeStack, updateTotal };
+  return { loading, data: data?.me.budget[0], error, addStack, updateStack, removeStack, updateTotal };
 };
 
 export default useBudget;

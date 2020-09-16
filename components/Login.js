@@ -46,10 +46,22 @@ const Card = styled.div`
   border: 1px solid var(--lineColor);
 `;
 const LOGIN = gql`
-  mutation($email: String!, $password: String!) {
-    userLogin(email: $email, password: $password) {
-      record {
+  mutation login($email: String!, $password: String!) {
+    login(email: $email, password: $password) {
+      user {
         email
+        budget {
+          stacks {
+            label
+            amount
+          }
+        }
+        transactions {
+          description
+          amount
+          type
+          date
+        }
       }
     }
   }
@@ -60,7 +72,7 @@ const Login = () => {
   const { user, loading: userLoading, loggedIn } = useUser();
 
   const [loginUser, { loading: loginLoading, error: loginError }] = useMutation(LOGIN, {
-    onCompleted: () => Router.push('/'),
+    onCompleted: () => Router.push('/budget'),
     onError: err => console.error(err.message),
   });
   const onSubmit = async payload => {

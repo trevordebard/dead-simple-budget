@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import useBudget from '../hooks/useBudget';
 import FormInput from './FormInput';
 import BudgetStack from './BudgetStack';
-import RequireLogin from './RequireLogin';
 import { Button } from './styled';
 import EditableText from './EditableText';
 
@@ -41,9 +40,9 @@ const AddStackWrapper = styled.div`
 
 function Budget() {
   const { data, loading, error, addStack, updateStack, removeStack, updateTotal } = useBudget();
+  console.log('data', data);
   const { register, handleSubmit, errors, reset } = useForm();
   const [editTotalVisible, setEditTotalVisible] = useState(false);
-
   if (loading) {
     return <p>Loading...</p>;
   }
@@ -88,7 +87,7 @@ function Budget() {
             <SubText> to be budgeted</SubText>
           </h5>
         </ToplineBudget>
-        {renderStacks(data?.stacks, data._id)}
+        {renderStacks(data?.stacks, data.id)}
         <AddStackWrapper>
           <FormInput name="newStack" register={register} errors={errors} placeholder="Stack Name" autoComplete="off" />
           <Button isAction type="button" register={register} name="addStack" onClick={handleSubmit(onAddStack)}>
@@ -99,7 +98,6 @@ function Budget() {
       <br />
     </div>
   );
-
   function renderStacks(stacks, budgetId) {
     return stacks.map(item => (
       <div key={item._id}>
@@ -117,4 +115,4 @@ function Budget() {
   }
 }
 
-export default RequireLogin(Budget);
+export default Budget;

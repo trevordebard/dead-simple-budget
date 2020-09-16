@@ -4,7 +4,6 @@ const ME = gql`
   query ME {
     me {
       email
-      _id
     }
   }
 `;
