@@ -54,11 +54,11 @@ function Budget() {
     console.log(payload);
   };
   const onAddStack = payload => {
-    reset({ newStack: '' });
     addStack({
-      variables: { newStackLabel: payload.newStack, budgetId: data._id },
-      refetchQueries: ['GET_BUDGET'], // Eventually change to update cache
+      variables: { newStackLabel: payload.newStack, budgetId: data.id },
+      // refetchQueries: ['GET_BUDGET'], // Eventually change to update cache
     });
+    reset({ newStack: '' });
   };
   return (
     <div>
@@ -73,7 +73,7 @@ function Budget() {
                   updateTotal({
                     variables: {
                       total: parseFloat(total),
-                      budgetId: data._id,
+                      budgetId: data.id,
                     },
                   })
                 }

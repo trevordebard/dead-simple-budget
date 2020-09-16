@@ -14,25 +14,18 @@ const UPDATE_STACK = gql`
 `;
 
 const UPDATE_TOTAL = gql`
-  mutation($budgetId: MongoID!, $total: Float!) {
-    budgetUpdateById(record: { _id: $budgetId, total: $total }) {
-      record {
-        total
-        _id
-      }
+  mutation($budgetId: Int!, $total: Float!) {
+    updateOnebudget(data: { total: { set: $total } }, where: { id: $budgetId }) {
+      total
     }
   }
 `;
 
 const ADD_STACK = gql`
-  mutation($budgetId: MongoID!, $newStackLabel: String!, $newStackValue: Float) {
-    budgetPushToStacks(budgetId: $budgetId, newStackLabel: $newStackLabel, newStackValue: $newStackValue) {
-      total
-      toBeBudgeted
-      stacks {
-        label
-        value
-      }
+  mutation($budgetId: Int!, $newStackLabel: String!) {
+    createOnestacks(data: { label: $newStackLabel, budget: { connect: { id: $budgetId } } }) {
+      label
+      amount
     }
   }
 `;
@@ -74,10 +67,10 @@ const useBudget = () => {
   // TODO: Update stack label cache on addStack
   // For some reason GET_STACK_LABELS is not refetched on add stack, but it is on remove stack ???
   // Not looking deep into this since this will all be changed once I start working with cache more effectively
-  const [addStack] = useMutation(ADD_STACK, { refetchQueries: ['GET_BUDGET', 'GET_STACK_LABELS'] });
+  const [addStack] = useMutation(ADD_STACK);
   const [updateStack] = useMutation(UPDATE_STACK, { refetchQueries: ['GET_BUDGET'] });
   const [removeStack] = useMutation(REMOVE_STACK, { refetchQueries: ['GET_BUDGET', 'GET_STACK_LABELS'] });
-  const [updateTotal] = useMutation(UPDATE_TOTAL, { refetchQueries: ['GET_BUDGET'] });
+  const [updateTotal] = useMutation(UPDATE_TOTAL);
 
   return { loading, data: data?.me.budget[0], error, addStack, updateStack, removeStack, updateTotal };
 };

@@ -90,36 +90,39 @@ schema.objectType({
 })
 schema.mutationType({
   definition(t) {
-    t.field('signup', {
-      type: 'AuthPayload',
-      args: {
-        name: schema.stringArg(),
-        email: schema.stringArg({ nullable: false }),
-        password: schema.stringArg({ nullable: false }),
-      },
-      resolve: async (_parent, { name, email, password }, ctx) => {
-        const hashedPassword = await hash(password, 10)
-        const user = await ctx.db.user.create({
-          data: {
-            email,
-            password: hashedPassword,
-            budget: {
-              create: {
-                total: 0,
-                toBeBudgeted: 0,
+    t.crud.updateOnebudget(),
+      t.crud.updateOnestacks(),
+      t.crud.createOnestacks(),
+      t.field('signup', {
+        type: 'AuthPayload',
+        args: {
+          name: schema.stringArg(),
+          email: schema.stringArg({ nullable: false }),
+          password: schema.stringArg({ nullable: false }),
+        },
+        resolve: async (_parent, { name, email, password }, ctx) => {
+          const hashedPassword = await hash(password, 10)
+          const user = await ctx.db.user.create({
+            data: {
+              email,
+              password: hashedPassword,
+              budget: {
+                create: {
+                  total: 0,
+                  toBeBudgeted: 0,
+                }
               }
-            }
-          },
-        })
-        const token = sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: "5 days" });
-        // @ts-ignore
-        setCookie(ctx.res, 'token', token)
-        return {
-          token,
-          user,
-        }
-      },
-    })
+            },
+          })
+          const token = sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: "5 days" });
+          // @ts-ignore
+          setCookie(ctx.res, 'token', token)
+          return {
+            token,
+            user,
+          }
+        },
+      })
   }
 })
 schema.extendType({

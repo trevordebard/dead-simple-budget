@@ -15,6 +15,47 @@ type budget {
   userId: Int
 }
 
+input budgetCreateOneWithoutStacksInput {
+  connect: budgetWhereUniqueInput
+  create: budgetCreateWithoutStacksInput
+}
+
+input budgetCreateWithoutStacksInput {
+  toBeBudgeted: Float
+  total: Float
+  user: userCreateOneWithoutBudgetInput
+}
+
+input BudgetId_label_idxCompoundUniqueInput {
+  budgetId: Int!
+  label: String!
+}
+
+input budgetUpdateInput {
+  stacks: stacksUpdateManyWithoutBudgetInput
+  toBeBudgeted: NullableFloatFieldUpdateOperationsInput
+  total: NullableFloatFieldUpdateOperationsInput
+  user: userUpdateOneWithoutBudgetInput
+}
+
+input budgetUpdateOneRequiredWithoutStacksInput {
+  connect: budgetWhereUniqueInput
+  create: budgetCreateWithoutStacksInput
+  update: budgetUpdateWithoutStacksDataInput
+  upsert: budgetUpsertWithoutStacksInput
+}
+
+input budgetUpdateWithoutStacksDataInput {
+  toBeBudgeted: NullableFloatFieldUpdateOperationsInput
+  total: NullableFloatFieldUpdateOperationsInput
+  user: userUpdateOneWithoutBudgetInput
+}
+
+input budgetUpsertWithoutStacksInput {
+  create: budgetCreateWithoutStacksInput!
+  update: budgetUpdateWithoutStacksDataInput!
+}
+
 input budgetWhereUniqueInput {
   id: Int
 }
@@ -26,14 +67,135 @@ A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the
 """
 scalar DateTime
 
+input DateTimeFieldUpdateOperationsInput {
+  set: DateTime
+}
+
+input DateTimeFilter {
+  equals: DateTime
+  gt: DateTime
+  gte: DateTime
+  in: [DateTime!]
+  lt: DateTime
+  lte: DateTime
+  not: NestedDateTimeFilter
+  notIn: [DateTime!]
+}
+
+input FloatFieldUpdateOperationsInput {
+  set: Float
+}
+
+input FloatFilter {
+  equals: Float
+  gt: Float
+  gte: Float
+  in: [Float!]
+  lt: Float
+  lte: Float
+  not: NestedFloatFilter
+  notIn: [Float!]
+}
+
+input IntFilter {
+  equals: Int
+  gt: Int
+  gte: Int
+  in: [Int!]
+  lt: Int
+  lte: Int
+  not: NestedIntFilter
+  notIn: [Int!]
+}
+
+input IntNullableFilter {
+  equals: Int
+  gt: Int
+  gte: Int
+  in: [Int!]
+  lt: Int
+  lte: Int
+  not: NestedIntNullableFilter
+  notIn: [Int!]
+}
+
 """
 The `JSON` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
 scalar Json
 
 type Mutation {
+  createOnestacks(data: stacksCreateInput!): stacks!
   login(email: String!, password: String!): AuthPayload
   signup(email: String!, name: String, password: String!): AuthPayload
+  updateOnebudget(data: budgetUpdateInput!, where: budgetWhereUniqueInput!): budget
+  updateOnestacks(data: stacksUpdateInput!, where: stacksWhereUniqueInput!): stacks
+}
+
+input NestedDateTimeFilter {
+  equals: DateTime
+  gt: DateTime
+  gte: DateTime
+  in: [DateTime!]
+  lt: DateTime
+  lte: DateTime
+  not: NestedDateTimeFilter
+  notIn: [DateTime!]
+}
+
+input NestedFloatFilter {
+  equals: Float
+  gt: Float
+  gte: Float
+  in: [Float!]
+  lt: Float
+  lte: Float
+  not: NestedFloatFilter
+  notIn: [Float!]
+}
+
+input NestedIntFilter {
+  equals: Int
+  gt: Int
+  gte: Int
+  in: [Int!]
+  lt: Int
+  lte: Int
+  not: NestedIntFilter
+  notIn: [Int!]
+}
+
+input NestedIntNullableFilter {
+  equals: Int
+  gt: Int
+  gte: Int
+  in: [Int!]
+  lt: Int
+  lte: Int
+  not: NestedIntNullableFilter
+  notIn: [Int!]
+}
+
+input NestedStringFilter {
+  contains: String
+  endsWith: String
+  equals: String
+  gt: String
+  gte: String
+  in: [String!]
+  lt: String
+  lte: String
+  not: NestedStringFilter
+  notIn: [String!]
+  startsWith: String
+}
+
+input NullableDateTimeFieldUpdateOperationsInput {
+  set: DateTime
+}
+
+input NullableFloatFieldUpdateOperationsInput {
+  set: Float
 }
 
 type Query {
@@ -53,8 +215,92 @@ type stacks {
   label: String!
 }
 
+input stacksCreateInput {
+  amount: Float
+  budget: budgetCreateOneWithoutStacksInput!
+  label: String!
+}
+
+input stacksCreateWithoutBudgetInput {
+  amount: Float
+  label: String!
+}
+
+input stacksScalarWhereInput {
+  amount: FloatFilter
+  AND: [stacksScalarWhereInput!]
+  budgetId: IntFilter
+  id: IntFilter
+  label: StringFilter
+  NOT: [stacksScalarWhereInput!]
+  OR: [stacksScalarWhereInput!]
+}
+
+input stacksUpdateInput {
+  amount: FloatFieldUpdateOperationsInput
+  budget: budgetUpdateOneRequiredWithoutStacksInput
+  label: StringFieldUpdateOperationsInput
+}
+
+input stacksUpdateManyDataInput {
+  amount: FloatFieldUpdateOperationsInput
+  label: StringFieldUpdateOperationsInput
+}
+
+input stacksUpdateManyWithoutBudgetInput {
+  connect: [stacksWhereUniqueInput!]
+  create: [stacksCreateWithoutBudgetInput!]
+  delete: [stacksWhereUniqueInput!]
+  deleteMany: [stacksScalarWhereInput!]
+  disconnect: [stacksWhereUniqueInput!]
+  set: [stacksWhereUniqueInput!]
+  update: [stacksUpdateWithWhereUniqueWithoutBudgetInput!]
+  updateMany: [stacksUpdateManyWithWhereNestedInput!]
+  upsert: [stacksUpsertWithWhereUniqueWithoutBudgetInput!]
+}
+
+input stacksUpdateManyWithWhereNestedInput {
+  data: stacksUpdateManyDataInput!
+  where: stacksScalarWhereInput!
+}
+
+input stacksUpdateWithoutBudgetDataInput {
+  amount: FloatFieldUpdateOperationsInput
+  label: StringFieldUpdateOperationsInput
+}
+
+input stacksUpdateWithWhereUniqueWithoutBudgetInput {
+  data: stacksUpdateWithoutBudgetDataInput!
+  where: stacksWhereUniqueInput!
+}
+
+input stacksUpsertWithWhereUniqueWithoutBudgetInput {
+  create: stacksCreateWithoutBudgetInput!
+  update: stacksUpdateWithoutBudgetDataInput!
+  where: stacksWhereUniqueInput!
+}
+
 input stacksWhereUniqueInput {
+  budgetId_label_idx: BudgetId_label_idxCompoundUniqueInput
   id: Int
+}
+
+input StringFieldUpdateOperationsInput {
+  set: String
+}
+
+input StringFilter {
+  contains: String
+  endsWith: String
+  equals: String
+  gt: String
+  gte: String
+  in: [String!]
+  lt: String
+  lte: String
+  not: NestedStringFilter
+  notIn: [String!]
+  startsWith: String
 }
 
 type transactions {
@@ -67,6 +313,76 @@ type transactions {
   userId: Int
 }
 
+input transactionsCreateManyWithoutUserInput {
+  connect: [transactionsWhereUniqueInput!]
+  create: [transactionsCreateWithoutUserInput!]
+}
+
+input transactionsCreateWithoutUserInput {
+  amount: Float!
+  date: DateTime!
+  description: String!
+  stack: String!
+  type: String!
+}
+
+input transactionsScalarWhereInput {
+  amount: FloatFilter
+  AND: [transactionsScalarWhereInput!]
+  date: DateTimeFilter
+  description: StringFilter
+  id: IntFilter
+  NOT: [transactionsScalarWhereInput!]
+  OR: [transactionsScalarWhereInput!]
+  stack: StringFilter
+  type: StringFilter
+  userId: IntNullableFilter
+}
+
+input transactionsUpdateManyDataInput {
+  amount: FloatFieldUpdateOperationsInput
+  date: DateTimeFieldUpdateOperationsInput
+  description: StringFieldUpdateOperationsInput
+  stack: StringFieldUpdateOperationsInput
+  type: StringFieldUpdateOperationsInput
+}
+
+input transactionsUpdateManyWithoutUserInput {
+  connect: [transactionsWhereUniqueInput!]
+  create: [transactionsCreateWithoutUserInput!]
+  delete: [transactionsWhereUniqueInput!]
+  deleteMany: [transactionsScalarWhereInput!]
+  disconnect: [transactionsWhereUniqueInput!]
+  set: [transactionsWhereUniqueInput!]
+  update: [transactionsUpdateWithWhereUniqueWithoutUserInput!]
+  updateMany: [transactionsUpdateManyWithWhereNestedInput!]
+  upsert: [transactionsUpsertWithWhereUniqueWithoutUserInput!]
+}
+
+input transactionsUpdateManyWithWhereNestedInput {
+  data: transactionsUpdateManyDataInput!
+  where: transactionsScalarWhereInput!
+}
+
+input transactionsUpdateWithoutUserDataInput {
+  amount: FloatFieldUpdateOperationsInput
+  date: DateTimeFieldUpdateOperationsInput
+  description: StringFieldUpdateOperationsInput
+  stack: StringFieldUpdateOperationsInput
+  type: StringFieldUpdateOperationsInput
+}
+
+input transactionsUpdateWithWhereUniqueWithoutUserInput {
+  data: transactionsUpdateWithoutUserDataInput!
+  where: transactionsWhereUniqueInput!
+}
+
+input transactionsUpsertWithWhereUniqueWithoutUserInput {
+  create: transactionsCreateWithoutUserInput!
+  update: transactionsUpdateWithoutUserDataInput!
+  where: transactionsWhereUniqueInput!
+}
+
 input transactionsWhereUniqueInput {
   id: Int
 }
@@ -77,6 +393,39 @@ type user {
   email: String!
   id: Int!
   transactions(after: transactionsWhereUniqueInput, before: transactionsWhereUniqueInput, first: Int, last: Int): [transactions!]!
+}
+
+input userCreateOneWithoutBudgetInput {
+  connect: userWhereUniqueInput
+  create: userCreateWithoutBudgetInput
+}
+
+input userCreateWithoutBudgetInput {
+  created_at: DateTime
+  email: String!
+  password: String!
+  transactions: transactionsCreateManyWithoutUserInput
+}
+
+input userUpdateOneWithoutBudgetInput {
+  connect: userWhereUniqueInput
+  create: userCreateWithoutBudgetInput
+  delete: Boolean
+  disconnect: Boolean
+  update: userUpdateWithoutBudgetDataInput
+  upsert: userUpsertWithoutBudgetInput
+}
+
+input userUpdateWithoutBudgetDataInput {
+  created_at: NullableDateTimeFieldUpdateOperationsInput
+  email: StringFieldUpdateOperationsInput
+  password: StringFieldUpdateOperationsInput
+  transactions: transactionsUpdateManyWithoutUserInput
+}
+
+input userUpsertWithoutBudgetInput {
+  create: userCreateWithoutBudgetInput!
+  update: userUpdateWithoutBudgetDataInput!
 }
 
 input userWhereUniqueInput {

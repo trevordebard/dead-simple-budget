@@ -22,6 +22,8 @@ model stacks {
   label    String
   amount   Float  @default(dbgenerated())
   budget   budget @relation(fields: [budgetId], references: [id])
+
+  @@unique([budgetId, label], name: "budgetId_label_idx")
 }
 
 model transactions {
