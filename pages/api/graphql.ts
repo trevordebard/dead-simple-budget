@@ -1,7 +1,9 @@
 import app, { server, use } from 'nexus';
 import { auth } from 'nexus-plugin-jwt-auth'
 import '../../graphql/schema';
+import nextConnect from 'next-connect'
 
+//TODO: update with all paths (or at least most)
 const protectedPaths = [
   'Query.me',
 ]
@@ -17,8 +19,5 @@ app.settings.change({
 });
 app.assemble();
 
-// const handler = (req, res) => {
-//   console.log('cookies!', req.cookies)
-//   return app.server.handlers.graphql(req, res)
-// }
-export default app.server.handlers.graphql
+export default nextConnect()
+  .use(app.server.handlers.graphql)
