@@ -61,7 +61,9 @@ const LoggedInNav = ({ email }) => {
     <>
       <LogoWrapper>
         <Link href="/">
-          <Logo />
+          <>
+            <Logo />
+          </>
         </Link>
       </LogoWrapper>
 
