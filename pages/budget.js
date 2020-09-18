@@ -1,27 +1,8 @@
-import { gql } from '@apollo/client';
 import Budget from '../components/Budget';
 import Layout from '../components/Layout';
 import { initializeApollo } from '../lib/apolloClient';
+import { GET_ME } from '../lib/queries/GET_ME';
 
-const TestMe = gql`
-  query TestMe {
-    me {
-      id
-      email
-      budget {
-        id
-        userId
-        total
-        toBeBudgeted
-        stacks {
-          id
-          label
-          amount
-        }
-      }
-    }
-  }
-`;
 const BudgetPage = () => (
   <Layout>
     <Budget />
@@ -36,7 +17,7 @@ export async function getServerSideProps(context) {
   // if valid, continue with initializing apollo
   const apolloClient = initializeApollo(null, context);
   try {
-    const data = await apolloClient.query({ query: TestMe });
+    const data = await apolloClient.query({ query: GET_ME });
   } catch (e) {
     if (e.graphQLErrors[0].message.toLowerCase() === 'not authorized!') {
       console.error('not authorized');

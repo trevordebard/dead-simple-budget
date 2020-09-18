@@ -85,7 +85,6 @@ const NewTransaction = () => {
               {label}
             </option>
           ))}
-        }
       </FormSelect>
       <FormInput
         name="date"

@@ -5,10 +5,9 @@ import { ADD_TRANSACTION } from '../lib/queries/ADD_TRANSACTION';
 const GET_STACK_LABELS = gql`
   query GET_STACK_LABELS {
     me {
-      _id
+      id
       budget {
-        _id
-        stackLabels
+        id
         stacks {
           label
         }
@@ -33,6 +32,7 @@ export const EDIT_TRANSACTION = gql`
 const useTransactions = () => {
   const { data, loading } = useQuery(GET_TRANSACTIONS);
   const { data: stackLabelData } = useQuery(GET_STACK_LABELS);
+
   const [editTransaction] = useMutation(EDIT_TRANSACTION);
   const [addTransaction] = useMutation(ADD_TRANSACTION, {
     update: (cache, { data: resData }) => {
@@ -47,6 +47,7 @@ const useTransactions = () => {
   });
   let transactions;
   let stackLabels;
+
   if (data?.me) {
     transactions = data.me.transactions;
   }
