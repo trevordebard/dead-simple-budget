@@ -5,13 +5,13 @@
     "dev": "concurrently -r \"npx nexus dev\" \"next\"",
     "deploy-dev": "npm ci && npm run build && pm2 restart budget-dev",
     "deploy-production": "npm ci && npm run build && pm2 restart budget-prod",
-    "build": "next build",
+    "build": "nexus build && next build",
     "start": "next start",
     "start-dev": "next start -p 4000",
     "start-production": "next start -p 5000"
   },
   "dependencies": {
-    "@apollo/client": "^3.1.4",
+    "@apollo/client": "^3.2.0",
     "@apollo/react-ssr": "^4.0.0",
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
