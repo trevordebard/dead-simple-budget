@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import { useMutation } from '@apollo/client';
 import { useRouter } from 'next/router';
-import { ADD_USER } from '../lib/queries/ADD_USER';
+import { ADD_USER } from '../graphql/queries/ADD_USER';
 import FormInput from './FormInput';
 import { ActionButton } from './styled';
 

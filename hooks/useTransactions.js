@@ -1,6 +1,6 @@
 import { useQuery, useMutation, gql } from '@apollo/client';
-import { GET_TRANSACTIONS } from '../lib/queries/GET_TRANSACTIONS';
-import { ADD_TRANSACTION } from '../lib/queries/ADD_TRANSACTION';
+import { GET_TRANSACTIONS } from '../graphql/queries/GET_TRANSACTIONS';
+import { ADD_TRANSACTION } from '../graphql/queries/ADD_TRANSACTION';
 
 const GET_STACK_LABELS = gql`
   query GET_STACK_LABELS {

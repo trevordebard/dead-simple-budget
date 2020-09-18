@@ -1,7 +1,7 @@
 import Budget from '../components/Budget';
 import Layout from '../components/Layout';
 import { initializeApollo } from '../lib/apolloClient';
-import { GET_ME } from '../lib/queries/GET_ME';
+import { GET_ME } from '../graphql/queries/GET_ME';
 
 const BudgetPage = () => (
   <Layout>

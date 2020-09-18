@@ -1,6 +1,6 @@
 import Login from '../components/Login';
 import { initializeApollo } from '../lib/apolloClient';
-import { GET_ME } from '../lib/queries/GET_ME';
+import { GET_ME } from '../graphql/queries/GET_ME';
 
 export default Login;
 export async function getServerSideProps(context) {
