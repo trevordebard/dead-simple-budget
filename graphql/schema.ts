@@ -93,6 +93,8 @@ schema.mutationType({
     t.crud.updateOnebudget(),
       t.crud.updateOnestacks(),
       t.crud.createOnestacks(),
+      t.crud.createOnetransactions(),
+      t.crud.updateOnetransactions(),
       t.field('signup', {
         type: 'AuthPayload',
         args: {

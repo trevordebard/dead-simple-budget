@@ -31,8 +31,8 @@ const NewTransaction = () => {
 
   const onSubmit = () => {
     const data = getValues();
-    const { description, stack, date } = data;
-    let { amount } = data;
+    const { description, stack } = data;
+    let { amount, date } = data;
 
     amount = parseFloat(amount);
     if (transactionType === 'withdrawal') {
@@ -40,12 +40,8 @@ const NewTransaction = () => {
     }
 
     reset();
-    addTransaction({
-      variables: { record: { description, amount, stack, date, type: transactionType } },
-      refetchQueries: { query: GET_TRANSACTIONS },
-    });
+    addTransaction(description, amount, stack, date, transactionType);
   };
-
   return (
     <NewtransactionWrapper onSubmit={handleSubmit(onSubmit)}>
       <h4>New Transaction</h4>

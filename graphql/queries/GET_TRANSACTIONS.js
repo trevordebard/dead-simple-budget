@@ -4,6 +4,7 @@ export const GET_TRANSACTIONS = gql`
   query GET_TRANSACTIONS {
     me {
       id
+      email
       transactions {
         id
         stack

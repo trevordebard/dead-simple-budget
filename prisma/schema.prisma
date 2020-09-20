@@ -32,9 +32,9 @@ model transactions {
   stack       String
   amount      Float
   type        String
-  userId      Int?
+  userId      Int
   date        DateTime
-  user        user?    @relation(fields: [userId], references: [id])
+  user        user     @relation(fields: [userId], references: [id])
 }
 
 model user {

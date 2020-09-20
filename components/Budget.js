@@ -100,7 +100,7 @@ function Budget() {
   );
   function renderStacks(stacks, budgetId) {
     return stacks.map(item => (
-      <div key={item._id}>
+      <div key={item.id}>
         <BudgetStack
           label={item.label}
           register={register}

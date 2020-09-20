@@ -32,11 +32,12 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
 
   useEffect(() => {
     reset();
+    // TODO: Not sure why I did this with fragments. Look into better way to do this on load to prevent flicker
     const data = client.readFragment({
-      id: `Transaction:${transactionId}`,
+      id: `transactions:${transactionId}`,
       fragment: gql`
-        fragment myTest on Transaction {
-          _id
+        fragment selectedTransaction on transactions {
+          id
           amount
           date
           stack
@@ -57,22 +58,11 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
     if (transactionType === 'withdrawal') {
       amount = -amount;
     }
-    editTransaction({
-      variables: {
-        record: {
-          _id: transactionId,
-          amount,
-          date,
-          stack,
-          description,
-          type: transactionType,
-        },
-      },
-    });
+    editTransaction(transactionId, description, amount, stack, date, transactionType);
     cancelEdit();
   };
   if (!cachedTransaction) {
-    return <div>Error</div>;
+    return null;
   }
   return (
     <EditTransactionWrapper onSubmit={handleSubmit(onSubmit)}>
