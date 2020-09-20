@@ -41,10 +41,8 @@ const Nav = () => {
 };
 const LOGOUT = gql`
   mutation LOGOUT {
-    userLogout {
-      record {
-        email
-      }
+    logout {
+      message
     }
   }
 `;

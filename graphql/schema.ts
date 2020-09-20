@@ -88,6 +88,12 @@ schema.objectType({
     t.field('user', { type: 'user' })
   },
 })
+schema.objectType({
+  name: 'LogoutResponse',
+  definition(t) {
+    t.string('message')
+  }
+})
 schema.mutationType({
   definition(t) {
     t.crud.updateOnebudget(),
@@ -125,6 +131,17 @@ schema.mutationType({
           }
         },
       })
+
+    t.field('logout', {
+      type: 'LogoutResponse',
+      resolve: async (_parent, args, ctx) => {
+        // @ts-ignore
+        setCookie(ctx.res, 'token', "")
+        return {
+          message: 'You have been logged out'
+        }
+      },
+    })
   }
 })
 schema.extendType({
