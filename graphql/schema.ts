@@ -58,6 +58,7 @@ schema.objectType({
     t.model.label()
     t.model.amount()
     t.model.budgetId()
+    t.model.created_at()
   }
 
 })

@@ -13,6 +13,7 @@ export const GET_ME = gql`
           id
           label
           amount
+          created_at
         }
        
       }

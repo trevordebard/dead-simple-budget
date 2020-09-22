@@ -99,7 +99,8 @@ function Budget() {
     </div>
   );
   function renderStacks(stacks, budgetId) {
-    return stacks.map(item => (
+    const sortedStacks = stacks.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+    return sortedStacks.map(item => (
       <div key={item.id}>
         <BudgetStack
           label={item.label}

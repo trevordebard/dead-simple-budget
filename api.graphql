@@ -300,6 +300,7 @@ type Query {
 type stacks {
   amount: Float!
   budgetId: Int!
+  created_at: DateTime!
   id: Int!
   label: String!
 }
@@ -307,6 +308,7 @@ type stacks {
 input stacksCreateInput {
   amount: Float
   budget: budgetCreateOneWithoutStacksInput!
+  created_at: DateTime
   label: String!
 }
 
@@ -317,6 +319,7 @@ input stacksCreateManyWithoutBudgetInput {
 
 input stacksCreateWithoutBudgetInput {
   amount: Float
+  created_at: DateTime
   label: String!
 }
 
@@ -324,6 +327,7 @@ input stacksScalarWhereInput {
   amount: FloatFilter
   AND: [stacksScalarWhereInput!]
   budgetId: IntFilter
+  created_at: DateTimeFilter
   id: IntFilter
   label: StringFilter
   NOT: [stacksScalarWhereInput!]
@@ -333,11 +337,13 @@ input stacksScalarWhereInput {
 input stacksUpdateInput {
   amount: FloatFieldUpdateOperationsInput
   budget: budgetUpdateOneRequiredWithoutStacksInput
+  created_at: DateTimeFieldUpdateOperationsInput
   label: StringFieldUpdateOperationsInput
 }
 
 input stacksUpdateManyDataInput {
   amount: FloatFieldUpdateOperationsInput
+  created_at: DateTimeFieldUpdateOperationsInput
   label: StringFieldUpdateOperationsInput
 }
 
@@ -360,6 +366,7 @@ input stacksUpdateManyWithWhereNestedInput {
 
 input stacksUpdateWithoutBudgetDataInput {
   amount: FloatFieldUpdateOperationsInput
+  created_at: DateTimeFieldUpdateOperationsInput
   label: StringFieldUpdateOperationsInput
 }
 

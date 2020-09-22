@@ -58,6 +58,7 @@ const GET_BUDGET = gql`
           id
           label
           amount
+          created_at
         }
       }
     }
@@ -65,7 +66,7 @@ const GET_BUDGET = gql`
 `;
 
 const useBudget = () => {
-  const { data, loading, error } = useQuery(GET_BUDGET, { fetchPolicy: 'cache-only' });
+  const { data, loading, error } = useQuery(GET_BUDGET);
   // TODO: Update stack label cache on addStack
   // For some reason GET_STACK_LABELS is not refetched on add stack, but it is on remove stack ???
   // Not looking deep into this since this will all be changed once I start working with cache more effectively
@@ -83,11 +84,13 @@ const useBudget = () => {
       });
     },
   });
+  const budget = JSON.parse(JSON.stringify(data.me.budget[0]));
+
   const [updateStack] = useMutation(UPDATE_STACK);
   const [removeStack] = useMutation(REMOVE_STACK, { refetchQueries: ['GET_BUDGET', 'GET_STACK_LABELS'] });
   const [updateTotal] = useMutation(UPDATE_TOTAL);
 
-  return { loading, data: data?.me.budget[0], error, addStack, updateStack, removeStack, updateTotal };
+  return { loading, data: budget, error, addStack, updateStack, removeStack, updateTotal };
 };
 
 export default useBudget;
