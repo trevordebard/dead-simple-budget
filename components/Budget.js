@@ -41,7 +41,7 @@ const AddStackWrapper = styled.div`
 function Budget() {
   const { data, loading, error, addStack, updateStack, removeStack, updateTotal } = useBudget();
   console.log('data', data);
-  const { register, handleSubmit, errors, reset } = useForm();
+  const { register, handleSubmit, errors, reset, setValue } = useForm();
   const [editTotalVisible, setEditTotalVisible] = useState(false);
   if (loading) {
     return <p>Loading...</p>;
@@ -110,6 +110,7 @@ function Budget() {
           errors={errors}
           updateStack={updateStack}
           removeStack={removeStack}
+          setValue={setValue}
         />
       </div>
     ));
