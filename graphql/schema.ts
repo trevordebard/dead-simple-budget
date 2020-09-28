@@ -97,8 +97,24 @@ schema.objectType({
 })
 schema.mutationType({
   definition(t) {
-    t.crud.updateOnebudget(),
-      t.crud.updateOnestacks(),
+    t.crud.updateOnebudget({
+      async resolve(root, args, ctx, info, originalResolve) {
+        const res = await originalResolve(root, args, ctx, info)
+        const { sum: { amount: sumOfStacks } } = await ctx.db.stacks.aggregate({ sum: { amount: true } })
+        const { total } = await ctx.db.budget.findOne({ where: { id: res.id } })
+        await ctx.db.budget.update({ data: { toBeBudgeted: { set: total - sumOfStacks } }, where: { id: res.id } })
+        return res
+      },
+    }),
+      t.crud.updateOnestacks({
+        async resolve(root, args, ctx, info, originalResolve) {
+          const res = await originalResolve(root, args, ctx, info)
+          const { sum: { amount: sumOfStacks } } = await ctx.db.stacks.aggregate({ sum: { amount: true } })
+          const { total } = await ctx.db.budget.findOne({ where: { id: res.budgetId } })
+          await ctx.db.budget.update({ data: { toBeBudgeted: { set: total - sumOfStacks } }, where: { id: res.budgetId } })
+          return res
+        },
+      }),
       t.crud.createOnestacks(),
       t.crud.createOnetransactions(),
       t.crud.updateOnetransactions(),

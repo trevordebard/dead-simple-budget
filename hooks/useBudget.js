@@ -75,7 +75,6 @@ const useBudget = () => {
       const existingBudget = cache.readQuery({
         query: GET_ME,
       });
-
       const newBudget = JSON.parse(JSON.stringify(existingBudget));
       newBudget.me.budget[0].stacks = [...newBudget.me.budget[0].stacks, result.createOnestacks];
       cache.writeQuery({
@@ -84,11 +83,13 @@ const useBudget = () => {
       });
     },
   });
-  const budget = JSON.parse(JSON.stringify(data.me.budget[0]));
 
-  const [updateStack] = useMutation(UPDATE_STACK);
+  const budget = JSON.parse(JSON.stringify(data.me.budget[0]));
+  const [updateStack] = useMutation(UPDATE_STACK, {
+    refetchQueries: ['GET_BUDGET'],
+  });
   const [removeStack] = useMutation(REMOVE_STACK, { refetchQueries: ['GET_BUDGET', 'GET_STACK_LABELS'] });
-  const [updateTotal] = useMutation(UPDATE_TOTAL);
+  const [updateTotal] = useMutation(UPDATE_TOTAL, { refetchQueries: ['GET_BUDGET'] });
 
   return { loading, data: budget, error, addStack, updateStack, removeStack, updateTotal };
 };
