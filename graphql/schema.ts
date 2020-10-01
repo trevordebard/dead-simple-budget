@@ -1,33 +1,21 @@
-import { use, schema } from 'nexus';
-import { prisma } from 'nexus-plugin-prisma';
-import { compare, hash } from 'bcrypt'
-import { sign } from 'jsonwebtoken'
-import { getUserId } from '../auth/utils'
-import { setCookie } from '../auth/cookies';
+import { makeSchema, objectType, mutationType } from '@nexus/schema'
+import { queryType } from '@nexus/schema'
+import { nexusSchemaPrisma } from 'nexus-plugin-prisma/schema'
+import path from 'path'
 
-use(prisma({ features: { crud: true } }));
-
-schema.addToContext(({ req, res }) => {
-  return {
-    //@ts-ignore
-    sendCookie: req.sendCookie,
-    req,
-    res,
-  }
-})
-
-schema.objectType({
-  name: "user",
+const User = objectType({
+  name: 'user',
   definition(t) {
     t.model.id();
     t.model.created_at();
     t.model.email();
     t.model.budget();
     t.model.transactions();
+
   }
 })
 
-schema.objectType({
+const Budget = objectType({
   name: "budget",
   definition(t) {
     t.model.id()
@@ -38,7 +26,7 @@ schema.objectType({
   },
 })
 
-schema.objectType({
+const Transactions = objectType({
   name: "transactions",
   definition(t) {
     t.model.amount()
@@ -51,7 +39,7 @@ schema.objectType({
   }
 })
 
-schema.objectType({
+const Stacks = objectType({
   name: "stacks",
   definition(t) {
     t.model.id()
@@ -60,141 +48,62 @@ schema.objectType({
     t.model.budgetId()
     t.model.created_at()
   }
-
 })
-
-schema.queryType({
+const Query = queryType({
   definition(t) {
     t.crud.user();
     t.crud.budget();
     t.crud.transactions();
     t.crud.users();
     t.crud.budgets();
-    t.crud.stacks();
-    t.field('me', {
-      type: 'user',
-      async resolve(_root, _args, ctx) {
-        let pris = ctx.db
-        const userId = getUserId(ctx.token)
-        let me = await pris.user.findOne({ where: { id: userId } })
-        return me;
-      },
-    })
+    t.crud.stacks()
   }
 })
-schema.objectType({
-  name: 'AuthPayload',
-  definition(t) {
-    t.string('token')
-    t.field('user', { type: 'user' })
-  },
-})
-schema.objectType({
-  name: 'LogoutResponse',
-  definition(t) {
-    t.string('message')
-  }
-})
-schema.mutationType({
+
+const Mutation = mutationType({
   definition(t) {
     t.crud.updateOnebudget({
       async resolve(root, args, ctx, info, originalResolve) {
         const res = await originalResolve(root, args, ctx, info)
-        const { sum: { amount: sumOfStacks } } = await ctx.db.stacks.aggregate({ sum: { amount: true } })
-        const { total } = await ctx.db.budget.findOne({ where: { id: res.id } })
-        await ctx.db.budget.update({ data: { toBeBudgeted: { set: total - sumOfStacks } }, where: { id: res.id } })
+        const { sum: { amount: sumOfStacks } } = await ctx.prisma.stacks.aggregate({ sum: { amount: true } })
+        const { total } = await ctx.prisma.budget.findOne({ where: { id: res.id } })
+        await ctx.prisma.budget.update({ data: { toBeBudgeted: { set: total - sumOfStacks } }, where: { id: res.id } })
         return res
       },
     }),
       t.crud.updateOnestacks({
         async resolve(root, args, ctx, info, originalResolve) {
           const res = await originalResolve(root, args, ctx, info)
-          const { sum: { amount: sumOfStacks } } = await ctx.db.stacks.aggregate({ sum: { amount: true } })
-          const { total } = await ctx.db.budget.findOne({ where: { id: res.budgetId } })
-          await ctx.db.budget.update({ data: { toBeBudgeted: { set: total - sumOfStacks } }, where: { id: res.budgetId } })
+          const { sum: { amount: sumOfStacks } } = await ctx.prisma.stacks.aggregate({ sum: { amount: true } })
+          const { total } = await ctx.prisma.budget.findOne({ where: { id: res.budgetId } })
+          await ctx.prisma.budget.update({ data: { toBeBudgeted: { set: total - sumOfStacks } }, where: { id: res.budgetId } })
           return res
         },
       }),
       t.crud.createOnestacks(),
       t.crud.createOnetransactions(),
-      t.crud.updateOnetransactions(),
-      t.field('signup', {
-        type: 'AuthPayload',
-        args: {
-          name: schema.stringArg(),
-          email: schema.stringArg({ nullable: false }),
-          password: schema.stringArg({ nullable: false }),
-        },
-        resolve: async (_parent, { name, email, password }, ctx) => {
-          const hashedPassword = await hash(password, 10)
-          const user = await ctx.db.user.create({
-            data: {
-              email,
-              password: hashedPassword,
-              budget: {
-                create: {
-                  total: 0,
-                  toBeBudgeted: 0,
-                }
-              }
-            },
-          })
-          const token = sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: "5 days" });
-          // @ts-ignore
-          setCookie(ctx.res, 'token', token)
-          return {
-            token,
-            user,
-          }
-        },
-      })
-
-    t.field('logout', {
-      type: 'LogoutResponse',
-      resolve: async (_parent, args, ctx) => {
-        // @ts-ignore
-        setCookie(ctx.res, 'token', "")
-        return {
-          message: 'You have been logged out'
-        }
-      },
-    })
+      t.crud.updateOnetransactions()
   }
 })
-schema.extendType({
-  type: "Mutation",
-  definition(t) {
-    t.field('login', {
-      type: 'AuthPayload',
-      args: {
-        email: schema.stringArg({ nullable: false }),
-        password: schema.stringArg({ nullable: false }),
+export const schema = makeSchema({
+  types: { Query, User, Budget, Transactions, Stacks, Mutation },
+  plugins: [nexusSchemaPrisma({ experimentalCRUD: true })],
+  outputs: {
+    schema: path.join(process.cwd(), "schema.graphql"),
+    typegen: path.join(process.cwd(), "nexus.ts"),
+  },
+  typegenAutoConfig: {
+    contextType: "Context.Context",
+    sources: [
+      {
+        source: "@prisma/client",
+        alias: "prisma",
       },
-      resolve: async (_parent, { email, password }, ctx) => {
-        //Check if user exists
-        let user;
-        try {
-          user = await ctx.db.user.findOne({
-            where: {
-              email: email
-            }
-          });
-        } catch (e) {
-          console.error(e)
-          throw new Error(`There was a problem finding user with email: ${email}`)
-        }
-        const passwordMatches = await compare(password, user.password)
-        if (passwordMatches) {
-          const token = sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: "5 days" });
-          // @ts-ignore
-          setCookie(ctx.res, 'token', token)
-          return {
-            user
-          }
-        }
-        console.error(`Email: ${email} attempted login with incorrect password.`)
-        throw new Error(`There was a problem finding user with email: ${email}`)
+      {
+        source: require.resolve("./context"),
+        alias: "Context",
       },
-    })
-  }
+    ],
+
+  },
 })

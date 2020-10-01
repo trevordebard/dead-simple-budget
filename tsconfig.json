@@ -2,6 +2,7 @@
   "compilerOptions": {
     // ...
     "noEmit": true,
+    "baseUrl": ".",
     "rootDir": ".",
     "typeRoots": [
       "node_modules/@types",

@@ -1,26 +1,12 @@
-import app, { server, use } from 'nexus';
-import { auth } from 'nexus-plugin-jwt-auth'
-import '../../graphql/schema';
-import nextConnect from 'next-connect'
+import { ApolloServer } from 'apollo-server-micro'
+import { schema } from 'graphql/schema'
+import { createContext } from 'graphql/context'
+const server = new ApolloServer({ schema, context: createContext })
+const handler = server.createHandler({ path: '/api/graphql' })
 
-//TODO: update with all paths (or at least most)
-const protectedPaths = [
-  'Query.me',
-  'Mutation.updateOnestacks'
-]
-use(auth({
-  appSecret: process.env.JWT_SECRET,
-  protectedPaths,
-  cookieName: 'token',
-  useCookie: true
-}))
-
-app.settings.change({
-  server: {
-    path: '/api/graphql',
-  },
-});
-app.assemble();
-
-export default nextConnect()
-  .use(app.server.handlers.graphql)
+export const config = {
+  api: {
+    bodyParser: false
+  }
+}
+export default handler;
