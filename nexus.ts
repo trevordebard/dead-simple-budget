@@ -592,8 +592,6 @@ export interface NexusGenFieldTypes {
     budgets: NexusGenRootTypes['budget'][]; // [budget!]!
     stacks: NexusGenRootTypes['stacks'][]; // [stacks!]!
     transactions: NexusGenRootTypes['transactions'][]; // [transactions!]!
-    user: NexusGenRootTypes['user'] | null; // user
-    users: NexusGenRootTypes['user'][]; // [user!]!
   }
   budget: { // field return type
     id: number; // Int!
@@ -667,15 +665,6 @@ export interface NexusGenArgTypes {
     transactions: { // args
       after?: NexusGenInputs['transactionsWhereUniqueInput'] | null; // transactionsWhereUniqueInput
       before?: NexusGenInputs['transactionsWhereUniqueInput'] | null; // transactionsWhereUniqueInput
-      first?: number | null; // Int
-      last?: number | null; // Int
-    }
-    user: { // args
-      where: NexusGenInputs['userWhereUniqueInput']; // userWhereUniqueInput!
-    }
-    users: { // args
-      after?: NexusGenInputs['userWhereUniqueInput'] | null; // userWhereUniqueInput
-      before?: NexusGenInputs['userWhereUniqueInput'] | null; // userWhereUniqueInput
       first?: number | null; // Int
       last?: number | null; // Int
     }

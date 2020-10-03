@@ -270,8 +270,6 @@ type Query {
   budgets(after: budgetWhereUniqueInput, before: budgetWhereUniqueInput, first: Int, last: Int): [budget!]!
   stacks(after: stacksWhereUniqueInput, before: stacksWhereUniqueInput, first: Int, last: Int): [stacks!]!
   transactions(after: transactionsWhereUniqueInput, before: transactionsWhereUniqueInput, first: Int, last: Int): [transactions!]!
-  user(where: userWhereUniqueInput!): user
-  users(after: userWhereUniqueInput, before: userWhereUniqueInput, first: Int, last: Int): [user!]!
 }
 
 type stacks {
