@@ -7,11 +7,9 @@ const User = objectType({
   name: 'user',
   definition(t) {
     t.model.id();
-    t.model.created_at();
     t.model.email();
     t.model.budget();
     t.model.transactions();
-
   }
 })
 
@@ -53,9 +51,10 @@ const Query = queryType({
   definition(t) {
     t.crud.user();
     t.crud.budget();
-    t.crud.transactions();
-    t.crud.users();
-    t.crud.budgets();
+    t.crud.transactions({ filtering: { user: true, userId: true } });
+    // t.crud.users();
+    t.crud.user();
+    t.crud.budgets({ filtering: { user: true, userId: true } });
     t.crud.stacks()
   }
 })
@@ -86,7 +85,7 @@ const Mutation = mutationType({
   }
 })
 export const schema = makeSchema({
-  types: { Query, User, Budget, Transactions, Stacks, Mutation },
+  types: { Query, Budget, Transactions, Stacks, User, Mutation },
   plugins: [nexusSchemaPrisma({ experimentalCRUD: true })],
   outputs: {
     schema: path.join(process.cwd(), "schema.graphql"),

@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model budget {
@@ -12,7 +12,7 @@ model budget {
   total        Float?   @default(0)
   toBeBudgeted Float?
   userId       Int
-  user         user     @relation(fields: [userId], references: [id])
+  user         User     @relation(fields: [userId], references: [id])
   stacks       stacks[]
 }
 
@@ -35,11 +35,11 @@ model transactions {
   type        String
   userId      Int
   date        DateTime
-  user        user     @relation(fields: [userId], references: [id])
+  user        User     @relation(fields: [userId], references: [id])
 
 }
 
-model account {
+model Account {
   id                 Int       @id @default(autoincrement())
   compoundId         String    @unique @map("compound_id")
   userId             Int       @map("user_id")
@@ -70,7 +70,7 @@ model Session {
   @@map("sessions")
 }
 
-model user {
+model User {
   id            Int       @id @default(autoincrement())
   name          String?
   email         String?   @unique
@@ -80,8 +80,8 @@ model user {
   updatedAt     DateTime  @default(now()) @map("updated_at")
 
   transactions transactions[]
-  budget       budget[]
   @@map("users")
+  budget budget[]
 }
 
 model VerificationRequest {

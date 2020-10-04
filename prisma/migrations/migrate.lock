@@ -1,3 +1,4 @@
 # Prisma Migrate lockfile v1
 
-20200922022857-add-stack-timestamp
+20201004212937-init
+20201004221005-lowercase-names-for-prisma-plugin-errors
