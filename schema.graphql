@@ -10,6 +10,13 @@ type budget {
   userId: Int!
 }
 
+input budgetCreateInput {
+  stacks: stacksCreateManyWithoutBudgetInput
+  toBeBudgeted: Float
+  total: Float
+  user: userCreateOneWithoutBudgetInput!
+}
+
 input budgetCreateManyWithoutUserInput {
   connect: [budgetWhereUniqueInput]
   create: [budgetCreateWithoutUserInput]
@@ -199,8 +206,10 @@ input IntFilter {
 }
 
 type Mutation {
+  createOnebudget(data: budgetCreateInput!): budget!
   createOnestacks(data: stacksCreateInput!): stacks!
   createOnetransactions(data: transactionsCreateInput!): transactions!
+  createOneuser(data: userCreateInput!): user!
   updateOnebudget(data: budgetUpdateInput!, where: budgetWhereUniqueInput!): budget
   updateOnestacks(data: stacksUpdateInput!, where: stacksWhereUniqueInput!): stacks
   updateOnetransactions(data: transactionsUpdateInput!, where: transactionsWhereUniqueInput!): transactions
@@ -585,6 +594,17 @@ type user {
   email: String
   id: Int!
   transactions(after: transactionsWhereUniqueInput, before: transactionsWhereUniqueInput, first: Int, last: Int): [transactions!]!
+}
+
+input userCreateInput {
+  budget: budgetCreateManyWithoutUserInput
+  createdAt: DateTime
+  email: String
+  emailVerified: DateTime
+  image: String
+  name: String
+  transactions: transactionsCreateManyWithoutUserInput
+  updatedAt: DateTime
 }
 
 input userCreateOneWithoutBudgetInput {

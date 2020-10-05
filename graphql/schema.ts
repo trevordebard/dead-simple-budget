@@ -61,6 +61,8 @@ const Query = queryType({
 
 const Mutation = mutationType({
   definition(t) {
+    t.crud.createOneuser()
+    t.crud.createOnebudget()
     t.crud.updateOnebudget({
       async resolve(root, args, ctx, info, originalResolve) {
         const res = await originalResolve(root, args, ctx, info)

@@ -1,7 +1,9 @@
+import { getSession } from 'next-auth/client';
+import { GET_USER } from 'graphql/queries/GET_USER';
+import { ADD_BUDGET } from 'graphql/queries/ADD_BUDGET';
 import Budget from '../components/Budget';
 import Layout from '../components/Layout';
 import { initializeApollo } from '../lib/apolloClient';
-import { GET_ME } from '../graphql/queries/GET_ME';
 
 const BudgetPage = () => (
   <Layout>
@@ -11,20 +13,16 @@ const BudgetPage = () => (
 export default BudgetPage;
 
 export async function getServerSideProps(context) {
-  // getToken(context)
-  // if no token or token isn't legit, redirect
-  // ^ above could be done with a function called ensureAuth
-  // if valid, continue with initializing apollo
   const apolloClient = initializeApollo(null, context);
-  try {
-    const data = await apolloClient.query({ query: GET_ME });
-  } catch (e) {
-    if (e.graphQLErrors[0].message.toLowerCase() === 'not authorized!') {
-      console.error('not authorized');
-      context.res.writeHead(302, { Location: '/login' });
-      context.res.end();
-      return;
-    }
+  const session = await getSession(context);
+  if (!session) {
+    context.res.writeHead(302, { Location: '/login' });
+    context.res.end();
+    return;
+  }
+  const data = await apolloClient.query({ query: GET_USER, variables: { email: session.user.email } });
+  if (data.data.user.budget.length === 0) {
+    const addedBudget = await apolloClient.mutate({ mutation: ADD_BUDGET, variables: { email: session.user.email } });
   }
   return {
     props: {
