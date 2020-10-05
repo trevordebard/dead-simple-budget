@@ -3,7 +3,7 @@ import Link from 'next/link';
 import styled from 'styled-components';
 import { useMutation, gql, useApolloClient } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
-import useUser from '../hooks/useUser';
+import { useSession } from 'next-auth/client';
 import Logo from './Logo.svg';
 import { TransparentButton } from './styled';
 
@@ -32,12 +32,15 @@ const Account = styled.div`
   justify-content: flex-end;
   flex-wrap: wrap;
 `;
+
 const Nav = () => {
-  const { user, loggedIn, loading } = useUser();
-  if (loading) {
-    return null;
-  }
-  return <NavContainer>{loggedIn ? <LoggedInNav email={user.email} /> : <LoggedOutNav />}</NavContainer>;
+  const [session] = useSession();
+
+  return (
+    <NavContainer>
+      <LoggedInNav email={session?.user?.email} />
+    </NavContainer>
+  );
 };
 const LOGOUT = gql`
   mutation LOGOUT {
@@ -74,23 +77,5 @@ const LoggedInNav = ({ email }) => {
     </>
   );
 };
-
-const LoggedOutNav = () => (
-  <>
-    <LogoWrapper>
-      <Link href="/">
-        <h1>Budget Trace</h1>
-      </Link>
-    </LogoWrapper>
-    <Account>
-      <Link href="/login">
-        <a>Login</a>
-      </Link>
-      <Link href="/signup">
-        <a>Signup</a>
-      </Link>
-    </Account>
-  </>
-);
 
 export default Nav;

@@ -1,5 +1,6 @@
 import { ApolloProvider } from '@apollo/client';
 import { createGlobalStyle } from 'styled-components';
+import { Provider } from 'next-auth/client';
 import { useApollo } from '../lib/apolloClient';
 import Head from '../components/head';
 
@@ -125,9 +126,11 @@ function MyApp({ Component, pageProps }) {
     <>
       <GlobalStyle />
       <Head />
-      <ApolloProvider client={apolloClient}>
-        <Component {...pageProps} />
-      </ApolloProvider>
+      <Provider session={pageProps.session}>
+        <ApolloProvider client={apolloClient}>
+          <Component {...pageProps} />
+        </ApolloProvider>
+      </Provider>
     </>
   );
 }
