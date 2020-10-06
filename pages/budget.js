@@ -22,11 +22,12 @@ export async function getServerSideProps(context) {
   }
   const data = await apolloClient.query({ query: GET_USER, variables: { email: session.user.email } });
   if (data.data.user.budget.length === 0) {
-    const addedBudget = await apolloClient.mutate({ mutation: ADD_BUDGET, variables: { email: session.user.email } });
+    await apolloClient.mutate({ mutation: ADD_BUDGET, variables: { email: session.user.email } });
   }
   return {
     props: {
       initialApolloState: apolloClient.cache.extract(),
+      session,
     },
   };
 }

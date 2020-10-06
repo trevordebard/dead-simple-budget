@@ -40,11 +40,11 @@ const AddStackWrapper = styled.div`
 
 function Budget() {
   const { data, loading, error, addStack, updateStack, removeStack, updateTotal } = useBudget();
-  console.log('data', data);
   const { register, handleSubmit, errors, reset, setValue } = useForm();
   const [editTotalVisible, setEditTotalVisible] = useState(false);
-  if (loading) {
-    return <p>Loading...</p>;
+
+  if (loading || !data) {
+    return <span>loading...</span>;
   }
   if (error) {
     console.error(error);
@@ -56,7 +56,6 @@ function Budget() {
   const onAddStack = payload => {
     addStack({
       variables: { newStackLabel: payload.newStack, budgetId: data.id },
-      // refetchQueries: ['GET_BUDGET'], // Eventually change to update cache
     });
     reset({ newStack: '' });
   };
@@ -87,7 +86,7 @@ function Budget() {
             <SubText> to be budgeted</SubText>
           </h5>
         </ToplineBudget>
-        {renderStacks(data?.stacks, data.id)}
+        {data.stacks && renderStacks(data?.stacks, data.id)}
         <AddStackWrapper>
           <FormInput name="newStack" register={register} errors={errors} placeholder="Stack Name" autoComplete="off" />
           <Button isAction type="button" register={register} name="addStack" onClick={handleSubmit(onAddStack)}>
@@ -99,8 +98,7 @@ function Budget() {
     </div>
   );
   function renderStacks(stacks, budgetId) {
-    const sortedStacks = stacks.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-    return sortedStacks.map(item => (
+    return stacks.map(item => (
       <div key={item.id}>
         <BudgetStack
           label={item.label}

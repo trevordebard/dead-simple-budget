@@ -2,7 +2,7 @@
   "name": "create-next-example-app",
   "version": "0.0.1",
   "scripts": {
-    "dev": "concurrently -r \"npx nexus dev\" \"next\"",
+    "dev": "npx next dev",
     "deploy-dev": "npm ci && npm run build && pm2 restart budget-dev",
     "deploy-production": "npm ci && npm run build && pm2 restart budget-prod",
     "build": "nexus build && next build",
