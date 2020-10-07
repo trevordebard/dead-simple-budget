@@ -1,7 +1,6 @@
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import { useState } from 'react';
-import { GET_TRANSACTIONS } from '../graphql/queries/GET_TRANSACTIONS';
 import useTransactions from '../hooks/useTransactions';
 import { ActionButton, RadioButton } from './styled';
 import FormInput, { FormSelect } from './FormInput';

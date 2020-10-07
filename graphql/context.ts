@@ -1,15 +1,14 @@
-import { PrismaClient } from "@prisma/client";
-import { getSession, Session } from 'next-auth/client'
+import { PrismaClient } from '@prisma/client';
+import { getSession, Session } from 'next-auth/client';
 
-const prisma = new PrismaClient({ log: ["query"] });
-
+const prisma = new PrismaClient({ log: ['query'] });
 
 export interface Context {
-    prisma: PrismaClient;
-    session: Session
+  prisma: PrismaClient;
+  session: Session;
 }
 
 export async function createContext({ req }): Promise<Context> {
-    const session = await getSession({ req })
-    return { prisma, session };
+  const session = await getSession({ req });
+  return { prisma, session };
 }

@@ -1,9 +1,9 @@
 import { getSession } from 'next-auth/client';
 import { GET_USER } from 'graphql/queries/GET_USER';
 import { ADD_BUDGET } from 'graphql/queries/ADD_BUDGET';
-import Budget from '../components/Budget';
-import Layout from '../components/Layout';
-import { initializeApollo } from '../lib/apolloClient';
+import { initializeApollo } from 'lib/apolloClient';
+import Budget from 'components/Budget';
+import Layout from 'components/Layout';
 
 const BudgetPage = () => (
   <Layout>

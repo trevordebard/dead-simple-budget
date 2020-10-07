@@ -16,7 +16,7 @@ const StackInput = styled(FormInput)`
   }
 `;
 
-const BudgetStack = ({ label, register, budgetId, amount, errors, updateStack, removeStack, setValue }) => {
+const BudgetStack = ({ label, register, budgetId, amount, updateStack, setValue }) => {
   const [prevAmount, setPrevAmount] = useState(amount);
   return (
     <ListRow>

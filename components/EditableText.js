@@ -27,7 +27,7 @@ const EditableText = ({ update, inputType = 'text', text: textDefault }) => {
   });
 
   return (
-    <React.Fragment>
+    <>
       {inputVisible ? (
         <input
           ref={inputRef}
@@ -45,7 +45,7 @@ const EditableText = ({ update, inputType = 'text', text: textDefault }) => {
       ) : (
         <span onClick={() => setInputVisible(true)}>{text}</span>
       )}
-    </React.Fragment>
+    </>
   );
 };
 

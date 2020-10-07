@@ -8,7 +8,7 @@ export async function getServerSideProps(context) {
   if (session) {
     context.res.writeHead(302, { Location: '/budget' });
     context.res.end();
-    return;
+    return {};
   }
   return {
     props: {},
