@@ -1,9 +1,9 @@
 import React from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
-import { useMutation, gql, useApolloClient } from '@apollo/client';
+import { useApolloClient } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
-import { useSession } from 'next-auth/client';
+import { useSession, signOut } from 'next-auth/client';
 import Logo from './Logo.svg';
 import { TransparentButton } from './styled';
 
@@ -42,22 +42,10 @@ const Nav = () => {
     </NavContainer>
   );
 };
-const LOGOUT = gql`
-  mutation LOGOUT {
-    logout {
-      message
-    }
-  }
-`;
+
 const LoggedInNav = ({ email }) => {
-  const router = useRouter();
   const client = useApolloClient();
-  const [logout] = useMutation(LOGOUT, {
-    onCompleted: async () => {
-      await client.clearStore();
-      router.push('/login');
-    },
-  });
+  const router = useRouter();
   return (
     <>
       <LogoWrapper>
@@ -70,7 +58,14 @@ const LoggedInNav = ({ email }) => {
 
       <Account>
         <p>{email}</p>
-        <TransparentButton transparent onClick={() => logout()}>
+        <TransparentButton
+          transparent
+          onClick={async () => {
+            signOut();
+            await client.clearStore();
+            router.push('/login');
+          }}
+        >
           Logout
         </TransparentButton>
       </Account>

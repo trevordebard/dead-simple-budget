@@ -1,16 +1,6 @@
-import { useForm } from 'react-hook-form';
+import { signIn } from 'next-auth/client';
 import styled from 'styled-components';
-import { useMutation, gql } from '@apollo/client';
-import Router from 'next/router';
-import useUser from '../hooks/useUser';
 import { ActionButton } from './styled';
-import FormInput from './FormInput';
-
-const Form = styled.form`
-  * {
-    display: block;
-  }
-`;
 
 const LoginWrapper = styled.div`
   display: grid;
@@ -45,62 +35,20 @@ const Card = styled.div`
   place-items: center;
   border: 1px solid var(--lineColor);
 `;
-const LOGIN = gql`
-  mutation login($email: String!, $password: String!) {
-    login(email: $email, password: $password) {
-      user {
-        email
-        budget {
-          stacks {
-            label
-            amount
-          }
-        }
-        transactions {
-          description
-          amount
-          type
-          date
-        }
-      }
-    }
-  }
-`;
 
 const Login = () => {
-  const { register, handleSubmit, errors, reset } = useForm();
-  const { user, loading: userLoading, loggedIn } = useUser();
-
-  const [loginUser, { loading: loginLoading, error: loginError }] = useMutation(LOGIN, {
-    onCompleted: () => Router.push('/budget'),
-    onError: err => console.error(err.message),
-  });
-  const onSubmit = async payload => {
-    loginUser({ variables: { email: payload.email, password: payload.password } });
-    reset();
+  const signInUser = async () => {
+    await signIn('google');
   };
-  if (userLoading) {
-    setTimeout(() => <p>Loading...</p>, 500);
-  }
-  if (loggedIn) {
-    return <p>{user?.email} is logged in!</p>;
-  }
   return (
     <LoginWrapper>
       <Content>
         <Card>
           <h2>Login</h2>
           <hr />
-          <Form method="POST" onSubmit={handleSubmit(onSubmit)}>
-            <label htmlFor="email">Email</label>
-            <FormInput register={register} errors={errors} name="email" type="email" required />
-            <label htmlFor="password">Password</label>
-            <FormInput register={register} errors={errors} name="password" type="password" required />
-            <ActionButton style={{ width: '100%' }} disabled={loginLoading}>
-              {loginLoading ? 'Loading...' : 'Login'}
-            </ActionButton>
-            {loginError && <p style={{ color: 'red' }}>There was an error logging in. Please try again!</p>}
-          </Form>
+          <ActionButton transparent onClick={signInUser}>
+            Sign in with Google
+          </ActionButton>
         </Card>
       </Content>
     </LoginWrapper>
