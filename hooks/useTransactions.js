@@ -1,14 +1,13 @@
 import { useQuery, useMutation, gql } from '@apollo/client';
-import { GET_TRANSACTIONS } from '../graphql/queries/GET_TRANSACTIONS';
+import { useSession } from 'next-auth/client';
 import { ADD_TRANSACTION } from '../graphql/queries/ADD_TRANSACTION';
 import { getStackLabels } from '../lib/budgetUtils';
 
 const GET_STACK_LABELS = gql`
-  query GET_STACK_LABELS {
-    me {
+  query GET_STACK_LABELS($email: String!) {
+    user(where: { email: $email }) {
       id
       budget {
-        id
         stacks {
           label
         }
@@ -16,6 +15,7 @@ const GET_STACK_LABELS = gql`
     }
   }
 `;
+
 export const EDIT_TRANSACTION = gql`
   mutation EDIT_TRANSACTION(
     $id: Int!
@@ -44,18 +44,34 @@ export const EDIT_TRANSACTION = gql`
   }
 `;
 
-const useTransactions = () => {
-  const { data, loading } = useQuery(GET_TRANSACTIONS);
-  const { data: stackLabelData } = useQuery(GET_STACK_LABELS);
+const GET_TRANSACTIONS = gql`
+  query GET_TRANSACTIONS($email: String!) {
+    transactions(where: { user: { email: { equals: $email } } }) {
+      id
+      amount
+      description
+      stack
+      date
+      type
+    }
+  }
+`;
 
+const useTransactions = () => {
+  const [session] = useSession();
+  const { data, loading } = useQuery(GET_TRANSACTIONS, { variables: { email: session.user.email } });
+  const { data: stackLabelRes } = useQuery(GET_STACK_LABELS, {
+    variables: { email: session.user.email },
+  });
   const [editTransactionM] = useMutation(EDIT_TRANSACTION);
   const [addTransactionM] = useMutation(ADD_TRANSACTION);
-  let transactions;
   let stackLabels;
+  let transactions;
   function addTransaction(description, amount, stack, date, type, ...params) {
     addTransactionM({
       ...params,
-      variables: { email: data.me.email, description, amount, stack, date: new Date(date).toISOString(), type },
+      refetchQueries: ['GET_TRANSACTIONS'],
+      variables: { email: session.user.email, description, amount, stack, date: new Date(date).toISOString(), type },
     });
   }
   function editTransaction(id, description, amount, stack, date, type, ...params) {
@@ -64,11 +80,11 @@ const useTransactions = () => {
       variables: { id, description, amount, stack, date: new Date(date).toISOString(), type },
     });
   }
-  if (data?.me) {
-    transactions = data.me.transactions;
+  if (data) {
+    transactions = data.transactions;
   }
-  if (stackLabelData?.me) {
-    stackLabels = getStackLabels(stackLabelData.me.budget[0]);
+  if (stackLabelRes) {
+    stackLabels = getStackLabels(stackLabelRes.user.budget[0]);
   }
 
   return { loading, transactions, addTransaction, stackLabels, editTransaction };

@@ -10,7 +10,6 @@ import TableContainer from '@material-ui/core/TableContainer';
 import { ThemeProvider } from '@material-ui/core';
 import { createMuiTheme } from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import RequireLogin from './RequireLogin';
 import useTransactions from '../hooks/useTransactions';
 import NewTransaction from './NewTransaction';
 import EditTransaction from './EditTransaction';
@@ -189,4 +188,4 @@ const TransactionActions = ({ transactionInFocus, setTransactionInFocus }) => {
   return <NewTransaction />;
 };
 
-export default RequireLogin(Transactions);
+export default Transactions;
