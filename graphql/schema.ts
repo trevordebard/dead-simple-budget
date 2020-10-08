@@ -72,24 +72,24 @@ const Mutation = mutationType({
         await ctx.prisma.budget.update({ data: { toBeBudgeted: { set: total - sumOfStacks } }, where: { id: res.id } });
         return res;
       },
-    }),
-      t.crud.updateOnestacks({
-        async resolve(root, args, ctx, info, originalResolve) {
-          const res = await originalResolve(root, args, ctx, info);
-          const {
-            sum: { amount: sumOfStacks },
-          } = await ctx.prisma.stacks.aggregate({ sum: { amount: true } });
-          const { total } = await ctx.prisma.budget.findOne({ where: { id: res.budgetId } });
-          await ctx.prisma.budget.update({
-            data: { toBeBudgeted: { set: total - sumOfStacks } },
-            where: { id: res.budgetId },
-          });
-          return res;
-        },
-      }),
-      t.crud.createOnestacks(),
-      t.crud.createOnetransactions(),
-      t.crud.updateOnetransactions();
+    });
+    t.crud.updateOnestacks({
+      async resolve(root, args, ctx, info, originalResolve) {
+        const res = await originalResolve(root, args, ctx, info);
+        const {
+          sum: { amount: sumOfStacks },
+        } = await ctx.prisma.stacks.aggregate({ sum: { amount: true }, where: { budgetId: { equals: res.budgetId } } });
+        const { total } = await ctx.prisma.budget.findOne({ where: { id: res.budgetId } });
+        await ctx.prisma.budget.update({
+          data: { toBeBudgeted: { set: total - sumOfStacks } },
+          where: { id: res.budgetId },
+        });
+        return res;
+      },
+    });
+    t.crud.createOnestacks();
+    t.crud.createOnetransactions();
+    t.crud.updateOnetransactions();
   },
 });
 export const schema = makeSchema({
