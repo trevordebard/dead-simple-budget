@@ -23,11 +23,6 @@ export interface NexusGenInputs {
     budgetId: number; // Int!
     label: string; // String!
   }
-  BudgetListRelationFilter: { // input type
-    every?: NexusGenInputs['budgetWhereInput'] | null; // budgetWhereInput
-    none?: NexusGenInputs['budgetWhereInput'] | null; // budgetWhereInput
-    some?: NexusGenInputs['budgetWhereInput'] | null; // budgetWhereInput
-  }
   DateTimeFieldUpdateOperationsInput: { // input type
     set?: NexusGenScalars['DateTime'] | null; // DateTime
   }
@@ -222,13 +217,13 @@ export interface NexusGenInputs {
     total?: number | null; // Float
     user: NexusGenInputs['userCreateOneWithoutBudgetInput']; // userCreateOneWithoutBudgetInput!
   }
-  budgetCreateManyWithoutUserInput: { // input type
-    connect?: Array<NexusGenInputs['budgetWhereUniqueInput'] | null> | null; // [budgetWhereUniqueInput]
-    create?: Array<NexusGenInputs['budgetCreateWithoutUserInput'] | null> | null; // [budgetCreateWithoutUserInput]
-  }
   budgetCreateOneWithoutStacksInput: { // input type
     connect?: NexusGenInputs['budgetWhereUniqueInput'] | null; // budgetWhereUniqueInput
     create?: NexusGenInputs['budgetCreateWithoutStacksInput'] | null; // budgetCreateWithoutStacksInput
+  }
+  budgetCreateOneWithoutUserInput: { // input type
+    connect?: NexusGenInputs['budgetWhereUniqueInput'] | null; // budgetWhereUniqueInput
+    create?: NexusGenInputs['budgetCreateWithoutUserInput'] | null; // budgetCreateWithoutUserInput
   }
   budgetCreateWithoutStacksInput: { // input type
     toBeBudgeted?: number | null; // Float
@@ -240,39 +235,11 @@ export interface NexusGenInputs {
     toBeBudgeted?: number | null; // Float
     total?: number | null; // Float
   }
-  budgetScalarWhereInput: { // input type
-    AND?: Array<NexusGenInputs['budgetScalarWhereInput'] | null> | null; // [budgetScalarWhereInput]
-    id?: NexusGenInputs['IntFilter'] | null; // IntFilter
-    NOT?: Array<NexusGenInputs['budgetScalarWhereInput'] | null> | null; // [budgetScalarWhereInput]
-    OR?: Array<NexusGenInputs['budgetScalarWhereInput'] | null> | null; // [budgetScalarWhereInput]
-    toBeBudgeted?: NexusGenInputs['FloatNullableFilter'] | null; // FloatNullableFilter
-    total?: NexusGenInputs['FloatNullableFilter'] | null; // FloatNullableFilter
-    userId?: NexusGenInputs['IntFilter'] | null; // IntFilter
-  }
   budgetUpdateInput: { // input type
     stacks?: NexusGenInputs['stacksUpdateManyWithoutBudgetInput'] | null; // stacksUpdateManyWithoutBudgetInput
     toBeBudgeted?: NexusGenInputs['NullableFloatFieldUpdateOperationsInput'] | null; // NullableFloatFieldUpdateOperationsInput
     total?: NexusGenInputs['NullableFloatFieldUpdateOperationsInput'] | null; // NullableFloatFieldUpdateOperationsInput
     user?: NexusGenInputs['userUpdateOneRequiredWithoutBudgetInput'] | null; // userUpdateOneRequiredWithoutBudgetInput
-  }
-  budgetUpdateManyDataInput: { // input type
-    toBeBudgeted?: NexusGenInputs['NullableFloatFieldUpdateOperationsInput'] | null; // NullableFloatFieldUpdateOperationsInput
-    total?: NexusGenInputs['NullableFloatFieldUpdateOperationsInput'] | null; // NullableFloatFieldUpdateOperationsInput
-  }
-  budgetUpdateManyWithWhereNestedInput: { // input type
-    data: NexusGenInputs['budgetUpdateManyDataInput']; // budgetUpdateManyDataInput!
-    where: NexusGenInputs['budgetScalarWhereInput']; // budgetScalarWhereInput!
-  }
-  budgetUpdateManyWithoutUserInput: { // input type
-    connect?: Array<NexusGenInputs['budgetWhereUniqueInput'] | null> | null; // [budgetWhereUniqueInput]
-    create?: Array<NexusGenInputs['budgetCreateWithoutUserInput'] | null> | null; // [budgetCreateWithoutUserInput]
-    delete?: Array<NexusGenInputs['budgetWhereUniqueInput'] | null> | null; // [budgetWhereUniqueInput]
-    deleteMany?: Array<NexusGenInputs['budgetScalarWhereInput'] | null> | null; // [budgetScalarWhereInput]
-    disconnect?: Array<NexusGenInputs['budgetWhereUniqueInput'] | null> | null; // [budgetWhereUniqueInput]
-    set?: Array<NexusGenInputs['budgetWhereUniqueInput'] | null> | null; // [budgetWhereUniqueInput]
-    update?: Array<NexusGenInputs['budgetUpdateWithWhereUniqueWithoutUserInput'] | null> | null; // [budgetUpdateWithWhereUniqueWithoutUserInput]
-    updateMany?: Array<NexusGenInputs['budgetUpdateManyWithWhereNestedInput'] | null> | null; // [budgetUpdateManyWithWhereNestedInput]
-    upsert?: Array<NexusGenInputs['budgetUpsertWithWhereUniqueWithoutUserInput'] | null> | null; // [budgetUpsertWithWhereUniqueWithoutUserInput]
   }
   budgetUpdateOneRequiredWithoutStacksInput: { // input type
     connect?: NexusGenInputs['budgetWhereUniqueInput'] | null; // budgetWhereUniqueInput
@@ -280,9 +247,11 @@ export interface NexusGenInputs {
     update?: NexusGenInputs['budgetUpdateWithoutStacksDataInput'] | null; // budgetUpdateWithoutStacksDataInput
     upsert?: NexusGenInputs['budgetUpsertWithoutStacksInput'] | null; // budgetUpsertWithoutStacksInput
   }
-  budgetUpdateWithWhereUniqueWithoutUserInput: { // input type
-    data: NexusGenInputs['budgetUpdateWithoutUserDataInput']; // budgetUpdateWithoutUserDataInput!
-    where: NexusGenInputs['budgetWhereUniqueInput']; // budgetWhereUniqueInput!
+  budgetUpdateOneRequiredWithoutUserInput: { // input type
+    connect?: NexusGenInputs['budgetWhereUniqueInput'] | null; // budgetWhereUniqueInput
+    create?: NexusGenInputs['budgetCreateWithoutUserInput'] | null; // budgetCreateWithoutUserInput
+    update?: NexusGenInputs['budgetUpdateWithoutUserDataInput'] | null; // budgetUpdateWithoutUserDataInput
+    upsert?: NexusGenInputs['budgetUpsertWithoutUserInput'] | null; // budgetUpsertWithoutUserInput
   }
   budgetUpdateWithoutStacksDataInput: { // input type
     toBeBudgeted?: NexusGenInputs['NullableFloatFieldUpdateOperationsInput'] | null; // NullableFloatFieldUpdateOperationsInput
@@ -294,14 +263,13 @@ export interface NexusGenInputs {
     toBeBudgeted?: NexusGenInputs['NullableFloatFieldUpdateOperationsInput'] | null; // NullableFloatFieldUpdateOperationsInput
     total?: NexusGenInputs['NullableFloatFieldUpdateOperationsInput'] | null; // NullableFloatFieldUpdateOperationsInput
   }
-  budgetUpsertWithWhereUniqueWithoutUserInput: { // input type
-    create: NexusGenInputs['budgetCreateWithoutUserInput']; // budgetCreateWithoutUserInput!
-    update: NexusGenInputs['budgetUpdateWithoutUserDataInput']; // budgetUpdateWithoutUserDataInput!
-    where: NexusGenInputs['budgetWhereUniqueInput']; // budgetWhereUniqueInput!
-  }
   budgetUpsertWithoutStacksInput: { // input type
     create: NexusGenInputs['budgetCreateWithoutStacksInput']; // budgetCreateWithoutStacksInput!
     update: NexusGenInputs['budgetUpdateWithoutStacksDataInput']; // budgetUpdateWithoutStacksDataInput!
+  }
+  budgetUpsertWithoutUserInput: { // input type
+    create: NexusGenInputs['budgetCreateWithoutUserInput']; // budgetCreateWithoutUserInput!
+    update: NexusGenInputs['budgetUpdateWithoutUserDataInput']; // budgetUpdateWithoutUserDataInput!
   }
   budgetWhereInput: { // input type
     AND?: Array<NexusGenInputs['budgetWhereInput'] | null> | null; // [budgetWhereInput]
@@ -491,7 +459,7 @@ export interface NexusGenInputs {
     id?: number | null; // Int
   }
   userCreateInput: { // input type
-    budget?: NexusGenInputs['budgetCreateManyWithoutUserInput'] | null; // budgetCreateManyWithoutUserInput
+    budget?: NexusGenInputs['budgetCreateOneWithoutUserInput'] | null; // budgetCreateOneWithoutUserInput
     createdAt?: NexusGenScalars['DateTime'] | null; // DateTime
     email?: string | null; // String
     emailVerified?: NexusGenScalars['DateTime'] | null; // DateTime
@@ -518,7 +486,7 @@ export interface NexusGenInputs {
     updatedAt?: NexusGenScalars['DateTime'] | null; // DateTime
   }
   userCreateWithoutTransactionsInput: { // input type
-    budget?: NexusGenInputs['budgetCreateManyWithoutUserInput'] | null; // budgetCreateManyWithoutUserInput
+    budget?: NexusGenInputs['budgetCreateOneWithoutUserInput'] | null; // budgetCreateOneWithoutUserInput
     createdAt?: NexusGenScalars['DateTime'] | null; // DateTime
     email?: string | null; // String
     emailVerified?: NexusGenScalars['DateTime'] | null; // DateTime
@@ -548,7 +516,7 @@ export interface NexusGenInputs {
     updatedAt?: NexusGenInputs['DateTimeFieldUpdateOperationsInput'] | null; // DateTimeFieldUpdateOperationsInput
   }
   userUpdateWithoutTransactionsDataInput: { // input type
-    budget?: NexusGenInputs['budgetUpdateManyWithoutUserInput'] | null; // budgetUpdateManyWithoutUserInput
+    budget?: NexusGenInputs['budgetUpdateOneRequiredWithoutUserInput'] | null; // budgetUpdateOneRequiredWithoutUserInput
     createdAt?: NexusGenInputs['DateTimeFieldUpdateOperationsInput'] | null; // DateTimeFieldUpdateOperationsInput
     email?: NexusGenInputs['NullableStringFieldUpdateOperationsInput'] | null; // NullableStringFieldUpdateOperationsInput
     emailVerified?: NexusGenInputs['NullableDateTimeFieldUpdateOperationsInput'] | null; // NullableDateTimeFieldUpdateOperationsInput
@@ -566,7 +534,7 @@ export interface NexusGenInputs {
   }
   userWhereInput: { // input type
     AND?: Array<NexusGenInputs['userWhereInput'] | null> | null; // [userWhereInput]
-    budget?: NexusGenInputs['BudgetListRelationFilter'] | null; // BudgetListRelationFilter
+    budget?: NexusGenInputs['budgetWhereInput'] | null; // budgetWhereInput
     createdAt?: NexusGenInputs['DateTimeFilter'] | null; // DateTimeFilter
     email?: NexusGenInputs['StringNullableFilter'] | null; // StringNullableFilter
     emailVerified?: NexusGenInputs['DateTimeNullableFilter'] | null; // DateTimeNullableFilter
@@ -629,7 +597,6 @@ export interface NexusGenRootTypes {
 
 export interface NexusGenAllTypes extends NexusGenRootTypes {
   BudgetId_label_idxCompoundUniqueInput: NexusGenInputs['BudgetId_label_idxCompoundUniqueInput'];
-  BudgetListRelationFilter: NexusGenInputs['BudgetListRelationFilter'];
   DateTimeFieldUpdateOperationsInput: NexusGenInputs['DateTimeFieldUpdateOperationsInput'];
   DateTimeFilter: NexusGenInputs['DateTimeFilter'];
   DateTimeNullableFilter: NexusGenInputs['DateTimeNullableFilter'];
@@ -655,21 +622,17 @@ export interface NexusGenAllTypes extends NexusGenRootTypes {
   StringNullableFilter: NexusGenInputs['StringNullableFilter'];
   TransactionsListRelationFilter: NexusGenInputs['TransactionsListRelationFilter'];
   budgetCreateInput: NexusGenInputs['budgetCreateInput'];
-  budgetCreateManyWithoutUserInput: NexusGenInputs['budgetCreateManyWithoutUserInput'];
   budgetCreateOneWithoutStacksInput: NexusGenInputs['budgetCreateOneWithoutStacksInput'];
+  budgetCreateOneWithoutUserInput: NexusGenInputs['budgetCreateOneWithoutUserInput'];
   budgetCreateWithoutStacksInput: NexusGenInputs['budgetCreateWithoutStacksInput'];
   budgetCreateWithoutUserInput: NexusGenInputs['budgetCreateWithoutUserInput'];
-  budgetScalarWhereInput: NexusGenInputs['budgetScalarWhereInput'];
   budgetUpdateInput: NexusGenInputs['budgetUpdateInput'];
-  budgetUpdateManyDataInput: NexusGenInputs['budgetUpdateManyDataInput'];
-  budgetUpdateManyWithWhereNestedInput: NexusGenInputs['budgetUpdateManyWithWhereNestedInput'];
-  budgetUpdateManyWithoutUserInput: NexusGenInputs['budgetUpdateManyWithoutUserInput'];
   budgetUpdateOneRequiredWithoutStacksInput: NexusGenInputs['budgetUpdateOneRequiredWithoutStacksInput'];
-  budgetUpdateWithWhereUniqueWithoutUserInput: NexusGenInputs['budgetUpdateWithWhereUniqueWithoutUserInput'];
+  budgetUpdateOneRequiredWithoutUserInput: NexusGenInputs['budgetUpdateOneRequiredWithoutUserInput'];
   budgetUpdateWithoutStacksDataInput: NexusGenInputs['budgetUpdateWithoutStacksDataInput'];
   budgetUpdateWithoutUserDataInput: NexusGenInputs['budgetUpdateWithoutUserDataInput'];
-  budgetUpsertWithWhereUniqueWithoutUserInput: NexusGenInputs['budgetUpsertWithWhereUniqueWithoutUserInput'];
   budgetUpsertWithoutStacksInput: NexusGenInputs['budgetUpsertWithoutStacksInput'];
+  budgetUpsertWithoutUserInput: NexusGenInputs['budgetUpsertWithoutUserInput'];
   budgetWhereInput: NexusGenInputs['budgetWhereInput'];
   budgetWhereUniqueInput: NexusGenInputs['budgetWhereUniqueInput'];
   stacksCreateInput: NexusGenInputs['stacksCreateInput'];
@@ -760,7 +723,7 @@ export interface NexusGenFieldTypes {
     userId: number; // Int!
   }
   user: { // field return type
-    budget: NexusGenRootTypes['budget'][]; // [budget!]!
+    budget: NexusGenRootTypes['budget']; // budget!
     email: string | null; // String
     id: number; // Int!
     transactions: NexusGenRootTypes['transactions'][]; // [transactions!]!
@@ -831,12 +794,6 @@ export interface NexusGenArgTypes {
     }
   }
   user: {
-    budget: { // args
-      after?: NexusGenInputs['budgetWhereUniqueInput'] | null; // budgetWhereUniqueInput
-      before?: NexusGenInputs['budgetWhereUniqueInput'] | null; // budgetWhereUniqueInput
-      first?: number | null; // Int
-      last?: number | null; // Int
-    }
     transactions: { // args
       after?: NexusGenInputs['transactionsWhereUniqueInput'] | null; // transactionsWhereUniqueInput
       before?: NexusGenInputs['transactionsWhereUniqueInput'] | null; // transactionsWhereUniqueInput
@@ -853,7 +810,7 @@ export interface NexusGenInheritedFields {}
 
 export type NexusGenObjectNames = "Mutation" | "Query" | "budget" | "stacks" | "transactions" | "user";
 
-export type NexusGenInputNames = "BudgetId_label_idxCompoundUniqueInput" | "BudgetListRelationFilter" | "DateTimeFieldUpdateOperationsInput" | "DateTimeFilter" | "DateTimeNullableFilter" | "FloatFieldUpdateOperationsInput" | "FloatFilter" | "FloatNullableFilter" | "IntFilter" | "NestedDateTimeFilter" | "NestedDateTimeNullableFilter" | "NestedFloatFilter" | "NestedFloatNullableFilter" | "NestedIntFilter" | "NestedStringFilter" | "NestedStringNullableFilter" | "NullableDateTimeFieldUpdateOperationsInput" | "NullableFloatFieldUpdateOperationsInput" | "NullableStringFieldUpdateOperationsInput" | "QueryBudgetsWhereInput" | "QueryTransactionsWhereInput" | "StacksListRelationFilter" | "StringFieldUpdateOperationsInput" | "StringFilter" | "StringNullableFilter" | "TransactionsListRelationFilter" | "budgetCreateInput" | "budgetCreateManyWithoutUserInput" | "budgetCreateOneWithoutStacksInput" | "budgetCreateWithoutStacksInput" | "budgetCreateWithoutUserInput" | "budgetScalarWhereInput" | "budgetUpdateInput" | "budgetUpdateManyDataInput" | "budgetUpdateManyWithWhereNestedInput" | "budgetUpdateManyWithoutUserInput" | "budgetUpdateOneRequiredWithoutStacksInput" | "budgetUpdateWithWhereUniqueWithoutUserInput" | "budgetUpdateWithoutStacksDataInput" | "budgetUpdateWithoutUserDataInput" | "budgetUpsertWithWhereUniqueWithoutUserInput" | "budgetUpsertWithoutStacksInput" | "budgetWhereInput" | "budgetWhereUniqueInput" | "stacksCreateInput" | "stacksCreateManyWithoutBudgetInput" | "stacksCreateWithoutBudgetInput" | "stacksScalarWhereInput" | "stacksUpdateInput" | "stacksUpdateManyDataInput" | "stacksUpdateManyWithWhereNestedInput" | "stacksUpdateManyWithoutBudgetInput" | "stacksUpdateWithWhereUniqueWithoutBudgetInput" | "stacksUpdateWithoutBudgetDataInput" | "stacksUpsertWithWhereUniqueWithoutBudgetInput" | "stacksWhereInput" | "stacksWhereUniqueInput" | "transactionsCreateInput" | "transactionsCreateManyWithoutUserInput" | "transactionsCreateWithoutUserInput" | "transactionsScalarWhereInput" | "transactionsUpdateInput" | "transactionsUpdateManyDataInput" | "transactionsUpdateManyWithWhereNestedInput" | "transactionsUpdateManyWithoutUserInput" | "transactionsUpdateWithWhereUniqueWithoutUserInput" | "transactionsUpdateWithoutUserDataInput" | "transactionsUpsertWithWhereUniqueWithoutUserInput" | "transactionsWhereInput" | "transactionsWhereUniqueInput" | "userCreateInput" | "userCreateOneWithoutBudgetInput" | "userCreateOneWithoutTransactionsInput" | "userCreateWithoutBudgetInput" | "userCreateWithoutTransactionsInput" | "userUpdateOneRequiredWithoutBudgetInput" | "userUpdateOneRequiredWithoutTransactionsInput" | "userUpdateWithoutBudgetDataInput" | "userUpdateWithoutTransactionsDataInput" | "userUpsertWithoutBudgetInput" | "userUpsertWithoutTransactionsInput" | "userWhereInput" | "userWhereUniqueInput";
+export type NexusGenInputNames = "BudgetId_label_idxCompoundUniqueInput" | "DateTimeFieldUpdateOperationsInput" | "DateTimeFilter" | "DateTimeNullableFilter" | "FloatFieldUpdateOperationsInput" | "FloatFilter" | "FloatNullableFilter" | "IntFilter" | "NestedDateTimeFilter" | "NestedDateTimeNullableFilter" | "NestedFloatFilter" | "NestedFloatNullableFilter" | "NestedIntFilter" | "NestedStringFilter" | "NestedStringNullableFilter" | "NullableDateTimeFieldUpdateOperationsInput" | "NullableFloatFieldUpdateOperationsInput" | "NullableStringFieldUpdateOperationsInput" | "QueryBudgetsWhereInput" | "QueryTransactionsWhereInput" | "StacksListRelationFilter" | "StringFieldUpdateOperationsInput" | "StringFilter" | "StringNullableFilter" | "TransactionsListRelationFilter" | "budgetCreateInput" | "budgetCreateOneWithoutStacksInput" | "budgetCreateOneWithoutUserInput" | "budgetCreateWithoutStacksInput" | "budgetCreateWithoutUserInput" | "budgetUpdateInput" | "budgetUpdateOneRequiredWithoutStacksInput" | "budgetUpdateOneRequiredWithoutUserInput" | "budgetUpdateWithoutStacksDataInput" | "budgetUpdateWithoutUserDataInput" | "budgetUpsertWithoutStacksInput" | "budgetUpsertWithoutUserInput" | "budgetWhereInput" | "budgetWhereUniqueInput" | "stacksCreateInput" | "stacksCreateManyWithoutBudgetInput" | "stacksCreateWithoutBudgetInput" | "stacksScalarWhereInput" | "stacksUpdateInput" | "stacksUpdateManyDataInput" | "stacksUpdateManyWithWhereNestedInput" | "stacksUpdateManyWithoutBudgetInput" | "stacksUpdateWithWhereUniqueWithoutBudgetInput" | "stacksUpdateWithoutBudgetDataInput" | "stacksUpsertWithWhereUniqueWithoutBudgetInput" | "stacksWhereInput" | "stacksWhereUniqueInput" | "transactionsCreateInput" | "transactionsCreateManyWithoutUserInput" | "transactionsCreateWithoutUserInput" | "transactionsScalarWhereInput" | "transactionsUpdateInput" | "transactionsUpdateManyDataInput" | "transactionsUpdateManyWithWhereNestedInput" | "transactionsUpdateManyWithoutUserInput" | "transactionsUpdateWithWhereUniqueWithoutUserInput" | "transactionsUpdateWithoutUserDataInput" | "transactionsUpsertWithWhereUniqueWithoutUserInput" | "transactionsWhereInput" | "transactionsWhereUniqueInput" | "userCreateInput" | "userCreateOneWithoutBudgetInput" | "userCreateOneWithoutTransactionsInput" | "userCreateWithoutBudgetInput" | "userCreateWithoutTransactionsInput" | "userUpdateOneRequiredWithoutBudgetInput" | "userUpdateOneRequiredWithoutTransactionsInput" | "userUpdateWithoutBudgetDataInput" | "userUpdateWithoutTransactionsDataInput" | "userUpsertWithoutBudgetInput" | "userUpsertWithoutTransactionsInput" | "userWhereInput" | "userWhereUniqueInput";
 
 export type NexusGenEnumNames = never;
 

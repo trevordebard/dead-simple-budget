@@ -17,14 +17,14 @@ input budgetCreateInput {
   user: userCreateOneWithoutBudgetInput!
 }
 
-input budgetCreateManyWithoutUserInput {
-  connect: [budgetWhereUniqueInput]
-  create: [budgetCreateWithoutUserInput]
-}
-
 input budgetCreateOneWithoutStacksInput {
   connect: budgetWhereUniqueInput
   create: budgetCreateWithoutStacksInput
+}
+
+input budgetCreateOneWithoutUserInput {
+  connect: budgetWhereUniqueInput
+  create: budgetCreateWithoutUserInput
 }
 
 input budgetCreateWithoutStacksInput {
@@ -44,22 +44,6 @@ input BudgetId_label_idxCompoundUniqueInput {
   label: String!
 }
 
-input BudgetListRelationFilter {
-  every: budgetWhereInput
-  none: budgetWhereInput
-  some: budgetWhereInput
-}
-
-input budgetScalarWhereInput {
-  AND: [budgetScalarWhereInput]
-  id: IntFilter
-  NOT: [budgetScalarWhereInput]
-  OR: [budgetScalarWhereInput]
-  toBeBudgeted: FloatNullableFilter
-  total: FloatNullableFilter
-  userId: IntFilter
-}
-
 input budgetUpdateInput {
   stacks: stacksUpdateManyWithoutBudgetInput
   toBeBudgeted: NullableFloatFieldUpdateOperationsInput
@@ -67,33 +51,18 @@ input budgetUpdateInput {
   user: userUpdateOneRequiredWithoutBudgetInput
 }
 
-input budgetUpdateManyDataInput {
-  toBeBudgeted: NullableFloatFieldUpdateOperationsInput
-  total: NullableFloatFieldUpdateOperationsInput
-}
-
-input budgetUpdateManyWithoutUserInput {
-  connect: [budgetWhereUniqueInput]
-  create: [budgetCreateWithoutUserInput]
-  delete: [budgetWhereUniqueInput]
-  deleteMany: [budgetScalarWhereInput]
-  disconnect: [budgetWhereUniqueInput]
-  set: [budgetWhereUniqueInput]
-  update: [budgetUpdateWithWhereUniqueWithoutUserInput]
-  updateMany: [budgetUpdateManyWithWhereNestedInput]
-  upsert: [budgetUpsertWithWhereUniqueWithoutUserInput]
-}
-
-input budgetUpdateManyWithWhereNestedInput {
-  data: budgetUpdateManyDataInput!
-  where: budgetScalarWhereInput!
-}
-
 input budgetUpdateOneRequiredWithoutStacksInput {
   connect: budgetWhereUniqueInput
   create: budgetCreateWithoutStacksInput
   update: budgetUpdateWithoutStacksDataInput
   upsert: budgetUpsertWithoutStacksInput
+}
+
+input budgetUpdateOneRequiredWithoutUserInput {
+  connect: budgetWhereUniqueInput
+  create: budgetCreateWithoutUserInput
+  update: budgetUpdateWithoutUserDataInput
+  upsert: budgetUpsertWithoutUserInput
 }
 
 input budgetUpdateWithoutStacksDataInput {
@@ -108,20 +77,14 @@ input budgetUpdateWithoutUserDataInput {
   total: NullableFloatFieldUpdateOperationsInput
 }
 
-input budgetUpdateWithWhereUniqueWithoutUserInput {
-  data: budgetUpdateWithoutUserDataInput!
-  where: budgetWhereUniqueInput!
-}
-
 input budgetUpsertWithoutStacksInput {
   create: budgetCreateWithoutStacksInput!
   update: budgetUpdateWithoutStacksDataInput!
 }
 
-input budgetUpsertWithWhereUniqueWithoutUserInput {
+input budgetUpsertWithoutUserInput {
   create: budgetCreateWithoutUserInput!
   update: budgetUpdateWithoutUserDataInput!
-  where: budgetWhereUniqueInput!
 }
 
 input budgetWhereInput {
@@ -590,14 +553,14 @@ input transactionsWhereUniqueInput {
 }
 
 type user {
-  budget(after: budgetWhereUniqueInput, before: budgetWhereUniqueInput, first: Int, last: Int): [budget!]!
+  budget: budget!
   email: String
   id: Int!
   transactions(after: transactionsWhereUniqueInput, before: transactionsWhereUniqueInput, first: Int, last: Int): [transactions!]!
 }
 
 input userCreateInput {
-  budget: budgetCreateManyWithoutUserInput
+  budget: budgetCreateOneWithoutUserInput
   createdAt: DateTime
   email: String
   emailVerified: DateTime
@@ -628,7 +591,7 @@ input userCreateWithoutBudgetInput {
 }
 
 input userCreateWithoutTransactionsInput {
-  budget: budgetCreateManyWithoutUserInput
+  budget: budgetCreateOneWithoutUserInput
   createdAt: DateTime
   email: String
   emailVerified: DateTime
@@ -662,7 +625,7 @@ input userUpdateWithoutBudgetDataInput {
 }
 
 input userUpdateWithoutTransactionsDataInput {
-  budget: budgetUpdateManyWithoutUserInput
+  budget: budgetUpdateOneRequiredWithoutUserInput
   createdAt: DateTimeFieldUpdateOperationsInput
   email: NullableStringFieldUpdateOperationsInput
   emailVerified: NullableDateTimeFieldUpdateOperationsInput
@@ -683,7 +646,7 @@ input userUpsertWithoutTransactionsInput {
 
 input userWhereInput {
   AND: [userWhereInput]
-  budget: BudgetListRelationFilter
+  budget: budgetWhereInput
   createdAt: DateTimeFilter
   email: StringNullableFilter
   emailVerified: DateTimeNullableFilter

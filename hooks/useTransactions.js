@@ -84,7 +84,7 @@ const useTransactions = () => {
     transactions = data.transactions;
   }
   if (stackLabelRes) {
-    stackLabels = getStackLabels(stackLabelRes.user.budget[0]);
+    stackLabels = getStackLabels(stackLabelRes.user.budget);
   }
 
   return { loading, transactions, addTransaction, stackLabels, editTransaction };

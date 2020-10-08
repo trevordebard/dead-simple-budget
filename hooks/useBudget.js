@@ -39,9 +39,7 @@ const useBudget = () => {
 
   let budget;
   if (data?.user?.budget) {
-    // destructure array to get first budget
-    // Right now users can only have 1 budget, but I could see a future where you can have multiple
-    [budget] = data.user.budget;
+    budget = data.user.budget;
   }
 
   const [addStack] = useMutation(ADD_STACK, {
@@ -53,7 +51,7 @@ const useBudget = () => {
         },
       });
       const newUser = JSON.parse(JSON.stringify(existingUser));
-      newUser.user.budget[0].stacks = [...newUser.user.budget[0].stacks, result.createOnestacks];
+      newUser.user.budget.stacks = [...newUser.user.budget.stacks, result.createOnestacks];
       cache.writeQuery({
         query: GET_USER,
         data: newUser,
