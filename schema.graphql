@@ -132,6 +132,10 @@ input DateTimeNullableFilter {
 }
 
 input FloatFieldUpdateOperationsInput {
+  decrement: Float
+  divide: Float
+  increment: Float
+  multiply: Float
   set: Float
 }
 
@@ -266,6 +270,10 @@ input NullableDateTimeFieldUpdateOperationsInput {
 }
 
 input NullableFloatFieldUpdateOperationsInput {
+  decrement: Float
+  divide: Float
+  increment: Float
+  multiply: Float
   set: Float
 }
 
