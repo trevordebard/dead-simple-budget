@@ -51,7 +51,6 @@ const Query = queryType({
     t.crud.user();
     t.crud.budget();
     t.crud.transactions({ filtering: { user: true, userId: true } });
-    // t.crud.users();
     t.crud.user();
     t.crud.budgets({ filtering: { user: true, userId: true } });
     t.crud.stacks();
@@ -88,8 +87,44 @@ const Mutation = mutationType({
       },
     });
     t.crud.createOnestacks();
-    t.crud.createOnetransactions();
-    t.crud.updateOnetransactions();
+    t.crud.createOnetransactions({
+      async resolve(root, args, ctx, info, originalResolve) {
+        const res = await originalResolve(root, args, ctx, info);
+        const { budget } = await ctx.prisma.user.findOne({
+          where: { id: res.userId },
+          include: { budget: true },
+        });
+        await ctx.prisma.stacks.update({
+          data: { amount: { increment: res.amount } },
+          where: { budgetId_label_idx: { budgetId: budget.id, label: res.stack } },
+        });
+        await ctx.prisma.budget.update({
+          data: { toBeBudgeted: { increment: args.data.amount } },
+          where: { id: budget.id },
+        });
+        return res;
+      },
+    });
+    t.crud.updateOnetransactions({
+      async resolve(root, args, ctx, info, originalResolve) {
+        const transactionBefore = await ctx.prisma.transactions.findOne({ where: { id: args.where.id } });
+        const res = await originalResolve(root, args, ctx, info);
+        const difference = transactionBefore.amount - res.amount;
+        const { budget } = await ctx.prisma.user.findOne({
+          where: { id: res.userId },
+          include: { budget: true },
+        });
+        await ctx.prisma.stacks.update({
+          data: { amount: difference },
+          where: { budgetId_label_idx: { budgetId: budget.id, label: res.stack } },
+        });
+        await ctx.prisma.budget.update({
+          data: { toBeBudgeted: { increment: difference } },
+          where: { id: budget.id },
+        });
+        return res;
+      },
+    });
   },
 });
 export const schema = makeSchema({
