@@ -20,10 +20,16 @@ export async function getServerSideProps(context) {
     context.res.end();
     return;
   }
-  const data = await apolloClient.query({ query: GET_USER, variables: { email: session.user.email } });
-  if (data.data.user.budget.length === 0) {
+  let data;
+  try {
+    data = await apolloClient.query({ query: GET_USER, variables: { email: session.user.email } });
+  } catch (e) {
+    console.log('couldnt find user!')
+    console.log(session.user.email)
     await apolloClient.mutate({ mutation: ADD_BUDGET, variables: { email: session.user.email } });
+    data = await apolloClient.query({ query: GET_USER, variables: { email: session.user.email } });
   }
+
   return {
     props: {
       initialApolloState: apolloClient.cache.extract(),

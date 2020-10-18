@@ -13,6 +13,13 @@ const options = {
     }),
   ],
   adapter: Adapters.Prisma.Adapter({ prisma }),
+  events: {
+    createUser: async message => {
+      console.log('yooooo');
+      await prisma.budget.create({ data: { toBeBudgeted: 0, total: 0, user: { connect: { id: message.id } } } });
+      console.log('budget created!');
+    },
+  },
 };
 
 export default (req, res) => NextAuth(req, res, options);

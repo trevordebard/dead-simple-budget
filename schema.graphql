@@ -562,7 +562,7 @@ input transactionsWhereUniqueInput {
 
 type user {
   budget: budget!
-  email: String
+  email: String!
   id: Int!
   transactions(after: transactionsWhereUniqueInput, before: transactionsWhereUniqueInput, first: Int, last: Int): [transactions!]!
 }
@@ -570,7 +570,7 @@ type user {
 input userCreateInput {
   budget: budgetCreateOneWithoutUserInput
   createdAt: DateTime
-  email: String
+  email: String!
   emailVerified: DateTime
   image: String
   name: String
@@ -590,7 +590,7 @@ input userCreateOneWithoutTransactionsInput {
 
 input userCreateWithoutBudgetInput {
   createdAt: DateTime
-  email: String
+  email: String!
   emailVerified: DateTime
   image: String
   name: String
@@ -601,7 +601,7 @@ input userCreateWithoutBudgetInput {
 input userCreateWithoutTransactionsInput {
   budget: budgetCreateOneWithoutUserInput
   createdAt: DateTime
-  email: String
+  email: String!
   emailVerified: DateTime
   image: String
   name: String
@@ -624,7 +624,7 @@ input userUpdateOneRequiredWithoutTransactionsInput {
 
 input userUpdateWithoutBudgetDataInput {
   createdAt: DateTimeFieldUpdateOperationsInput
-  email: NullableStringFieldUpdateOperationsInput
+  email: StringFieldUpdateOperationsInput
   emailVerified: NullableDateTimeFieldUpdateOperationsInput
   image: NullableStringFieldUpdateOperationsInput
   name: NullableStringFieldUpdateOperationsInput
@@ -635,7 +635,7 @@ input userUpdateWithoutBudgetDataInput {
 input userUpdateWithoutTransactionsDataInput {
   budget: budgetUpdateOneRequiredWithoutUserInput
   createdAt: DateTimeFieldUpdateOperationsInput
-  email: NullableStringFieldUpdateOperationsInput
+  email: StringFieldUpdateOperationsInput
   emailVerified: NullableDateTimeFieldUpdateOperationsInput
   image: NullableStringFieldUpdateOperationsInput
   name: NullableStringFieldUpdateOperationsInput
@@ -656,7 +656,7 @@ input userWhereInput {
   AND: [userWhereInput]
   budget: budgetWhereInput
   createdAt: DateTimeFilter
-  email: StringNullableFilter
+  email: StringFilter
   emailVerified: DateTimeNullableFilter
   id: IntFilter
   image: StringNullableFilter
