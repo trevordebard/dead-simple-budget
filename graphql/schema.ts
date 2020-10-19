@@ -66,7 +66,7 @@ const Mutation = mutationType({
         const res = await originalResolve(root, args, ctx, info);
         const {
           sum: { amount: sumOfStacks },
-        } = await ctx.prisma.stacks.aggregate({ sum: { amount: true } });
+        } = await ctx.prisma.stacks.aggregate({ sum: { amount: true }, where: { budgetId: res.id } });
         const { total } = await ctx.prisma.budget.findOne({ where: { id: res.id } });
         await ctx.prisma.budget.update({ data: { toBeBudgeted: { set: total - sumOfStacks } }, where: { id: res.id } });
         return res;
@@ -99,7 +99,7 @@ const Mutation = mutationType({
           where: { budgetId_label_idx: { budgetId: budget.id, label: res.stack } },
         });
         await ctx.prisma.budget.update({
-          data: { toBeBudgeted: { increment: args.data.amount } },
+          data: { toBeBudgeted: { decrement: args.data.amount } },
           where: { id: budget.id },
         });
         return res;
