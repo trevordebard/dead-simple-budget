@@ -88,10 +88,10 @@ input budgetUpsertWithoutUserInput {
 }
 
 input budgetWhereInput {
-  AND: [budgetWhereInput]
+  AND: [budgetWhereInput!]
   id: IntFilter
-  NOT: [budgetWhereInput]
-  OR: [budgetWhereInput]
+  NOT: [budgetWhereInput!]
+  OR: [budgetWhereInput!]
   stacks: StacksListRelationFilter
   toBeBudgeted: FloatNullableFilter
   total: FloatNullableFilter
@@ -113,22 +113,22 @@ input DateTimeFilter {
   equals: DateTime
   gt: DateTime
   gte: DateTime
-  in: [DateTime]
+  in: [DateTime!]
   lt: DateTime
   lte: DateTime
   not: NestedDateTimeFilter
-  notIn: [DateTime]
+  notIn: [DateTime!]
 }
 
 input DateTimeNullableFilter {
   equals: DateTime
   gt: DateTime
   gte: DateTime
-  in: [DateTime]
+  in: [DateTime!]
   lt: DateTime
   lte: DateTime
   not: NestedDateTimeNullableFilter
-  notIn: [DateTime]
+  notIn: [DateTime!]
 }
 
 input FloatFieldUpdateOperationsInput {
@@ -143,33 +143,33 @@ input FloatFilter {
   equals: Float
   gt: Float
   gte: Float
-  in: [Float]
+  in: [Float!]
   lt: Float
   lte: Float
   not: NestedFloatFilter
-  notIn: [Float]
+  notIn: [Float!]
 }
 
 input FloatNullableFilter {
   equals: Float
   gt: Float
   gte: Float
-  in: [Float]
+  in: [Float!]
   lt: Float
   lte: Float
   not: NestedFloatNullableFilter
-  notIn: [Float]
+  notIn: [Float!]
 }
 
 input IntFilter {
   equals: Int
   gt: Int
   gte: Int
-  in: [Int]
+  in: [Int!]
   lt: Int
   lte: Int
   not: NestedIntFilter
-  notIn: [Int]
+  notIn: [Int!]
 }
 
 type Mutation {
@@ -186,55 +186,55 @@ input NestedDateTimeFilter {
   equals: DateTime
   gt: DateTime
   gte: DateTime
-  in: [DateTime]
+  in: [DateTime!]
   lt: DateTime
   lte: DateTime
   not: NestedDateTimeFilter
-  notIn: [DateTime]
+  notIn: [DateTime!]
 }
 
 input NestedDateTimeNullableFilter {
   equals: DateTime
   gt: DateTime
   gte: DateTime
-  in: [DateTime]
+  in: [DateTime!]
   lt: DateTime
   lte: DateTime
   not: NestedDateTimeNullableFilter
-  notIn: [DateTime]
+  notIn: [DateTime!]
 }
 
 input NestedFloatFilter {
   equals: Float
   gt: Float
   gte: Float
-  in: [Float]
+  in: [Float!]
   lt: Float
   lte: Float
   not: NestedFloatFilter
-  notIn: [Float]
+  notIn: [Float!]
 }
 
 input NestedFloatNullableFilter {
   equals: Float
   gt: Float
   gte: Float
-  in: [Float]
+  in: [Float!]
   lt: Float
   lte: Float
   not: NestedFloatNullableFilter
-  notIn: [Float]
+  notIn: [Float!]
 }
 
 input NestedIntFilter {
   equals: Int
   gt: Int
   gte: Int
-  in: [Int]
+  in: [Int!]
   lt: Int
   lte: Int
   not: NestedIntFilter
-  notIn: [Int]
+  notIn: [Int!]
 }
 
 input NestedStringFilter {
@@ -243,11 +243,11 @@ input NestedStringFilter {
   equals: String
   gt: String
   gte: String
-  in: [String]
+  in: [String!]
   lt: String
   lte: String
   not: NestedStringFilter
-  notIn: [String]
+  notIn: [String!]
   startsWith: String
 }
 
@@ -257,11 +257,11 @@ input NestedStringNullableFilter {
   equals: String
   gt: String
   gte: String
-  in: [String]
+  in: [String!]
   lt: String
   lte: String
   not: NestedStringNullableFilter
-  notIn: [String]
+  notIn: [String!]
   startsWith: String
 }
 
@@ -294,6 +294,11 @@ input QueryBudgetsWhereInput {
   userId: IntFilter
 }
 
+enum QueryMode {
+  default
+  insensitive
+}
+
 input QueryTransactionsWhereInput {
   user: userWhereInput
   userId: IntFilter
@@ -315,8 +320,8 @@ input stacksCreateInput {
 }
 
 input stacksCreateManyWithoutBudgetInput {
-  connect: [stacksWhereUniqueInput]
-  create: [stacksCreateWithoutBudgetInput]
+  connect: [stacksWhereUniqueInput!]
+  create: [stacksCreateWithoutBudgetInput!]
 }
 
 input stacksCreateWithoutBudgetInput {
@@ -333,13 +338,13 @@ input StacksListRelationFilter {
 
 input stacksScalarWhereInput {
   amount: FloatFilter
-  AND: [stacksScalarWhereInput]
+  AND: [stacksScalarWhereInput!]
   budgetId: IntFilter
   created_at: DateTimeFilter
   id: IntFilter
   label: StringFilter
-  NOT: [stacksScalarWhereInput]
-  OR: [stacksScalarWhereInput]
+  NOT: [stacksScalarWhereInput!]
+  OR: [stacksScalarWhereInput!]
 }
 
 input stacksUpdateInput {
@@ -356,15 +361,15 @@ input stacksUpdateManyDataInput {
 }
 
 input stacksUpdateManyWithoutBudgetInput {
-  connect: [stacksWhereUniqueInput]
-  create: [stacksCreateWithoutBudgetInput]
-  delete: [stacksWhereUniqueInput]
-  deleteMany: [stacksScalarWhereInput]
-  disconnect: [stacksWhereUniqueInput]
-  set: [stacksWhereUniqueInput]
-  update: [stacksUpdateWithWhereUniqueWithoutBudgetInput]
-  updateMany: [stacksUpdateManyWithWhereNestedInput]
-  upsert: [stacksUpsertWithWhereUniqueWithoutBudgetInput]
+  connect: [stacksWhereUniqueInput!]
+  create: [stacksCreateWithoutBudgetInput!]
+  delete: [stacksWhereUniqueInput!]
+  deleteMany: [stacksScalarWhereInput!]
+  disconnect: [stacksWhereUniqueInput!]
+  set: [stacksWhereUniqueInput!]
+  update: [stacksUpdateWithWhereUniqueWithoutBudgetInput!]
+  updateMany: [stacksUpdateManyWithWhereNestedInput!]
+  upsert: [stacksUpsertWithWhereUniqueWithoutBudgetInput!]
 }
 
 input stacksUpdateManyWithWhereNestedInput {
@@ -391,14 +396,14 @@ input stacksUpsertWithWhereUniqueWithoutBudgetInput {
 
 input stacksWhereInput {
   amount: FloatFilter
-  AND: [stacksWhereInput]
+  AND: [stacksWhereInput!]
   budget: budgetWhereInput
   budgetId: IntFilter
   created_at: DateTimeFilter
   id: IntFilter
   label: StringFilter
-  NOT: [stacksWhereInput]
-  OR: [stacksWhereInput]
+  NOT: [stacksWhereInput!]
+  OR: [stacksWhereInput!]
 }
 
 input stacksWhereUniqueInput {
@@ -416,11 +421,12 @@ input StringFilter {
   equals: String
   gt: String
   gte: String
-  in: [String]
+  in: [String!]
   lt: String
   lte: String
+  mode: QueryMode
   not: NestedStringFilter
-  notIn: [String]
+  notIn: [String!]
   startsWith: String
 }
 
@@ -430,11 +436,12 @@ input StringNullableFilter {
   equals: String
   gt: String
   gte: String
-  in: [String]
+  in: [String!]
   lt: String
   lte: String
+  mode: QueryMode
   not: NestedStringNullableFilter
-  notIn: [String]
+  notIn: [String!]
   startsWith: String
 }
 
@@ -458,8 +465,8 @@ input transactionsCreateInput {
 }
 
 input transactionsCreateManyWithoutUserInput {
-  connect: [transactionsWhereUniqueInput]
-  create: [transactionsCreateWithoutUserInput]
+  connect: [transactionsWhereUniqueInput!]
+  create: [transactionsCreateWithoutUserInput!]
 }
 
 input transactionsCreateWithoutUserInput {
@@ -478,12 +485,12 @@ input TransactionsListRelationFilter {
 
 input transactionsScalarWhereInput {
   amount: FloatFilter
-  AND: [transactionsScalarWhereInput]
+  AND: [transactionsScalarWhereInput!]
   date: DateTimeFilter
   description: StringFilter
   id: IntFilter
-  NOT: [transactionsScalarWhereInput]
-  OR: [transactionsScalarWhereInput]
+  NOT: [transactionsScalarWhereInput!]
+  OR: [transactionsScalarWhereInput!]
   stack: StringFilter
   type: StringFilter
   userId: IntFilter
@@ -507,15 +514,15 @@ input transactionsUpdateManyDataInput {
 }
 
 input transactionsUpdateManyWithoutUserInput {
-  connect: [transactionsWhereUniqueInput]
-  create: [transactionsCreateWithoutUserInput]
-  delete: [transactionsWhereUniqueInput]
-  deleteMany: [transactionsScalarWhereInput]
-  disconnect: [transactionsWhereUniqueInput]
-  set: [transactionsWhereUniqueInput]
-  update: [transactionsUpdateWithWhereUniqueWithoutUserInput]
-  updateMany: [transactionsUpdateManyWithWhereNestedInput]
-  upsert: [transactionsUpsertWithWhereUniqueWithoutUserInput]
+  connect: [transactionsWhereUniqueInput!]
+  create: [transactionsCreateWithoutUserInput!]
+  delete: [transactionsWhereUniqueInput!]
+  deleteMany: [transactionsScalarWhereInput!]
+  disconnect: [transactionsWhereUniqueInput!]
+  set: [transactionsWhereUniqueInput!]
+  update: [transactionsUpdateWithWhereUniqueWithoutUserInput!]
+  updateMany: [transactionsUpdateManyWithWhereNestedInput!]
+  upsert: [transactionsUpsertWithWhereUniqueWithoutUserInput!]
 }
 
 input transactionsUpdateManyWithWhereNestedInput {
@@ -544,12 +551,12 @@ input transactionsUpsertWithWhereUniqueWithoutUserInput {
 
 input transactionsWhereInput {
   amount: FloatFilter
-  AND: [transactionsWhereInput]
+  AND: [transactionsWhereInput!]
   date: DateTimeFilter
   description: StringFilter
   id: IntFilter
-  NOT: [transactionsWhereInput]
-  OR: [transactionsWhereInput]
+  NOT: [transactionsWhereInput!]
+  OR: [transactionsWhereInput!]
   stack: StringFilter
   type: StringFilter
   user: userWhereInput
@@ -653,7 +660,7 @@ input userUpsertWithoutTransactionsInput {
 }
 
 input userWhereInput {
-  AND: [userWhereInput]
+  AND: [userWhereInput!]
   budget: budgetWhereInput
   createdAt: DateTimeFilter
   email: StringFilter
@@ -661,8 +668,8 @@ input userWhereInput {
   id: IntFilter
   image: StringNullableFilter
   name: StringNullableFilter
-  NOT: [userWhereInput]
-  OR: [userWhereInput]
+  NOT: [userWhereInput!]
+  OR: [userWhereInput!]
   transactions: TransactionsListRelationFilter
   updatedAt: DateTimeFilter
 }
