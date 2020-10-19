@@ -3,9 +3,9 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "npx next dev",
-    "deploy-dev": "npm ci && npm run build && pm2 restart budget-dev",
-    "deploy-production": "npm ci && npm run build && pm2 restart budget-prod",
-    "build": "nexus build && next build",
+    "deploy-dev": "sudo npm ci && npm run build && pm2 restart budget-dev",
+    "deploy-production": "sudo npm ci && npm run build && pm2 restart budget-prod",
+    "build": "npx prisma generate && npx next build",
     "start": "next start",
     "start-dev": "next start -p 4000",
     "start-production": "next start -p 5000"
