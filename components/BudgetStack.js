@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import styled from 'styled-components';
+import { evaluate } from 'mathjs';
 import FormInput from './FormInput';
 import { ListRow } from './styled';
 
@@ -15,29 +16,31 @@ const StackInput = styled(FormInput)`
   }
 `;
 
-const BudgetStack = ({ label, register, budgetId, value, errors, updateStack, removeStack }) => {
-  const [prevValue, setPrevValue] = useState(value);
+const BudgetStack = ({ label, register, budgetId, amount, updateStack, setValue }) => {
+  const [prevAmount, setPrevAmount] = useState(amount);
   return (
     <ListRow>
       <p>{label} </p>
       <StackInput
         name={label}
-        type="number"
-        defaultValue={value}
-        danger={value < 0}
+        type=""
+        defaultValue={amount}
+        danger={amount < 0}
         register={register}
         onBlur={e => {
-          const newVal = parseFloat(e.target.value);
+          // const newVal = parseFloat(e.target.value);
+          const newVal = evaluate(e.target.value);
           // Prevent api call if vlaue didn't change
-          if (newVal !== prevValue) {
+          if (newVal !== prevAmount) {
             updateStack({
               variables: {
                 budgetId,
                 label,
-                value: newVal,
+                amount: newVal,
               },
             });
-            setPrevValue(newVal);
+            setPrevAmount(newVal);
+            setValue(label, newVal);
           }
         }}
       />
@@ -57,4 +60,4 @@ const BudgetStack = ({ label, register, budgetId, value, errors, updateStack, re
     </ListRow>
   );
 };
-export default BudgetStack;
+export default memo(BudgetStack);

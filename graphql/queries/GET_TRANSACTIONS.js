@@ -3,9 +3,10 @@ import { gql } from '@apollo/client';
 export const GET_TRANSACTIONS = gql`
   query GET_TRANSACTIONS {
     me {
-      _id
+      id
+      email
       transactions {
-        _id
+        id
         stack
         amount
         description

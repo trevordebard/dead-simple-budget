@@ -10,7 +10,6 @@ import TableContainer from '@material-ui/core/TableContainer';
 import { ThemeProvider } from '@material-ui/core';
 import { createMuiTheme } from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import RequireLogin from './RequireLogin';
 import useTransactions from '../hooks/useTransactions';
 import NewTransaction from './NewTransaction';
 import EditTransaction from './EditTransaction';
@@ -124,7 +123,7 @@ const Transactions = () => {
               <TableBody>
                 {transactions &&
                   transactions.map(transaction => (
-                    <TableRow key={transaction._id} selected={transaction._id === transactionInFocus}>
+                    <TableRow key={transaction.id} selected={transaction.id === transactionInFocus}>
                       <TableCell>{transaction.description}</TableCell>
                       <TableCell align="right">${transaction.amount}</TableCell>
                       <TableCell align="right">{transaction.stack}</TableCell>
@@ -135,7 +134,7 @@ const Transactions = () => {
                         <RowTools>
                           <EditIcon
                             onClick={() => {
-                              setTransactionInFocus(transaction._id);
+                              setTransactionInFocus(transaction.id);
                             }}
                           />
                         </RowTools>
@@ -189,4 +188,4 @@ const TransactionActions = ({ transactionInFocus, setTransactionInFocus }) => {
   return <NewTransaction />;
 };
 
-export default RequireLogin(Transactions);
+export default Transactions;

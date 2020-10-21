@@ -1,9 +1,9 @@
 import React from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
-import { useMutation, gql, useApolloClient } from '@apollo/client';
+import { useApolloClient } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
-import useUser from '../hooks/useUser';
+import { useSession, signOut } from 'next-auth/client';
 import Logo from './Logo.svg';
 import { TransparentButton } from './styled';
 
@@ -32,65 +32,45 @@ const Account = styled.div`
   justify-content: flex-end;
   flex-wrap: wrap;
 `;
+
 const Nav = () => {
-  const { user, loggedIn, loading } = useUser();
-  if (loading) {
-    return null;
-  }
-  return <NavContainer>{loggedIn ? <LoggedInNav email={user.email} /> : <LoggedOutNav />}</NavContainer>;
+  const [session] = useSession();
+
+  return (
+    <NavContainer>
+      <LoggedInNav email={session?.user?.email} />
+    </NavContainer>
+  );
 };
-const LOGOUT = gql`
-  mutation LOGOUT {
-    userLogout {
-      record {
-        email
-      }
-    }
-  }
-`;
+
 const LoggedInNav = ({ email }) => {
-  const router = useRouter();
   const client = useApolloClient();
-  const [logout] = useMutation(LOGOUT, {
-    onCompleted: async () => {
-      await client.clearStore();
-      router.push('/login');
-    },
-  });
+  const router = useRouter();
   return (
     <>
       <LogoWrapper>
         <Link href="/">
-          <Logo />
+          <>
+            <Logo />
+          </>
         </Link>
       </LogoWrapper>
 
       <Account>
         <p>{email}</p>
-        <TransparentButton transparent onClick={() => logout()}>
+        <TransparentButton
+          transparent
+          onClick={async () => {
+            signOut();
+            await client.clearStore();
+            router.push('/login');
+          }}
+        >
           Logout
         </TransparentButton>
       </Account>
     </>
   );
 };
-
-const LoggedOutNav = () => (
-  <>
-    <LogoWrapper>
-      <Link href="/">
-        <h1>Budget Trace</h1>
-      </Link>
-    </LogoWrapper>
-    <Account>
-      <Link href="/login">
-        <a>Login</a>
-      </Link>
-      <Link href="/signup">
-        <a>Signup</a>
-      </Link>
-    </Account>
-  </>
-);
 
 export default Nav;

@@ -1,70 +1,70 @@
 import { gql, useQuery, useMutation } from '@apollo/client';
+import { useSession } from 'next-auth/client';
+import { GET_USER } from 'graphql/queries/GET_USER';
 
 const UPDATE_STACK = gql`
-  mutation($budgetId: MongoID!, $label: String!, $value: Float!) {
-    budgetUpdateStack(budgetId: $budgetId, label: $label, value: $value) {
-      total
-      toBeBudgeted
-      stacks {
-        value
-        label
-      }
+  mutation($budgetId: Int!, $label: String!, $amount: Float!) {
+    updateOnestacks(
+      data: { amount: { set: $amount } }
+      where: { budgetId_label_idx: { budgetId: $budgetId, label: $label } }
+    ) {
+      label
+      amount
     }
   }
 `;
+
+const UPDATE_TOTAL = gql`
+  mutation($budgetId: Int!, $total: Float!) {
+    updateOnebudget(data: { total: { set: $total } }, where: { id: $budgetId }) {
+      total
+    }
+  }
+`;
+
 const ADD_STACK = gql`
-  mutation($budgetId: MongoID!, $newStackLabel: String!, $newStackValue: Float) {
-    budgetPushToStacks(budgetId: $budgetId, newStackLabel: $newStackLabel, newStackValue: $newStackValue) {
-      total
-      toBeBudgeted
-      stacks {
-        label
-        value
-      }
-    }
-  }
-`;
-const REMOVE_STACK = gql`
-  mutation($budgetId: MongoID!, $label: String!) {
-    budgetRemoveStack(budgetId: $budgetId, label: $label) {
-      total
-      toBeBudgeted
-      stacks {
-        label
-        value
-      }
-    }
-  }
-`;
-const GET_BUDGET = gql`
-  query GET_BUDGET {
-    me {
-      _id
-      budget {
-        _userId
-        _id
-        total
-        toBeBudgeted
-        stacks {
-          _id
-          label
-          value
-        }
-      }
+  mutation($budgetId: Int!, $newStackLabel: String!) {
+    createOnestacks(data: { label: $newStackLabel, budget: { connect: { id: $budgetId } } }) {
+      label
+      amount
+      id
+      budgetId
     }
   }
 `;
 
 const useBudget = () => {
-  const { data, loading, error } = useQuery(GET_BUDGET);
-  // TODO: Update stack label cache on addStack
-  // For some reason GET_STACK_LABELS is not refetched on add stack, but it is on remove stack ???
-  // Not looking deep into this since this will all be changed once I start working with cache more effectively
-  const [addStack] = useMutation(ADD_STACK, { refetchQueries: ['GET_BUDGET', 'GET_STACK_LABELS'] });
-  const [updateStack] = useMutation(UPDATE_STACK, { refetchQueries: ['GET_BUDGET'] });
-  const [removeStack] = useMutation(REMOVE_STACK, { refetchQueries: ['GET_BUDGET', 'GET_STACK_LABELS'] });
+  const [session] = useSession();
+  const { data, loading, error } = useQuery(GET_USER, { variables: { email: session.user.email } });
 
-  return { loading, data: data?.me.budget, error, addStack, updateStack, removeStack };
+  let budget;
+  if (data?.user?.budget) {
+    budget = data.user.budget;
+  }
+
+  const [addStack] = useMutation(ADD_STACK, {
+    update(cache, { data: result }) {
+      const existingUser = cache.readQuery({
+        query: GET_USER,
+        variables: {
+          email: session.user.email,
+        },
+      });
+      const newUser = JSON.parse(JSON.stringify(existingUser));
+      newUser.user.budget.stacks = [...newUser.user.budget.stacks, result.createOnestacks];
+      cache.writeQuery({
+        query: GET_USER,
+        data: newUser,
+      });
+    },
+  });
+
+  const [updateStack] = useMutation(UPDATE_STACK, {
+    refetchQueries: ['GET_USER'],
+  });
+  const [updateTotal] = useMutation(UPDATE_TOTAL, { refetchQueries: ['GET_USER'] });
+
+  return { loading, data: budget, error, addStack, updateStack, updateTotal };
 };
 
 export default useBudget;

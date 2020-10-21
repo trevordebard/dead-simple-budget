@@ -1,4 +1,13 @@
 module.exports = {
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/budget',
+        permanent: true,
+      },
+    ];
+  },
   webpack: config => {
     // Fixes npm packages that depend on `fs` module
     config.node = {
@@ -6,8 +15,5 @@ module.exports = {
     };
 
     return config;
-  },
-  env: {
-    MONGO_URI: 'mongodb://localhost:27017/budget',
   },
 };

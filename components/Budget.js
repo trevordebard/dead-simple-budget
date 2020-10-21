@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import useBudget from '../hooks/useBudget';
 import FormInput from './FormInput';
 import BudgetStack from './BudgetStack';
-import RequireLogin from './RequireLogin';
 import { Button } from './styled';
+import EditableText from './EditableText';
 
 const ToplineBudget = styled.div`
   text-align: center;
@@ -15,6 +15,15 @@ const ToplineBudget = styled.div`
 const Amount = styled.span`
   font-weight: 500;
   color: ${props => (props.danger ? 'var(--danger)' : 'var(--fontColor)')};
+  ::before {
+    content: '$';
+  }
+  span {
+    &:hover {
+      color: ${props => (props.editable ? 'var(--action)' : 'inherit')};
+      cursor: ${props => (props.editable ? 'pointer' : 'inherit')};
+    }
+  }
 `;
 const SubText = styled.span`
   font-weight: 400;
@@ -30,11 +39,12 @@ const AddStackWrapper = styled.div`
 `;
 
 function Budget() {
-  const { data, loading, error, addStack, updateStack, removeStack } = useBudget();
-  const { register, handleSubmit, errors, reset } = useForm();
+  const { data, loading, error, addStack, updateStack, removeStack, updateTotal } = useBudget();
+  const { register, handleSubmit, errors, reset, setValue } = useForm();
+  const [editTotalVisible, setEditTotalVisible] = useState(false);
 
-  if (loading) {
-    return <p>Loading...</p>;
+  if (loading || !data) {
+    return <span>loading...</span>;
   }
   if (error) {
     console.error(error);
@@ -44,11 +54,10 @@ function Budget() {
     console.log(payload);
   };
   const onAddStack = payload => {
-    reset({ newStack: '' });
     addStack({
-      variables: { newStackLabel: payload.newStack, budgetId: data._id },
-      refetchQueries: ['GET_BUDGET'], // Eventually change to update cache
+      variables: { newStackLabel: payload.newStack, budgetId: data.id },
     });
+    reset({ newStack: '' });
   };
   return (
     <div>
@@ -56,15 +65,28 @@ function Budget() {
         <ToplineBudget>
           <h1>Budget</h1>
           <h5>
-            <Amount danger={data.total < 0}>${data.total}</Amount>
+            <Amount editable danger={data.total < 0} onClick={() => setEditTotalVisible(!editTotalVisible)}>
+              <EditableText
+                text={data.total}
+                update={total =>
+                  updateTotal({
+                    variables: {
+                      total: parseFloat(total),
+                      budgetId: data.id,
+                    },
+                  })
+                }
+                inputType="number"
+              />
+            </Amount>
             <SubText> in account</SubText>
           </h5>
           <h5>
-            <Amount danger={data.toBeBudgeted < 0}>${data.toBeBudgeted}</Amount>
+            <Amount danger={data.toBeBudgeted < 0}>{data.toBeBudgeted}</Amount>
             <SubText> to be budgeted</SubText>
           </h5>
         </ToplineBudget>
-        {renderStacks(data?.stacks, data._id)}
+        {data.stacks && renderStacks(data?.stacks, data.id)}
         <AddStackWrapper>
           <FormInput name="newStack" register={register} errors={errors} placeholder="Stack Name" autoComplete="off" />
           <Button isAction type="button" register={register} name="addStack" onClick={handleSubmit(onAddStack)}>
@@ -75,22 +97,22 @@ function Budget() {
       <br />
     </div>
   );
-
   function renderStacks(stacks, budgetId) {
     return stacks.map(item => (
-      <div key={item._id}>
+      <div key={item.id}>
         <BudgetStack
           label={item.label}
           register={register}
           budgetId={budgetId}
-          value={item.value}
+          amount={item.amount}
           errors={errors}
           updateStack={updateStack}
           removeStack={removeStack}
+          setValue={setValue}
         />
       </div>
     ));
   }
 }
 
-export default RequireLogin(Budget);
+export default Budget;

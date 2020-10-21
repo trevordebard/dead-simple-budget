@@ -1,0 +1,43 @@
+{
+  "compilerOptions": {
+    // ...
+    "noEmit": true,
+    "baseUrl": ".",
+    "rootDir": ".",
+    "typeRoots": [
+      "node_modules/@types",
+      "types"
+    ],
+    "plugins": [
+      {
+        "name": "nexus/typescript-language-service"
+      }
+    ],
+    "target": "es5",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve"
+  },
+  // ...
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".",
+    "types.d.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

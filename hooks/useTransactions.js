@@ -1,14 +1,13 @@
 import { useQuery, useMutation, gql } from '@apollo/client';
-import { GET_TRANSACTIONS } from '../lib/queries/GET_TRANSACTIONS';
-import { ADD_TRANSACTION } from '../lib/queries/ADD_TRANSACTION';
+import { useSession } from 'next-auth/client';
+import { ADD_TRANSACTION } from '../graphql/queries/ADD_TRANSACTION';
+import { getStackLabels } from '../lib/budgetUtils';
 
 const GET_STACK_LABELS = gql`
-  query GET_STACK_LABELS {
-    me {
-      _id
+  query GET_STACK_LABELS($email: String!) {
+    user(where: { email: $email }) {
+      id
       budget {
-        _id
-        stackLabels
         stacks {
           label
         }
@@ -16,42 +15,76 @@ const GET_STACK_LABELS = gql`
     }
   }
 `;
+
 export const EDIT_TRANSACTION = gql`
-  mutation($record: UpdateByIdTransactionInput!) {
-    transactionUpdateById(record: $record) {
-      record {
-        _id
-        amount
-        stack
-        description
-        date
+  mutation EDIT_TRANSACTION(
+    $id: Int!
+    $amount: Float
+    $stack: String
+    $description: String
+    $date: DateTime
+    $type: String
+  ) {
+    updateOnetransactions(
+      where: { id: $id }
+      data: {
+        description: { set: $description }
+        stack: { set: $stack }
+        amount: { set: $amount }
+        type: { set: $type }
+        date: { set: $date }
       }
+    ) {
+      id
+      amount
+      stack
+      description
+      date
+    }
+  }
+`;
+
+const GET_TRANSACTIONS = gql`
+  query GET_TRANSACTIONS($email: String!) {
+    transactions(where: { user: { email: { equals: $email } } }) {
+      id
+      amount
+      description
+      stack
+      date
+      type
     }
   }
 `;
 
 const useTransactions = () => {
-  const { data, loading } = useQuery(GET_TRANSACTIONS);
-  const { data: stackLabelData } = useQuery(GET_STACK_LABELS);
-  const [editTransaction] = useMutation(EDIT_TRANSACTION);
-  const [addTransaction] = useMutation(ADD_TRANSACTION, {
-    update: (cache, { data: resData }) => {
-      const dataResult = cache.readQuery({ query: GET_TRANSACTIONS });
-      cache.writeQuery({
-        query: GET_TRANSACTIONS,
-        data: {
-          me: [...dataResult.me.transactions, resData.transactionCreateOne.record],
-        },
-      });
-    },
+  const [session] = useSession();
+  const { data, loading } = useQuery(GET_TRANSACTIONS, { variables: { email: session.user.email } });
+  const { data: stackLabelRes } = useQuery(GET_STACK_LABELS, {
+    variables: { email: session.user.email },
   });
-  let transactions;
+  const [editTransactionM] = useMutation(EDIT_TRANSACTION);
+  const [addTransactionM] = useMutation(ADD_TRANSACTION);
   let stackLabels;
-  if (data?.me) {
-    transactions = data.me.transactions;
+  let transactions;
+  function addTransaction(description, amount, stack, date, type, ...params) {
+    addTransactionM({
+      ...params,
+      refetchQueries: ['GET_TRANSACTIONS'],
+      variables: { email: session.user.email, description, amount, stack, date: new Date(date).toISOString(), type },
+    });
   }
-  if (stackLabelData?.me) {
-    stackLabels = stackLabelData.me.budget.stackLabels;
+  function editTransaction(id, description, amount, stack, date, type, ...params) {
+    editTransactionM({
+      ...params,
+      variables: { id, description, amount, stack, date: new Date(date).toISOString(), type },
+    });
+  }
+  if (data) {
+    transactions = data.transactions;
+  }
+  if (stackLabelRes) {
+    stackLabels = getStackLabels(stackLabelRes.user.budget);
   }
 
   return { loading, transactions, addTransaction, stackLabels, editTransaction };

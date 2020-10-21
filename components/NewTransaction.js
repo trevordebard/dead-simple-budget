@@ -1,7 +1,6 @@
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import { useState } from 'react';
-import { GET_TRANSACTIONS } from '../lib/queries/GET_TRANSACTIONS';
 import useTransactions from '../hooks/useTransactions';
 import { ActionButton, RadioButton } from './styled';
 import FormInput, { FormSelect } from './FormInput';
@@ -31,8 +30,8 @@ const NewTransaction = () => {
 
   const onSubmit = () => {
     const data = getValues();
-    const { description, stack, date } = data;
-    let { amount } = data;
+    const { description, stack } = data;
+    let { amount, date } = data;
 
     amount = parseFloat(amount);
     if (transactionType === 'withdrawal') {
@@ -40,12 +39,8 @@ const NewTransaction = () => {
     }
 
     reset();
-    addTransaction({
-      variables: { record: { description, amount, stack, date, type: transactionType } },
-      refetchQueries: { query: GET_TRANSACTIONS },
-    });
+    addTransaction(description, amount, stack, date, transactionType);
   };
-
   return (
     <NewtransactionWrapper onSubmit={handleSubmit(onSubmit)}>
       <h4>New Transaction</h4>
@@ -85,7 +80,6 @@ const NewTransaction = () => {
               {label}
             </option>
           ))}
-        }
       </FormSelect>
       <FormInput
         name="date"
