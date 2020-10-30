@@ -8,7 +8,7 @@ const StackInput = styled(FormInput)`
   text-align: right;
   border: none;
   background-color: ${props => (props.danger ? 'var(--dangerHover)' : 'transparent')};
-  padding: 5px 0px;
+  padding: 5px 10px;
   max-width: 100px;
   :hover {
     background-color: ${props => !props.danger && 'var(--rowHoverDark)'};
