@@ -46,7 +46,7 @@ export const EDIT_TRANSACTION = gql`
 
 const GET_TRANSACTIONS = gql`
   query GET_TRANSACTIONS($email: String!) {
-    transactions(where: { user: { email: { equals: $email } } }) {
+    transactions(where: { user: { email: { equals: $email } } }, orderBy: { date: desc }) {
       id
       amount
       description
@@ -82,6 +82,7 @@ const useTransactions = () => {
   }
   if (data) {
     transactions = data.transactions;
+    console.log(transactions);
   }
   if (stackLabelRes) {
     stackLabels = getStackLabels(stackLabelRes.user.budget);

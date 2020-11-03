@@ -51,8 +51,7 @@ const Query = queryType({
   definition(t) {
     t.crud.user();
     t.crud.budget();
-    t.crud.transactions({ filtering: { user: true, userId: true } });
-    t.crud.user();
+    t.crud.transactions({ filtering: { user: true, userId: true }, ordering: { date: true } });
     t.crud.budgets({ filtering: { user: true, userId: true } });
     t.crud.stacks();
   },

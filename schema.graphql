@@ -284,8 +284,8 @@ input NullableStringFieldUpdateOperationsInput {
 type Query {
   budget(where: budgetWhereUniqueInput!): budget
   budgets(after: budgetWhereUniqueInput, before: budgetWhereUniqueInput, first: Int, last: Int, where: QueryBudgetsWhereInput): [budget!]!
-  stacks(after: stacksWhereUniqueInput, before: stacksWhereUniqueInput, first: Int, last: Int): [stacks!]!
-  transactions(after: transactionsWhereUniqueInput, before: transactionsWhereUniqueInput, first: Int, last: Int, where: QueryTransactionsWhereInput): [transactions!]!
+  stacks(after: stacksWhereUniqueInput, before: stacksWhereUniqueInput, first: Int, last: Int, orderBy: [QueryStacksOrderByInput!]): [stacks!]!
+  transactions(after: transactionsWhereUniqueInput, before: transactionsWhereUniqueInput, first: Int, last: Int, orderBy: [QueryTransactionsOrderByInput!], where: QueryTransactionsWhereInput): [transactions!]!
   user(where: userWhereUniqueInput!): user
 }
 
@@ -299,9 +299,22 @@ enum QueryMode {
   insensitive
 }
 
+input QueryStacksOrderByInput {
+  created_at: SortOrder
+}
+
+input QueryTransactionsOrderByInput {
+  date: SortOrder
+}
+
 input QueryTransactionsWhereInput {
   user: userWhereInput
   userId: IntFilter
+}
+
+enum SortOrder {
+  asc
+  desc
 }
 
 type stacks {
