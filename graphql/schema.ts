@@ -1,7 +1,9 @@
-import { makeSchema, objectType, mutationType, queryType } from '@nexus/schema';
+import { makeSchema, objectType, mutationType, queryType, arg } from '@nexus/schema';
 import { nexusSchemaPrisma } from 'nexus-plugin-prisma/schema';
 import path from 'path';
 import { PrismaClient } from '@prisma/client';
+import { Upload, UploadFile } from 'graphql/Upload';
+import { csvToArray } from 'lib/csvToArray';
 
 const User = objectType({
   name: 'user',
@@ -47,6 +49,17 @@ const Stacks = objectType({
     t.model.created_at();
   },
 });
+export const File = objectType({
+  name: 'File',
+  definition(t) {
+    t.id('id');
+    t.string('path');
+    t.string('filename');
+    t.string('mimetype');
+    t.string('encoding');
+  },
+});
+
 const Query = queryType({
   definition(t) {
     t.crud.user();
@@ -59,6 +72,20 @@ const Query = queryType({
 
 const Mutation = mutationType({
   definition(t) {
+    t.field('uploadFile', {
+      type: 'UploadFile',
+      args: {
+        file: arg({ type: 'Upload' }),
+      },
+      resolve: async (_root, args, ctx) => {
+        const { createReadStream, filename } = await args.file;
+        const transactions = await csvToArray(createReadStream);
+
+        return {
+          filename,
+        };
+      },
+    });
     t.crud.createOneuser();
     t.crud.createOnebudget();
     t.crud.updateOnebudget({
@@ -115,7 +142,7 @@ const Mutation = mutationType({
   },
 });
 export const schema = makeSchema({
-  types: { Query, Budget, Transactions, Stacks, User, Mutation },
+  types: { Query, Budget, Transactions, Stacks, User, Mutation, Upload, UploadFile },
   plugins: [nexusSchemaPrisma({ experimentalCRUD: true })],
   outputs: {
     schema: path.join(process.cwd(), 'schema.graphql'),

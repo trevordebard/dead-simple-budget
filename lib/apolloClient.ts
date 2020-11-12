@@ -1,5 +1,7 @@
 import { useMemo } from 'react';
-import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client';
+import { ApolloClient, InMemoryCache } from '@apollo/client';
+import { createUploadLink } from 'apollo-upload-client';
+
 import { setContext } from '@apollo/client/link/context';
 
 let apolloClient;
@@ -31,7 +33,7 @@ function createApolloClient(ctx) {
     }
   }
 
-  const httpLink = createHttpLink({
+  const httpLink = createUploadLink({
     uri: `${process.env.NEXT_PUBLIC_SITE_URL}/api/graphql`,
   });
   const authLink = setContext((req, { headers }) =>
