@@ -3,7 +3,7 @@ import { nexusSchemaPrisma } from 'nexus-plugin-prisma/schema';
 import path from 'path';
 import { PrismaClient } from '@prisma/client';
 import { Upload, UploadFile } from 'graphql/Upload';
-import { csvToArray } from 'lib/csvToArray';
+import { importTransactions } from 'lib/importTransactions';
 
 const User = objectType({
   name: 'user',
@@ -79,8 +79,7 @@ const Mutation = mutationType({
       },
       resolve: async (_root, args, ctx) => {
         const { createReadStream, filename } = await args.file;
-        const transactions = await csvToArray(createReadStream);
-
+        await importTransactions(createReadStream, ctx);
         return {
           filename,
         };
@@ -163,7 +162,7 @@ export const schema = makeSchema({
   },
 });
 
-async function recalcToBeBudgeted(prisma: PrismaClient, budgetId: number) {
+export async function recalcToBeBudgeted(prisma: PrismaClient, budgetId: number) {
   const {
     sum: { amount: sumOfStacks },
   } = await prisma.stacks.aggregate({ sum: { amount: true }, where: { budgetId: { equals: budgetId } } });
