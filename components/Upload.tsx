@@ -1,27 +1,99 @@
-import { useForm } from 'react-hook-form';
 import { useMutation, gql } from '@apollo/client'
+import { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import { Button } from './styled';
 const UPLOAD = gql`
     mutation uploadFile($file: Upload!) {
       uploadFile(file: $file) {
         uri
       }
     }
-
 `
+interface UploadZoneProps {
+  isDragging: boolean
+  message: string
+}
+const UploadZone = styled.label<UploadZoneProps>`
+  border: 2px  ${props => props.isDragging ? 'solid var(--action)' : 'dashed var(--actionLight)'};
+  color: ${props => props.isDragging ? ' var(--action)' : ' var(--fontColor)'};
+  width: 400px;
+  height: 100px;
+  background-color: ${props => props.isDragging ? 'var(--actionHover)' : 'var(--backgroundSubtle)'};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+`
+const UploadContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+`
+
 const Upload = () => {
-  const { register, handleSubmit } = useForm()
-  const [uploadF] = useMutation(UPLOAD, { onCompleted: (data) => console.log('done', data) })
-  const onSubmit = (data) => {
-    console.log(data.transactionCsv[0])
-    uploadF({ variables: { file: data.transactionCsv[0] } })
+  const [isDragging, setIsDragging] = useState(false)
+  const [file, setFile] = useState<File | null>(null)
+  const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
+
+  const [uploadF, { loading }] = useMutation(UPLOAD, { onCompleted: (data) => { setFile(null); setUploadSuccess(true) } })
+
+  const submitFile = (file: File) => {
+    if (file.type === "text/csv") {
+      uploadF({ variables: { file } })
+    }
   }
+
+  useEffect(() => {
+    if (uploadSuccess) {
+      setTimeout(() => {
+        setUploadSuccess(false)
+      }, 4000)
+    }
+  }, [uploadSuccess])
+
   return (
-    <div>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <input ref={register} type="file" name="transactionCsv" accept=".csv" />
-        <button>Submit</button>
-      </form>
-    </div>
+    <UploadContainer>
+      <UploadZone
+        isDragging={isDragging}
+        onDragEnter={() => {
+          setIsDragging(true);
+        }}
+        onDragLeave={() => {
+          setIsDragging(false);
+        }}
+        onDragOver={(e) => {
+          e.preventDefault();
+        }}
+        onDrop={(e) => {
+          e.preventDefault();
+          setIsDragging(false);
+          if (e.dataTransfer.files[0].type === 'text/csv') {
+            setFile(e.dataTransfer.files[0])
+          }
+        }}
+        message={isDragging ? 'Upload!' : 'Drop CSV Here'}
+      >
+        <input type="file" style={{ display: 'none' }} onChange={e => {
+          if (e.target.files[0].type === 'text/csv') {
+            setFile(e.target.files[0])
+          }
+        }}></input>
+        {file && file.name}
+        {!file &&
+          <div style={{ textAlign: 'center' }}>
+            <p>{isDragging ? 'Upload!' : 'Upload CSV File'}</p>
+          </div>
+        }
+      </UploadZone >
+      <Button disabled={!file || loading} style={{ width: '100%', marginTop: '1rem' }} onClick={() => submitFile(file)}>
+        {loading && !uploadSuccess
+          ? "Uploading..."
+          : uploadSuccess
+            ? "Success!"
+            : "Upload"
+        }
+      </Button>
+    </ UploadContainer>
   );
 };
 

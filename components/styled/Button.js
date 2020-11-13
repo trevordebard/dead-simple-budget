@@ -11,11 +11,21 @@ const Button = styled.button`
     box-shadow: var(--level2);
     background-color: var(--primaryLight);
   }
-  ${({ small }) => {
+  ${({ small, disabled }) => {
     if (small) {
       return css`
         font-size: var(--smallFontSize);
         padding: 5px 15px;
+      `;
+    }
+    if (disabled) {
+      return css`
+        background-color: var(--primaryHover);
+        cursor: auto;
+        &:hover {
+          box-shadow: none;
+          background-color: var(--primaryHover);
+        }
       `;
     }
   }}

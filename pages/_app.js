@@ -13,6 +13,7 @@ const GlobalStyle = createGlobalStyle`
     --red-o25: hsl(1, 57%, 43%, 25%);
     --redLight: hsl(1, 57%, 49%);
     --aqua: hsl(186, 61%, 45%);
+    --aqua-o25: hsl(186, 61%, 45%, 15%);
     --aquaLight: hsl(186, 61%, 51%);
     --yellow: #FAEA7A;
     --green: hsl(152, 55%,44%);
@@ -35,6 +36,7 @@ const GlobalStyle = createGlobalStyle`
     --primaryHover: var(--purp-o25);
     --action: var(--aqua);
     --actionLight: var(--aquaLight);
+    --actionHover: var(--aqua-o25);
     --danger: var(--red);
     --dangerLight: var(--redLight);
     --dangerHover: var(--red-o25);
