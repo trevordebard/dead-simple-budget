@@ -29,7 +29,7 @@ const GlobalStyle = createGlobalStyle`
     --fontColor: var(--black);
     --fontColor-o60: hsl(211, 39%, 23%, 60%);
     --baseFontSize: 100%;
-    --smallFontSize: .8em;
+    --smallFontSize: .8rem;
     
     --primary: var(--purp);
     --primaryLight: var(--purpLight);

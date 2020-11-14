@@ -1,11 +1,18 @@
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import { useState } from 'react';
+import Link from 'next/link';
 import useTransactions from '../hooks/useTransactions';
 import { ActionButton, RadioButton } from './styled';
 import FormInput, { FormSelect } from './FormInput';
 import { formatDate } from '../lib/formatDate';
 
+const UploadLink = styled.a`
+  text-decoration: none;
+  color: inherit;
+  font-size: var(--smallFontSize);
+  text-decoration: underline;
+`;
 const NewtransactionWrapper = styled.form`
   display: flex;
   flex-direction: column;
@@ -102,6 +109,9 @@ const NewTransaction = () => {
         </RadioButton>
       </TransactionTypeWrapper>
       <ActionButton type="submit">Add</ActionButton>
+      <Link href="/upload" passHref>
+        <UploadLink>Import Transactions</UploadLink>
+      </Link>
     </NewtransactionWrapper>
   );
 };

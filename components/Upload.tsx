@@ -17,6 +17,7 @@ const UploadZone = styled.label<UploadZoneProps>`
   border: 2px  ${props => props.isDragging ? 'solid var(--action)' : 'dashed var(--actionLight)'};
   color: ${props => props.isDragging ? ' var(--action)' : ' var(--fontColor)'};
   width: 400px;
+  max-width: 90vw;
   height: 100px;
   background-color: ${props => props.isDragging ? 'var(--actionHover)' : 'var(--backgroundSubtle)'};
   display: flex;

@@ -55,7 +55,6 @@ const TransparentButton = styled(Button)`
     discrete &&
     css`
       padding: 0px;
-      width: min-content;
       display: inline-block;
     `}
 `;
