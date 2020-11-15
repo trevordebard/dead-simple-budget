@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import EditIcon from '@material-ui/icons/Edit';
 import styled from 'styled-components';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -9,13 +8,17 @@ import TableRow from '@material-ui/core/TableRow';
 import TableContainer from '@material-ui/core/TableContainer';
 import { ThemeProvider } from '@material-ui/core';
 import { createMuiTheme } from '@material-ui/core/styles';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
+import Link from 'next/link';
 import useTransactions from '../hooks/useTransactions';
-import NewTransaction from './NewTransaction';
-import EditTransaction from './EditTransaction';
 import { smBreakpoint } from '../lib/constants';
-import Modal, { ModalCard } from './Modal';
-import { ActionButton } from './styled';
+
+const ActionLink = styled.a`
+  text-decoration: none;
+  color: inherit;
+  font-size: var(--smallFontSize);
+  cursor: pointer;
+  color: var(--fontColorLight);
+`;
 
 const theme = createMuiTheme({
   overrides: {
@@ -42,18 +45,6 @@ const theme = createMuiTheme({
   },
 });
 
-const RowTools = styled.div`
-  display: flex;
-  justify-content: center;
-  color: transparent;
-  svg {
-    cursor: pointer;
-    :hover {
-      color: var(--action);
-    }
-  }
-`;
-
 const TransactionWrapper = styled.div`
   max-width: 100%;
   max-height: 70vh;
@@ -61,23 +52,12 @@ const TransactionWrapper = styled.div`
   grid-template-columns: 3fr auto;
   grid-auto-rows: min-content;
   grid-template-areas:
-    'title .'
-    'table actions';
-  @media only screen and (max-width: ${smBreakpoint}) {
-    grid-template-areas:
-      'title'
-      'actions'
-      'table';
-  }
+    'title'
+    'table';
 `;
 
 const Title = styled.div`
   grid-area: title;
-  text-align: center;
-`;
-
-const Actions = styled.div`
-  grid-area: actions;
   text-align: center;
 `;
 
@@ -99,45 +79,66 @@ const TableWrapper = styled(TableContainer)`
 
 const Transactions = () => {
   const { transactions, loading } = useTransactions();
-  const [transactionInFocus, setTransactionInFocus] = useState();
+  const [selectedTransactions, setSelectedTransactions] = useState([]);
   if (!loading) {
     return (
       <TransactionWrapper>
         <Title>
           <h1>Transactions</h1>
+          <div>
+            {selectedTransactions.length === 0 && (
+              <Link href="/upload">
+                <ActionLink>Import</ActionLink>
+              </Link>
+            )}
+            {selectedTransactions.length === 1 && (
+              <Link href={`/transactions/edit/${selectedTransactions[0]}`}>
+                <ActionLink>Edit</ActionLink>
+              </Link>
+            )}
+            {selectedTransactions.length > 1 && (
+              <Link href="/TODO">
+                <ActionLink>Delete Selected</ActionLink>
+              </Link>
+            )}
+          </div>
         </Title>
         <TableWrapper>
           <ThemeProvider theme={theme}>
             <Table stickyHeader size="small">
               <TableHead>
                 <TableRow>
+                  <TableCell></TableCell>
                   <TableCell>Description</TableCell>
                   <TableCell align="right">Amount</TableCell>
                   <TableCell align="right">Stack</TableCell>
                   <TableCell sortDirection="desc" style={{ minWidth: '115px' }} align="right">
                     Date
                   </TableCell>
-                  <TableCell></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {transactions &&
                   transactions.map(transaction => (
-                    <TableRow key={transaction.id} selected={transaction.id === transactionInFocus}>
+                    <TableRow key={transaction.id} selected={selectedTransactions.includes(transaction.id)}>
+                      <TableCell>
+                        <input
+                          key={transaction.id}
+                          type="checkbox"
+                          onChange={e => {
+                            if (!e.target.checked) {
+                              setSelectedTransactions(selectedTransactions.filter(item => item !== transaction.id));
+                            } else {
+                              setSelectedTransactions([...selectedTransactions, transaction.id]);
+                            }
+                          }}
+                        />
+                      </TableCell>
                       <TableCell>{transaction.description}</TableCell>
                       <TableCell align="right">${transaction.amount}</TableCell>
                       <TableCell align="right">{transaction.stack}</TableCell>
                       <TableCell align="right">
                         {new Date(transaction.date).toLocaleDateString() || '9999/9/9'}
-                      </TableCell>
-                      <TableCell style={{ padding: '0px' }}>
-                        <RowTools>
-                          <EditIcon
-                            onClick={() => {
-                              setTransactionInFocus(transaction.id);
-                            }}
-                          />
-                        </RowTools>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -145,47 +146,10 @@ const Transactions = () => {
             </Table>
           </ThemeProvider>
         </TableWrapper>
-        <Actions>
-          <TransactionActions transactionInFocus={transactionInFocus} setTransactionInFocus={setTransactionInFocus} />
-        </Actions>
       </TransactionWrapper>
     );
   }
-  return <p>loading...</p>;
-};
-
-const TransactionActions = ({ transactionInFocus, setTransactionInFocus }) => {
-  const smScreen = useMediaQuery(`(max-width:${smBreakpoint})`);
-  const [newTransactionInFocus, setNewTransactionInFocus] = useState(false);
-  if (smScreen) {
-    if (transactionInFocus) {
-      return (
-        <Modal visible={transactionInFocus || newTransactionInFocus} hide={() => setTransactionInFocus(null)}>
-          <ModalCard>
-            <EditTransaction transactionId={transactionInFocus} cancelEdit={() => setTransactionInFocus(null)} />
-          </ModalCard>
-        </Modal>
-      );
-    }
-    if (!newTransactionInFocus) {
-      return (
-        <ActionButton type="button" onClick={() => setNewTransactionInFocus(true)}>
-          Add Transaction
-        </ActionButton>
-      );
-    }
-    return (
-      <Modal visible={newTransactionInFocus} hide={() => setNewTransactionInFocus(null)}>
-        <ModalCard>
-          <NewTransaction />
-        </ModalCard>
-      </Modal>
-    );
-  }
-  if (transactionInFocus) {
-    return <EditTransaction transactionId={transactionInFocus} cancelEdit={() => setTransactionInFocus(null)} />;
-  }
-  return <NewTransaction />;
+  return null;
 };
 
 export default Transactions;

@@ -21,12 +21,14 @@ const GlobalStyle = createGlobalStyle`
     --green-h1: hsl(152, 55%, 44%, 10%);
     --green-h2: hsl(152, 55%, 40%, 10%);
     --black:  hsl(211, 39%, 23%);
+    --blackLight:  hsl(211, 39%, 29%);
     --black-o10:  hsl(211, 39%, 23%, 10%);
 
     --lineColor: #EAEAEA;
     --backgroundSubtle: hsl(211, 39%, 23%, 3%);
     
     --fontColor: var(--black);
+    --fontColorLight: var(--blackLight);
     --fontColor-o60: hsl(211, 39%, 23%, 60%);
     --baseFontSize: 100%;
     --smallFontSize: .8rem;

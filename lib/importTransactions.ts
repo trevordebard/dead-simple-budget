@@ -17,7 +17,7 @@ async function parseTransactionCsv(createReadStream, ctx: Context): Promise<tran
           amount: parseFloat(row.amount),
           date: new Date(row.date),
           description: row.description,
-          stack: 'imported',
+          stack: 'Imported',
           type: row.type.toLowerCase(),
           user: { connect: { email: ctx.session.user.email } },
         };

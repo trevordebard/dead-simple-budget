@@ -8,11 +8,11 @@ import useTransactions from '../hooks/useTransactions';
 import { formatDate } from '../lib/formatDate';
 
 const EditTransactionWrapper = styled.form`
+  text-align: center;
   display: flex;
   flex-direction: column;
   margin: 1rem;
   max-width: 60rem;
-
   * {
     margin-bottom: 10px;
   }
@@ -29,6 +29,7 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
   const [cachedTransaction, setCachedTransction] = useState();
   const [selectedStack, setSelectedStack] = useState();
   const [transactionType, setTransactionType] = useState();
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     reset();
@@ -46,9 +47,13 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
         }
       `,
     });
-    setSelectedStack(data.stack);
-    setCachedTransction(data);
-    setTransactionType(data.type);
+    if (!data) {
+      setNotFound(true);
+    } else {
+      setCachedTransction(data);
+      setSelectedStack(data?.stack);
+      setTransactionType(data?.type);
+    }
   }, [client, getValues, reset, transactionId]);
 
   const onSubmit = payload => {
@@ -61,6 +66,9 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
     editTransaction(transactionId, description, amount, stack, date, transactionType);
     cancelEdit();
   };
+  if (notFound) {
+    return <h1 style={{ textAlign: 'center' }}>Not Found</h1>;
+  }
   if (!cachedTransaction) {
     return null;
   }
@@ -82,6 +90,7 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
         register={register}
         type="number"
         pattern="\d*"
+        step={0.01}
         placeholder="Amount"
         defaultValue={Math.abs(cachedTransaction.amount)}
         autoComplete="off"
@@ -123,7 +132,14 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
         </RadioButton>
       </RadioGroup>
       <ActionButton type="submit">Save Changes</ActionButton>
-      <TransparentButton discrete small underline onClick={() => cancelEdit()} style={{ alignSelf: 'center' }}>
+      <TransparentButton
+        type="button"
+        discrete
+        small
+        underline
+        onClick={() => cancelEdit()}
+        style={{ alignSelf: 'center' }}
+      >
         Cancel
       </TransparentButton>
     </EditTransactionWrapper>

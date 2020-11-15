@@ -82,7 +82,6 @@ const useTransactions = () => {
   }
   if (data) {
     transactions = data.transactions;
-    console.log(transactions);
   }
   if (stackLabelRes) {
     stackLabels = getStackLabels(stackLabelRes.user.budget);
