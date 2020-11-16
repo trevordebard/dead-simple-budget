@@ -2,6 +2,10 @@
 ### Do not make changes to this file directly
 
 
+type BatchPayload {
+  count: Int!
+}
+
 type budget {
   id: Int!
   stacks(after: stacksWhereUniqueInput, before: stacksWhereUniqueInput, first: Int, last: Int): [stacks!]!
@@ -191,6 +195,7 @@ type Mutation {
   createOnestacks(data: stacksCreateInput!): stacks!
   createOnetransactions(data: transactionsCreateInput!): transactions!
   createOneuser(data: userCreateInput!): user!
+  deleteManytransactions(where: transactionsWhereInput): BatchPayload!
   updateOnebudget(data: budgetUpdateInput!, where: budgetWhereUniqueInput!): budget
   updateOnestacks(data: stacksUpdateInput!, where: stacksWhereUniqueInput!): stacks
   updateOnetransactions(data: transactionsUpdateInput!, where: transactionsWhereUniqueInput!): transactions

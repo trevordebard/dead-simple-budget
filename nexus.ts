@@ -625,6 +625,9 @@ export interface NexusGenScalars {
 }
 
 export interface NexusGenRootTypes {
+  BatchPayload: { // root type
+    count: number; // Int!
+  }
   Mutation: {};
   Query: {};
   UploadFile: { // root type
@@ -757,11 +760,15 @@ export interface NexusGenAllTypes extends NexusGenRootTypes {
 }
 
 export interface NexusGenFieldTypes {
+  BatchPayload: { // field return type
+    count: number; // Int!
+  }
   Mutation: { // field return type
     createOnebudget: NexusGenRootTypes['budget']; // budget!
     createOnestacks: NexusGenRootTypes['stacks']; // stacks!
     createOnetransactions: NexusGenRootTypes['transactions']; // transactions!
     createOneuser: NexusGenRootTypes['user']; // user!
+    deleteManytransactions: NexusGenRootTypes['BatchPayload']; // BatchPayload!
     updateOnebudget: NexusGenRootTypes['budget'] | null; // budget
     updateOnestacks: NexusGenRootTypes['stacks'] | null; // stacks
     updateOnetransactions: NexusGenRootTypes['transactions'] | null; // transactions
@@ -810,11 +817,15 @@ export interface NexusGenFieldTypes {
 }
 
 export interface NexusGenFieldTypeNames {
+  BatchPayload: { // field return type name
+    count: 'Int'
+  }
   Mutation: { // field return type name
     createOnebudget: 'budget'
     createOnestacks: 'stacks'
     createOnetransactions: 'transactions'
     createOneuser: 'user'
+    deleteManytransactions: 'BatchPayload'
     updateOnebudget: 'budget'
     updateOnestacks: 'stacks'
     updateOnetransactions: 'transactions'
@@ -875,6 +886,9 @@ export interface NexusGenArgTypes {
     }
     createOneuser: { // args
       data: NexusGenInputs['userCreateInput']; // userCreateInput!
+    }
+    deleteManytransactions: { // args
+      where?: NexusGenInputs['transactionsWhereInput'] | null; // transactionsWhereInput
     }
     updateOnebudget: { // args
       data: NexusGenInputs['budgetUpdateInput']; // budgetUpdateInput!
@@ -944,7 +958,7 @@ export interface NexusGenAbstractResolveReturnTypes {
 
 export interface NexusGenInheritedFields {}
 
-export type NexusGenObjectNames = "Mutation" | "Query" | "UploadFile" | "budget" | "stacks" | "transactions" | "user";
+export type NexusGenObjectNames = "BatchPayload" | "Mutation" | "Query" | "UploadFile" | "budget" | "stacks" | "transactions" | "user";
 
 export type NexusGenInputNames = "BudgetId_label_idxCompoundUniqueInput" | "DateTimeFieldUpdateOperationsInput" | "DateTimeFilter" | "DateTimeNullableFilter" | "FloatFieldUpdateOperationsInput" | "FloatFilter" | "FloatNullableFilter" | "IntFilter" | "NestedDateTimeFilter" | "NestedDateTimeNullableFilter" | "NestedFloatFilter" | "NestedFloatNullableFilter" | "NestedIntFilter" | "NestedStringFilter" | "NestedStringNullableFilter" | "NullableDateTimeFieldUpdateOperationsInput" | "NullableFloatFieldUpdateOperationsInput" | "NullableStringFieldUpdateOperationsInput" | "QueryBudgetsWhereInput" | "QueryTransactionsOrderByInput" | "QueryTransactionsWhereInput" | "StacksListRelationFilter" | "StringFieldUpdateOperationsInput" | "StringFilter" | "StringNullableFilter" | "TransactionsListRelationFilter" | "budgetCreateInput" | "budgetCreateOneWithoutStacksInput" | "budgetCreateOneWithoutUserInput" | "budgetCreateOrConnectWithoutstacksInput" | "budgetCreateOrConnectWithoutuserInput" | "budgetCreateWithoutStacksInput" | "budgetCreateWithoutUserInput" | "budgetUpdateInput" | "budgetUpdateOneRequiredWithoutStacksInput" | "budgetUpdateOneRequiredWithoutUserInput" | "budgetUpdateWithoutStacksInput" | "budgetUpdateWithoutUserInput" | "budgetUpsertWithoutStacksInput" | "budgetUpsertWithoutUserInput" | "budgetWhereInput" | "budgetWhereUniqueInput" | "stacksCreateInput" | "stacksCreateManyWithoutBudgetInput" | "stacksCreateOrConnectWithoutbudgetInput" | "stacksCreateWithoutBudgetInput" | "stacksScalarWhereInput" | "stacksUpdateInput" | "stacksUpdateManyMutationInput" | "stacksUpdateManyWithWhereWithoutBudgetInput" | "stacksUpdateManyWithoutBudgetInput" | "stacksUpdateWithWhereUniqueWithoutBudgetInput" | "stacksUpdateWithoutBudgetInput" | "stacksUpsertWithWhereUniqueWithoutBudgetInput" | "stacksWhereInput" | "stacksWhereUniqueInput" | "transactionsCreateInput" | "transactionsCreateManyWithoutUserInput" | "transactionsCreateOrConnectWithoutuserInput" | "transactionsCreateWithoutUserInput" | "transactionsScalarWhereInput" | "transactionsUpdateInput" | "transactionsUpdateManyMutationInput" | "transactionsUpdateManyWithWhereWithoutUserInput" | "transactionsUpdateManyWithoutUserInput" | "transactionsUpdateWithWhereUniqueWithoutUserInput" | "transactionsUpdateWithoutUserInput" | "transactionsUpsertWithWhereUniqueWithoutUserInput" | "transactionsWhereInput" | "transactionsWhereUniqueInput" | "userCreateInput" | "userCreateOneWithoutBudgetInput" | "userCreateOneWithoutTransactionsInput" | "userCreateOrConnectWithoutbudgetInput" | "userCreateOrConnectWithouttransactionsInput" | "userCreateWithoutBudgetInput" | "userCreateWithoutTransactionsInput" | "userUpdateOneRequiredWithoutBudgetInput" | "userUpdateOneRequiredWithoutTransactionsInput" | "userUpdateWithoutBudgetInput" | "userUpdateWithoutTransactionsInput" | "userUpsertWithoutBudgetInput" | "userUpsertWithoutTransactionsInput" | "userWhereInput" | "userWhereUniqueInput";
 

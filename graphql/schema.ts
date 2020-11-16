@@ -86,6 +86,7 @@ const Mutation = mutationType({
       },
     });
     t.crud.createOneuser();
+    t.crud.deleteManytransactions();
     t.crud.createOnebudget();
     t.crud.updateOnebudget({
       async resolve(root, args, ctx, info, originalResolve) {

@@ -57,6 +57,14 @@ const GET_TRANSACTIONS = gql`
   }
 `;
 
+const DELETE_MANY_TRANSACTIONS = gql`
+  mutation DELETE_MANY_TRANSACTIONS($transactionIds: [Int!]) {
+    deleteManytransactions(where: { id: { in: $transactionIds } }) {
+      count
+    }
+  }
+`;
+
 const useTransactions = () => {
   const [session] = useSession();
   const { data, loading } = useQuery(GET_TRANSACTIONS, { variables: { email: session.user.email } });
@@ -65,6 +73,7 @@ const useTransactions = () => {
   });
   const [editTransactionM] = useMutation(EDIT_TRANSACTION);
   const [addTransactionM] = useMutation(ADD_TRANSACTION);
+  const [deleteManyTransactionsM] = useMutation(DELETE_MANY_TRANSACTIONS, { refetchQueries: ['GET_TRANSACTIONS'] });
   let stackLabels;
   let transactions;
   function addTransaction(description, amount, stack, date, type, ...params) {
@@ -80,6 +89,12 @@ const useTransactions = () => {
       variables: { id, description, amount, stack, date: new Date(date).toISOString(), type },
     });
   }
+  function deleteManyTransactions(transactionIds, ...params) {
+    deleteManyTransactionsM({
+      ...params,
+      variables: { transactionIds },
+    });
+  }
   if (data) {
     transactions = data.transactions;
   }
@@ -87,7 +102,7 @@ const useTransactions = () => {
     stackLabels = getStackLabels(stackLabelRes.user.budget);
   }
 
-  return { loading, transactions, addTransaction, stackLabels, editTransaction };
+  return { loading, transactions, addTransaction, stackLabels, editTransaction, deleteManyTransactions };
 };
 
 export default useTransactions;

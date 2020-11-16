@@ -78,7 +78,7 @@ const TableWrapper = styled(TableContainer)`
 `;
 
 const Transactions = () => {
-  const { transactions, loading } = useTransactions();
+  const { transactions, loading, deleteManyTransactions } = useTransactions();
   const [selectedTransactions, setSelectedTransactions] = useState([]);
   if (!loading) {
     return (
@@ -97,9 +97,16 @@ const Transactions = () => {
               </Link>
             )}
             {selectedTransactions.length > 1 && (
-              <Link href="/TODO">
-                <ActionLink>Delete Selected</ActionLink>
-              </Link>
+              <ActionLink
+                as="div"
+                role="button"
+                onClick={() => {
+                  deleteManyTransactions(selectedTransactions);
+                  setSelectedTransactions([]);
+                }}
+              >
+                Delete Selected
+              </ActionLink>
             )}
           </div>
         </Title>
