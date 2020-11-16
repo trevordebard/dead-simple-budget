@@ -87,8 +87,8 @@ const Transactions = () => {
           <h1>Transactions</h1>
           <div>
             {selectedTransactions.length === 0 && (
-              <Link href="/upload">
-                <ActionLink>Import</ActionLink>
+              <Link href="/transactions/new">
+                <ActionLink>Add</ActionLink>
               </Link>
             )}
             {selectedTransactions.length === 1 && (

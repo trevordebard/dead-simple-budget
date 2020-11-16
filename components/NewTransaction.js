@@ -18,7 +18,7 @@ const NewtransactionWrapper = styled.form`
   flex-direction: column;
   margin: 1em;
   max-width: 60rem;
-
+  text-align: center;
   > * {
     margin-bottom: 10px;
   }
@@ -66,6 +66,7 @@ const NewTransaction = () => {
         register={register}
         type="number"
         pattern="\d*"
+        step={0.01}
         placeholder="Amount"
         autoComplete="off"
         required
