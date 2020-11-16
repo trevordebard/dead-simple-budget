@@ -1,4 +1,4 @@
-import { useQuery, useMutation, gql } from '@apollo/client';
+import { useQuery, useMutation, gql, MutationHookOptions } from '@apollo/client';
 import { useSession } from 'next-auth/client';
 import { ADD_TRANSACTION } from '../graphql/queries/ADD_TRANSACTION';
 import { getStackLabels } from '../lib/budgetUtils';
@@ -83,13 +83,21 @@ const useTransactions = () => {
       variables: { email: session.user.email, description, amount, stack, date: new Date(date).toISOString(), type },
     });
   }
-  function editTransaction(id, description, amount, stack, date, type, ...params) {
+  function editTransaction(
+    id: number,
+    description: string,
+    amount: number,
+    stack: string,
+    date: Date,
+    type: string,
+    params: MutationHookOptions
+  ) {
     editTransactionM({
       ...params,
       variables: { id, description, amount, stack, date: new Date(date).toISOString(), type },
     });
   }
-  function deleteManyTransactions(transactionIds, ...params) {
+  function deleteManyTransactions(transactionIds: number[], params: MutationHookOptions) {
     deleteManyTransactionsM({
       ...params,
       variables: { transactionIds },
