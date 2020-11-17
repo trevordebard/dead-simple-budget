@@ -12,14 +12,6 @@ import Link from 'next/link';
 import useTransactions from '../hooks/useTransactions';
 import { smBreakpoint } from '../lib/constants';
 
-const ActionLink = styled.a`
-  text-decoration: none;
-  color: inherit;
-  font-size: var(--smallFontSize);
-  cursor: pointer;
-  color: var(--fontColorLight);
-`;
-
 const theme = createMuiTheme({
   overrides: {
     MuiTable: {
@@ -77,6 +69,19 @@ const TableWrapper = styled(TableContainer)`
   }
 `;
 
+const Actions = styled.div`
+  a + a::before {
+    content: ' | ';
+  }
+`;
+const ActionLink = styled.a`
+  text-decoration: none;
+  color: inherit;
+  font-size: var(--smallFontSize);
+  cursor: pointer;
+  color: var(--fontColorLight);
+`;
+
 const Transactions = () => {
   const { transactions, loading, deleteManyTransactions } = useTransactions();
   const [selectedTransactions, setSelectedTransactions] = useState([]);
@@ -85,7 +90,7 @@ const Transactions = () => {
       <TransactionWrapper>
         <Title>
           <h1>Transactions</h1>
-          <div>
+          <Actions>
             {selectedTransactions.length === 0 && (
               <Link href="/transactions/new">
                 <ActionLink>Add</ActionLink>
@@ -96,19 +101,18 @@ const Transactions = () => {
                 <ActionLink>Edit</ActionLink>
               </Link>
             )}
-            {selectedTransactions.length > 1 && (
+            {selectedTransactions.length > 0 && (
               <ActionLink
-                as="div"
                 role="button"
                 onClick={() => {
                   deleteManyTransactions(selectedTransactions);
                   setSelectedTransactions([]);
                 }}
               >
-                Delete Selected
+                Delete {selectedTransactions.length > 1 && 'Selected'}
               </ActionLink>
             )}
-          </div>
+          </Actions>
         </Title>
         <TableWrapper>
           <ThemeProvider theme={theme}>
