@@ -7,7 +7,7 @@ import { ListRow } from './styled';
 const StackInput = styled(FormInput)`
   text-align: right;
   border: none;
-  background-color: ${props => (props.danger ? 'var(--dangerHover)' : 'transparent')};
+  background-color: ${props => (props.danger ? 'var(--dangerSubtle)' : 'transparent')};
   padding: 5px 10px;
   max-width: 100px;
   :hover {
@@ -44,19 +44,6 @@ const BudgetStack = ({ label, register, budgetId, amount, updateStack, setValue 
           }
         }}
       />
-      {/* <FormInput
-        type="button"
-        value="Delete"
-        register={register}
-        onClick={e => {
-          removeStack({
-            variables: {
-              budgetId,
-              label,
-            },
-          });
-        }}
-      /> */}
     </ListRow>
   );
 };

@@ -15,7 +15,7 @@ const TabItem = styled.li`
     color: ${props => !props.active && 'var(--fontcolor)'};
     cursor: pointer;
     :hover {
-      ${props => !props.active && 'background-color: var(--primaryHover)'};
+      ${props => !props.active && 'background-color: var(--primarySubtle)'};
     }
   }
   @media only screen and (max-width: ${smBreakpoint}) {

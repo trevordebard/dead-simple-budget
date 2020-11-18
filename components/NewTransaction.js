@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useState } from 'react';
 import Link from 'next/link';
 import useTransactions from '../hooks/useTransactions';
-import { ActionButton, RadioButton } from './styled';
+import { ActionButton, RadioButton, RadioGroup } from './styled';
 import FormInput, { FormSelect } from './FormInput';
 import { formatDate } from '../lib/formatDate';
 
@@ -22,11 +22,6 @@ const NewtransactionWrapper = styled.form`
   > * {
     margin-bottom: 10px;
   }
-`;
-
-const TransactionTypeWrapper = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
 `;
 
 const NewTransaction = () => {
@@ -97,7 +92,7 @@ const NewTransaction = () => {
         defaultValue={formatDate(new Date())}
         required
       />
-      <TransactionTypeWrapper>
+      <RadioGroup>
         <RadioButton
           type="button"
           active={transactionType === 'withdrawal'}
@@ -108,7 +103,7 @@ const NewTransaction = () => {
         <RadioButton type="button" active={transactionType === 'deposit'} onClick={() => setTransactionType('deposit')}>
           Deposit
         </RadioButton>
-      </TransactionTypeWrapper>
+      </RadioGroup>
       <ActionButton type="submit">Add</ActionButton>
       <Link href="/upload" passHref>
         <UploadLink>Import Transactions</UploadLink>

@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 
 const Button = styled.button`
-  background-color: var(--primary);
+  background-color: var(--buttonBg);
   color: white;
   border-radius: 45px;
   border: 0px;
@@ -9,46 +9,38 @@ const Button = styled.button`
   cursor: pointer;
   &:hover {
     box-shadow: var(--level2);
-    background-color: var(--primaryLight);
+    background-color: var(--buttonHover);
   }
-  ${({ small, disabled }) => {
-    if (small) {
-      return css`
-        font-size: var(--smallFontSize);
-        padding: 5px 15px;
-      `;
+  &:disabled {
+    background-color: var(--buttonHover);
+    cursor: auto;
+    &:hover {
+      box-shadow: none;
+      background-color: var(--buttonHover);
     }
-    if (disabled) {
-      return css`
-        background-color: var(--primaryHover);
-        cursor: auto;
-        &:hover {
-          box-shadow: none;
-          background-color: var(--primaryHover);
-        }
-      `;
-    }
-  }}
+  }
+  ${props =>
+    props.small &&
+    css`
+      font-size: var(--smallFontSize);
+      padding: 5px 15px;
+    `}
 `;
 
 const ActionButton = styled(Button)`
-  background: var(--action);
-  &:hover {
-    background-color: var(--actionLight);
-  }
+  --buttonBg: var(--action);
+  --buttonHover: var(--actionHover);
 `;
 const DangerButton = styled(Button)`
-  background: var(--danger);
-  &:hover {
-    background-color: var(--dangerLight);
-  }
+  --buttonBg: var(--danger);
+  --buttonHover: var(--dangerHover);
 `;
 const TransparentButton = styled(Button)`
-  background: transparent;
+  --buttonBg: transparent;
+  --buttonHover: transparent;
   color: var(--fontColor);
   text-decoration: ${props => props.underline && 'underline'};
   &:hover {
-    background-color: transparent;
     box-shadow: none;
   }
   ${({ discrete }) =>
@@ -62,7 +54,8 @@ const TransparentButton = styled(Button)`
 // This should be used with side by side buttons
 // where only one should be selected
 const RadioButton = styled(Button)`
-  background: ${props => (props.active ? 'var(--neutral)' : 'transparent')};
+  --buttonBg: ${props => (props.active ? 'var(--neutral)' : 'transparent')};
+  --buttonHover: ${props => (props.active ? 'var(--neutral)' : 'var(--neutralHover)')};
   border: 1px solid var(--neutral);
   color: ${props => (props.active ? 'white' : 'var(--fontColor)')};
   padding: 5px;
@@ -76,9 +69,11 @@ const RadioButton = styled(Button)`
     outline-color: var(--primary);
     outline-style: inherit;
   }
-  :hover {
-    background: ${props => (props.active ? 'var(--neutral)' : 'var(--neutralHover)')};
-  }
 `;
 
-export { Button, ActionButton, DangerButton, TransparentButton, RadioButton };
+const RadioGroup = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10px, 1fr));
+`;
+
+export { Button, ActionButton, DangerButton, TransparentButton, RadioButton, RadioGroup };

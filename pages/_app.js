@@ -34,18 +34,21 @@ const GlobalStyle = createGlobalStyle`
     --smallFontSize: .8rem;
     
     --primary: var(--purp);
-    --primaryLight: var(--purpLight);
-    --primaryHover: var(--purp-o25);
+    --primaryHover: var(--purpLight);
+    --primarySubtle: var(--purp-o25);
     --action: var(--aqua);
-    --actionLight: var(--aquaLight);
-    --actionHover: var(--aqua-o25);
+    --actionHover: var(--aquaLight);
+    --actionSubtle: var(--aqua-o25);
     --danger: var(--red);
-    --dangerLight: var(--redLight);
-    --dangerHover: var(--red-o25);
+    --dangerHover: var(--redLight);
+    --dangerSubtle: var(--red-o25);
     --neutral: var(--fontColor);
     --neutralHover: var(--black-o10);
     --rowHover: var(--green-h2);
     --rowHoverDark: var(--green-h1);
+
+    --buttonBg: var(--primary);
+    --buttonHover: var(--primaryHover);
 
     /* Elevation */
     --level1: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);

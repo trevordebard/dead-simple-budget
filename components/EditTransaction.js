@@ -2,7 +2,7 @@ import { useApolloClient, gql } from '@apollo/client';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useForm } from 'react-hook-form';
-import { ActionButton, TransparentButton, RadioButton } from './styled';
+import { ActionButton, TransparentButton, RadioButton, RadioGroup } from './styled';
 import FormInput, { FormSelect } from './FormInput';
 import useTransactions from '../hooks/useTransactions';
 import { formatDate } from '../lib/formatDate';
@@ -16,10 +16,6 @@ const EditTransactionWrapper = styled.form`
   * {
     margin-bottom: 10px;
   }
-`;
-const RadioGroup = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
 `;
 
 const EditTransaction = ({ transactionId, cancelEdit }) => {
