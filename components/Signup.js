@@ -4,7 +4,7 @@ import { useMutation } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { ADD_USER } from '../graphql/queries/ADD_USER';
 import FormInput from './FormInput';
-import { ActionButton } from './styled';
+import { Button } from './styled';
 
 const Form = styled.form`
   * {
@@ -70,9 +70,9 @@ const Signup = () => {
             <FormInput register={register} errors={errors} name="email" type="email" required />
             <label htmlFor="password">Password</label>
             <FormInput register={register} errors={errors} name="password" type="password" required />
-            <ActionButton style={{ width: '100%' }} disabled={loading}>
+            <Button category="ACTION" style={{ width: '100%' }} disabled={loading}>
               {loading ? 'Loading...' : 'Signup'}
-            </ActionButton>
+            </Button>
             {error && <p style={{ color: 'red' }}>There was an error logging in. Please try again!</p>}
           </Form>
         </Card>

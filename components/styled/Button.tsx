@@ -1,6 +1,10 @@
+import { FC, FunctionComponent, HTMLProps, ReactNode } from 'react';
 import styled, { css } from 'styled-components';
 
-const Button = styled.button`
+interface StyledButtonProps {
+  small?: boolean;
+}
+const StyledButton = styled.button<StyledButtonProps>`
   background-color: var(--buttonBg);
   color: white;
   border-radius: 45px;
@@ -27,15 +31,15 @@ const Button = styled.button`
     `}
 `;
 
-const ActionButton = styled(Button)`
+const ActionButton = styled(StyledButton)`
   --buttonBg: var(--action);
   --buttonHover: var(--actionHover);
 `;
-const DangerButton = styled(Button)`
+const DangerButton = styled(StyledButton)`
   --buttonBg: var(--danger);
   --buttonHover: var(--dangerHover);
 `;
-const TransparentButton = styled(Button)`
+const TransparentButton = styled(StyledButton) <{ underline?: boolean, discrete?: boolean }>`
   --buttonBg: transparent;
   --buttonHover: transparent;
   color: var(--fontColor);
@@ -53,14 +57,14 @@ const TransparentButton = styled(Button)`
 
 // This should be used with side by side buttons
 // where only one should be selected
-const RadioButton = styled(Button)`
+const RadioButton = styled(StyledButton) <{ active?: boolean }>`
   --buttonBg: ${props => (props.active ? 'var(--neutral)' : 'transparent')};
   --buttonHover: ${props => (props.active ? 'var(--neutral)' : 'var(--neutralHover)')};
   border: 1px solid var(--neutral);
   color: ${props => (props.active ? 'white' : 'var(--fontColor)')};
   padding: 5px;
   text-align: center;
-  border-radius: 0;
+  border-radius: 0px;
   cursor: pointer;
   + button {
     border-left: none;
@@ -76,4 +80,35 @@ const RadioGroup = styled.div`
   grid-template-columns: repeat(auto-fit, minmax(10px, 1fr));
 `;
 
-export { Button, ActionButton, DangerButton, TransparentButton, RadioButton, RadioGroup };
+interface ButtonProps extends HTMLProps<HTMLButtonElement> {
+  loading: boolean;
+  category: 'PRIMARY' | 'ACTION' | 'DANGER' | 'TRANSPARENT';
+  children: ReactNode;
+}
+
+const Button: FC<ButtonProps> = ({ category = 'PRIMARY', loading, children, ...props }: ButtonProps) => {
+  return (
+    <>
+      <StyledButton as={getComponent(category)} {...props}>
+        {loading && <p>Loading...</p>}
+        {!loading && children}
+      </StyledButton>
+    </>
+  )
+};
+function getComponent(category: 'PRIMARY' | 'ACTION' | 'DANGER' | 'TRANSPARENT') {
+  if (category === 'PRIMARY') {
+    return StyledButton
+  }
+  if (category == 'ACTION') {
+    return ActionButton
+  }
+  if (category === 'DANGER') {
+    return DangerButton
+  }
+  if (category === 'TRANSPARENT') {
+    return TransparentButton
+  }
+}
+
+export { StyledButton, ActionButton, DangerButton, TransparentButton, RadioButton, RadioGroup, Button };

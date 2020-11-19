@@ -5,7 +5,7 @@ import { useApolloClient } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
 import { useSession, signOut } from 'next-auth/client';
 import Logo from './Logo.svg';
-import { TransparentButton } from './styled';
+import { Button } from './styled';
 
 const NavContainer = styled.div`
   display: grid;
@@ -58,8 +58,8 @@ const LoggedInNav = ({ email }) => {
 
       <Account>
         <p>{email}</p>
-        <TransparentButton
-          transparent
+        <Button
+          category="TRANSPARENT"
           onClick={async () => {
             signOut();
             await client.clearStore();
@@ -67,7 +67,7 @@ const LoggedInNav = ({ email }) => {
           }}
         >
           Logout
-        </TransparentButton>
+        </Button>
       </Account>
     </>
   );

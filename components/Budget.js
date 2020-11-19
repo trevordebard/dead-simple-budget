@@ -89,7 +89,7 @@ function Budget() {
         {data.stacks && renderStacks(data?.stacks, data.id)}
         <AddStackWrapper>
           <FormInput name="newStack" register={register} errors={errors} placeholder="Stack Name" autoComplete="off" />
-          <Button isAction type="button" register={register} name="addStack" onClick={handleSubmit(onAddStack)}>
+          <Button isAction register={register} name="addStack" onClick={handleSubmit(onAddStack)}>
             Add Stack
           </Button>
         </AddStackWrapper>

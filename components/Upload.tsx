@@ -14,7 +14,7 @@ interface UploadZoneProps {
   message: string
 }
 const UploadZone = styled.label<UploadZoneProps>`
-  border: 2px  ${props => props.isDragging ? 'solid var(--action)' : 'dashed var(--actionLight)'};
+  border: 2px  ${props => props.isDragging ? 'solid var(--action)' : 'dashed var(--actionHover)'};
   color: ${props => props.isDragging ? ' var(--action)' : ' var(--fontColor)'};
   width: 400px;
   max-width: 90vw;
@@ -86,13 +86,8 @@ const Upload = () => {
           </div>
         }
       </UploadZone >
-      <Button disabled={!file || loading} style={{ width: '100%', marginTop: '1rem' }} onClick={() => submitFile(file)}>
-        {loading && !uploadSuccess
-          ? "Uploading..."
-          : uploadSuccess
-            ? "Success!"
-            : "Upload"
-        }
+      <Button category="PRIMARY" disabled={!file || loading} loading={loading} style={{ width: '100%', marginTop: '1rem' }} onClick={() => submitFile(file)}>
+        Upload
       </Button>
     </ UploadContainer>
   );

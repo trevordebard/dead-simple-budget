@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useState } from 'react';
 import Link from 'next/link';
 import useTransactions from '../hooks/useTransactions';
-import { ActionButton, RadioButton, RadioGroup } from './styled';
+import { Button, RadioButton, RadioGroup } from './styled';
 import FormInput, { FormSelect } from './FormInput';
 import { formatDate } from '../lib/formatDate';
 
@@ -104,7 +104,9 @@ const NewTransaction = () => {
           Deposit
         </RadioButton>
       </RadioGroup>
-      <ActionButton type="submit">Add</ActionButton>
+      <Button category="ACTION" type="submit">
+        Add
+      </Button>
       <Link href="/upload" passHref>
         <UploadLink>Import Transactions</UploadLink>
       </Link>

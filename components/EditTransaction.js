@@ -2,10 +2,10 @@ import { useApolloClient, gql } from '@apollo/client';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useForm } from 'react-hook-form';
-import { ActionButton, TransparentButton, RadioButton, RadioGroup } from './styled';
 import FormInput, { FormSelect } from './FormInput';
 import useTransactions from '../hooks/useTransactions';
 import { formatDate } from '../lib/formatDate';
+import { Button, RadioButton, RadioGroup } from './styled';
 
 const EditTransactionWrapper = styled.form`
   text-align: center;
@@ -127,9 +127,11 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
           Deposit
         </RadioButton>
       </RadioGroup>
-      <ActionButton type="submit">Save Changes</ActionButton>
-      <TransparentButton
-        type="button"
+      <Button category="ACTION" type="submit">
+        Save Changes
+      </Button>
+      <Button
+        category="TRANSPARENT"
         discrete
         small
         underline
@@ -137,7 +139,7 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
         style={{ alignSelf: 'center' }}
       >
         Cancel
-      </TransparentButton>
+      </Button>
     </EditTransactionWrapper>
   );
 };
