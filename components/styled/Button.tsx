@@ -16,11 +16,11 @@ const StyledButton = styled.button<StyledButtonProps>`
     background-color: var(--buttonHover);
   }
   &:disabled {
-    background-color: var(--buttonHover);
+    background-color: var(--buttonSubtle);
     cursor: auto;
     &:hover {
       box-shadow: none;
-      background-color: var(--buttonHover);
+      background-color: var(--buttonSubtle);
     }
   }
   ${props =>
@@ -34,10 +34,12 @@ const StyledButton = styled.button<StyledButtonProps>`
 const ActionButton = styled(StyledButton)`
   --buttonBg: var(--action);
   --buttonHover: var(--actionHover);
+  --buttonSubtle: var(--actionSubtle);
 `;
 const DangerButton = styled(StyledButton)`
   --buttonBg: var(--danger);
   --buttonHover: var(--dangerHover);
+  --buttonSubtle: var(--dangerSubtle);
 `;
 const TransparentButton = styled(StyledButton) <{ underline?: boolean, discrete?: boolean }>`
   --buttonBg: transparent;
