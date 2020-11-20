@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { useState } from 'react';
-import { Button, ActionButton, DangerButton } from '../components/styled';
+import { Button} from '../components/styled';
 import Modal, { ModalCard } from '../components/Modal';
 
 const ButtonContainer = styled.div`
@@ -60,8 +60,8 @@ const Sink = () => {
         </div>
         <ButtonContainer>
           <Button type="button">Normal Button</Button>
-          <ActionButton type="button">Submit</ActionButton>
-          <DangerButton type="button">Cancel</DangerButton>
+          <Button category="ACTION">Submit</Button>
+          <Button category="DANGER">Cancel</Button>
           <Button small type="button">
             Small Button
           </Button>
