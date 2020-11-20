@@ -12,7 +12,7 @@ const EditTransactionWrapper = styled.form`
   display: flex;
   flex-direction: column;
   margin: 1rem;
-  max-width: 60rem;
+  min-width: 250px;
   * {
     margin-bottom: 10px;
   }

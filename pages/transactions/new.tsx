@@ -8,19 +8,13 @@ import styled from 'styled-components';
 import { FunctionComponent } from 'react';
 import { GetServerSidePropsContext, NextPageContext } from 'next';
 
-const EditWrapper = styled.div`
-  width: 50%;
-  max-width: 90vw;
-`;
 
 const NewTransactionPage: FunctionComponent = () => {
     const router = useRouter();
     const { transactionId } = router.query;
     return (
         <Layout>
-            <EditWrapper>
-                <NewTransaction />
-            </EditWrapper>
+            <NewTransaction />
         </Layout>
     );
 };

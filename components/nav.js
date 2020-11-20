@@ -38,7 +38,7 @@ const Nav = () => {
 
   return (
     <NavContainer>
-      <LoggedInNav email={session?.user?.email} />
+      <LoggedInNav email={session.user.email.split('@')[0]} />
     </NavContainer>
   );
 };

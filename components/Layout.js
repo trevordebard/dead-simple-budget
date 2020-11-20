@@ -8,6 +8,8 @@ const AppLayout = styled.div`
   grid-template-columns: minmax(auto, 300px) 3fr;
   grid-template-rows: min-content auto;
   height: 100vh;
+  margin: 0 auto;
+  max-width: 1080px;
   grid-template-areas:
     'nav nav'
     'sidebar content';
@@ -31,7 +33,8 @@ const SidebarWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 1rem;
+  padding: 1rem 0;
+  margin: 0 1rem;
   @media only screen and (max-width: ${smBreakpoint}) {
     grid-column: 1 / -1;
     width: 100vw;
@@ -40,6 +43,7 @@ const SidebarWrapper = styled.div`
     justify-content: center;
     background-color: var(--backgroundSubtle);
     padding: 0;
+    margin: 0;
   }
 `;
 const Content = styled.div`

@@ -4,20 +4,13 @@ import { GET_USER } from 'graphql/queries/GET_USER';
 import { initializeApollo } from 'lib/apolloClient';
 import { getSession } from 'next-auth/client';
 import { useRouter } from 'next/router';
-import styled from 'styled-components';
 
-const EditWrapper = styled.div`
-  width: 50%;
-  max-width: 90vw;
-`;
 const Transaction = () => {
   const router = useRouter();
   const { transactionId } = router.query;
   return (
     <Layout>
-      <EditWrapper>
-        <EditTransaction transactionId={parseInt(transactionId, 10)} cancelEdit={() => router.push('/transactions')} />
-      </EditWrapper>
+      <EditTransaction transactionId={parseInt(transactionId, 10)} cancelEdit={() => router.push('/transactions')} />
     </Layout>
   );
 };

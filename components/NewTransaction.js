@@ -17,8 +17,8 @@ const NewtransactionWrapper = styled.form`
   display: flex;
   flex-direction: column;
   margin: 1em;
-  max-width: 60rem;
   text-align: center;
+  min-width: 250px;
   > * {
     margin-bottom: 10px;
   }

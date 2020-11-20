@@ -12,6 +12,9 @@ const ToplineBudget = styled.div`
   margin-bottom: 30px; /*TODO: temporary */
 `;
 
+const BudgetWrapper = styled.div`
+  max-width: 85vw;
+`;
 const Amount = styled.span`
   font-weight: 500;
   color: ${props => (props.danger ? 'var(--danger)' : 'var(--fontColor)')};
@@ -60,7 +63,7 @@ function Budget() {
     reset({ newStack: '' });
   };
   return (
-    <div>
+    <BudgetWrapper>
       <form onSubmit={handleSubmit(onSubmit)}>
         <ToplineBudget>
           <h1>Budget</h1>
@@ -74,8 +77,7 @@ function Budget() {
                       total: parseFloat(total),
                       budgetId: data.id,
                     },
-                  })
-                }
+                  })}
                 inputType="number"
               />
             </Amount>
@@ -95,7 +97,7 @@ function Budget() {
         </AddStackWrapper>
       </form>
       <br />
-    </div>
+    </BudgetWrapper>
   );
   function renderStacks(stacks, budgetId) {
     return stacks.map(item => (
