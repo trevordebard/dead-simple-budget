@@ -6,6 +6,7 @@ import Head from '../components/head';
 
 const GlobalStyle = createGlobalStyle`
   :root {
+    --white: rgb(255, 255, 255);
     --purp: hsl(282, 44%, 47%);
     --purp-o25: hsl(282, 44%, 47%, 25%);
     --purpLight: hsl(282, 44%, 53%);
@@ -62,17 +63,15 @@ const GlobalStyle = createGlobalStyle`
     max-width: 100%;
     height: 100%;
     overflow-x: hidden;
-    font-size: var(--baseFontSize)
+    font-size: var(--baseFontSize);
   }
   body {
     margin: 0;
     padding: 5px;
     color: var(--fontColor);
-    background-color: white;
     font-family: 'Roboto', sans-serif;
     font-weight: 400;
     line-height: 1.65;
-    color: #333;
   }
 
 /* p {margin-bottom: 1.15rem;} */

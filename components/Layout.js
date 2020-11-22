@@ -5,11 +5,11 @@ import { smBreakpoint } from '../lib/constants';
 
 const AppLayout = styled.div`
   display: grid;
-  grid-template-columns: minmax(auto, 300px) 3fr;
+  grid-template-columns: minmax(auto, 230px) 3fr;
   grid-template-rows: min-content auto;
   height: 100vh;
   margin: 0 auto;
-  max-width: 1080px;
+  max-width: 1200px;
   grid-template-areas:
     'nav nav'
     'sidebar content';
@@ -34,7 +34,6 @@ const SidebarWrapper = styled.div`
   align-items: center;
   text-align: center;
   padding: 1rem 0;
-  margin: 0 1rem;
   @media only screen and (max-width: ${smBreakpoint}) {
     grid-column: 1 / -1;
     width: 100vw;
@@ -52,7 +51,6 @@ const Content = styled.div`
   flex-direction: column;
   align-items: center;
   padding: 1rem 0;
-  max-width: 1080px;
   @media only screen and (max-width: ${smBreakpoint}) {
     grid-column: 1;
     max-width: 100vw !important;
