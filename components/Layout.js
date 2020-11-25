@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import Nav from './nav';
-import LeftSidebar from './LeftSidebar';
+import TabSidebar from './TabSidebar';
 import { smBreakpoint } from '../lib/constants';
 
 const AppLayout = styled.div`
@@ -63,7 +63,7 @@ const Layout = ({ children }) => (
       <Nav />
     </NavWrapper>
     <SidebarWrapper>
-      <LeftSidebar />
+      <TabSidebar />
     </SidebarWrapper>
     <Content>{children}</Content>
   </AppLayout>
