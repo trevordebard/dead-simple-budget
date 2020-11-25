@@ -83,7 +83,7 @@ const RadioGroup = styled.div`
 `;
 
 interface ButtonProps extends HTMLProps<HTMLButtonElement> {
-  loading: boolean;
+  loading?: boolean;
   category: 'PRIMARY' | 'ACTION' | 'DANGER' | 'TRANSPARENT';
   children: ReactNode;
 }

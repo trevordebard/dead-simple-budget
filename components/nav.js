@@ -20,6 +20,7 @@ const LogoWrapper = styled.div`
   grid-column: 1 / 2;
   display: flex;
   align-items: center;
+  margin-left: 20px;
   justify-content: flex-start;
   h1 {
     cursor: pointer;

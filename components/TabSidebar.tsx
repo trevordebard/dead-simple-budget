@@ -5,7 +5,7 @@ import { useRouter } from 'next/dist/client/router';
 import { smBreakpoint } from '../lib/constants';
 import { Button } from './styled';
 
-const TabItem = styled.li`
+const TabItem = styled.li<{ active?: boolean }>`
   + li {
     margin-top: 1em;
   }
@@ -45,19 +45,19 @@ const Tabs = styled.div`
     }
   }
 `;
-const LeftSidebar = () => {
+const TabSidebar = () => {
   const router = useRouter();
   return (
     <Tabs>
       <ul>
         <Link href="/budget">
           <TabItem active={router.pathname === '/budget'}>
-            <Button as="a">Budget</Button>
+            <Button category="TRANSPARENT" as="a">Budget</Button>
           </TabItem>
         </Link>
         <Link href="/transactions">
           <TabItem active={router.pathname === '/transactions'}>
-            <Button as="a">Transactions</Button>
+            <Button category="TRANSPARENT" as="a">Transactions</Button>
           </TabItem>
         </Link>
       </ul>
@@ -65,4 +65,4 @@ const LeftSidebar = () => {
   );
 };
 
-export default LeftSidebar;
+export default TabSidebar;

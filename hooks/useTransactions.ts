@@ -97,7 +97,7 @@ const useTransactions = () => {
       variables: { id, description, amount, stack, date: new Date(date).toISOString(), type },
     });
   }
-  function deleteManyTransactions(transactionIds: number[], params: MutationHookOptions) {
+  function deleteManyTransactions(transactionIds: number[], params?: MutationHookOptions) {
     deleteManyTransactionsM({
       ...params,
       variables: { transactionIds },
