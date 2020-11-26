@@ -86,12 +86,36 @@ const Mutation = mutationType({
       },
     });
     t.crud.createOneuser();
-    t.crud.deleteManytransactions();
+    t.crud.deleteManytransactions({
+      async resolve(root, args, ctx, info, originalResolve) {
+        // Sum transactions being deleted
+        const sum = await ctx.prisma.transactions.aggregate({
+          sum: { amount: true },
+          where: { id: { in: args.where.id.in } },
+        });
+        const res = await originalResolve(root, args, ctx, info);
+
+        // Get budget
+        const { budget } = await ctx.prisma.user.findOne({
+          where: { email: ctx.session.user.email },
+          include: { budget: true },
+        });
+
+        // Update total
+        await ctx.prisma.budget.update({
+          // using negative amount becuase if the amount is negative, we want to increment total since that amount is being deleted
+          data: { total: { increment: -sum.sum.amount } },
+          where: { id: budget.id },
+        });
+        await recalcToBeBudgeted(ctx.prisma, budget.id);
+        return res;
+      },
+    });
     t.crud.createOnebudget();
     t.crud.updateOnebudget({
       async resolve(root, args, ctx, info, originalResolve) {
         const res = await originalResolve(root, args, ctx, info);
-        recalcToBeBudgeted(ctx.prisma, res.id);
+        await recalcToBeBudgeted(ctx.prisma, res.id);
         return res;
       },
     });
