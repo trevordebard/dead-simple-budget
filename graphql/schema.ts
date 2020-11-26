@@ -96,7 +96,7 @@ const Mutation = mutationType({
         const res = await originalResolve(root, args, ctx, info);
 
         // Get budget
-        const { budget } = await ctx.prisma.user.findOne({
+        const { budget } = await ctx.prisma.user.findUnique({
           where: { email: ctx.session.user.email },
           include: { budget: true },
         });
@@ -130,7 +130,7 @@ const Mutation = mutationType({
     t.crud.createOnetransactions({
       async resolve(root, args, ctx, info, originalResolve) {
         const res = await originalResolve(root, args, ctx, info);
-        const { budget } = await ctx.prisma.user.findOne({
+        const { budget } = await ctx.prisma.user.findUnique({
           where: { id: res.userId },
           include: { budget: true },
         });
@@ -148,10 +148,10 @@ const Mutation = mutationType({
     });
     t.crud.updateOnetransactions({
       async resolve(root, args, ctx, info, originalResolve) {
-        const transactionBefore = await ctx.prisma.transactions.findOne({ where: { id: args.where.id } });
+        const transactionBefore = await ctx.prisma.transactions.findUnique({ where: { id: args.where.id } });
         const res = await originalResolve(root, args, ctx, info);
         const difference = transactionBefore.amount - res.amount;
-        const { budget } = await ctx.prisma.user.findOne({
+        const { budget } = await ctx.prisma.user.findUnique({
           where: { id: res.userId },
           include: { budget: true },
         });
@@ -191,7 +191,7 @@ export async function recalcToBeBudgeted(prisma: PrismaClient, budgetId: number)
   const {
     sum: { amount: sumOfStacks },
   } = await prisma.stacks.aggregate({ sum: { amount: true }, where: { budgetId: { equals: budgetId } } });
-  const { total } = await prisma.budget.findOne({ where: { id: budgetId } });
+  const { total } = await prisma.budget.findUnique({ where: { id: budgetId } });
   await prisma.budget.update({
     data: { toBeBudgeted: { set: total - sumOfStacks } },
     where: { id: budgetId },

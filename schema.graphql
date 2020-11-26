@@ -75,10 +75,12 @@ input budgetUpdateOneRequiredWithoutStacksInput {
   upsert: budgetUpsertWithoutStacksInput
 }
 
-input budgetUpdateOneRequiredWithoutUserInput {
+input budgetUpdateOneWithoutUserInput {
   connect: budgetWhereUniqueInput
   connectOrCreate: budgetCreateOrConnectWithoutuserInput
   create: budgetCreateWithoutUserInput
+  delete: Boolean
+  disconnect: Boolean
   update: budgetUpdateWithoutUserInput
   upsert: budgetUpsertWithoutUserInput
 }
@@ -619,7 +621,7 @@ type UploadFile {
 }
 
 type user {
-  budget: budget!
+  budget: budget
   email: String!
   id: Int!
   transactions(after: transactionsWhereUniqueInput, before: transactionsWhereUniqueInput, first: Int, last: Int): [transactions!]!
@@ -705,7 +707,7 @@ input userUpdateWithoutBudgetInput {
 }
 
 input userUpdateWithoutTransactionsInput {
-  budget: budgetUpdateOneRequiredWithoutUserInput
+  budget: budgetUpdateOneWithoutUserInput
   createdAt: DateTimeFieldUpdateOperationsInput
   email: StringFieldUpdateOperationsInput
   emailVerified: NullableDateTimeFieldUpdateOperationsInput

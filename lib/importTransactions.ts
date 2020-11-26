@@ -1,10 +1,10 @@
-import { transactionsCreateInput } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import * as csv from 'fast-csv';
 import { Context } from 'nexus-plugin-prisma/typegen';
 import { recalcToBeBudgeted } from 'graphql/schema';
 
 // Converts transaction readstream to array of transaction objects
-async function parseTransactionCsv(createReadStream, ctx: Context): Promise<transactionsCreateInput[]> {
+async function parseTransactionCsv(createReadStream, ctx: Context): Promise<Prisma.transactionsCreateInput[]> {
   return new Promise((resolve, reject) => {
     const res = [];
     createReadStream()
@@ -13,7 +13,7 @@ async function parseTransactionCsv(createReadStream, ctx: Context): Promise<tran
       )
       .on('error', error => reject(error))
       .on('data', row => {
-        const transaction: transactionsCreateInput = {
+        const transaction: Prisma.transactionsCreateInput = {
           amount: parseFloat(row.amount),
           date: new Date(row.date),
           description: row.description,
@@ -45,7 +45,7 @@ export async function importTransactions(createReadStream, ctx: Context) {
     const results = await ctx.prisma.$transaction(prismaCalls);
 
     // Get user budget given the user id from one of the responses
-    const { budget } = await ctx.prisma.user.findOne({
+    const { budget } = await ctx.prisma.user.findUnique({
       where: { id: results[0].userId },
       include: { budget: true },
     });

@@ -80,7 +80,7 @@ model user {
   updatedAt     DateTime  @default(now()) @map("updated_at")
 
   transactions transactions[]
-  budget       budget
+  budget       budget?
   @@map("users")
 }
 
