@@ -346,6 +346,13 @@ export interface NexusGenInputs {
     created_at?: NexusGenScalars['DateTime'] | null; // DateTime
     label: string; // String!
   }
+  stacksOrderByInput: { // input type
+    amount?: NexusGenEnums['SortOrder'] | null; // SortOrder
+    budgetId?: NexusGenEnums['SortOrder'] | null; // SortOrder
+    created_at?: NexusGenEnums['SortOrder'] | null; // SortOrder
+    id?: NexusGenEnums['SortOrder'] | null; // SortOrder
+    label?: NexusGenEnums['SortOrder'] | null; // SortOrder
+  }
   stacksScalarWhereInput: { // input type
     amount?: NexusGenInputs['FloatFilter'] | null; // FloatFilter
     AND?: NexusGenInputs['stacksScalarWhereInput'][] | null; // [stacksScalarWhereInput!]
@@ -862,6 +869,7 @@ export interface NexusGenArgTypes {
       before?: NexusGenInputs['stacksWhereUniqueInput'] | null; // stacksWhereUniqueInput
       first?: number | null; // Int
       last?: number | null; // Int
+      orderBy?: NexusGenInputs['stacksOrderByInput'][] | null; // [stacksOrderByInput!]
     }
   }
   user: {

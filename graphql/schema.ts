@@ -22,7 +22,7 @@ const Budget = objectType({
     t.model.toBeBudgeted();
     t.model.total();
     t.model.userId();
-    t.model.stacks();
+    t.model.stacks({ ordering: true });
   },
 });
 

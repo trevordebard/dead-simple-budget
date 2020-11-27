@@ -9,7 +9,7 @@ export const GET_USER = gql`
         id
         total
         toBeBudgeted
-        stacks {
+        stacks(orderBy: { created_at: asc }) {
           id
           label
           amount

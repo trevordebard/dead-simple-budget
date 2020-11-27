@@ -8,7 +8,7 @@ type BatchPayload {
 
 type budget {
   id: Int!
-  stacks(after: stacksWhereUniqueInput, before: stacksWhereUniqueInput, first: Int, last: Int): [stacks!]!
+  stacks(after: stacksWhereUniqueInput, before: stacksWhereUniqueInput, first: Int, last: Int, orderBy: [stacksOrderByInput!]): [stacks!]!
   toBeBudgeted: Float
   total: Float
   userId: Int!
@@ -371,6 +371,14 @@ input StacksListRelationFilter {
   every: stacksWhereInput
   none: stacksWhereInput
   some: stacksWhereInput
+}
+
+input stacksOrderByInput {
+  amount: SortOrder
+  budgetId: SortOrder
+  created_at: SortOrder
+  id: SortOrder
+  label: SortOrder
 }
 
 input stacksScalarWhereInput {
