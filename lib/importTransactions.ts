@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { Prisma, transactions } from '@prisma/client';
 import * as csv from 'fast-csv';
 import { Context } from 'nexus-plugin-prisma/typegen';
 import { recalcToBeBudgeted } from 'graphql/schema';
@@ -27,14 +27,38 @@ async function parseTransactionCsv(createReadStream, ctx: Context): Promise<Pris
   });
 }
 
+function removeExistingTransactions(
+  newTransactions: Prisma.transactionsCreateInput[],
+  existingTransactions: transactions[]
+): Prisma.transactionsCreateInput[] {
+  const uniqueResultOne = newTransactions.filter(
+    newTrasaction =>
+      !existingTransactions.some(
+        existing =>
+          newTrasaction.amount === existing.amount &&
+          newTrasaction.description === existing.description &&
+          new Date(newTrasaction.date).getTime() === existing.date.getTime() &&
+          newTrasaction.type === existing.type
+      )
+  );
+  return uniqueResultOne;
+}
+
 export async function importTransactions(createReadStream, ctx: Context) {
   // Convert transaction CSV to array of transactions
-  const transactions = await parseTransactionCsv(createReadStream, ctx);
+  const parsedTransactions = await parseTransactionCsv(createReadStream, ctx);
+
+  const existingTransactions = await ctx.prisma.transactions.findMany({
+    where: { user: { email: { equals: ctx.session.user.email } } },
+  });
+  const transactionsToUpload = removeExistingTransactions(parsedTransactions, existingTransactions);
+
   let sumOfTransactions = 0;
   // Create list of prisma calls which will create a transaction (i.e. our data model, "transaction";
   // not to be confused with the prisma call, "$transaction")
   // Tracking https://github.com/prisma/prisma-client-js/issues/332 for native prisma batch create
-  const prismaCalls = transactions.map(transaction => {
+
+  const prismaCalls = transactionsToUpload.map(transaction => {
     sumOfTransactions += transaction.amount;
     return ctx.prisma.transactions.create({
       data: transaction,
@@ -49,7 +73,6 @@ export async function importTransactions(createReadStream, ctx: Context) {
       where: { id: results[0].userId },
       include: { budget: true },
     });
-    console.log(sumOfTransactions);
     // Update increment budget total by sum of all transactions imported
     await ctx.prisma.budget.update({
       data: { total: { increment: sumOfTransactions } },
