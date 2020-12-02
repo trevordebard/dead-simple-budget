@@ -1,10 +1,10 @@
 import { useState, memo } from 'react';
 import styled from 'styled-components';
 import { evaluate } from 'mathjs';
-import FormInput from './FormInput';
+import useBudget from 'hooks/useBudget';
 import { ListRow } from './styled';
 
-const StackInput = styled(FormInput)`
+const StackInput = styled.input<{ danger: boolean }>`
   text-align: right;
   border: none;
   background-color: ${props => (props.danger ? 'var(--dangerSubtle)' : 'transparent')};
@@ -16,8 +16,9 @@ const StackInput = styled(FormInput)`
   }
 `;
 
-const BudgetStack = ({ label, register, budgetId, amount, updateStack, setValue }) => {
-  const [prevAmount, setPrevAmount] = useState(amount);
+const BudgetStack = ({ label, budgetId, amount }) => {
+  const [prevAmount, setPrevAmount] = useState<number>(amount);
+  const { updateStack } = useBudget();
   return (
     <ListRow>
       <p>{label} </p>
@@ -26,9 +27,7 @@ const BudgetStack = ({ label, register, budgetId, amount, updateStack, setValue 
         type=""
         defaultValue={amount}
         danger={amount < 0}
-        register={register}
         onBlur={e => {
-          // const newVal = parseFloat(e.target.value);
           const newVal = evaluate(e.target.value);
           // Prevent api call if vlaue didn't change
           if (newVal !== prevAmount) {
@@ -40,7 +39,6 @@ const BudgetStack = ({ label, register, budgetId, amount, updateStack, setValue 
               },
             });
             setPrevAmount(newVal);
-            setValue(label, newVal);
           }
         }}
       />
