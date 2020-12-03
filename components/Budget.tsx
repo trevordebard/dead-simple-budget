@@ -89,7 +89,7 @@ const Stacks = ({ stacks, budgetId }) => {
   return (
     stacks.map(item => (
       <div key={item.id}>
-        <BudgetStack label={item.label} budgetId={budgetId} amount={item.amount} />
+        <BudgetStack id={item.id} label={item.label} budgetId={budgetId} amount={item.amount} />
       </div>
     ))
   )

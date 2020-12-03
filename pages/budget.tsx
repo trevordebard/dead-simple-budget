@@ -6,19 +6,33 @@ import Budget from 'components/Budget';
 import Layout, { Main, Left, Center, Right } from 'components/Layout';
 import TabSidebar from 'components/TabSidebar';
 import Nav from 'components/nav';
+import { createContext, useState } from 'react';
 
-const BudgetPage = () => (
-  <Layout>
-    <Nav />
-    <Main>
-      <Left>
-        <TabSidebar />
-      </Left>
-      <Center><Budget /></Center>
-      <Right></Right>
-    </Main>
-  </Layout>
-);
+const BudgetState = {
+  stackInFocus: 0,
+  setStackInFocus: null
+}
+export const BudgetContext = createContext(BudgetState);
+
+const BudgetPage = () => {
+  const [stackId, setStackId] = useState<null | number>(null)
+  return (
+    <Layout>
+      <Nav />
+      <Main>
+        <BudgetContext.Provider value={{ stackInFocus: stackId, setStackInFocus: setStackId }}>
+          <Left>
+            <TabSidebar />
+          </Left>
+          <Center><Budget /></Center>
+          <Right>
+            {stackId}
+          </Right>
+        </BudgetContext.Provider>
+      </Main>
+    </Layout>
+  )
+};
 export default BudgetPage;
 
 export async function getServerSideProps(context) {

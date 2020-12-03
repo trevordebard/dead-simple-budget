@@ -1,8 +1,9 @@
-import { useState, memo } from 'react';
+import { useState, memo, useContext } from 'react';
 import styled from 'styled-components';
 import { evaluate } from 'mathjs';
 import useBudget from 'hooks/useBudget';
 import { ListRow } from './styled';
+import { BudgetContext } from 'pages/budget';
 
 const StackInput = styled.input<{ danger: boolean }>`
   text-align: right;
@@ -16,11 +17,12 @@ const StackInput = styled.input<{ danger: boolean }>`
   }
 `;
 
-const BudgetStack = ({ label, budgetId, amount }) => {
+const BudgetStack = ({ label, budgetId, amount, id }) => {
   const [prevAmount, setPrevAmount] = useState<number>(amount);
   const { updateStack } = useBudget();
+  const budgetContext = useContext(BudgetContext)
   return (
-    <ListRow>
+    <ListRow selected={id === budgetContext.stackInFocus} onClick={() => budgetContext.setStackInFocus(id)}>
       <p>{label} </p>
       <StackInput
         name={label}
