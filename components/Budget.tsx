@@ -12,6 +12,8 @@ const ToplineBudget = styled.div`
 
 const BudgetWrapper = styled.div`
   max-width: 85vw;
+  margin: 0 auto;
+  width: 400px;
 `;
 const Amount = styled.span<{ danger?: boolean, editable?: boolean }>`
   font-weight: 500;
@@ -47,7 +49,6 @@ function Budget() {
     return <span>loading...</span>;
   }
   if (error) {
-    console.error(error);
     return <p>error...</p>;
   }
   return (
@@ -84,12 +85,15 @@ function Budget() {
   );
 }
 
-const Stacks = ({ stacks, budgetId }) =>
-  stacks.map(item => (
-    <div key={item.id}>
-      <BudgetStack label={item.label} budgetId={budgetId} amount={item.amount} />
-    </div>
-  ));
+const Stacks = ({ stacks, budgetId }) => {
+  return (
+    stacks.map(item => (
+      <div key={item.id}>
+        <BudgetStack label={item.label} budgetId={budgetId} amount={item.amount} />
+      </div>
+    ))
+  )
+};
 
 const NewStack = ({ budgetId }) => {
   const { addStack } = useBudget();

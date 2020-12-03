@@ -26,9 +26,8 @@ const UploadZone = styled.label<UploadZoneProps>`
   cursor: pointer;
 `
 const UploadContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center; 
+  max-width: 400px;
+  margin: 30px auto;
 `
 
 const Upload = () => {

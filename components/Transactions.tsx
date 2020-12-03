@@ -25,7 +25,7 @@ const TableWrapper = styled.div`
   grid-area: table;
   min-width: 450px;
   max-height: 600px;
-  margin-top: 1rem;
+  margin: 0 auto;
   font-size: 13px;
   overflow-y: scroll;
 

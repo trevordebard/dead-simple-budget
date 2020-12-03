@@ -16,9 +16,10 @@ const UploadLink = styled.a`
 const NewtransactionWrapper = styled.form`
   display: flex;
   flex-direction: column;
-  margin: 1em;
+  margin: 0 auto;
   text-align: center;
   min-width: 250px;
+  max-width: 400px;
   > * {
     margin-bottom: 10px;
   }

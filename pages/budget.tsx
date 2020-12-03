@@ -3,11 +3,20 @@ import { GET_USER } from 'graphql/queries/GET_USER';
 import { ADD_BUDGET } from 'graphql/queries/ADD_BUDGET';
 import { initializeApollo } from 'lib/apolloClient';
 import Budget from 'components/Budget';
-import Layout from 'components/Layout';
+import Layout, { Main, Left, Center, Right } from 'components/Layout';
+import TabSidebar from 'components/TabSidebar';
+import Nav from 'components/nav';
 
 const BudgetPage = () => (
   <Layout>
-    <Budget />
+    <Nav />
+    <Main>
+      <Left>
+        <TabSidebar />
+      </Left>
+      <Center><Budget /></Center>
+      <Right></Right>
+    </Main>
   </Layout>
 );
 export default BudgetPage;
