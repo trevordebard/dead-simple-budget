@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import styled from 'styled-components';
 import { smBreakpoint } from '../lib/constants';
 
@@ -44,9 +45,15 @@ export const Left = styled.nav`
     margin: 0;
   }
 `;
-export const Right = styled.nav`
+export const Right = styled(motion.nav) <{ visible: boolean }>`
   width: 20%;
   border-left: 1px solid var(--lineColor);
+  @media only screen and (max-width: ${smBreakpoint}) {
+    width: 100%;
+    background-color: white;
+    position: absolute;
+    height: calc(100% - 88px); /* Not perfect. This is usually nav height*/
+  }
 `;
 
 const Layout = ({ children }) => <AppLayout>{children}</AppLayout>;

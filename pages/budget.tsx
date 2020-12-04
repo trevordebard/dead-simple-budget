@@ -7,7 +7,13 @@ import Layout, { Main, Left, Center, Right } from 'components/Layout';
 import TabSidebar from 'components/TabSidebar';
 import Nav from 'components/nav';
 import { createContext, useState } from 'react';
+import EditBudgetStack from 'components/EditBudgetStack';
+import { Variants } from "framer-motion"
 
+const variants: Variants = {
+  open: { y: 0, transition: { type: "just" }, opacity: 1 },
+  closed: { y: "+100%", opacity: 0 },
+}
 const BudgetState = {
   stackInFocus: 0,
   setStackInFocus: null
@@ -25,8 +31,10 @@ const BudgetPage = () => {
             <TabSidebar />
           </Left>
           <Center><Budget /></Center>
-          <Right>
-            {stackId}
+          <Right visible={stackId !== null}
+            animate={stackId !== null ? "open" : "closed"}
+            variants={variants}>
+            <EditBudgetStack id={stackId} />
           </Right>
         </BudgetContext.Provider>
       </Main>
