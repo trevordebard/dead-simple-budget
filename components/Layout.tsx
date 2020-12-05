@@ -17,6 +17,7 @@ export const Center = styled.div`
 `;
 
 export const Main = styled.div`
+  position: relative;
   /* Take the remaining height */
   flex-grow: 1;
 
@@ -45,14 +46,14 @@ export const Left = styled.nav`
     margin: 0;
   }
 `;
-export const Right = styled(motion.nav) <{ visible: boolean }>`
+export const Right = styled(motion.nav)`
   width: 20%;
   border-left: 1px solid var(--lineColor);
   @media only screen and (max-width: ${smBreakpoint}) {
     width: 100%;
     background-color: white;
     position: absolute;
-    height: calc(100% - 88px); /* Not perfect. This is usually nav height*/
+    height: 100%;
   }
 `;
 

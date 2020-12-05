@@ -8,7 +8,7 @@ import TabSidebar from 'components/TabSidebar';
 import Nav from 'components/nav';
 import { createContext, useState } from 'react';
 import EditBudgetStack from 'components/EditBudgetStack';
-import { Variants } from "framer-motion"
+import { AnimatePresence, Variants } from "framer-motion"
 
 const variants: Variants = {
   open: { y: 0, transition: { type: "just" }, opacity: 1 },
@@ -31,10 +31,14 @@ const BudgetPage = () => {
             <TabSidebar />
           </Left>
           <Center><Budget /></Center>
-          <Right visible={stackId !== null}
+          <Right
             animate={stackId !== null ? "open" : "closed"}
             variants={variants}>
-            <EditBudgetStack id={stackId} />
+            <AnimatePresence>
+              {stackId && (
+                <EditBudgetStack id={stackId} />
+              )}
+            </AnimatePresence>
           </Right>
         </BudgetContext.Provider>
       </Main>
