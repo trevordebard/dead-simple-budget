@@ -190,6 +190,9 @@ export interface NexusGenInputs {
     user?: NexusGenInputs['userWhereInput'] | null; // userWhereInput
     userId?: NexusGenInputs['IntFilter'] | null; // IntFilter
   }
+  QueryStacksWhereInput: { // input type
+    id?: NexusGenInputs['IntFilter'] | null; // IntFilter
+  }
   QueryTransactionsOrderByInput: { // input type
     date?: NexusGenEnums['SortOrder'] | null; // SortOrder
   }
@@ -850,6 +853,7 @@ export interface NexusGenArgTypes {
       before?: NexusGenInputs['stacksWhereUniqueInput'] | null; // stacksWhereUniqueInput
       first?: number | null; // Int
       last?: number | null; // Int
+      where?: NexusGenInputs['QueryStacksWhereInput'] | null; // QueryStacksWhereInput
     }
     transactions: { // args
       after?: NexusGenInputs['transactionsWhereUniqueInput'] | null; // transactionsWhereUniqueInput

@@ -306,7 +306,7 @@ input NullableStringFieldUpdateOperationsInput {
 type Query {
   budget(where: budgetWhereUniqueInput!): budget
   budgets(after: budgetWhereUniqueInput, before: budgetWhereUniqueInput, first: Int, last: Int, where: QueryBudgetsWhereInput): [budget!]!
-  stacks(after: stacksWhereUniqueInput, before: stacksWhereUniqueInput, first: Int, last: Int): [stacks!]!
+  stacks(after: stacksWhereUniqueInput, before: stacksWhereUniqueInput, first: Int, last: Int, where: QueryStacksWhereInput): [stacks!]!
   transactions(after: transactionsWhereUniqueInput, before: transactionsWhereUniqueInput, first: Int, last: Int, orderBy: [QueryTransactionsOrderByInput!], where: QueryTransactionsWhereInput): [transactions!]!
   user(where: userWhereUniqueInput!): user
 }
@@ -319,6 +319,10 @@ input QueryBudgetsWhereInput {
 enum QueryMode {
   default
   insensitive
+}
+
+input QueryStacksWhereInput {
+  id: IntFilter
 }
 
 input QueryTransactionsOrderByInput {
