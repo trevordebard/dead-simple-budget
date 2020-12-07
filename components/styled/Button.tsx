@@ -1,9 +1,11 @@
-import { FC, FunctionComponent, HTMLProps, ReactNode } from 'react';
+import { FC, HTMLProps, ReactNode } from 'react';
 import styled, { css } from 'styled-components';
 
-interface StyledButtonProps {
+interface StyledButtonProps extends HTMLProps<HTMLButtonElement> {
   small?: boolean;
+  outline?: boolean;
 }
+
 const StyledButton = styled.button<StyledButtonProps>`
   background-color: var(--buttonBg);
   color: white;
@@ -23,12 +25,8 @@ const StyledButton = styled.button<StyledButtonProps>`
       background-color: var(--buttonSubtle);
     }
   }
-  ${props =>
-    props.small &&
-    css`
-      font-size: var(--smallFontSize);
-      padding: 5px 15px;
-    `}
+  ${props => props.small && smallCss}
+  ${props => props.outline && outlineCss}
 `;
 
 const ActionButton = styled(StyledButton)`
@@ -57,6 +55,20 @@ const TransparentButton = styled(StyledButton) <{ underline?: boolean, discrete?
     `}
 `;
 
+const outlineCss = css`
+  background-color: transparent;
+  border: 1px solid var(--buttonBg);
+  color: var(--buttonBg);
+  :hover {
+    color: white;
+  }
+`
+
+const smallCss = css`
+    font-size: var(--smallFontSize);
+    padding: 5px 15px;
+  `
+
 // This should be used with side by side buttons
 // where only one should be selected
 const RadioButton = styled(StyledButton) <{ active?: boolean }>`
@@ -82,7 +94,7 @@ const RadioGroup = styled.div`
   grid-template-columns: repeat(auto-fit, minmax(10px, 1fr));
 `;
 
-interface ButtonProps extends HTMLProps<HTMLButtonElement> {
+interface ButtonProps extends StyledButtonProps {
   loading?: boolean;
   category: 'PRIMARY' | 'ACTION' | 'DANGER' | 'TRANSPARENT';
   children: ReactNode;
