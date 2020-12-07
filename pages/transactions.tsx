@@ -5,13 +5,16 @@ import { initializeApollo } from 'lib/apolloClient';
 import Layout, { Main, Left, Center } from 'components/Layout';
 import TabSidebar from 'components/TabSidebar';
 import Nav from 'components/nav';
+import { StickyWrapper } from 'components/styled';
 
 const TransactionPage = () => (
   <Layout>
     <Nav />
     <Main>
       <Left>
-        <TabSidebar />
+        <StickyWrapper top="1rem">
+          <TabSidebar />
+        </StickyWrapper>
       </Left>
       <Center><Transactions /></Center>
     </Main>

@@ -9,10 +9,11 @@ import Nav from 'components/nav';
 import { createContext, useState } from 'react';
 import EditBudgetStack from 'components/EditBudgetStack';
 import { AnimatePresence, Variants } from "framer-motion"
+import { StickyWrapper } from 'components/styled';
 
 const variants: Variants = {
-  open: { y: 0, transition: { type: "just" }, opacity: 1 },
-  closed: { y: "+100%", opacity: 0 },
+  open: { x: 0, transition: { type: "just" }, opacity: 1 },
+  closed: { x: "+100%", opacity: 0 },
 }
 const BudgetState = {
   stackInFocus: 0,
@@ -28,15 +29,20 @@ const BudgetPage = () => {
       <Main>
         <BudgetContext.Provider value={{ stackInFocus: stackId, setStackInFocus: setStackId }}>
           <Left>
-            <TabSidebar />
+            <StickyWrapper top="1rem">
+              <TabSidebar />
+            </StickyWrapper>
           </Left>
           <Center><Budget /></Center>
           <Right
+            initial="closed"
             animate={stackId !== null ? "open" : "closed"}
             variants={variants}>
             <AnimatePresence>
               {stackId && (
-                <EditBudgetStack id={stackId} />
+                <StickyWrapper top="1rem">
+                  <EditBudgetStack id={stackId} />
+                </StickyWrapper>
               )}
             </AnimatePresence>
           </Right>

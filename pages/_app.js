@@ -57,10 +57,12 @@ const GlobalStyle = createGlobalStyle`
     --level2: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     --level3: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   }
+  div#__next{
+    height: 100%;
+  }
   html,body {
     box-sizing: border-box;
     max-width: 100%;
-    overflow-x: hidden;
     font-size: var(--baseFontSize);
   }
   body {

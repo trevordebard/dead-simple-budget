@@ -49,11 +49,12 @@ export const Left = styled.nav`
 export const Right = styled(motion.nav)`
   width: 20%;
   border-left: 1px solid var(--lineColor);
+  background-color: var(--white);
   @media only screen and (max-width: ${smBreakpoint}) {
     width: 100%;
-    background-color: white;
     position: absolute;
     height: 100%;
+    right: 0;
   }
 `;
 
