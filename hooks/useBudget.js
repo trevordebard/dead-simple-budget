@@ -60,7 +60,7 @@ const useBudget = () => {
   });
 
   const [updateStack] = useMutation(UPDATE_STACK, {
-    refetchQueries: ['GET_USER'],
+    refetchQueries: ['GET_USER', 'GET_STACK'],
   });
   const [updateTotal] = useMutation(UPDATE_TOTAL, { refetchQueries: ['GET_USER'] });
 

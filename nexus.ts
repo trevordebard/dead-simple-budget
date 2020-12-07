@@ -700,6 +700,7 @@ export interface NexusGenFieldTypes {
     createOnetransactions: NexusGenRootTypes['transactions']; // transactions!
     createOneuser: NexusGenRootTypes['user']; // user!
     deleteManytransactions: NexusGenRootTypes['BatchPayload']; // BatchPayload!
+    deleteOnestacks: NexusGenRootTypes['stacks'] | null; // stacks
     updateOnebudget: NexusGenRootTypes['budget'] | null; // budget
     updateOnestacks: NexusGenRootTypes['stacks'] | null; // stacks
     updateOnetransactions: NexusGenRootTypes['transactions'] | null; // transactions
@@ -757,6 +758,7 @@ export interface NexusGenFieldTypeNames {
     createOnetransactions: 'transactions'
     createOneuser: 'user'
     deleteManytransactions: 'BatchPayload'
+    deleteOnestacks: 'stacks'
     updateOnebudget: 'budget'
     updateOnestacks: 'stacks'
     updateOnetransactions: 'transactions'
@@ -820,6 +822,9 @@ export interface NexusGenArgTypes {
     }
     deleteManytransactions: { // args
       where?: NexusGenInputs['transactionsWhereInput'] | null; // transactionsWhereInput
+    }
+    deleteOnestacks: { // args
+      where: NexusGenInputs['stacksWhereUniqueInput']; // stacksWhereUniqueInput!
     }
     updateOnebudget: { // args
       data: NexusGenInputs['budgetUpdateInput']; // budgetUpdateInput!

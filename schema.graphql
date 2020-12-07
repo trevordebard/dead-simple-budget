@@ -198,6 +198,7 @@ type Mutation {
   createOnetransactions(data: transactionsCreateInput!): transactions!
   createOneuser(data: userCreateInput!): user!
   deleteManytransactions(where: transactionsWhereInput): BatchPayload!
+  deleteOnestacks(where: stacksWhereUniqueInput!): stacks
   updateOnebudget(data: budgetUpdateInput!, where: budgetWhereUniqueInput!): budget
   updateOnestacks(data: stacksUpdateInput!, where: stacksWhereUniqueInput!): stacks
   updateOnetransactions(data: transactionsUpdateInput!, where: transactionsWhereUniqueInput!): transactions
