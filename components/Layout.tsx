@@ -12,7 +12,8 @@ const AppLayout = styled.div`
 
 export const Center = styled.div`
   flex-grow: 1;
-  margin: 0 auto;
+  display: flex;
+  justify-content: center;
   padding: 1rem;
 `;
 
@@ -46,16 +47,10 @@ export const Left = styled.nav`
     margin: 0;
   }
 `;
-export const Right = styled(motion.nav)`
+export const Right = styled.nav`
   width: 20%;
   border-left: 1px solid var(--lineColor);
   background-color: var(--white);
-  @media only screen and (max-width: ${smBreakpoint}) {
-    width: 100%;
-    position: absolute;
-    height: 100%;
-    right: 0;
-  }
 `;
 
 const Layout = ({ children }) => <AppLayout>{children}</AppLayout>;
