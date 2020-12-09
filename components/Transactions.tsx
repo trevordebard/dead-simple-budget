@@ -7,32 +7,19 @@ import { Table, THead, TR, TD, TH } from 'components/styled/Table'
 
 const TransactionWrapper = styled.div`
   max-width: 100%;
-  max-height: 70vh;
-  display: grid;
-  grid-template-columns: 3fr auto;
-  grid-auto-rows: min-content;
-  grid-template-areas:
-    'title'
-    'table';
 `;
 
 const Title = styled.div`
-  grid-area: title;
   text-align: center;
 `;
 
 const TableWrapper = styled.div`
-  grid-area: table;
-  min-width: 450px;
   max-height: 600px;
-  margin: 0 auto;
   font-size: 13px;
   overflow-y: scroll;
-
+  
   @media only screen and (max-width: ${smBreakpoint}) {
-    min-width: 350px;
-    grid-template-columns: 1fr;
-    max-height: 440px;
+  max-width: 90vw;
   }
 `;
 
