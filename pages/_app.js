@@ -64,6 +64,7 @@ const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
     max-width: 100%;
     font-size: var(--baseFontSize);
+    height: 100%;
   }
   body {
     margin: 0;

@@ -1,6 +1,0 @@
-# Prisma Migrate lockfile v1
-
-20201004212937-init
-20201004221005-lowercase-names-for-prisma-plugin-errors
-20201008013634-remove-multiple-budgets-for-users
-20201018211456-make-email-required
