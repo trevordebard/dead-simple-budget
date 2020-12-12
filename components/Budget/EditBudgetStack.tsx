@@ -2,7 +2,7 @@ import { gql, useMutation, useQuery } from '@apollo/client'
 import { BudgetContext } from 'pages/budget'
 import { useContext } from 'react'
 import styled from 'styled-components'
-import { Button } from './styled'
+import { Button } from '../Styled'
 
 const GET_STACK = gql`
   query GET_STACK($id: Int!) {

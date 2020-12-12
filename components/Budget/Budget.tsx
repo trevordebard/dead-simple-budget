@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import useBudget from '../hooks/useBudget';
+import useBudget from './useBudget';
 import BudgetStack from './BudgetStack';
-import { Button, Input } from './styled';
-import EditableText from './EditableText';
+import { Button, Input } from 'components/Styled';
+import EditableText from 'components/Shared/EditableText';
 
 const ToplineBudget = styled.div`
   text-align: center;

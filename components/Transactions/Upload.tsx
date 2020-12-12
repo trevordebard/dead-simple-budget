@@ -1,7 +1,7 @@
 import { useMutation, gql } from '@apollo/client'
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Button } from './styled';
+import { Button } from 'components/Styled';
 const UPLOAD = gql`
     mutation uploadFile($file: Upload!) {
       uploadFile(file: $file) {

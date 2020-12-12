@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 export const ADD_TRANSACTION = gql`
-  mutation ADD_TRANSACTION(
+  mutation addTransaction(
     $description: String!
     $stack: String!
     $amount: Float!

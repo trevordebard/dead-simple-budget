@@ -1,6 +1,6 @@
 import { gql, useQuery, useMutation } from '@apollo/client';
 import { useSession } from 'next-auth/client';
-import { GET_USER } from 'graphql/queries/GET_USER';
+import { GET_USER } from 'components/GET_USER';
 
 const UPDATE_STACK = gql`
   mutation UPDATE_STACK($budgetId: Int!, $label: String!, $amount: Float!) {

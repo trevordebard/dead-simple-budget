@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
-import { smBreakpoint } from '../lib/constants';
+import { smBreakpoint } from '../../lib/constants';
 
 const AppLayout = styled.div`
   display: flex;

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
-import useTransactions from '../hooks/useTransactions';
-import { smBreakpoint } from '../lib/constants';
-import { Table, THead, TR, TD, TH } from 'components/styled/Table'
+import useTransactions from './useTransactions';
+import { smBreakpoint } from '../../lib/constants';
+import { Table, THead, TR, TD, TH } from 'components/Styled/Table'
 
 const TransactionWrapper = styled.div`
   max-width: 100%;

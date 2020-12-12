@@ -1,16 +1,14 @@
 import { getSession } from 'next-auth/client';
-import { GET_USER } from 'graphql/queries/GET_USER';
-import { ADD_BUDGET } from 'graphql/queries/ADD_BUDGET';
+import { GET_USER } from 'components/GET_USER';
+import { ADD_BUDGET } from 'components/Budget/queries/ADD_BUDGET';
 import { initializeApollo } from 'lib/apolloClient';
-import Budget from 'components/Budget';
-import Layout, { Main, Left, Center, Right } from 'components/Layout';
-import TabSidebar from 'components/TabSidebar';
-import Nav from 'components/nav';
+import { Budget, EditBudgetStack } from 'components/Budget';
+import Layout, { Main, Left, Center, Right } from 'components/Shared/Layout';
+import { TabSidebar, ActionSidebar } from 'components/Sidebar';
+import { Nav } from 'components/Nav';
 import { createContext, useState } from 'react';
-import EditBudgetStack from 'components/EditBudgetStack';
 import { AnimatePresence, Variants } from "framer-motion"
-import { ActionSidebar } from 'components/Sidebar/ActionSidebar';
-import { StickyWrapper } from 'components/styled/StickyWrapper'
+import { StickyWrapper } from 'components/Styled/StickyWrapper'
 const variants: Variants = {
   open: { x: 0, transition: { type: "just" }, opacity: 1 },
   closed: { x: "+100%", opacity: 0 },

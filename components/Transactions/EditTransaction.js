@@ -2,10 +2,10 @@ import { useApolloClient, gql } from '@apollo/client';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useForm } from 'react-hook-form';
-import FormInput, { FormSelect } from './FormInput';
-import useTransactions from '../hooks/useTransactions';
-import { formatDate } from '../lib/formatDate';
-import { Button, RadioButton, RadioGroup } from './styled';
+import FormInput, { FormSelect } from '../Shared/FormInput';
+import useTransactions from './useTransactions';
+import { formatDate } from '../../lib/formatDate';
+import { Button, RadioButton, RadioGroup } from '../Styled';
 
 const EditTransactionWrapper = styled.form`
   text-align: center;

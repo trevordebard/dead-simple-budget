@@ -1,10 +1,10 @@
 import { getSession } from 'next-auth/client';
-import { GET_USER } from 'graphql/queries/GET_USER';
-import Upload from 'components/Upload';
+import { GET_USER } from 'components/GET_USER';
+import { Upload } from 'components/Transactions';
 import { initializeApollo } from 'lib/apolloClient';
-import Layout, { Main, Left, Center } from 'components/Layout';
-import TabSidebar from 'components/TabSidebar';
-import Nav from 'components/nav';
+import Layout, { Main, Left, Center } from 'components/Shared/Layout';
+import { TabSidebar } from 'components/Sidebar';
+import { Nav } from 'components/Nav';
 
 const UploadPage = () => (
   <Layout>

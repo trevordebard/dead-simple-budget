@@ -1,13 +1,13 @@
-import NewTransaction from 'components/NewTransaction';
-import { GET_USER } from 'graphql/queries/GET_USER';
+import { NewTransaction } from 'components/Transactions';
+import { GET_USER } from 'components/GET_USER';
 import { initializeApollo } from 'lib/apolloClient';
 import { getSession } from 'next-auth/client';
 import { useRouter } from 'next/router';
 import { FunctionComponent } from 'react';
-import { GetServerSidePropsContext, NextPageContext } from 'next';
-import Layout, { Main, Left, Center } from 'components/Layout';
-import TabSidebar from 'components/TabSidebar';
-import Nav from 'components/nav';
+import { GetServerSidePropsContext } from 'next';
+import Layout, { Main, Left, Center } from 'components/Shared/Layout';
+import { TabSidebar } from 'components/Sidebar';
+import { Nav } from 'components/Nav';
 
 const NewTransactionPage: FunctionComponent = () => {
   const router = useRouter();

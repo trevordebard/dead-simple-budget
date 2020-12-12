@@ -2,8 +2,8 @@ import React from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
 import { useRouter } from 'next/dist/client/router';
-import { smBreakpoint } from '../lib/constants';
-import { Button } from './styled';
+import { smBreakpoint } from '../../lib/constants';
+import { Button } from 'components/Styled';
 
 const TabItem = styled.li<{ active?: boolean }>`
   + li {

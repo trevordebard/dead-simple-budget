@@ -1,11 +1,11 @@
-import EditTransaction from 'components/EditTransaction';
-import { GET_USER } from 'graphql/queries/GET_USER';
+import { EditTransaction } from 'components/Transactions';
+import { GET_USER } from 'components/GET_USER';
 import { initializeApollo } from 'lib/apolloClient';
 import { getSession } from 'next-auth/client';
 import { useRouter } from 'next/router';
-import Layout, { Main, Left, Center } from 'components/Layout';
-import TabSidebar from 'components/TabSidebar';
-import Nav from 'components/nav';
+import Layout, { Main, Left, Center } from 'components/Shared/Layout';
+import { TabSidebar } from 'components/Sidebar';
+import { Nav } from 'components/Nav';
 
 const Transaction = () => {
   const router = useRouter();

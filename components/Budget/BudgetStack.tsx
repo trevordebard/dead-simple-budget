@@ -1,8 +1,8 @@
 import { useState, memo, useContext } from 'react';
 import styled from 'styled-components';
 import { evaluate } from 'mathjs';
-import useBudget from 'hooks/useBudget';
-import { ListRow } from './styled';
+import useBudget from 'components/Budget/useBudget';
+import { ListRow } from '../Styled';
 import { BudgetContext } from 'pages/budget';
 
 const StackInput = styled.input<{ danger: boolean }>`

@@ -1,5 +1,5 @@
 import { ErrorMessage } from 'react-hook-form';
-import { Input } from './styled';
+import { Input } from '../Styled';
 
 const FormInput = ({ register, name, errors, required = false, ...rest }) => (
   <>

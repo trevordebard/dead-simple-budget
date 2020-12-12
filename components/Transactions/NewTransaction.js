@@ -2,10 +2,10 @@ import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import { useState } from 'react';
 import Link from 'next/link';
-import useTransactions from '../hooks/useTransactions';
-import { Button, RadioButton, RadioGroup } from './styled';
-import FormInput, { FormSelect } from './FormInput';
-import { formatDate } from '../lib/formatDate';
+import useTransactions from './useTransactions';
+import { Button, RadioButton, RadioGroup } from '../Styled';
+import FormInput, { FormSelect } from '../Shared/FormInput';
+import { formatDate } from '../../lib/formatDate';
 
 const UploadLink = styled.a`
   text-decoration: none;

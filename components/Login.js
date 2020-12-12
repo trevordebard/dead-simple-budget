@@ -1,6 +1,6 @@
 import { signIn } from 'next-auth/client';
 import styled from 'styled-components';
-import { Button } from './styled';
+import { Button } from './Styled';
 
 const LoginWrapper = styled.div`
   display: grid;

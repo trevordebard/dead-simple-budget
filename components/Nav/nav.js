@@ -5,7 +5,7 @@ import { useApolloClient } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
 import { useSession, signOut } from 'next-auth/client';
 import Logo from './Logo.svg';
-import { Button } from './styled';
+import { Button } from '../Styled';
 
 const NavContainer = styled.div`
   display: grid;
