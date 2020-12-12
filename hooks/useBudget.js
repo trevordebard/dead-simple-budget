@@ -3,7 +3,7 @@ import { useSession } from 'next-auth/client';
 import { GET_USER } from 'graphql/queries/GET_USER';
 
 const UPDATE_STACK = gql`
-  mutation($budgetId: Int!, $label: String!, $amount: Float!) {
+  mutation UPDATE_STACK($budgetId: Int!, $label: String!, $amount: Float!) {
     updateOnestacks(
       data: { amount: { set: $amount } }
       where: { budgetId_label_idx: { budgetId: $budgetId, label: $label } }
@@ -15,7 +15,7 @@ const UPDATE_STACK = gql`
 `;
 
 const UPDATE_TOTAL = gql`
-  mutation($budgetId: Int!, $total: Float!) {
+  mutation UPDATE_TOTAL($budgetId: Int!, $total: Float!) {
     updateOnebudget(data: { total: { set: $total } }, where: { id: $budgetId }) {
       total
     }
@@ -23,7 +23,7 @@ const UPDATE_TOTAL = gql`
 `;
 
 const ADD_STACK = gql`
-  mutation($budgetId: Int!, $newStackLabel: String!) {
+  mutation ADD_STACK($budgetId: Int!, $newStackLabel: String!) {
     createOnestacks(data: { label: $newStackLabel, budget: { connect: { id: $budgetId } } }) {
       label
       amount

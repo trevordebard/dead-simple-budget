@@ -21,7 +21,7 @@ interface DeleteStackData {
   id: number
 }
 const DELETE_ONE_STACK = gql`
-  mutation($stackId: Int!) {
+  mutation DELETE_ONE_STACK($stackId: Int!) {
     deleteOnestacks(where: {id: $stackId}) {
       id
     }
