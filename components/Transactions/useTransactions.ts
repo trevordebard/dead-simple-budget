@@ -2,6 +2,7 @@ import { useQuery, useMutation, gql, MutationHookOptions } from '@apollo/client'
 import { useSession } from 'next-auth/client';
 import { ADD_TRANSACTION } from './queries/ADD_TRANSACTION';
 import { getStackLabels } from '../../lib/budgetUtils';
+import { GET_TRANSACTIONS, EDIT_TRANSACTION, DELETE_MANY_TRANSACTIONS } from './queries';
 
 const GET_STACK_LABELS = gql`
   query getStackLabels($email: String!) {
@@ -12,55 +13,6 @@ const GET_STACK_LABELS = gql`
           label
         }
       }
-    }
-  }
-`;
-
-export const EDIT_TRANSACTION = gql`
-  mutation editTransaction(
-    $id: Int!
-    $amount: Float
-    $stack: String
-    $description: String
-    $date: DateTime
-    $type: String
-  ) {
-    updateOnetransactions(
-      where: { id: $id }
-      data: {
-        description: { set: $description }
-        stack: { set: $stack }
-        amount: { set: $amount }
-        type: { set: $type }
-        date: { set: $date }
-      }
-    ) {
-      id
-      amount
-      stack
-      description
-      date
-    }
-  }
-`;
-
-const GET_TRANSACTIONS = gql`
-  query getTransactions($email: String!) {
-    transactions(where: { user: { email: { equals: $email } } }, orderBy: { date: desc }) {
-      id
-      amount
-      description
-      stack
-      date
-      type
-    }
-  }
-`;
-
-const DELETE_MANY_TRANSACTIONS = gql`
-  mutation deleteManyTransactions($transactionIds: [Int!]) {
-    deleteManytransactions(where: { id: { in: $transactionIds } }) {
-      count
     }
   }
 `;

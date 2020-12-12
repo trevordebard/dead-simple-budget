@@ -1,37 +1,7 @@
-import { gql, useQuery, useMutation } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
 import { useSession } from 'next-auth/client';
 import { GET_USER } from 'components/GET_USER';
-
-const UPDATE_STACK = gql`
-  mutation UPDATE_STACK($budgetId: Int!, $label: String!, $amount: Float!) {
-    updateOnestacks(
-      data: { amount: { set: $amount } }
-      where: { budgetId_label_idx: { budgetId: $budgetId, label: $label } }
-    ) {
-      label
-      amount
-    }
-  }
-`;
-
-const UPDATE_TOTAL = gql`
-  mutation UPDATE_TOTAL($budgetId: Int!, $total: Float!) {
-    updateOnebudget(data: { total: { set: $total } }, where: { id: $budgetId }) {
-      total
-    }
-  }
-`;
-
-const ADD_STACK = gql`
-  mutation ADD_STACK($budgetId: Int!, $newStackLabel: String!) {
-    createOnestacks(data: { label: $newStackLabel, budget: { connect: { id: $budgetId } } }) {
-      label
-      amount
-      id
-      budgetId
-    }
-  }
-`;
+import { ADD_STACK, UPDATE_STACK, UPDATE_TOTAL } from './queries';
 
 const useBudget = () => {
   const [session] = useSession();
