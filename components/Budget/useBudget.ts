@@ -1,43 +1,33 @@
 import { useSession } from 'next-auth/client';
-import { GET_USER } from 'components/GET_USER';
 import {
+  Budget,
   useAddStackMutation,
-  useGetUserQuery,
+  useGetBudgetQuery,
   useUpdateStackMutation,
   useUpdateTotalMutation,
 } from 'graphql/generated/codegen';
+import { useEffect, useState } from 'react';
 
 const useBudget = () => {
   const [session] = useSession();
-  const { data, loading, error } = useGetUserQuery({ variables: { email: session.user.email } });
-  let budget;
-  if (data?.user?.budget) {
-    budget = data.user.budget;
-  }
+  const { data, loading, error } = useGetBudgetQuery({ variables: { email: session.user.email } });
+  const [budget, setBudget] = useState<null | Budget>(null);
+  useEffect(() => {
+    if (data) {
+      setBudget(data.budgets[0]);
+    }
+  }, [data]);
 
   const [addStack] = useAddStackMutation({
-    update(cache, { data: result }) {
-      const existingUser = cache.readQuery({
-        query: GET_USER,
-        variables: {
-          email: session.user.email,
-        },
-      });
-      const newUser = JSON.parse(JSON.stringify(existingUser));
-      newUser.user.budget.stacks = [...newUser.user.budget.stacks, result.createOnestacks];
-      cache.writeQuery({
-        query: GET_USER,
-        data: newUser,
-      });
-    },
+    refetchQueries: ['getBudget'],
   });
 
   const [updateStack] = useUpdateStackMutation({
-    refetchQueries: ['getUser', 'getStack'],
+    refetchQueries: ['getBudget', 'getStack'],
   });
-  const [updateTotal] = useUpdateTotalMutation({ refetchQueries: ['getUser'] });
+  const [updateTotal] = useUpdateTotalMutation({ refetchQueries: ['getBudget'] });
 
-  return { loading, data: budget, error, addStack, updateStack, updateTotal };
+  return { loading, budget, error, addStack, updateStack, updateTotal };
 };
 
 export default useBudget;

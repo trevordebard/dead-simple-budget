@@ -47,7 +47,7 @@ const EditBudgetStack = ({ id }: { id: number }) => {
       <h4>{loading ? "Loading..." : data.stacks[0].label}</h4>
       <p>Amount: {!loading && data.stacks[0].amount}</p>
       <Button outline small category="DANGER" onClick={() => {
-        deleteStack({ variables: { stackId: id }, refetchQueries: ['getUser'] })
+        deleteStack({ variables: { stackId: id }, refetchQueries: ['getBudget'] })
         budgetContext.setStackInFocus(null)
       }}>Delete Stack</Button>
       <Button small category="TRANSPARENT" onClick={() => budgetContext.setStackInFocus(null)}>Cancel</Button>

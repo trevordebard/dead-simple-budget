@@ -939,6 +939,23 @@ export type AddStackMutation = (
   ) }
 );
 
+export type GetBudgetQueryVariables = Exact<{
+  email: Scalars['String'];
+}>;
+
+
+export type GetBudgetQuery = (
+  { __typename?: 'Query' }
+  & { budgets: Array<(
+    { __typename?: 'budget' }
+    & Pick<Budget, 'id' | 'userId' | 'total' | 'toBeBudgeted'>
+    & { stacks: Array<(
+      { __typename?: 'stacks' }
+      & Pick<Stacks, 'id' | 'label' | 'amount' | 'created_at' | 'budgetId'>
+    )> }
+  )> }
+);
+
 export type UpdateStackMutationVariables = Exact<{
   budgetId: Scalars['Int'];
   label: Scalars['String'];
@@ -1242,6 +1259,49 @@ export function useAddStackMutation(baseOptions?: Apollo.MutationHookOptions<Add
 export type AddStackMutationHookResult = ReturnType<typeof useAddStackMutation>;
 export type AddStackMutationResult = Apollo.MutationResult<AddStackMutation>;
 export type AddStackMutationOptions = Apollo.BaseMutationOptions<AddStackMutation, AddStackMutationVariables>;
+export const GetBudgetDocument = gql`
+    query getBudget($email: String!) {
+  budgets(where: {user: {email: {equals: $email}}}) {
+    id
+    userId
+    total
+    toBeBudgeted
+    stacks(orderBy: {created_at: asc}) {
+      id
+      label
+      amount
+      created_at
+      budgetId
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetBudgetQuery__
+ *
+ * To run a query within a React component, call `useGetBudgetQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetBudgetQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetBudgetQuery({
+ *   variables: {
+ *      email: // value for 'email'
+ *   },
+ * });
+ */
+export function useGetBudgetQuery(baseOptions: Apollo.QueryHookOptions<GetBudgetQuery, GetBudgetQueryVariables>) {
+        return Apollo.useQuery<GetBudgetQuery, GetBudgetQueryVariables>(GetBudgetDocument, baseOptions);
+      }
+export function useGetBudgetLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetBudgetQuery, GetBudgetQueryVariables>) {
+          return Apollo.useLazyQuery<GetBudgetQuery, GetBudgetQueryVariables>(GetBudgetDocument, baseOptions);
+        }
+export type GetBudgetQueryHookResult = ReturnType<typeof useGetBudgetQuery>;
+export type GetBudgetLazyQueryHookResult = ReturnType<typeof useGetBudgetLazyQuery>;
+export type GetBudgetQueryResult = Apollo.QueryResult<GetBudgetQuery, GetBudgetQueryVariables>;
 export const UpdateStackDocument = gql`
     mutation updateStack($budgetId: Int!, $label: String!, $amount: Float!) {
   updateOnestacks(

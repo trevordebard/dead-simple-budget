@@ -42,10 +42,10 @@ const NewStackWrapper = styled.div`
 `;
 
 function Budget() {
-  const { data, loading, error, updateTotal } = useBudget();
+  const { budget, loading, error, updateTotal } = useBudget();
   const [editTotalVisible, setEditTotalVisible] = useState(false);
 
-  if (loading || !data) {
+  if (loading || !budget) {
     return <span>loading...</span>;
   }
   if (error) {
@@ -56,14 +56,14 @@ function Budget() {
       <ToplineBudget>
         <h1>Budget</h1>
         <h5>
-          <Amount editable danger={data.total < 0} onClick={() => setEditTotalVisible(!editTotalVisible)}>
+          <Amount editable danger={budget.total < 0} onClick={() => setEditTotalVisible(!editTotalVisible)}>
             <EditableText
-              text={data.total}
+              text={budget.total}
               update={total =>
                 updateTotal({
                   variables: {
                     total: parseFloat(total),
-                    budgetId: data.id,
+                    budgetId: budget.id,
                   },
                 })}
               inputType="number"
@@ -72,13 +72,13 @@ function Budget() {
           <SubText> in account</SubText>
         </h5>
         <h5>
-          <Amount danger={data.toBeBudgeted < 0}>{data.toBeBudgeted}</Amount>
+          <Amount danger={budget.toBeBudgeted < 0}>{budget.toBeBudgeted}</Amount>
           <SubText> to be budgeted</SubText>
         </h5>
       </ToplineBudget>
-      <Stacks stacks={data.stacks} budgetId={data.id} />
+      <Stacks stacks={budget.stacks} budgetId={budget.id} />
       <NewStackWrapper>
-        <NewStack budgetId={data.id} />
+        <NewStack budgetId={budget.id} />
       </NewStackWrapper>
       <br />
     </BudgetWrapper>
