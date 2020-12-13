@@ -1,18 +1,21 @@
-import { useQuery, useMutation } from '@apollo/client';
 import { useSession } from 'next-auth/client';
 import { GET_USER } from 'components/GET_USER';
-import { ADD_STACK, UPDATE_STACK, UPDATE_TOTAL } from './queries';
+import {
+  useAddStackMutation,
+  useGetUserQuery,
+  useUpdateStackMutation,
+  useUpdateTotalMutation,
+} from 'graphql/generated/codegen';
 
 const useBudget = () => {
   const [session] = useSession();
-  const { data, loading, error } = useQuery(GET_USER, { variables: { email: session.user.email } });
-
+  const { data, loading, error } = useGetUserQuery({ variables: { email: session.user.email } });
   let budget;
   if (data?.user?.budget) {
     budget = data.user.budget;
   }
 
-  const [addStack] = useMutation(ADD_STACK, {
+  const [addStack] = useAddStackMutation({
     update(cache, { data: result }) {
       const existingUser = cache.readQuery({
         query: GET_USER,
@@ -29,10 +32,10 @@ const useBudget = () => {
     },
   });
 
-  const [updateStack] = useMutation(UPDATE_STACK, {
-    refetchQueries: ['GET_USER', 'GET_STACK'],
+  const [updateStack] = useUpdateStackMutation({
+    refetchQueries: ['getUser', 'getStack'],
   });
-  const [updateTotal] = useMutation(UPDATE_TOTAL, { refetchQueries: ['GET_USER'] });
+  const [updateTotal] = useUpdateTotalMutation({ refetchQueries: ['getUser'] });
 
   return { loading, data: budget, error, addStack, updateStack, updateTotal };
 };

@@ -1,8 +1,13 @@
-import { useQuery, useMutation, gql, MutationHookOptions } from '@apollo/client';
+import { gql, MutationHookOptions } from '@apollo/client';
 import { useSession } from 'next-auth/client';
-import { ADD_TRANSACTION } from './queries/ADD_TRANSACTION';
+import {
+  useAddTransactionMutation,
+  useDeleteManyTransactionsMutation,
+  useEditTransactionMutation,
+  useGetStackLabelsQuery,
+  useGetTransactionsQuery,
+} from 'graphql/generated/codegen';
 import { getStackLabels } from '../../lib/budgetUtils';
-import { GET_TRANSACTIONS, EDIT_TRANSACTION, DELETE_MANY_TRANSACTIONS } from './queries';
 
 const GET_STACK_LABELS = gql`
   query getStackLabels($email: String!) {
@@ -19,13 +24,11 @@ const GET_STACK_LABELS = gql`
 
 const useTransactions = () => {
   const [session] = useSession();
-  const { data, loading } = useQuery(GET_TRANSACTIONS, { variables: { email: session.user.email } });
-  const { data: stackLabelRes } = useQuery(GET_STACK_LABELS, {
-    variables: { email: session.user.email },
-  });
-  const [editTransactionM] = useMutation(EDIT_TRANSACTION);
-  const [addTransactionM] = useMutation(ADD_TRANSACTION);
-  const [deleteManyTransactionsM] = useMutation(DELETE_MANY_TRANSACTIONS, { refetchQueries: ['GET_TRANSACTIONS'] });
+  const { data, loading } = useGetTransactionsQuery({ variables: { email: session.user.email } });
+  const { data: stackLabelRes } = useGetStackLabelsQuery({ variables: { email: session.user.email } });
+  const [editTransactionM] = useEditTransactionMutation({ refetchQueries: ['getTransactions'] });
+  const [addTransactionM] = useAddTransactionMutation({ refetchQueries: ['getTransactions'] });
+  const [deleteManyTransactionsM] = useDeleteManyTransactionsMutation({ refetchQueries: ['getTransactions'] });
   let stackLabels;
   let transactions;
   function addTransaction(description, amount, stack, date, type, ...params) {

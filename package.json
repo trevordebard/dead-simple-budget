@@ -9,7 +9,8 @@
     "start": "next start",
     "start-dev": "next start -p 4000",
     "start-production": "next start -p 5000",
-    "preinstall": "npx npm-force-resolutions"
+    "preinstall": "npx npm-force-resolutions",
+    "codegen": "graphql-codegen --config codegen.yml"
   },
   "dependencies": {
     "@apollo/client": "^3.2.0",
@@ -47,6 +48,7 @@
     "styled-components": "^5.1.1"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "1.19.4",
     "@prisma/cli": "^2.13.0",
     "@typescript-eslint/eslint-plugin": "^2.34.0",
     "@typescript-eslint/parser": "^2.34.0",
@@ -68,7 +70,11 @@
     "eslint-plugin-tsdoc": "^0.2.7",
     "esprima": "^4.0.1",
     "prettier": "^1.19.1",
-    "typescript": "^4.0.3"
+    "typescript": "^4.0.3",
+    "@graphql-codegen/typescript": "1.19.0",
+    "@graphql-codegen/typescript-react-apollo": "2.2.1",
+    "@graphql-codegen/typescript-operations": "1.17.12",
+    "@graphql-codegen/introspection": "1.18.1"
   },
   "resolutions": {
     "graphql-upload": "^11.0.0"

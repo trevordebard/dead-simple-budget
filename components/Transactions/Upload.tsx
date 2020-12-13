@@ -1,7 +1,8 @@
-import { useMutation, gql } from '@apollo/client'
+import { gql } from '@apollo/client'
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Button } from 'components/Styled';
+import { useUploadFileMutation } from 'graphql/generated/codegen';
 const UPLOAD = gql`
     mutation uploadFile($file: Upload!) {
       uploadFile(file: $file) {
@@ -35,7 +36,7 @@ const Upload = () => {
   const [file, setFile] = useState<File | null>(null)
   const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
 
-  const [uploadF, { loading }] = useMutation(UPLOAD, { onCompleted: (data) => { setFile(null); setUploadSuccess(true) } })
+  const [uploadF, { loading }] = useUploadFileMutation({ onCompleted: (data) => { setFile(null); setUploadSuccess(true) } })
 
   const submitFile = (file: File) => {
     if (file.type === "text/csv") {
