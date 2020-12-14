@@ -1,10 +1,10 @@
-import { Prisma, transactions } from '@prisma/client';
+import { Prisma, Transaction } from '@prisma/client';
 import * as csv from 'fast-csv';
 import { recalcToBeBudgeted } from 'graphql/schema';
 import { Context } from '../graphql/context';
 
 // Converts transaction readstream to array of transaction objects
-async function parseTransactionCsv(createReadStream, ctx: Context): Promise<Prisma.transactionsCreateInput[]> {
+async function parseTransactionCsv(createReadStream, ctx: Context): Promise<Prisma.TransactionCreateInput[]> {
   return new Promise((resolve, reject) => {
     const res = [];
     createReadStream()
@@ -13,7 +13,7 @@ async function parseTransactionCsv(createReadStream, ctx: Context): Promise<Pris
       )
       .on('error', error => reject(error))
       .on('data', row => {
-        const transaction: Prisma.transactionsCreateInput = {
+        const transaction: Prisma.TransactionCreateInput = {
           amount: parseFloat(row.amount),
           date: new Date(row.date),
           description: row.description,
@@ -28,9 +28,9 @@ async function parseTransactionCsv(createReadStream, ctx: Context): Promise<Pris
 }
 
 function removeExistingTransactions(
-  newTransactions: Prisma.transactionsCreateInput[],
-  existingTransactions: transactions[]
-): Prisma.transactionsCreateInput[] {
+  newTransactions: Prisma.TransactionCreateInput[],
+  existingTransactions: Transaction[]
+): Prisma.TransactionCreateInput[] {
   const uniqueResultOne = newTransactions.filter(
     newTrasaction =>
       !existingTransactions.some(

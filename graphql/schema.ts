@@ -4,7 +4,6 @@ import path from 'path';
 import { PrismaClient } from '@prisma/client';
 import { Upload, UploadFile } from 'graphql/Upload';
 import { importTransactions } from 'lib/importTransactions';
-import { Context } from './context';
 
 const User = objectType({
   name: 'user',
@@ -90,7 +89,7 @@ const Mutation = mutationType({
     t.crud.createOneuser();
     t.crud.deleteOnestacks();
     t.crud.deleteManyTransaction({
-      async resolve(root, args, ctx: Context, info, originalResolve) {
+      async resolve(root, args, ctx, info, originalResolve) {
         // Sum transactions being deleted
         const sum = await ctx.prisma.transaction.aggregate({
           sum: { amount: true },
@@ -116,7 +115,7 @@ const Mutation = mutationType({
     });
     t.crud.createOnebudget();
     t.crud.updateOnebudget({
-      async resolve(root, args, ctx: Context, info, originalResolve) {
+      async resolve(root, args, ctx, info, originalResolve) {
         const res = await originalResolve(root, args, ctx, info);
         await recalcToBeBudgeted(ctx.prisma, res.id);
         return res;
@@ -150,7 +149,7 @@ const Mutation = mutationType({
       },
     });
     t.crud.updateOneTransaction({
-      async resolve(root, args, ctx: Context, info, originalResolve) {
+      async resolve(root, args, ctx, info, originalResolve) {
         const transactionBefore = await ctx.prisma.transaction.findUnique({ where: { id: args.where.id } });
         const res = await originalResolve(root, args, ctx, info);
         const difference = transactionBefore.amount - res.amount;
@@ -172,8 +171,8 @@ export const schema = makeSchema({
   types: { Query, Budget, Transactions, Stacks, User, Mutation, Upload, UploadFile },
   plugins: [nexusSchemaPrisma({ experimentalCRUD: true })],
   outputs: {
-    schema: path.join(process.cwd(), 'graphql/generated/schema.graphql'),
-    typegen: path.join(process.cwd(), 'graphql/generated/nexus.ts'),
+    schema: path.join(process.cwd(), 'schema.gen.graphql'),
+    typegen: path.join(process.cwd(), 'nexus.gen.ts'),
   },
   typegenAutoConfig: {
     contextType: 'Context.Context',
