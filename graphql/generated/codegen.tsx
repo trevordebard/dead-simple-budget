@@ -21,7 +21,8 @@ export type Query = {
   __typename?: 'Query';
   user?: Maybe<User>;
   budget?: Maybe<Budget>;
-  transactions: Array<Transactions>;
+  transaction?: Maybe<Transaction>;
+  transactions: Array<Transaction>;
   budgets: Array<Budget>;
   stacks: Array<Stacks>;
 };
@@ -37,13 +38,18 @@ export type QueryBudgetArgs = {
 };
 
 
+export type QueryTransactionArgs = {
+  where: TransactionWhereUniqueInput;
+};
+
+
 export type QueryTransactionsArgs = {
   where?: Maybe<QueryTransactionsWhereInput>;
   orderBy?: Maybe<Array<QueryTransactionsOrderByInput>>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
-  before?: Maybe<TransactionsWhereUniqueInput>;
-  after?: Maybe<TransactionsWhereUniqueInput>;
+  before?: Maybe<TransactionWhereUniqueInput>;
+  after?: Maybe<TransactionWhereUniqueInput>;
 };
 
 
@@ -82,8 +88,8 @@ export type BudgetStacksArgs = {
   after?: Maybe<StacksWhereUniqueInput>;
 };
 
-export type Transactions = {
-  __typename?: 'transactions';
+export type Transaction = {
+  __typename?: 'Transaction';
   amount: Scalars['Float'];
   description: Scalars['String'];
   id: Scalars['Int'];
@@ -107,15 +113,15 @@ export type User = {
   id: Scalars['Int'];
   email: Scalars['String'];
   budget?: Maybe<Budget>;
-  transactions: Array<Transactions>;
+  transactions: Array<Transaction>;
 };
 
 
 export type UserTransactionsArgs = {
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
-  before?: Maybe<TransactionsWhereUniqueInput>;
-  after?: Maybe<TransactionsWhereUniqueInput>;
+  before?: Maybe<TransactionWhereUniqueInput>;
+  after?: Maybe<TransactionWhereUniqueInput>;
 };
 
 export type Mutation = {
@@ -123,13 +129,13 @@ export type Mutation = {
   uploadFile?: Maybe<UploadFile>;
   createOneuser: User;
   deleteOnestacks?: Maybe<Stacks>;
-  deleteManytransactions: BatchPayload;
+  deleteManyTransaction: BatchPayload;
   createOnebudget: Budget;
   updateOnebudget?: Maybe<Budget>;
   updateOnestacks?: Maybe<Stacks>;
   createOnestacks: Stacks;
-  createOnetransactions: Transactions;
-  updateOnetransactions?: Maybe<Transactions>;
+  createOneTransaction: Transaction;
+  updateOneTransaction?: Maybe<Transaction>;
 };
 
 
@@ -148,8 +154,8 @@ export type MutationDeleteOnestacksArgs = {
 };
 
 
-export type MutationDeleteManytransactionsArgs = {
-  where?: Maybe<TransactionsWhereInput>;
+export type MutationDeleteManyTransactionArgs = {
+  where?: Maybe<TransactionWhereInput>;
 };
 
 
@@ -175,14 +181,14 @@ export type MutationCreateOnestacksArgs = {
 };
 
 
-export type MutationCreateOnetransactionsArgs = {
-  data: TransactionsCreateInput;
+export type MutationCreateOneTransactionArgs = {
+  data: TransactionCreateInput;
 };
 
 
-export type MutationUpdateOnetransactionsArgs = {
-  data: TransactionsUpdateInput;
-  where: TransactionsWhereUniqueInput;
+export type MutationUpdateOneTransactionArgs = {
+  data: TransactionUpdateInput;
+  where: TransactionWhereUniqueInput;
 };
 
 export type UploadFile = {
@@ -200,6 +206,10 @@ export type BudgetWhereUniqueInput = {
   id?: Maybe<Scalars['Int']>;
 };
 
+export type TransactionWhereUniqueInput = {
+  id?: Maybe<Scalars['Int']>;
+};
+
 export type QueryTransactionsWhereInput = {
   userId?: Maybe<IntFilter>;
   user?: Maybe<UserWhereInput>;
@@ -207,10 +217,6 @@ export type QueryTransactionsWhereInput = {
 
 export type QueryTransactionsOrderByInput = {
   date?: Maybe<SortOrder>;
-};
-
-export type TransactionsWhereUniqueInput = {
-  id?: Maybe<Scalars['Int']>;
 };
 
 export type QueryBudgetsWhereInput = {
@@ -243,7 +249,7 @@ export type UserCreateInput = {
   image?: Maybe<Scalars['String']>;
   createdAt?: Maybe<Scalars['DateTime']>;
   updatedAt?: Maybe<Scalars['DateTime']>;
-  transactions?: Maybe<TransactionsCreateManyWithoutUserInput>;
+  transactions?: Maybe<TransactionCreateManyWithoutUserInput>;
   budget?: Maybe<BudgetCreateOneWithoutUserInput>;
 };
 
@@ -252,10 +258,10 @@ export type BatchPayload = {
   count: Scalars['Int'];
 };
 
-export type TransactionsWhereInput = {
-  AND?: Maybe<Array<TransactionsWhereInput>>;
-  OR?: Maybe<Array<TransactionsWhereInput>>;
-  NOT?: Maybe<Array<TransactionsWhereInput>>;
+export type TransactionWhereInput = {
+  AND?: Maybe<Array<TransactionWhereInput>>;
+  OR?: Maybe<Array<TransactionWhereInput>>;
+  NOT?: Maybe<Array<TransactionWhereInput>>;
   id?: Maybe<IntFilter>;
   description?: Maybe<StringFilter>;
   stack?: Maybe<StringFilter>;
@@ -294,7 +300,7 @@ export type StacksCreateInput = {
   budget: BudgetCreateOneWithoutStacksInput;
 };
 
-export type TransactionsCreateInput = {
+export type TransactionCreateInput = {
   description: Scalars['String'];
   stack: Scalars['String'];
   amount: Scalars['Float'];
@@ -303,7 +309,7 @@ export type TransactionsCreateInput = {
   user: UserCreateOneWithoutTransactionsInput;
 };
 
-export type TransactionsUpdateInput = {
+export type TransactionUpdateInput = {
   description?: Maybe<StringFieldUpdateOperationsInput>;
   stack?: Maybe<StringFieldUpdateOperationsInput>;
   amount?: Maybe<FloatFieldUpdateOperationsInput>;
@@ -334,7 +340,7 @@ export type UserWhereInput = {
   image?: Maybe<StringNullableFilter>;
   createdAt?: Maybe<DateTimeFilter>;
   updatedAt?: Maybe<DateTimeFilter>;
-  transactions?: Maybe<TransactionsListRelationFilter>;
+  transactions?: Maybe<TransactionListRelationFilter>;
   budget?: Maybe<BudgetWhereInput>;
 };
 
@@ -348,10 +354,10 @@ export type BudgetId_Label_IdxCompoundUniqueInput = {
   label: Scalars['String'];
 };
 
-export type TransactionsCreateManyWithoutUserInput = {
-  create?: Maybe<Array<TransactionsCreateWithoutUserInput>>;
-  connect?: Maybe<Array<TransactionsWhereUniqueInput>>;
-  connectOrCreate?: Maybe<Array<TransactionsCreateOrConnectWithoutuserInput>>;
+export type TransactionCreateManyWithoutUserInput = {
+  create?: Maybe<Array<TransactionCreateWithoutUserInput>>;
+  connect?: Maybe<Array<TransactionWhereUniqueInput>>;
+  connectOrCreate?: Maybe<Array<TransactionCreateOrConnectWithoutuserInput>>;
 };
 
 export type BudgetCreateOneWithoutUserInput = {
@@ -519,10 +525,10 @@ export type DateTimeNullableFilter = {
   not?: Maybe<NestedDateTimeNullableFilter>;
 };
 
-export type TransactionsListRelationFilter = {
-  every?: Maybe<TransactionsWhereInput>;
-  some?: Maybe<TransactionsWhereInput>;
-  none?: Maybe<TransactionsWhereInput>;
+export type TransactionListRelationFilter = {
+  every?: Maybe<TransactionWhereInput>;
+  some?: Maybe<TransactionWhereInput>;
+  none?: Maybe<TransactionWhereInput>;
 };
 
 export type BudgetWhereInput = {
@@ -537,7 +543,7 @@ export type BudgetWhereInput = {
   stacks?: Maybe<StacksListRelationFilter>;
 };
 
-export type TransactionsCreateWithoutUserInput = {
+export type TransactionCreateWithoutUserInput = {
   description: Scalars['String'];
   stack: Scalars['String'];
   amount: Scalars['Float'];
@@ -545,9 +551,9 @@ export type TransactionsCreateWithoutUserInput = {
   date: Scalars['DateTime'];
 };
 
-export type TransactionsCreateOrConnectWithoutuserInput = {
-  where: TransactionsWhereUniqueInput;
-  create: TransactionsCreateWithoutUserInput;
+export type TransactionCreateOrConnectWithoutuserInput = {
+  where: TransactionWhereUniqueInput;
+  create: TransactionCreateWithoutUserInput;
 };
 
 export type BudgetCreateWithoutUserInput = {
@@ -609,7 +615,7 @@ export type UserCreateWithoutBudgetInput = {
   image?: Maybe<Scalars['String']>;
   createdAt?: Maybe<Scalars['DateTime']>;
   updatedAt?: Maybe<Scalars['DateTime']>;
-  transactions?: Maybe<TransactionsCreateManyWithoutUserInput>;
+  transactions?: Maybe<TransactionCreateManyWithoutUserInput>;
 };
 
 export type UserCreateOrConnectWithoutbudgetInput = {
@@ -635,7 +641,7 @@ export type UserUpdateWithoutBudgetInput = {
   image?: Maybe<NullableStringFieldUpdateOperationsInput>;
   createdAt?: Maybe<DateTimeFieldUpdateOperationsInput>;
   updatedAt?: Maybe<DateTimeFieldUpdateOperationsInput>;
-  transactions?: Maybe<TransactionsUpdateManyWithoutUserInput>;
+  transactions?: Maybe<TransactionUpdateManyWithoutUserInput>;
 };
 
 export type UserUpsertWithoutBudgetInput = {
@@ -772,17 +778,17 @@ export type NullableDateTimeFieldUpdateOperationsInput = {
   set?: Maybe<Scalars['DateTime']>;
 };
 
-export type TransactionsUpdateManyWithoutUserInput = {
-  create?: Maybe<Array<TransactionsCreateWithoutUserInput>>;
-  connect?: Maybe<Array<TransactionsWhereUniqueInput>>;
-  set?: Maybe<Array<TransactionsWhereUniqueInput>>;
-  disconnect?: Maybe<Array<TransactionsWhereUniqueInput>>;
-  delete?: Maybe<Array<TransactionsWhereUniqueInput>>;
-  update?: Maybe<Array<TransactionsUpdateWithWhereUniqueWithoutUserInput>>;
-  updateMany?: Maybe<Array<TransactionsUpdateManyWithWhereWithoutUserInput>>;
-  deleteMany?: Maybe<Array<TransactionsScalarWhereInput>>;
-  upsert?: Maybe<Array<TransactionsUpsertWithWhereUniqueWithoutUserInput>>;
-  connectOrCreate?: Maybe<Array<TransactionsCreateOrConnectWithoutuserInput>>;
+export type TransactionUpdateManyWithoutUserInput = {
+  create?: Maybe<Array<TransactionCreateWithoutUserInput>>;
+  connect?: Maybe<Array<TransactionWhereUniqueInput>>;
+  set?: Maybe<Array<TransactionWhereUniqueInput>>;
+  disconnect?: Maybe<Array<TransactionWhereUniqueInput>>;
+  delete?: Maybe<Array<TransactionWhereUniqueInput>>;
+  update?: Maybe<Array<TransactionUpdateWithWhereUniqueWithoutUserInput>>;
+  updateMany?: Maybe<Array<TransactionUpdateManyWithWhereWithoutUserInput>>;
+  deleteMany?: Maybe<Array<TransactionScalarWhereInput>>;
+  upsert?: Maybe<Array<TransactionUpsertWithWhereUniqueWithoutUserInput>>;
+  connectOrCreate?: Maybe<Array<TransactionCreateOrConnectWithoutuserInput>>;
 };
 
 export type StacksUpdateWithoutBudgetInput = {
@@ -830,20 +836,20 @@ export type StacksWhereInput = {
   budget?: Maybe<BudgetWhereInput>;
 };
 
-export type TransactionsUpdateWithWhereUniqueWithoutUserInput = {
-  where: TransactionsWhereUniqueInput;
-  data: TransactionsUpdateWithoutUserInput;
+export type TransactionUpdateWithWhereUniqueWithoutUserInput = {
+  where: TransactionWhereUniqueInput;
+  data: TransactionUpdateWithoutUserInput;
 };
 
-export type TransactionsUpdateManyWithWhereWithoutUserInput = {
-  where: TransactionsScalarWhereInput;
-  data: TransactionsUpdateManyMutationInput;
+export type TransactionUpdateManyWithWhereWithoutUserInput = {
+  where: TransactionScalarWhereInput;
+  data: TransactionUpdateManyMutationInput;
 };
 
-export type TransactionsScalarWhereInput = {
-  AND?: Maybe<Array<TransactionsScalarWhereInput>>;
-  OR?: Maybe<Array<TransactionsScalarWhereInput>>;
-  NOT?: Maybe<Array<TransactionsScalarWhereInput>>;
+export type TransactionScalarWhereInput = {
+  AND?: Maybe<Array<TransactionScalarWhereInput>>;
+  OR?: Maybe<Array<TransactionScalarWhereInput>>;
+  NOT?: Maybe<Array<TransactionScalarWhereInput>>;
   id?: Maybe<IntFilter>;
   description?: Maybe<StringFilter>;
   stack?: Maybe<StringFilter>;
@@ -853,10 +859,10 @@ export type TransactionsScalarWhereInput = {
   date?: Maybe<DateTimeFilter>;
 };
 
-export type TransactionsUpsertWithWhereUniqueWithoutUserInput = {
-  where: TransactionsWhereUniqueInput;
-  update: TransactionsUpdateWithoutUserInput;
-  create: TransactionsCreateWithoutUserInput;
+export type TransactionUpsertWithWhereUniqueWithoutUserInput = {
+  where: TransactionWhereUniqueInput;
+  update: TransactionUpdateWithoutUserInput;
+  create: TransactionCreateWithoutUserInput;
 };
 
 export type BudgetUpdateWithoutUserInput = {
@@ -870,7 +876,7 @@ export type BudgetUpsertWithoutUserInput = {
   create: BudgetCreateWithoutUserInput;
 };
 
-export type TransactionsUpdateWithoutUserInput = {
+export type TransactionUpdateWithoutUserInput = {
   description?: Maybe<StringFieldUpdateOperationsInput>;
   stack?: Maybe<StringFieldUpdateOperationsInput>;
   amount?: Maybe<FloatFieldUpdateOperationsInput>;
@@ -878,7 +884,7 @@ export type TransactionsUpdateWithoutUserInput = {
   date?: Maybe<DateTimeFieldUpdateOperationsInput>;
 };
 
-export type TransactionsUpdateManyMutationInput = {
+export type TransactionUpdateManyMutationInput = {
   description?: Maybe<StringFieldUpdateOperationsInput>;
   stack?: Maybe<StringFieldUpdateOperationsInput>;
   amount?: Maybe<FloatFieldUpdateOperationsInput>;
@@ -1003,15 +1009,23 @@ export type GetUserQuery = (
         & Pick<Stacks, 'id' | 'label' | 'amount'>
       )> }
     )>, transactions: Array<(
-      { __typename?: 'transactions' }
-      & Pick<Transactions, 'description' | 'date' | 'id' | 'amount' | 'stack' | 'type'>
+      { __typename?: 'Transaction' }
+      & Pick<Transaction, 'description' | 'date' | 'id' | 'amount' | 'stack' | 'type'>
     )> }
   )> }
 );
 
-export type SelectedTransactionFragment = (
-  { __typename?: 'transactions' }
-  & Pick<Transactions, 'id' | 'amount' | 'date' | 'stack' | 'description' | 'type'>
+export type GetTransactionQueryVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type GetTransactionQuery = (
+  { __typename?: 'Query' }
+  & { transaction?: Maybe<(
+    { __typename?: 'Transaction' }
+    & Pick<Transaction, 'id' | 'amount' | 'date' | 'stack' | 'description' | 'type'>
+  )> }
 );
 
 export type UploadFileMutationVariables = Exact<{
@@ -1039,20 +1053,20 @@ export type AddTransactionMutationVariables = Exact<{
 
 export type AddTransactionMutation = (
   { __typename?: 'Mutation' }
-  & { createOnetransactions: (
-    { __typename?: 'transactions' }
-    & Pick<Transactions, 'id' | 'description' | 'amount' | 'stack' | 'type' | 'userId' | 'date'>
+  & { createOneTransaction: (
+    { __typename?: 'Transaction' }
+    & Pick<Transaction, 'id' | 'description' | 'amount' | 'stack' | 'type' | 'userId' | 'date'>
   ) }
 );
 
-export type DeleteManyTransactionsMutationVariables = Exact<{
+export type DeleteManyTransactionMutationVariables = Exact<{
   transactionIds?: Maybe<Array<Scalars['Int']>>;
 }>;
 
 
-export type DeleteManyTransactionsMutation = (
+export type DeleteManyTransactionMutation = (
   { __typename?: 'Mutation' }
-  & { deleteManytransactions: (
+  & { deleteManyTransaction: (
     { __typename?: 'BatchPayload' }
     & Pick<BatchPayload, 'count'>
   ) }
@@ -1070,9 +1084,9 @@ export type EditTransactionMutationVariables = Exact<{
 
 export type EditTransactionMutation = (
   { __typename?: 'Mutation' }
-  & { updateOnetransactions?: Maybe<(
-    { __typename?: 'transactions' }
-    & Pick<Transactions, 'id' | 'amount' | 'stack' | 'description' | 'date'>
+  & { updateOneTransaction?: Maybe<(
+    { __typename?: 'Transaction' }
+    & Pick<Transaction, 'id' | 'amount' | 'stack' | 'description' | 'date'>
   )> }
 );
 
@@ -1084,8 +1098,8 @@ export type GetTransactionsQueryVariables = Exact<{
 export type GetTransactionsQuery = (
   { __typename?: 'Query' }
   & { transactions: Array<(
-    { __typename?: 'transactions' }
-    & Pick<Transactions, 'id' | 'amount' | 'description' | 'stack' | 'date' | 'type'>
+    { __typename?: 'Transaction' }
+    & Pick<Transaction, 'id' | 'amount' | 'description' | 'stack' | 'date' | 'type'>
   )> }
 );
 
@@ -1109,16 +1123,7 @@ export type GetStackLabelsQuery = (
   )> }
 );
 
-export const SelectedTransactionFragmentDoc = gql`
-    fragment selectedTransaction on transactions {
-  id
-  amount
-  date
-  stack
-  description
-  type
-}
-    `;
+
 export const GetStackDocument = gql`
     query getStack($id: Int!) {
   stacks(where: {id: {equals: $id}}) {
@@ -1425,6 +1430,44 @@ export function useGetUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Ge
 export type GetUserQueryHookResult = ReturnType<typeof useGetUserQuery>;
 export type GetUserLazyQueryHookResult = ReturnType<typeof useGetUserLazyQuery>;
 export type GetUserQueryResult = Apollo.QueryResult<GetUserQuery, GetUserQueryVariables>;
+export const GetTransactionDocument = gql`
+    query getTransaction($id: Int!) {
+  transaction(where: {id: $id}) {
+    id
+    amount
+    date
+    stack
+    description
+    type
+  }
+}
+    `;
+
+/**
+ * __useGetTransactionQuery__
+ *
+ * To run a query within a React component, call `useGetTransactionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTransactionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTransactionQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetTransactionQuery(baseOptions: Apollo.QueryHookOptions<GetTransactionQuery, GetTransactionQueryVariables>) {
+        return Apollo.useQuery<GetTransactionQuery, GetTransactionQueryVariables>(GetTransactionDocument, baseOptions);
+      }
+export function useGetTransactionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTransactionQuery, GetTransactionQueryVariables>) {
+          return Apollo.useLazyQuery<GetTransactionQuery, GetTransactionQueryVariables>(GetTransactionDocument, baseOptions);
+        }
+export type GetTransactionQueryHookResult = ReturnType<typeof useGetTransactionQuery>;
+export type GetTransactionLazyQueryHookResult = ReturnType<typeof useGetTransactionLazyQuery>;
+export type GetTransactionQueryResult = Apollo.QueryResult<GetTransactionQuery, GetTransactionQueryVariables>;
 export const UploadFileDocument = gql`
     mutation uploadFile($file: Upload!) {
   uploadFile(file: $file) {
@@ -1459,7 +1502,7 @@ export type UploadFileMutationResult = Apollo.MutationResult<UploadFileMutation>
 export type UploadFileMutationOptions = Apollo.BaseMutationOptions<UploadFileMutation, UploadFileMutationVariables>;
 export const AddTransactionDocument = gql`
     mutation addTransaction($description: String!, $stack: String!, $amount: Float!, $type: String!, $email: String!, $date: DateTime!) {
-  createOnetransactions(
+  createOneTransaction(
     data: {description: $description, stack: $stack, amount: $amount, type: $type, date: $date, user: {connect: {email: $email}}}
   ) {
     id
@@ -1502,41 +1545,41 @@ export function useAddTransactionMutation(baseOptions?: Apollo.MutationHookOptio
 export type AddTransactionMutationHookResult = ReturnType<typeof useAddTransactionMutation>;
 export type AddTransactionMutationResult = Apollo.MutationResult<AddTransactionMutation>;
 export type AddTransactionMutationOptions = Apollo.BaseMutationOptions<AddTransactionMutation, AddTransactionMutationVariables>;
-export const DeleteManyTransactionsDocument = gql`
-    mutation deleteManyTransactions($transactionIds: [Int!]) {
-  deleteManytransactions(where: {id: {in: $transactionIds}}) {
+export const DeleteManyTransactionDocument = gql`
+    mutation deleteManyTransaction($transactionIds: [Int!]) {
+  deleteManyTransaction(where: {id: {in: $transactionIds}}) {
     count
   }
 }
     `;
-export type DeleteManyTransactionsMutationFn = Apollo.MutationFunction<DeleteManyTransactionsMutation, DeleteManyTransactionsMutationVariables>;
+export type DeleteManyTransactionMutationFn = Apollo.MutationFunction<DeleteManyTransactionMutation, DeleteManyTransactionMutationVariables>;
 
 /**
- * __useDeleteManyTransactionsMutation__
+ * __useDeleteManyTransactionMutation__
  *
- * To run a mutation, you first call `useDeleteManyTransactionsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteManyTransactionsMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useDeleteManyTransactionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteManyTransactionMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [deleteManyTransactionsMutation, { data, loading, error }] = useDeleteManyTransactionsMutation({
+ * const [deleteManyTransactionMutation, { data, loading, error }] = useDeleteManyTransactionMutation({
  *   variables: {
  *      transactionIds: // value for 'transactionIds'
  *   },
  * });
  */
-export function useDeleteManyTransactionsMutation(baseOptions?: Apollo.MutationHookOptions<DeleteManyTransactionsMutation, DeleteManyTransactionsMutationVariables>) {
-        return Apollo.useMutation<DeleteManyTransactionsMutation, DeleteManyTransactionsMutationVariables>(DeleteManyTransactionsDocument, baseOptions);
+export function useDeleteManyTransactionMutation(baseOptions?: Apollo.MutationHookOptions<DeleteManyTransactionMutation, DeleteManyTransactionMutationVariables>) {
+        return Apollo.useMutation<DeleteManyTransactionMutation, DeleteManyTransactionMutationVariables>(DeleteManyTransactionDocument, baseOptions);
       }
-export type DeleteManyTransactionsMutationHookResult = ReturnType<typeof useDeleteManyTransactionsMutation>;
-export type DeleteManyTransactionsMutationResult = Apollo.MutationResult<DeleteManyTransactionsMutation>;
-export type DeleteManyTransactionsMutationOptions = Apollo.BaseMutationOptions<DeleteManyTransactionsMutation, DeleteManyTransactionsMutationVariables>;
+export type DeleteManyTransactionMutationHookResult = ReturnType<typeof useDeleteManyTransactionMutation>;
+export type DeleteManyTransactionMutationResult = Apollo.MutationResult<DeleteManyTransactionMutation>;
+export type DeleteManyTransactionMutationOptions = Apollo.BaseMutationOptions<DeleteManyTransactionMutation, DeleteManyTransactionMutationVariables>;
 export const EditTransactionDocument = gql`
     mutation editTransaction($id: Int!, $amount: Float, $stack: String, $description: String, $date: DateTime, $type: String) {
-  updateOnetransactions(
+  updateOneTransaction(
     where: {id: $id}
     data: {description: {set: $description}, stack: {set: $stack}, amount: {set: $amount}, type: {set: $type}, date: {set: $date}}
   ) {

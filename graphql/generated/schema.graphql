@@ -195,13 +195,13 @@ input IntFilter {
 type Mutation {
   createOnebudget(data: budgetCreateInput!): budget!
   createOnestacks(data: stacksCreateInput!): stacks!
-  createOnetransactions(data: transactionsCreateInput!): transactions!
+  createOneTransaction(data: TransactionCreateInput!): Transaction!
   createOneuser(data: userCreateInput!): user!
-  deleteManytransactions(where: transactionsWhereInput): BatchPayload!
+  deleteManyTransaction(where: TransactionWhereInput): BatchPayload!
   deleteOnestacks(where: stacksWhereUniqueInput!): stacks
   updateOnebudget(data: budgetUpdateInput!, where: budgetWhereUniqueInput!): budget
   updateOnestacks(data: stacksUpdateInput!, where: stacksWhereUniqueInput!): stacks
-  updateOnetransactions(data: transactionsUpdateInput!, where: transactionsWhereUniqueInput!): transactions
+  updateOneTransaction(data: TransactionUpdateInput!, where: TransactionWhereUniqueInput!): Transaction
   uploadFile(file: Upload): UploadFile
 }
 
@@ -308,7 +308,8 @@ type Query {
   budget(where: budgetWhereUniqueInput!): budget
   budgets(after: budgetWhereUniqueInput, before: budgetWhereUniqueInput, first: Int, last: Int, where: QueryBudgetsWhereInput): [budget!]!
   stacks(after: stacksWhereUniqueInput, before: stacksWhereUniqueInput, first: Int, last: Int, where: QueryStacksWhereInput): [stacks!]!
-  transactions(after: transactionsWhereUniqueInput, before: transactionsWhereUniqueInput, first: Int, last: Int, orderBy: [QueryTransactionsOrderByInput!], where: QueryTransactionsWhereInput): [transactions!]!
+  transaction(where: TransactionWhereUniqueInput!): Transaction
+  transactions(after: TransactionWhereUniqueInput, before: TransactionWhereUniqueInput, first: Int, last: Int, orderBy: [QueryTransactionsOrderByInput!], where: QueryTransactionsWhereInput): [Transaction!]!
   user(where: userWhereUniqueInput!): user
 }
 
@@ -496,7 +497,7 @@ input StringNullableFilter {
   startsWith: String
 }
 
-type transactions {
+type Transaction {
   amount: Float!
   date: DateTime!
   description: String!
@@ -506,7 +507,7 @@ type transactions {
   userId: Int!
 }
 
-input transactionsCreateInput {
+input TransactionCreateInput {
   amount: Float!
   date: DateTime!
   description: String!
@@ -515,18 +516,18 @@ input transactionsCreateInput {
   user: userCreateOneWithoutTransactionsInput!
 }
 
-input transactionsCreateManyWithoutUserInput {
-  connect: [transactionsWhereUniqueInput!]
-  connectOrCreate: [transactionsCreateOrConnectWithoutuserInput!]
-  create: [transactionsCreateWithoutUserInput!]
+input TransactionCreateManyWithoutUserInput {
+  connect: [TransactionWhereUniqueInput!]
+  connectOrCreate: [TransactionCreateOrConnectWithoutuserInput!]
+  create: [TransactionCreateWithoutUserInput!]
 }
 
-input transactionsCreateOrConnectWithoutuserInput {
-  create: transactionsCreateWithoutUserInput!
-  where: transactionsWhereUniqueInput!
+input TransactionCreateOrConnectWithoutuserInput {
+  create: TransactionCreateWithoutUserInput!
+  where: TransactionWhereUniqueInput!
 }
 
-input transactionsCreateWithoutUserInput {
+input TransactionCreateWithoutUserInput {
   amount: Float!
   date: DateTime!
   description: String!
@@ -534,26 +535,26 @@ input transactionsCreateWithoutUserInput {
   type: String!
 }
 
-input TransactionsListRelationFilter {
-  every: transactionsWhereInput
-  none: transactionsWhereInput
-  some: transactionsWhereInput
+input TransactionListRelationFilter {
+  every: TransactionWhereInput
+  none: TransactionWhereInput
+  some: TransactionWhereInput
 }
 
-input transactionsScalarWhereInput {
+input TransactionScalarWhereInput {
   amount: FloatFilter
-  AND: [transactionsScalarWhereInput!]
+  AND: [TransactionScalarWhereInput!]
   date: DateTimeFilter
   description: StringFilter
   id: IntFilter
-  NOT: [transactionsScalarWhereInput!]
-  OR: [transactionsScalarWhereInput!]
+  NOT: [TransactionScalarWhereInput!]
+  OR: [TransactionScalarWhereInput!]
   stack: StringFilter
   type: StringFilter
   userId: IntFilter
 }
 
-input transactionsUpdateInput {
+input TransactionUpdateInput {
   amount: FloatFieldUpdateOperationsInput
   date: DateTimeFieldUpdateOperationsInput
   description: StringFieldUpdateOperationsInput
@@ -562,7 +563,7 @@ input transactionsUpdateInput {
   user: userUpdateOneRequiredWithoutTransactionsInput
 }
 
-input transactionsUpdateManyMutationInput {
+input TransactionUpdateManyMutationInput {
   amount: FloatFieldUpdateOperationsInput
   date: DateTimeFieldUpdateOperationsInput
   description: StringFieldUpdateOperationsInput
@@ -570,25 +571,25 @@ input transactionsUpdateManyMutationInput {
   type: StringFieldUpdateOperationsInput
 }
 
-input transactionsUpdateManyWithoutUserInput {
-  connect: [transactionsWhereUniqueInput!]
-  connectOrCreate: [transactionsCreateOrConnectWithoutuserInput!]
-  create: [transactionsCreateWithoutUserInput!]
-  delete: [transactionsWhereUniqueInput!]
-  deleteMany: [transactionsScalarWhereInput!]
-  disconnect: [transactionsWhereUniqueInput!]
-  set: [transactionsWhereUniqueInput!]
-  update: [transactionsUpdateWithWhereUniqueWithoutUserInput!]
-  updateMany: [transactionsUpdateManyWithWhereWithoutUserInput!]
-  upsert: [transactionsUpsertWithWhereUniqueWithoutUserInput!]
+input TransactionUpdateManyWithoutUserInput {
+  connect: [TransactionWhereUniqueInput!]
+  connectOrCreate: [TransactionCreateOrConnectWithoutuserInput!]
+  create: [TransactionCreateWithoutUserInput!]
+  delete: [TransactionWhereUniqueInput!]
+  deleteMany: [TransactionScalarWhereInput!]
+  disconnect: [TransactionWhereUniqueInput!]
+  set: [TransactionWhereUniqueInput!]
+  update: [TransactionUpdateWithWhereUniqueWithoutUserInput!]
+  updateMany: [TransactionUpdateManyWithWhereWithoutUserInput!]
+  upsert: [TransactionUpsertWithWhereUniqueWithoutUserInput!]
 }
 
-input transactionsUpdateManyWithWhereWithoutUserInput {
-  data: transactionsUpdateManyMutationInput!
-  where: transactionsScalarWhereInput!
+input TransactionUpdateManyWithWhereWithoutUserInput {
+  data: TransactionUpdateManyMutationInput!
+  where: TransactionScalarWhereInput!
 }
 
-input transactionsUpdateWithoutUserInput {
+input TransactionUpdateWithoutUserInput {
   amount: FloatFieldUpdateOperationsInput
   date: DateTimeFieldUpdateOperationsInput
   description: StringFieldUpdateOperationsInput
@@ -596,32 +597,32 @@ input transactionsUpdateWithoutUserInput {
   type: StringFieldUpdateOperationsInput
 }
 
-input transactionsUpdateWithWhereUniqueWithoutUserInput {
-  data: transactionsUpdateWithoutUserInput!
-  where: transactionsWhereUniqueInput!
+input TransactionUpdateWithWhereUniqueWithoutUserInput {
+  data: TransactionUpdateWithoutUserInput!
+  where: TransactionWhereUniqueInput!
 }
 
-input transactionsUpsertWithWhereUniqueWithoutUserInput {
-  create: transactionsCreateWithoutUserInput!
-  update: transactionsUpdateWithoutUserInput!
-  where: transactionsWhereUniqueInput!
+input TransactionUpsertWithWhereUniqueWithoutUserInput {
+  create: TransactionCreateWithoutUserInput!
+  update: TransactionUpdateWithoutUserInput!
+  where: TransactionWhereUniqueInput!
 }
 
-input transactionsWhereInput {
+input TransactionWhereInput {
   amount: FloatFilter
-  AND: [transactionsWhereInput!]
+  AND: [TransactionWhereInput!]
   date: DateTimeFilter
   description: StringFilter
   id: IntFilter
-  NOT: [transactionsWhereInput!]
-  OR: [transactionsWhereInput!]
+  NOT: [TransactionWhereInput!]
+  OR: [TransactionWhereInput!]
   stack: StringFilter
   type: StringFilter
   user: userWhereInput
   userId: IntFilter
 }
 
-input transactionsWhereUniqueInput {
+input TransactionWhereUniqueInput {
   id: Int
 }
 
@@ -637,7 +638,7 @@ type user {
   budget: budget
   email: String!
   id: Int!
-  transactions(after: transactionsWhereUniqueInput, before: transactionsWhereUniqueInput, first: Int, last: Int): [transactions!]!
+  transactions(after: TransactionWhereUniqueInput, before: TransactionWhereUniqueInput, first: Int, last: Int): [Transaction!]!
 }
 
 input userCreateInput {
@@ -647,7 +648,7 @@ input userCreateInput {
   emailVerified: DateTime
   image: String
   name: String
-  transactions: transactionsCreateManyWithoutUserInput
+  transactions: TransactionCreateManyWithoutUserInput
   updatedAt: DateTime
 }
 
@@ -679,7 +680,7 @@ input userCreateWithoutBudgetInput {
   emailVerified: DateTime
   image: String
   name: String
-  transactions: transactionsCreateManyWithoutUserInput
+  transactions: TransactionCreateManyWithoutUserInput
   updatedAt: DateTime
 }
 
@@ -715,7 +716,7 @@ input userUpdateWithoutBudgetInput {
   emailVerified: NullableDateTimeFieldUpdateOperationsInput
   image: NullableStringFieldUpdateOperationsInput
   name: NullableStringFieldUpdateOperationsInput
-  transactions: transactionsUpdateManyWithoutUserInput
+  transactions: TransactionUpdateManyWithoutUserInput
   updatedAt: DateTimeFieldUpdateOperationsInput
 }
 
@@ -750,7 +751,7 @@ input userWhereInput {
   name: StringNullableFilter
   NOT: [userWhereInput!]
   OR: [userWhereInput!]
-  transactions: TransactionsListRelationFilter
+  transactions: TransactionListRelationFilter
   updatedAt: DateTimeFilter
 }
 

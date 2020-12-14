@@ -4,6 +4,7 @@ import path from 'path';
 import { PrismaClient } from '@prisma/client';
 import { Upload, UploadFile } from 'graphql/Upload';
 import { importTransactions } from 'lib/importTransactions';
+import { Context } from './context';
 
 const User = objectType({
   name: 'user',
@@ -27,7 +28,7 @@ const Budget = objectType({
 });
 
 const Transactions = objectType({
-  name: 'transactions',
+  name: 'Transaction',
   definition(t) {
     t.model.amount();
     t.model.description();
@@ -64,6 +65,7 @@ const Query = queryType({
   definition(t) {
     t.crud.user();
     t.crud.budget();
+    t.crud.transaction();
     t.crud.transactions({ filtering: { user: true, userId: true }, ordering: { date: true } });
     t.crud.budgets({ filtering: { user: true, userId: true } });
     t.crud.stacks({ filtering: { id: true } });
@@ -87,10 +89,10 @@ const Mutation = mutationType({
     });
     t.crud.createOneuser();
     t.crud.deleteOnestacks();
-    t.crud.deleteManytransactions({
-      async resolve(root, args, ctx, info, originalResolve) {
+    t.crud.deleteManyTransaction({
+      async resolve(root, args, ctx: Context, info, originalResolve) {
         // Sum transactions being deleted
-        const sum = await ctx.prisma.transactions.aggregate({
+        const sum = await ctx.prisma.transaction.aggregate({
           sum: { amount: true },
           where: { id: { in: args.where.id.in } },
         });
@@ -114,7 +116,7 @@ const Mutation = mutationType({
     });
     t.crud.createOnebudget();
     t.crud.updateOnebudget({
-      async resolve(root, args, ctx, info, originalResolve) {
+      async resolve(root, args, ctx: Context, info, originalResolve) {
         const res = await originalResolve(root, args, ctx, info);
         await recalcToBeBudgeted(ctx.prisma, res.id);
         return res;
@@ -128,7 +130,7 @@ const Mutation = mutationType({
       },
     });
     t.crud.createOnestacks();
-    t.crud.createOnetransactions({
+    t.crud.createOneTransaction({
       async resolve(root, args, ctx, info, originalResolve) {
         const res = await originalResolve(root, args, ctx, info);
         const { budget } = await ctx.prisma.user.findUnique({
@@ -147,9 +149,9 @@ const Mutation = mutationType({
         return res;
       },
     });
-    t.crud.updateOnetransactions({
-      async resolve(root, args, ctx, info, originalResolve) {
-        const transactionBefore = await ctx.prisma.transactions.findUnique({ where: { id: args.where.id } });
+    t.crud.updateOneTransaction({
+      async resolve(root, args, ctx: Context, info, originalResolve) {
+        const transactionBefore = await ctx.prisma.transaction.findUnique({ where: { id: args.where.id } });
         const res = await originalResolve(root, args, ctx, info);
         const difference = transactionBefore.amount - res.amount;
         const { budget } = await ctx.prisma.user.findUnique({

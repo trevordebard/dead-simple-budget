@@ -1,7 +1,8 @@
-import { useApolloClient, gql } from '@apollo/client';
+import { gql } from '@apollo/client';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useForm } from 'react-hook-form';
+import { useGetTransactionQuery } from 'graphql/generated/codegen';
 import FormInput, { FormSelect } from '../Shared/FormInput';
 import useTransactions from './useTransactions';
 import { formatDate } from '../../lib/formatDate';
@@ -18,41 +19,31 @@ const EditTransactionWrapper = styled.form`
     margin-bottom: 10px;
   }
 `;
+const GET_TRANSACTION = gql`
+  query getTransaction($id: Int!) {
+    transaction(where: { id: $id }) {
+      id
+      amount
+      date
+      stack
+      description
+      type
+    }
+  }
+`;
 
 const EditTransaction = ({ transactionId, cancelEdit }) => {
-  const client = useApolloClient();
-  const { register, handleSubmit, errors, reset, getValues } = useForm();
+  const { register, handleSubmit, errors } = useForm();
   const { editTransaction, stackLabels } = useTransactions();
-  const [cachedTransaction, setCachedTransction] = useState();
   const [selectedStack, setSelectedStack] = useState();
-  const [transactionType, setTransactionType] = useState();
-  const [notFound, setNotFound] = useState(false);
-
+  const [transactionType, setTransactionType] = useState<string | null>(null);
+  const { data, loading } = useGetTransactionQuery({ variables: { id: transactionId }, skip: transactionId === null });
   useEffect(() => {
-    reset();
-    // TODO: Not sure why I did this with fragments. Look into better way to do this on load to prevent flicker
-    const data = client.readFragment({
-      id: `transactions:${transactionId}`,
-      fragment: gql`
-        fragment selectedTransaction on transactions {
-          id
-          amount
-          date
-          stack
-          description
-          type
-        }
-      `,
-    });
-    if (!data) {
-      setNotFound(true);
-    } else {
-      setCachedTransction(data);
-      setSelectedStack(data?.stack);
-      setTransactionType(data?.type);
+    if (data) {
+      setTransactionType('')
+      setTransactionType(data.transaction.type)
     }
-  }, [client, getValues, reset, transactionId]);
-
+  }, [data])
   const onSubmit = payload => {
     const { date, stack, description } = payload;
     let { amount } = payload;
@@ -60,13 +51,13 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
     if (transactionType === 'withdrawal') {
       amount = -amount;
     }
-    editTransaction(transactionId, description, amount, stack, date, transactionType);
+    editTransaction(transactionId, description, amount, stack, date, transactionType, null);
     cancelEdit();
   };
-  if (notFound) {
+  if (!data && !loading) {
     return <h1 style={{ textAlign: 'center' }}>Not Found</h1>;
   }
-  if (!cachedTransaction) {
+  if (!data) {
     return null;
   }
   return (
@@ -78,7 +69,7 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
         register={register}
         required
         type="text"
-        defaultValue={cachedTransaction.description}
+        defaultValue={data.transaction.description}
         autoComplete="off"
       />
       <FormInput
@@ -89,7 +80,7 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
         pattern="\d*"
         step={0.01}
         placeholder="Amount"
-        defaultValue={Math.abs(cachedTransaction.amount)}
+        defaultValue={Math.abs(data.transaction.amount)}
         autoComplete="off"
         required
       />
@@ -113,7 +104,7 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
         errors={errors}
         register={register}
         type="date"
-        defaultValue={formatDate(cachedTransaction.date)}
+        defaultValue={formatDate(data.transaction.date)}
         required
       />
       <RadioGroup>
@@ -133,9 +124,7 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
       </Button>
       <Button
         category="TRANSPARENT"
-        discrete
         small
-        underline
         onClick={() => cancelEdit()}
         style={{ alignSelf: 'center' }}
       >

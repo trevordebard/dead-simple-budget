@@ -2,7 +2,7 @@ import { gql, MutationHookOptions } from '@apollo/client';
 import { useSession } from 'next-auth/client';
 import {
   useAddTransactionMutation,
-  useDeleteManyTransactionsMutation,
+  useDeleteManyTransactionMutation,
   useEditTransactionMutation,
   useGetStackLabelsQuery,
   useGetTransactionsQuery,
@@ -28,13 +28,13 @@ const useTransactions = () => {
   const { data: stackLabelRes } = useGetStackLabelsQuery({ variables: { email: session.user.email } });
   const [editTransactionM] = useEditTransactionMutation({ refetchQueries: ['getTransactions'] });
   const [addTransactionM] = useAddTransactionMutation({ refetchQueries: ['getTransactions'] });
-  const [deleteManyTransactionsM] = useDeleteManyTransactionsMutation({ refetchQueries: ['getTransactions'] });
+  const [deleteManyTransactionsM] = useDeleteManyTransactionMutation({ refetchQueries: ['getTransactions'] });
   let stackLabels;
   let transactions;
   function addTransaction(description, amount, stack, date, type, ...params) {
     addTransactionM({
       ...params,
-      refetchQueries: ['GET_TRANSACTIONS'],
+      refetchQueries: ['getTransaction'],
       variables: { email: session.user.email, description, amount, stack, date: new Date(date).toISOString(), type },
     });
   }

@@ -9,7 +9,7 @@ export const ADD_TRANSACTION = gql`
     $email: String!
     $date: DateTime!
   ) {
-    createOnetransactions(
+    createOneTransaction(
       data: {
         description: $description
         stack: $stack

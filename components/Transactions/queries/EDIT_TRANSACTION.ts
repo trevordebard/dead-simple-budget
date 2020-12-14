@@ -9,7 +9,7 @@ export const EDIT_TRANSACTION = gql`
     $date: DateTime
     $type: String
   ) {
-    updateOnetransactions(
+    updateOneTransaction(
       where: { id: $id }
       data: {
         description: { set: $description }

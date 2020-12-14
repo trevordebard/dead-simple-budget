@@ -1,10 +1,10 @@
 import { getSession } from 'next-auth/client';
-import { GET_USER } from 'components/GET_USER';
 import { Transactions } from 'components/Transactions';
 import { initializeApollo } from 'lib/apolloClient';
 import Layout, { Main, Left, Center } from 'components/Shared/Layout';
 import { TabSidebar } from 'components/Sidebar';
 import { Nav } from 'components/Nav';
+import { GET_TRANSACTIONS } from 'components/Transactions/queries';
 
 const TransactionPage = () => (
   <Layout>
@@ -26,7 +26,7 @@ export async function getServerSideProps(context) {
     context.res.end();
     return null;
   }
-  await apolloClient.query({ query: GET_USER, variables: { email: session.user.email } });
+  await apolloClient.query({ query: GET_TRANSACTIONS, variables: { email: session.user.email } });
 
   return {
     props: {

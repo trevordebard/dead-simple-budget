@@ -1,7 +1,7 @@
 import { Prisma, transactions } from '@prisma/client';
 import * as csv from 'fast-csv';
-import { Context } from 'nexus-plugin-prisma/typegen';
 import { recalcToBeBudgeted } from 'graphql/schema';
+import { Context } from '../graphql/context';
 
 // Converts transaction readstream to array of transaction objects
 async function parseTransactionCsv(createReadStream, ctx: Context): Promise<Prisma.transactionsCreateInput[]> {
@@ -47,8 +47,7 @@ function removeExistingTransactions(
 export async function importTransactions(createReadStream, ctx: Context) {
   // Convert transaction CSV to array of transactions
   const parsedTransactions = await parseTransactionCsv(createReadStream, ctx);
-
-  const existingTransactions = await ctx.prisma.transactions.findMany({
+  const existingTransactions = await ctx.prisma.transaction.findMany({
     where: { user: { email: { equals: ctx.session.user.email } } },
   });
   const transactionsToUpload = removeExistingTransactions(parsedTransactions, existingTransactions);
@@ -60,7 +59,7 @@ export async function importTransactions(createReadStream, ctx: Context) {
 
   const prismaCalls = transactionsToUpload.map(transaction => {
     sumOfTransactions += transaction.amount;
-    return ctx.prisma.transactions.create({
+    return ctx.prisma.transaction.create({
       data: transaction,
     });
   });

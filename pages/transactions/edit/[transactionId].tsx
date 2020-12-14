@@ -1,5 +1,4 @@
 import { EditTransaction } from 'components/Transactions';
-import { GET_USER } from 'components/GET_USER';
 import { initializeApollo } from 'lib/apolloClient';
 import { getSession } from 'next-auth/client';
 import { useRouter } from 'next/router';
@@ -33,7 +32,6 @@ export async function getServerSideProps(context) {
     context.res.end();
     return null;
   }
-  await apolloClient.query({ query: GET_USER, variables: { email: session.user.email } });
 
   return {
     props: {
