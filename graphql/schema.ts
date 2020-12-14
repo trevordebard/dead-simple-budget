@@ -16,7 +16,7 @@ const User = objectType({
 });
 
 const Budget = objectType({
-  name: 'budget',
+  name: 'Budget',
   definition(t) {
     t.model.id();
     t.model.toBeBudgeted();
@@ -113,8 +113,8 @@ const Mutation = mutationType({
         return res;
       },
     });
-    t.crud.createOnebudget();
-    t.crud.updateOnebudget({
+    t.crud.createOneBudget();
+    t.crud.updateOneBudget({
       async resolve(root, args, ctx, info, originalResolve) {
         const res = await originalResolve(root, args, ctx, info);
         await recalcToBeBudgeted(ctx.prisma, res.id);

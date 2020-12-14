@@ -71,7 +71,7 @@ export type QueryStacksArgs = {
 };
 
 export type Budget = {
-  __typename?: 'budget';
+  __typename?: 'Budget';
   id: Scalars['Int'];
   toBeBudgeted?: Maybe<Scalars['Float']>;
   total?: Maybe<Scalars['Float']>;
@@ -130,8 +130,8 @@ export type Mutation = {
   createOneuser: User;
   deleteOneStack?: Maybe<Stack>;
   deleteManyTransaction: BatchPayload;
-  createOnebudget: Budget;
-  updateOnebudget?: Maybe<Budget>;
+  createOneBudget: Budget;
+  updateOneBudget?: Maybe<Budget>;
   updateOneStack?: Maybe<Stack>;
   createOneStack: Stack;
   createOneTransaction: Transaction;
@@ -159,12 +159,12 @@ export type MutationDeleteManyTransactionArgs = {
 };
 
 
-export type MutationCreateOnebudgetArgs = {
+export type MutationCreateOneBudgetArgs = {
   data: BudgetCreateInput;
 };
 
 
-export type MutationUpdateOnebudgetArgs = {
+export type MutationUpdateOneBudgetArgs = {
   data: BudgetUpdateInput;
   where: BudgetWhereUniqueInput;
 };
@@ -925,8 +925,8 @@ export type AddBudgetMutationVariables = Exact<{
 
 export type AddBudgetMutation = (
   { __typename?: 'Mutation' }
-  & { createOnebudget: (
-    { __typename?: 'budget' }
+  & { createOneBudget: (
+    { __typename?: 'Budget' }
     & Pick<Budget, 'total' | 'id'>
   ) }
 );
@@ -953,7 +953,7 @@ export type GetBudgetQueryVariables = Exact<{
 export type GetBudgetQuery = (
   { __typename?: 'Query' }
   & { budgets: Array<(
-    { __typename?: 'budget' }
+    { __typename?: 'Budget' }
     & Pick<Budget, 'id' | 'userId' | 'total' | 'toBeBudgeted'>
     & { stacks: Array<(
       { __typename?: 'Stack' }
@@ -985,8 +985,8 @@ export type UpdateTotalMutationVariables = Exact<{
 
 export type UpdateTotalMutation = (
   { __typename?: 'Mutation' }
-  & { updateOnebudget?: Maybe<(
-    { __typename?: 'budget' }
+  & { updateOneBudget?: Maybe<(
+    { __typename?: 'Budget' }
     & Pick<Budget, 'total'>
   )> }
 );
@@ -1002,7 +1002,7 @@ export type GetUserQuery = (
     { __typename?: 'user' }
     & Pick<User, 'id' | 'email'>
     & { budget?: Maybe<(
-      { __typename?: 'budget' }
+      { __typename?: 'Budget' }
       & Pick<Budget, 'id' | 'total' | 'toBeBudgeted'>
       & { stacks: Array<(
         { __typename?: 'Stack' }
@@ -1114,7 +1114,7 @@ export type GetStackLabelsQuery = (
     { __typename?: 'user' }
     & Pick<User, 'id'>
     & { budget?: Maybe<(
-      { __typename?: 'budget' }
+      { __typename?: 'Budget' }
       & { stacks: Array<(
         { __typename?: 'Stack' }
         & Pick<Stack, 'label'>
@@ -1193,7 +1193,7 @@ export type DeleteOneStackMutationResult = Apollo.MutationResult<DeleteOneStackM
 export type DeleteOneStackMutationOptions = Apollo.BaseMutationOptions<DeleteOneStackMutation, DeleteOneStackMutationVariables>;
 export const AddBudgetDocument = gql`
     mutation addBudget($email: String!) {
-  createOnebudget(
+  createOneBudget(
     data: {user: {connect: {email: $email}}, total: 0, toBeBudgeted: 0}
   ) {
     total
@@ -1347,7 +1347,7 @@ export type UpdateStackMutationResult = Apollo.MutationResult<UpdateStackMutatio
 export type UpdateStackMutationOptions = Apollo.BaseMutationOptions<UpdateStackMutation, UpdateStackMutationVariables>;
 export const UpdateTotalDocument = gql`
     mutation updateTotal($budgetId: Int!, $total: Float!) {
-  updateOnebudget(data: {total: {set: $total}}, where: {id: $budgetId}) {
+  updateOneBudget(data: {total: {set: $total}}, where: {id: $budgetId}) {
     total
   }
 }

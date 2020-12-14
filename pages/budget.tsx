@@ -68,7 +68,10 @@ export async function getServerSideProps(context) {
     await apolloClient.mutate({ mutation: ADD_BUDGET, variables: { email: session.user.email } });
     data = await apolloClient.query({ query: GET_BUDGET, variables: { email: session.user.email } });
   }
-
+  if (data.data.budgets.length === 0) {
+    await apolloClient.mutate({ mutation: ADD_BUDGET, variables: { email: session.user.email } });
+    data = await apolloClient.query({ query: GET_BUDGET, variables: { email: session.user.email } });
+  }
   return {
     props: {
       initialApolloState: apolloClient.cache.extract(),

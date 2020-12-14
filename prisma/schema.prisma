@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model budget {
+model Budget {
   id           Int     @id @default(autoincrement())
   total        Float?  @default(0)
   toBeBudgeted Float?
@@ -22,7 +22,7 @@ model Stack {
   label      String
   amount     Float    @default(0)
   created_at DateTime @default(now())
-  budget     budget   @relation(fields: [budgetId], references: [id])
+  budget     Budget   @relation(fields: [budgetId], references: [id])
 
   @@unique([budgetId, label], name: "budgetId_label_idx")
 }
@@ -80,7 +80,7 @@ model user {
   updatedAt     DateTime  @default(now()) @map("updated_at")
 
   transactions Transaction[]
-  budget       budget?
+  budget       Budget?
   @@map("users")
 }
 
