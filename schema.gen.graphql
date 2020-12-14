@@ -8,14 +8,14 @@ type BatchPayload {
 
 type budget {
   id: Int!
-  stacks(after: stacksWhereUniqueInput, before: stacksWhereUniqueInput, first: Int, last: Int, orderBy: [stacksOrderByInput!]): [stacks!]!
+  stacks(after: StackWhereUniqueInput, before: StackWhereUniqueInput, first: Int, last: Int, orderBy: [StackOrderByInput!]): [Stack!]!
   toBeBudgeted: Float
   total: Float
   userId: Int!
 }
 
 input budgetCreateInput {
-  stacks: stacksCreateManyWithoutBudgetInput
+  stacks: StackCreateManyWithoutBudgetInput
   toBeBudgeted: Float
   total: Float
   user: userCreateOneWithoutBudgetInput!
@@ -50,7 +50,7 @@ input budgetCreateWithoutStacksInput {
 }
 
 input budgetCreateWithoutUserInput {
-  stacks: stacksCreateManyWithoutBudgetInput
+  stacks: StackCreateManyWithoutBudgetInput
   toBeBudgeted: Float
   total: Float
 }
@@ -61,7 +61,7 @@ input BudgetId_label_idxCompoundUniqueInput {
 }
 
 input budgetUpdateInput {
-  stacks: stacksUpdateManyWithoutBudgetInput
+  stacks: StackUpdateManyWithoutBudgetInput
   toBeBudgeted: NullableFloatFieldUpdateOperationsInput
   total: NullableFloatFieldUpdateOperationsInput
   user: userUpdateOneRequiredWithoutBudgetInput
@@ -92,7 +92,7 @@ input budgetUpdateWithoutStacksInput {
 }
 
 input budgetUpdateWithoutUserInput {
-  stacks: stacksUpdateManyWithoutBudgetInput
+  stacks: StackUpdateManyWithoutBudgetInput
   toBeBudgeted: NullableFloatFieldUpdateOperationsInput
   total: NullableFloatFieldUpdateOperationsInput
 }
@@ -112,7 +112,7 @@ input budgetWhereInput {
   id: IntFilter
   NOT: [budgetWhereInput!]
   OR: [budgetWhereInput!]
-  stacks: StacksListRelationFilter
+  stacks: StackListRelationFilter
   toBeBudgeted: FloatNullableFilter
   total: FloatNullableFilter
   user: userWhereInput
@@ -194,13 +194,13 @@ input IntFilter {
 
 type Mutation {
   createOnebudget(data: budgetCreateInput!): budget!
-  createOnestacks(data: stacksCreateInput!): stacks!
+  createOneStack(data: StackCreateInput!): Stack!
   createOneTransaction(data: TransactionCreateInput!): Transaction!
   createOneuser(data: userCreateInput!): user!
   deleteManyTransaction(where: TransactionWhereInput): BatchPayload!
-  deleteOnestacks(where: stacksWhereUniqueInput!): stacks
+  deleteOneStack(where: StackWhereUniqueInput!): Stack
   updateOnebudget(data: budgetUpdateInput!, where: budgetWhereUniqueInput!): budget
-  updateOnestacks(data: stacksUpdateInput!, where: stacksWhereUniqueInput!): stacks
+  updateOneStack(data: StackUpdateInput!, where: StackWhereUniqueInput!): Stack
   updateOneTransaction(data: TransactionUpdateInput!, where: TransactionWhereUniqueInput!): Transaction
   uploadFile(file: Upload): UploadFile
 }
@@ -307,7 +307,7 @@ input NullableStringFieldUpdateOperationsInput {
 type Query {
   budget(where: budgetWhereUniqueInput!): budget
   budgets(after: budgetWhereUniqueInput, before: budgetWhereUniqueInput, first: Int, last: Int, where: QueryBudgetsWhereInput): [budget!]!
-  stacks(after: stacksWhereUniqueInput, before: stacksWhereUniqueInput, first: Int, last: Int, where: QueryStacksWhereInput): [stacks!]!
+  stacks(after: StackWhereUniqueInput, before: StackWhereUniqueInput, first: Int, last: Int, where: QueryStacksWhereInput): [Stack!]!
   transaction(where: TransactionWhereUniqueInput!): Transaction
   transactions(after: TransactionWhereUniqueInput, before: TransactionWhereUniqueInput, first: Int, last: Int, orderBy: [QueryTransactionsOrderByInput!], where: QueryTransactionsWhereInput): [Transaction!]!
   user(where: userWhereUniqueInput!): user
@@ -341,7 +341,7 @@ enum SortOrder {
   desc
 }
 
-type stacks {
+type Stack {
   amount: Float!
   budgetId: Int!
   created_at: DateTime!
@@ -349,37 +349,37 @@ type stacks {
   label: String!
 }
 
-input stacksCreateInput {
+input StackCreateInput {
   amount: Float
   budget: budgetCreateOneWithoutStacksInput!
   created_at: DateTime
   label: String!
 }
 
-input stacksCreateManyWithoutBudgetInput {
-  connect: [stacksWhereUniqueInput!]
-  connectOrCreate: [stacksCreateOrConnectWithoutbudgetInput!]
-  create: [stacksCreateWithoutBudgetInput!]
+input StackCreateManyWithoutBudgetInput {
+  connect: [StackWhereUniqueInput!]
+  connectOrCreate: [StackCreateOrConnectWithoutbudgetInput!]
+  create: [StackCreateWithoutBudgetInput!]
 }
 
-input stacksCreateOrConnectWithoutbudgetInput {
-  create: stacksCreateWithoutBudgetInput!
-  where: stacksWhereUniqueInput!
+input StackCreateOrConnectWithoutbudgetInput {
+  create: StackCreateWithoutBudgetInput!
+  where: StackWhereUniqueInput!
 }
 
-input stacksCreateWithoutBudgetInput {
+input StackCreateWithoutBudgetInput {
   amount: Float
   created_at: DateTime
   label: String!
 }
 
-input StacksListRelationFilter {
-  every: stacksWhereInput
-  none: stacksWhereInput
-  some: stacksWhereInput
+input StackListRelationFilter {
+  every: StackWhereInput
+  none: StackWhereInput
+  some: StackWhereInput
 }
 
-input stacksOrderByInput {
+input StackOrderByInput {
   amount: SortOrder
   budgetId: SortOrder
   created_at: SortOrder
@@ -387,78 +387,78 @@ input stacksOrderByInput {
   label: SortOrder
 }
 
-input stacksScalarWhereInput {
+input StackScalarWhereInput {
   amount: FloatFilter
-  AND: [stacksScalarWhereInput!]
+  AND: [StackScalarWhereInput!]
   budgetId: IntFilter
   created_at: DateTimeFilter
   id: IntFilter
   label: StringFilter
-  NOT: [stacksScalarWhereInput!]
-  OR: [stacksScalarWhereInput!]
+  NOT: [StackScalarWhereInput!]
+  OR: [StackScalarWhereInput!]
 }
 
-input stacksUpdateInput {
+input StackUpdateInput {
   amount: FloatFieldUpdateOperationsInput
   budget: budgetUpdateOneRequiredWithoutStacksInput
   created_at: DateTimeFieldUpdateOperationsInput
   label: StringFieldUpdateOperationsInput
 }
 
-input stacksUpdateManyMutationInput {
+input StackUpdateManyMutationInput {
   amount: FloatFieldUpdateOperationsInput
   created_at: DateTimeFieldUpdateOperationsInput
   label: StringFieldUpdateOperationsInput
 }
 
-input stacksUpdateManyWithoutBudgetInput {
-  connect: [stacksWhereUniqueInput!]
-  connectOrCreate: [stacksCreateOrConnectWithoutbudgetInput!]
-  create: [stacksCreateWithoutBudgetInput!]
-  delete: [stacksWhereUniqueInput!]
-  deleteMany: [stacksScalarWhereInput!]
-  disconnect: [stacksWhereUniqueInput!]
-  set: [stacksWhereUniqueInput!]
-  update: [stacksUpdateWithWhereUniqueWithoutBudgetInput!]
-  updateMany: [stacksUpdateManyWithWhereWithoutBudgetInput!]
-  upsert: [stacksUpsertWithWhereUniqueWithoutBudgetInput!]
+input StackUpdateManyWithoutBudgetInput {
+  connect: [StackWhereUniqueInput!]
+  connectOrCreate: [StackCreateOrConnectWithoutbudgetInput!]
+  create: [StackCreateWithoutBudgetInput!]
+  delete: [StackWhereUniqueInput!]
+  deleteMany: [StackScalarWhereInput!]
+  disconnect: [StackWhereUniqueInput!]
+  set: [StackWhereUniqueInput!]
+  update: [StackUpdateWithWhereUniqueWithoutBudgetInput!]
+  updateMany: [StackUpdateManyWithWhereWithoutBudgetInput!]
+  upsert: [StackUpsertWithWhereUniqueWithoutBudgetInput!]
 }
 
-input stacksUpdateManyWithWhereWithoutBudgetInput {
-  data: stacksUpdateManyMutationInput!
-  where: stacksScalarWhereInput!
+input StackUpdateManyWithWhereWithoutBudgetInput {
+  data: StackUpdateManyMutationInput!
+  where: StackScalarWhereInput!
 }
 
-input stacksUpdateWithoutBudgetInput {
+input StackUpdateWithoutBudgetInput {
   amount: FloatFieldUpdateOperationsInput
   created_at: DateTimeFieldUpdateOperationsInput
   label: StringFieldUpdateOperationsInput
 }
 
-input stacksUpdateWithWhereUniqueWithoutBudgetInput {
-  data: stacksUpdateWithoutBudgetInput!
-  where: stacksWhereUniqueInput!
+input StackUpdateWithWhereUniqueWithoutBudgetInput {
+  data: StackUpdateWithoutBudgetInput!
+  where: StackWhereUniqueInput!
 }
 
-input stacksUpsertWithWhereUniqueWithoutBudgetInput {
-  create: stacksCreateWithoutBudgetInput!
-  update: stacksUpdateWithoutBudgetInput!
-  where: stacksWhereUniqueInput!
+input StackUpsertWithWhereUniqueWithoutBudgetInput {
+  create: StackCreateWithoutBudgetInput!
+  update: StackUpdateWithoutBudgetInput!
+  where: StackWhereUniqueInput!
 }
 
-input stacksWhereInput {
+input StackWhereInput {
   amount: FloatFilter
-  AND: [stacksWhereInput!]
+  AND: [StackWhereInput!]
   budget: budgetWhereInput
   budgetId: IntFilter
   created_at: DateTimeFilter
   id: IntFilter
   label: StringFilter
-  NOT: [stacksWhereInput!]
-  OR: [stacksWhereInput!]
+  NOT: [StackWhereInput!]
+  OR: [StackWhereInput!]
 }
 
-input stacksWhereUniqueInput {
+input StackWhereUniqueInput {
   budgetId_label_idx: BudgetId_label_idxCompoundUniqueInput
   id: Int
 }

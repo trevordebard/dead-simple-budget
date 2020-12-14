@@ -40,7 +40,7 @@ const Transactions = objectType({
 });
 
 const Stacks = objectType({
-  name: 'stacks',
+  name: 'Stack',
   definition(t) {
     t.model.id();
     t.model.label();
@@ -87,7 +87,7 @@ const Mutation = mutationType({
       },
     });
     t.crud.createOneuser();
-    t.crud.deleteOnestacks();
+    t.crud.deleteOneStack();
     t.crud.deleteManyTransaction({
       async resolve(root, args, ctx, info, originalResolve) {
         // Sum transactions being deleted
@@ -121,14 +121,14 @@ const Mutation = mutationType({
         return res;
       },
     });
-    t.crud.updateOnestacks({
+    t.crud.updateOneStack({
       async resolve(root, args, ctx, info, originalResolve) {
         const res = await originalResolve(root, args, ctx, info);
         await recalcToBeBudgeted(ctx.prisma, res.budgetId);
         return res;
       },
     });
-    t.crud.createOnestacks();
+    t.crud.createOneStack();
     t.crud.createOneTransaction({
       async resolve(root, args, ctx, info, originalResolve) {
         const res = await originalResolve(root, args, ctx, info);
@@ -136,7 +136,7 @@ const Mutation = mutationType({
           where: { id: res.userId },
           include: { budget: true },
         });
-        await ctx.prisma.stacks.update({
+        await ctx.prisma.stack.update({
           data: { amount: { increment: res.amount } },
           where: { budgetId_label_idx: { budgetId: budget.id, label: res.stack } },
         });
@@ -157,7 +157,7 @@ const Mutation = mutationType({
           where: { id: res.userId },
           include: { budget: true },
         });
-        await ctx.prisma.stacks.update({
+        await ctx.prisma.stack.update({
           data: { amount: { increment: difference } },
           where: { budgetId_label_idx: { budgetId: budget.id, label: res.stack } },
         });
@@ -192,7 +192,7 @@ export const schema = makeSchema({
 export async function recalcToBeBudgeted(prisma: PrismaClient, budgetId: number) {
   const {
     sum: { amount: sumOfStacks },
-  } = await prisma.stacks.aggregate({ sum: { amount: true }, where: { budgetId: { equals: budgetId } } });
+  } = await prisma.stack.aggregate({ sum: { amount: true }, where: { budgetId: { equals: budgetId } } });
   const { total } = await prisma.budget.findUnique({ where: { id: budgetId } });
   await prisma.budget.update({
     data: { toBeBudgeted: { set: total - sumOfStacks } },

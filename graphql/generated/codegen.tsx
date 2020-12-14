@@ -24,7 +24,7 @@ export type Query = {
   transaction?: Maybe<Transaction>;
   transactions: Array<Transaction>;
   budgets: Array<Budget>;
-  stacks: Array<Stacks>;
+  stacks: Array<Stack>;
 };
 
 
@@ -66,8 +66,8 @@ export type QueryStacksArgs = {
   where?: Maybe<QueryStacksWhereInput>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
-  before?: Maybe<StacksWhereUniqueInput>;
-  after?: Maybe<StacksWhereUniqueInput>;
+  before?: Maybe<StackWhereUniqueInput>;
+  after?: Maybe<StackWhereUniqueInput>;
 };
 
 export type Budget = {
@@ -76,16 +76,16 @@ export type Budget = {
   toBeBudgeted?: Maybe<Scalars['Float']>;
   total?: Maybe<Scalars['Float']>;
   userId: Scalars['Int'];
-  stacks: Array<Stacks>;
+  stacks: Array<Stack>;
 };
 
 
 export type BudgetStacksArgs = {
-  orderBy?: Maybe<Array<StacksOrderByInput>>;
+  orderBy?: Maybe<Array<StackOrderByInput>>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
-  before?: Maybe<StacksWhereUniqueInput>;
-  after?: Maybe<StacksWhereUniqueInput>;
+  before?: Maybe<StackWhereUniqueInput>;
+  after?: Maybe<StackWhereUniqueInput>;
 };
 
 export type Transaction = {
@@ -99,8 +99,8 @@ export type Transaction = {
   date: Scalars['DateTime'];
 };
 
-export type Stacks = {
-  __typename?: 'stacks';
+export type Stack = {
+  __typename?: 'Stack';
   id: Scalars['Int'];
   label: Scalars['String'];
   amount: Scalars['Float'];
@@ -128,12 +128,12 @@ export type Mutation = {
   __typename?: 'Mutation';
   uploadFile?: Maybe<UploadFile>;
   createOneuser: User;
-  deleteOnestacks?: Maybe<Stacks>;
+  deleteOneStack?: Maybe<Stack>;
   deleteManyTransaction: BatchPayload;
   createOnebudget: Budget;
   updateOnebudget?: Maybe<Budget>;
-  updateOnestacks?: Maybe<Stacks>;
-  createOnestacks: Stacks;
+  updateOneStack?: Maybe<Stack>;
+  createOneStack: Stack;
   createOneTransaction: Transaction;
   updateOneTransaction?: Maybe<Transaction>;
 };
@@ -149,8 +149,8 @@ export type MutationCreateOneuserArgs = {
 };
 
 
-export type MutationDeleteOnestacksArgs = {
-  where: StacksWhereUniqueInput;
+export type MutationDeleteOneStackArgs = {
+  where: StackWhereUniqueInput;
 };
 
 
@@ -170,14 +170,14 @@ export type MutationUpdateOnebudgetArgs = {
 };
 
 
-export type MutationUpdateOnestacksArgs = {
-  data: StacksUpdateInput;
-  where: StacksWhereUniqueInput;
+export type MutationUpdateOneStackArgs = {
+  data: StackUpdateInput;
+  where: StackWhereUniqueInput;
 };
 
 
-export type MutationCreateOnestacksArgs = {
-  data: StacksCreateInput;
+export type MutationCreateOneStackArgs = {
+  data: StackCreateInput;
 };
 
 
@@ -228,12 +228,12 @@ export type QueryStacksWhereInput = {
   id?: Maybe<IntFilter>;
 };
 
-export type StacksWhereUniqueInput = {
+export type StackWhereUniqueInput = {
   id?: Maybe<Scalars['Int']>;
   budgetId_label_idx?: Maybe<BudgetId_Label_IdxCompoundUniqueInput>;
 };
 
-export type StacksOrderByInput = {
+export type StackOrderByInput = {
   id?: Maybe<SortOrder>;
   budgetId?: Maybe<SortOrder>;
   label?: Maybe<SortOrder>;
@@ -276,24 +276,24 @@ export type BudgetCreateInput = {
   total?: Maybe<Scalars['Float']>;
   toBeBudgeted?: Maybe<Scalars['Float']>;
   user: UserCreateOneWithoutBudgetInput;
-  stacks?: Maybe<StacksCreateManyWithoutBudgetInput>;
+  stacks?: Maybe<StackCreateManyWithoutBudgetInput>;
 };
 
 export type BudgetUpdateInput = {
   total?: Maybe<NullableFloatFieldUpdateOperationsInput>;
   toBeBudgeted?: Maybe<NullableFloatFieldUpdateOperationsInput>;
   user?: Maybe<UserUpdateOneRequiredWithoutBudgetInput>;
-  stacks?: Maybe<StacksUpdateManyWithoutBudgetInput>;
+  stacks?: Maybe<StackUpdateManyWithoutBudgetInput>;
 };
 
-export type StacksUpdateInput = {
+export type StackUpdateInput = {
   label?: Maybe<StringFieldUpdateOperationsInput>;
   amount?: Maybe<FloatFieldUpdateOperationsInput>;
   created_at?: Maybe<DateTimeFieldUpdateOperationsInput>;
   budget?: Maybe<BudgetUpdateOneRequiredWithoutStacksInput>;
 };
 
-export type StacksCreateInput = {
+export type StackCreateInput = {
   label: Scalars['String'];
   amount?: Maybe<Scalars['Float']>;
   created_at?: Maybe<Scalars['DateTime']>;
@@ -409,10 +409,10 @@ export type UserCreateOneWithoutBudgetInput = {
   connectOrCreate?: Maybe<UserCreateOrConnectWithoutbudgetInput>;
 };
 
-export type StacksCreateManyWithoutBudgetInput = {
-  create?: Maybe<Array<StacksCreateWithoutBudgetInput>>;
-  connect?: Maybe<Array<StacksWhereUniqueInput>>;
-  connectOrCreate?: Maybe<Array<StacksCreateOrConnectWithoutbudgetInput>>;
+export type StackCreateManyWithoutBudgetInput = {
+  create?: Maybe<Array<StackCreateWithoutBudgetInput>>;
+  connect?: Maybe<Array<StackWhereUniqueInput>>;
+  connectOrCreate?: Maybe<Array<StackCreateOrConnectWithoutbudgetInput>>;
 };
 
 export type NullableFloatFieldUpdateOperationsInput = {
@@ -431,17 +431,17 @@ export type UserUpdateOneRequiredWithoutBudgetInput = {
   connectOrCreate?: Maybe<UserCreateOrConnectWithoutbudgetInput>;
 };
 
-export type StacksUpdateManyWithoutBudgetInput = {
-  create?: Maybe<Array<StacksCreateWithoutBudgetInput>>;
-  connect?: Maybe<Array<StacksWhereUniqueInput>>;
-  set?: Maybe<Array<StacksWhereUniqueInput>>;
-  disconnect?: Maybe<Array<StacksWhereUniqueInput>>;
-  delete?: Maybe<Array<StacksWhereUniqueInput>>;
-  update?: Maybe<Array<StacksUpdateWithWhereUniqueWithoutBudgetInput>>;
-  updateMany?: Maybe<Array<StacksUpdateManyWithWhereWithoutBudgetInput>>;
-  deleteMany?: Maybe<Array<StacksScalarWhereInput>>;
-  upsert?: Maybe<Array<StacksUpsertWithWhereUniqueWithoutBudgetInput>>;
-  connectOrCreate?: Maybe<Array<StacksCreateOrConnectWithoutbudgetInput>>;
+export type StackUpdateManyWithoutBudgetInput = {
+  create?: Maybe<Array<StackCreateWithoutBudgetInput>>;
+  connect?: Maybe<Array<StackWhereUniqueInput>>;
+  set?: Maybe<Array<StackWhereUniqueInput>>;
+  disconnect?: Maybe<Array<StackWhereUniqueInput>>;
+  delete?: Maybe<Array<StackWhereUniqueInput>>;
+  update?: Maybe<Array<StackUpdateWithWhereUniqueWithoutBudgetInput>>;
+  updateMany?: Maybe<Array<StackUpdateManyWithWhereWithoutBudgetInput>>;
+  deleteMany?: Maybe<Array<StackScalarWhereInput>>;
+  upsert?: Maybe<Array<StackUpsertWithWhereUniqueWithoutBudgetInput>>;
+  connectOrCreate?: Maybe<Array<StackCreateOrConnectWithoutbudgetInput>>;
 };
 
 export type StringFieldUpdateOperationsInput = {
@@ -540,7 +540,7 @@ export type BudgetWhereInput = {
   toBeBudgeted?: Maybe<FloatNullableFilter>;
   userId?: Maybe<IntFilter>;
   user?: Maybe<UserWhereInput>;
-  stacks?: Maybe<StacksListRelationFilter>;
+  stacks?: Maybe<StackListRelationFilter>;
 };
 
 export type TransactionCreateWithoutUserInput = {
@@ -559,7 +559,7 @@ export type TransactionCreateOrConnectWithoutuserInput = {
 export type BudgetCreateWithoutUserInput = {
   total?: Maybe<Scalars['Float']>;
   toBeBudgeted?: Maybe<Scalars['Float']>;
-  stacks?: Maybe<StacksCreateManyWithoutBudgetInput>;
+  stacks?: Maybe<StackCreateManyWithoutBudgetInput>;
 };
 
 export type BudgetCreateOrConnectWithoutuserInput = {
@@ -623,15 +623,15 @@ export type UserCreateOrConnectWithoutbudgetInput = {
   create: UserCreateWithoutBudgetInput;
 };
 
-export type StacksCreateWithoutBudgetInput = {
+export type StackCreateWithoutBudgetInput = {
   label: Scalars['String'];
   amount?: Maybe<Scalars['Float']>;
   created_at?: Maybe<Scalars['DateTime']>;
 };
 
-export type StacksCreateOrConnectWithoutbudgetInput = {
-  where: StacksWhereUniqueInput;
-  create: StacksCreateWithoutBudgetInput;
+export type StackCreateOrConnectWithoutbudgetInput = {
+  where: StackWhereUniqueInput;
+  create: StackCreateWithoutBudgetInput;
 };
 
 export type UserUpdateWithoutBudgetInput = {
@@ -649,20 +649,20 @@ export type UserUpsertWithoutBudgetInput = {
   create: UserCreateWithoutBudgetInput;
 };
 
-export type StacksUpdateWithWhereUniqueWithoutBudgetInput = {
-  where: StacksWhereUniqueInput;
-  data: StacksUpdateWithoutBudgetInput;
+export type StackUpdateWithWhereUniqueWithoutBudgetInput = {
+  where: StackWhereUniqueInput;
+  data: StackUpdateWithoutBudgetInput;
 };
 
-export type StacksUpdateManyWithWhereWithoutBudgetInput = {
-  where: StacksScalarWhereInput;
-  data: StacksUpdateManyMutationInput;
+export type StackUpdateManyWithWhereWithoutBudgetInput = {
+  where: StackScalarWhereInput;
+  data: StackUpdateManyMutationInput;
 };
 
-export type StacksScalarWhereInput = {
-  AND?: Maybe<Array<StacksScalarWhereInput>>;
-  OR?: Maybe<Array<StacksScalarWhereInput>>;
-  NOT?: Maybe<Array<StacksScalarWhereInput>>;
+export type StackScalarWhereInput = {
+  AND?: Maybe<Array<StackScalarWhereInput>>;
+  OR?: Maybe<Array<StackScalarWhereInput>>;
+  NOT?: Maybe<Array<StackScalarWhereInput>>;
   id?: Maybe<IntFilter>;
   budgetId?: Maybe<IntFilter>;
   label?: Maybe<StringFilter>;
@@ -670,10 +670,10 @@ export type StacksScalarWhereInput = {
   created_at?: Maybe<DateTimeFilter>;
 };
 
-export type StacksUpsertWithWhereUniqueWithoutBudgetInput = {
-  where: StacksWhereUniqueInput;
-  update: StacksUpdateWithoutBudgetInput;
-  create: StacksCreateWithoutBudgetInput;
+export type StackUpsertWithWhereUniqueWithoutBudgetInput = {
+  where: StackWhereUniqueInput;
+  update: StackUpdateWithoutBudgetInput;
+  create: StackCreateWithoutBudgetInput;
 };
 
 export type BudgetCreateWithoutStacksInput = {
@@ -764,10 +764,10 @@ export type FloatNullableFilter = {
   not?: Maybe<NestedFloatNullableFilter>;
 };
 
-export type StacksListRelationFilter = {
-  every?: Maybe<StacksWhereInput>;
-  some?: Maybe<StacksWhereInput>;
-  none?: Maybe<StacksWhereInput>;
+export type StackListRelationFilter = {
+  every?: Maybe<StackWhereInput>;
+  some?: Maybe<StackWhereInput>;
+  none?: Maybe<StackWhereInput>;
 };
 
 export type NullableStringFieldUpdateOperationsInput = {
@@ -791,13 +791,13 @@ export type TransactionUpdateManyWithoutUserInput = {
   connectOrCreate?: Maybe<Array<TransactionCreateOrConnectWithoutuserInput>>;
 };
 
-export type StacksUpdateWithoutBudgetInput = {
+export type StackUpdateWithoutBudgetInput = {
   label?: Maybe<StringFieldUpdateOperationsInput>;
   amount?: Maybe<FloatFieldUpdateOperationsInput>;
   created_at?: Maybe<DateTimeFieldUpdateOperationsInput>;
 };
 
-export type StacksUpdateManyMutationInput = {
+export type StackUpdateManyMutationInput = {
   label?: Maybe<StringFieldUpdateOperationsInput>;
   amount?: Maybe<FloatFieldUpdateOperationsInput>;
   created_at?: Maybe<DateTimeFieldUpdateOperationsInput>;
@@ -824,10 +824,10 @@ export type NestedFloatNullableFilter = {
   not?: Maybe<NestedFloatNullableFilter>;
 };
 
-export type StacksWhereInput = {
-  AND?: Maybe<Array<StacksWhereInput>>;
-  OR?: Maybe<Array<StacksWhereInput>>;
-  NOT?: Maybe<Array<StacksWhereInput>>;
+export type StackWhereInput = {
+  AND?: Maybe<Array<StackWhereInput>>;
+  OR?: Maybe<Array<StackWhereInput>>;
+  NOT?: Maybe<Array<StackWhereInput>>;
   id?: Maybe<IntFilter>;
   budgetId?: Maybe<IntFilter>;
   label?: Maybe<StringFilter>;
@@ -868,7 +868,7 @@ export type TransactionUpsertWithWhereUniqueWithoutUserInput = {
 export type BudgetUpdateWithoutUserInput = {
   total?: Maybe<NullableFloatFieldUpdateOperationsInput>;
   toBeBudgeted?: Maybe<NullableFloatFieldUpdateOperationsInput>;
-  stacks?: Maybe<StacksUpdateManyWithoutBudgetInput>;
+  stacks?: Maybe<StackUpdateManyWithoutBudgetInput>;
 };
 
 export type BudgetUpsertWithoutUserInput = {
@@ -900,8 +900,8 @@ export type GetStackQueryVariables = Exact<{
 export type GetStackQuery = (
   { __typename?: 'Query' }
   & { stacks: Array<(
-    { __typename?: 'stacks' }
-    & Pick<Stacks, 'amount' | 'label' | 'id'>
+    { __typename?: 'Stack' }
+    & Pick<Stack, 'amount' | 'label' | 'id'>
   )> }
 );
 
@@ -912,9 +912,9 @@ export type DeleteOneStackMutationVariables = Exact<{
 
 export type DeleteOneStackMutation = (
   { __typename?: 'Mutation' }
-  & { deleteOnestacks?: Maybe<(
-    { __typename?: 'stacks' }
-    & Pick<Stacks, 'id'>
+  & { deleteOneStack?: Maybe<(
+    { __typename?: 'Stack' }
+    & Pick<Stack, 'id'>
   )> }
 );
 
@@ -939,9 +939,9 @@ export type AddStackMutationVariables = Exact<{
 
 export type AddStackMutation = (
   { __typename?: 'Mutation' }
-  & { createOnestacks: (
-    { __typename?: 'stacks' }
-    & Pick<Stacks, 'label' | 'amount' | 'id' | 'budgetId'>
+  & { createOneStack: (
+    { __typename?: 'Stack' }
+    & Pick<Stack, 'label' | 'amount' | 'id' | 'budgetId'>
   ) }
 );
 
@@ -956,8 +956,8 @@ export type GetBudgetQuery = (
     { __typename?: 'budget' }
     & Pick<Budget, 'id' | 'userId' | 'total' | 'toBeBudgeted'>
     & { stacks: Array<(
-      { __typename?: 'stacks' }
-      & Pick<Stacks, 'id' | 'label' | 'amount' | 'created_at' | 'budgetId'>
+      { __typename?: 'Stack' }
+      & Pick<Stack, 'id' | 'label' | 'amount' | 'created_at' | 'budgetId'>
     )> }
   )> }
 );
@@ -971,9 +971,9 @@ export type UpdateStackMutationVariables = Exact<{
 
 export type UpdateStackMutation = (
   { __typename?: 'Mutation' }
-  & { updateOnestacks?: Maybe<(
-    { __typename?: 'stacks' }
-    & Pick<Stacks, 'label' | 'amount'>
+  & { updateOneStack?: Maybe<(
+    { __typename?: 'Stack' }
+    & Pick<Stack, 'label' | 'amount'>
   )> }
 );
 
@@ -1005,8 +1005,8 @@ export type GetUserQuery = (
       { __typename?: 'budget' }
       & Pick<Budget, 'id' | 'total' | 'toBeBudgeted'>
       & { stacks: Array<(
-        { __typename?: 'stacks' }
-        & Pick<Stacks, 'id' | 'label' | 'amount'>
+        { __typename?: 'Stack' }
+        & Pick<Stack, 'id' | 'label' | 'amount'>
       )> }
     )>, transactions: Array<(
       { __typename?: 'Transaction' }
@@ -1116,8 +1116,8 @@ export type GetStackLabelsQuery = (
     & { budget?: Maybe<(
       { __typename?: 'budget' }
       & { stacks: Array<(
-        { __typename?: 'stacks' }
-        & Pick<Stacks, 'label'>
+        { __typename?: 'Stack' }
+        & Pick<Stack, 'label'>
       )> }
     )> }
   )> }
@@ -1161,7 +1161,7 @@ export type GetStackLazyQueryHookResult = ReturnType<typeof useGetStackLazyQuery
 export type GetStackQueryResult = Apollo.QueryResult<GetStackQuery, GetStackQueryVariables>;
 export const DeleteOneStackDocument = gql`
     mutation deleteOneStack($stackId: Int!) {
-  deleteOnestacks(where: {id: $stackId}) {
+  deleteOneStack(where: {id: $stackId}) {
     id
   }
 }
@@ -1228,7 +1228,7 @@ export type AddBudgetMutationResult = Apollo.MutationResult<AddBudgetMutation>;
 export type AddBudgetMutationOptions = Apollo.BaseMutationOptions<AddBudgetMutation, AddBudgetMutationVariables>;
 export const AddStackDocument = gql`
     mutation addStack($budgetId: Int!, $newStackLabel: String!) {
-  createOnestacks(
+  createOneStack(
     data: {label: $newStackLabel, budget: {connect: {id: $budgetId}}}
   ) {
     label
@@ -1309,7 +1309,7 @@ export type GetBudgetLazyQueryHookResult = ReturnType<typeof useGetBudgetLazyQue
 export type GetBudgetQueryResult = Apollo.QueryResult<GetBudgetQuery, GetBudgetQueryVariables>;
 export const UpdateStackDocument = gql`
     mutation updateStack($budgetId: Int!, $label: String!, $amount: Float!) {
-  updateOnestacks(
+  updateOneStack(
     data: {amount: {set: $amount}}
     where: {budgetId_label_idx: {budgetId: $budgetId, label: $label}}
   ) {

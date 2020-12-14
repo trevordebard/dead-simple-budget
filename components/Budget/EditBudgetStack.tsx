@@ -17,7 +17,7 @@ const GET_STACK = gql`
 
 const DELETE_ONE_STACK = gql`
   mutation deleteOneStack($stackId: Int!) {
-    deleteOnestacks(where: {id: $stackId}) {
+    deleteOneStack(where: {id: $stackId}) {
       id
     }
   }

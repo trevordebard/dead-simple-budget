@@ -8,15 +8,15 @@ datasource db {
 }
 
 model budget {
-  id           Int      @id @default(autoincrement())
-  total        Float?   @default(0)
+  id           Int     @id @default(autoincrement())
+  total        Float?  @default(0)
   toBeBudgeted Float?
   userId       Int
-  user         user     @relation(fields: [userId], references: [id])
-  stacks       stacks[]
+  user         user    @relation(fields: [userId], references: [id])
+  stacks       Stack[]
 }
 
-model stacks {
+model Stack {
   id         Int      @id @default(autoincrement())
   budgetId   Int
   label      String
