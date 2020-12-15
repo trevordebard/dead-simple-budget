@@ -171,8 +171,8 @@ export const schema = makeSchema({
   types: { Query, Budget, Transactions, Stacks, User, Mutation, Upload, UploadFile },
   plugins: [nexusSchemaPrisma({ experimentalCRUD: true })],
   outputs: {
-    schema: path.join(process.cwd(), 'schema.gen.graphql'),
-    typegen: path.join(process.cwd(), 'nexus.gen.ts'),
+    schema: path.join(process.cwd(), 'schema.graphql'),
+    typegen: path.join(process.cwd(), 'nexus.ts'),
   },
   typegenAutoConfig: {
     contextType: 'Context.Context',
