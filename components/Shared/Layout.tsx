@@ -42,6 +42,7 @@ export const Left = styled.nav`
   @media only screen and (max-width: ${smBreakpoint}) {
     width: 100%;
     max-width: 100vw;
+    min-height: fit-content;
     background-color: var(--backgroundSubtle);
     padding: 0;
     margin: 0;

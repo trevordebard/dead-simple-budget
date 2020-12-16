@@ -4,6 +4,7 @@ import useBudget from './useBudget';
 import BudgetStack from './BudgetStack';
 import { Button, Input } from 'components/Styled';
 import EditableText from 'components/Shared/EditableText';
+import { useAlert } from 'components/Alert';
 
 const ToplineBudget = styled.div`
   text-align: center;
@@ -44,6 +45,7 @@ const NewStackWrapper = styled.div`
 function Budget() {
   const { budget, loading, error, updateTotal } = useBudget();
   const [editTotalVisible, setEditTotalVisible] = useState(false);
+  const { addAlert, removeAlert, alert } = useAlert()
 
   if (loading || !budget) {
     return <span>loading...</span>;
@@ -80,6 +82,14 @@ function Budget() {
       <NewStackWrapper>
         <NewStack budgetId={budget.id} />
       </NewStackWrapper>
+      <button onClick={() => {
+        console.log(alert)
+        if (alert) {
+          removeAlert()
+        } else {
+          addAlert({ message: "Success" })
+        }
+      }}>Alert Test</button>
       <br />
     </BudgetWrapper>
   );

@@ -1,6 +1,8 @@
 import { ApolloProvider } from '@apollo/client';
 import { createGlobalStyle } from 'styled-components';
 import { Provider } from 'next-auth/client';
+import { Alert } from 'components/Alert';
+import { AlertProvider } from '../components/Alert/AlertProvider';
 import { useApollo } from '../lib/apolloClient';
 import Head from '../components/head';
 
@@ -135,9 +137,12 @@ function MyApp({ Component, pageProps }) {
       <GlobalStyle />
       <Head />
       <Provider session={pageProps.session}>
-        <ApolloProvider client={apolloClient}>
-          <Component {...pageProps} />
-        </ApolloProvider>
+        <AlertProvider>
+          <ApolloProvider client={apolloClient}>
+            <Alert />
+            <Component {...pageProps} />
+          </ApolloProvider>
+        </AlertProvider>
       </Provider>
     </>
   );

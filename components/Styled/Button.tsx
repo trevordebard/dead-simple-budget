@@ -79,6 +79,7 @@ const RadioButton = styled(StyledButton) <{ active?: boolean }>`
   padding: 5px;
   text-align: center;
   border-radius: 0px;
+  margin: 0px;
   cursor: pointer;
   + button {
     border-left: none;
