@@ -1,9 +1,9 @@
-import { makeSchema, objectType, mutationType, queryType, arg } from '@nexus/schema';
+import { makeSchema, objectType, mutationType, queryType, arg } from 'nexus';
 import { nexusSchemaPrisma } from 'nexus-plugin-prisma/schema';
 import path from 'path';
 import { PrismaClient } from '@prisma/client';
-import { Upload, UploadFile } from 'graphql/Upload';
-import { importTransactions } from 'lib/importTransactions';
+import { importTransactions } from '../lib/importTransactions';
+import { Upload, UploadFile } from './Upload';
 
 const User = objectType({
   name: 'user',
@@ -96,7 +96,6 @@ const Mutation = mutationType({
           where: { id: { in: args.where.id.in } },
         });
         const res = await originalResolve(root, args, ctx, info);
-
         // Get budget
         const { budget } = await ctx.prisma.user.findUnique({
           where: { email: ctx.session.user.email },
@@ -171,21 +170,26 @@ export const schema = makeSchema({
   types: { Query, Budget, Transactions, Stacks, User, Mutation, Upload, UploadFile },
   plugins: [nexusSchemaPrisma({ experimentalCRUD: true })],
   outputs: {
-    schema: path.join(process.cwd(), 'schema.graphql'),
-    typegen: path.join(process.cwd(), 'nexus.ts'),
+    typegen: path.join(process.cwd(), 'graphql/generated/nexus-typegen.gen.ts'),
+    schema: path.join(process.cwd(), 'graphql/generated/schema.graphql'),
   },
-  typegenAutoConfig: {
-    contextType: 'Context.Context',
-    sources: [
+  sourceTypes: {
+    modules: [
       {
-        source: '@prisma/client',
-        alias: 'prisma',
+        module: '@prisma/client',
+        alias: 'PrismaClient',
+        typeMatch: name => new RegExp(`(?:interface|type|class)\\s+(${name}s?)\\W`, 'g'),
       },
       {
-        source: require.resolve('./context'),
-        alias: 'Context',
+        module: require.resolve('./context'),
+        alias: 'Context.Context',
+        typeMatch: name => new RegExp(`(?:interface|type|class)\\s+(${name}s?)\\W`, 'g'),
       },
     ],
+  },
+  contextType: {
+    module: path.join(process.cwd(), 'graphql/context.ts'),
+    export: 'Context',
   },
 });
 

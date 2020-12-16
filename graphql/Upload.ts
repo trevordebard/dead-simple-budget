@@ -1,4 +1,4 @@
-import { asNexusMethod, objectType } from '@nexus/schema';
+import { asNexusMethod, objectType } from 'nexus';
 import { GraphQLUpload } from 'apollo-server-micro';
 
 export const Upload = asNexusMethod(GraphQLUpload, 'Upload');
