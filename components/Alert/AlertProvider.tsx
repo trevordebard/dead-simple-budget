@@ -34,7 +34,6 @@ export function AlertProvider({ children }) {
   };
 
   return <AlertContext.Provider value={contextValue}>
-
     {children}
   </AlertContext.Provider>
 }
