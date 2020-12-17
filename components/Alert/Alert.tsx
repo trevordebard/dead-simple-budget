@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components'
 import { AnimatePresence, motion, Variants } from 'framer-motion'
 import { useEffect } from 'react'
 import { AlertTypes } from './AlertProvider'
+import { smBreakpoint } from 'lib/constants'
 
 interface StyledAlertProps {
   type?: AlertTypes
@@ -24,6 +25,10 @@ const AlertWrapper = styled(motion.div) <StyledAlertProps>`
   ${props => (props.type === 'neutral' || !props.type) && AlertNeutralCss};
   ${props => props.type === 'error' && AlertErrorCss};
   ${props => props.type === 'success' && AlertSuccessCss};
+  @media only screen and (max-width: ${smBreakpoint}) {
+    padding: 10px;
+    min-width: 85vw;
+  }
 `
 const AlertSuccessCss = css`
   background-color: var(--green);
