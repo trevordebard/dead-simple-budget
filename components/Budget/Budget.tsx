@@ -82,14 +82,6 @@ function Budget() {
       <NewStackWrapper>
         <NewStack budgetId={budget.id} />
       </NewStackWrapper>
-      <button onClick={() => {
-        console.log(alert)
-        if (alert) {
-          removeAlert()
-        } else {
-          addAlert({ message: "Success" })
-        }
-      }}>Alert Test</button>
       <br />
     </BudgetWrapper>
   );
@@ -106,13 +98,18 @@ const Stacks = ({ stacks, budgetId }) => {
 };
 
 const NewStack = ({ budgetId }) => {
+  const { addAlert } = useAlert()
   const { addStack } = useBudget();
   const [newStack, setNewStack] = useState<string>("")
   const handleAddStack = (stackName: string) => {
-    addStack({
-      variables: { newStackLabel: newStack, budgetId },
-    });
-    setNewStack("")
+    if (!newStack || newStack.trim() === '') {
+      addAlert({ message: "Stack name cannot be empty.", type: 'error' })
+    } else {
+      addStack({
+        variables: { newStackLabel: newStack, budgetId },
+      });
+      setNewStack("")
+    }
   };
   return (
 
