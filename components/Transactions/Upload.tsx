@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Button } from 'components/Styled';
 import { useUploadFileMutation } from 'graphql/generated/codegen';
+import { useAlert } from 'components/Alert';
 const UPLOAD = gql`
     mutation uploadFile($file: Upload!) {
       uploadFile(file: $file) {
@@ -35,8 +36,14 @@ const Upload = () => {
   const [isDragging, setIsDragging] = useState(false)
   const [file, setFile] = useState<File | null>(null)
   const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
-
-  const [uploadF, { loading }] = useUploadFileMutation({ onCompleted: (data) => { setFile(null); setUploadSuccess(true) } })
+  const { addAlert } = useAlert()
+  const [uploadF, { loading }] = useUploadFileMutation({
+    onCompleted: (data) => {
+      addAlert({ message: "Success!", type: "success" });
+      setFile(null);
+      setUploadSuccess(true);
+    }
+  })
 
   const submitFile = (file: File) => {
     if (file.type === "text/csv") {

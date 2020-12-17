@@ -7,6 +7,7 @@ import {
   useGetStackLabelsQuery,
   useGetTransactionsQuery,
 } from 'graphql/generated/codegen';
+import { useAlert } from 'components/Alert';
 import { getStackLabels } from '../../lib/budgetUtils';
 
 const GET_STACK_LABELS = gql`
@@ -24,11 +25,27 @@ const GET_STACK_LABELS = gql`
 
 const useTransactions = () => {
   const [session] = useSession();
+  const { addAlert } = useAlert();
   const { data, loading } = useGetTransactionsQuery({ variables: { email: session.user.email } });
   const { data: stackLabelRes } = useGetStackLabelsQuery({ variables: { email: session.user.email } });
-  const [editTransactionM] = useEditTransactionMutation({ refetchQueries: ['getTransactions'] });
-  const [addTransactionM] = useAddTransactionMutation({ refetchQueries: ['getTransactions'] });
-  const [deleteManyTransactionsM] = useDeleteManyTransactionMutation({ refetchQueries: ['getTransactions'] });
+  const [editTransactionM] = useEditTransactionMutation({
+    refetchQueries: ['getTransactions'],
+    onError: e => {
+      addAlert({ message: 'There was a problem editing transaction.', type: 'error' });
+    },
+  });
+  const [addTransactionM] = useAddTransactionMutation({
+    refetchQueries: ['getTransactions'],
+    onError: e => {
+      addAlert({ message: 'There was a problem adding transaction.', type: 'error' });
+    },
+  });
+  const [deleteManyTransactionsM] = useDeleteManyTransactionMutation({
+    refetchQueries: ['getTransactions'],
+    onError: e => {
+      addAlert({ message: 'There was a problem deleting transactions.', type: 'error' });
+    },
+  });
   let stackLabels;
   let transactions;
   function addTransaction(description, amount, stack, date, type, ...params) {

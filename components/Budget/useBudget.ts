@@ -35,8 +35,16 @@ const useBudget = () => {
 
   const [updateStack] = useUpdateStackMutation({
     refetchQueries: ['getBudget', 'getStack'],
+    onError: e => {
+      addAlert({ message: 'There was a problem updating the stack.', type: 'error' });
+    },
   });
-  const [updateTotal] = useUpdateTotalMutation({ refetchQueries: ['getBudget'] });
+  const [updateTotal] = useUpdateTotalMutation({
+    refetchQueries: ['getBudget'],
+    onError: e => {
+      addAlert({ message: 'There was a problem updating account total.', type: 'error' });
+    },
+  });
 
   return { loading, budget, error, addStack, updateStack, updateTotal };
 };
