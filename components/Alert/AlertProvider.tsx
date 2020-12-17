@@ -1,9 +1,9 @@
 import { createContext, useCallback, useState } from "react";
 
-
+export type AlertTypes = 'error' | 'success' | 'neutral'
 interface Alert {
   message: string,
-  error?: boolean,
+  type?: AlertTypes,
   duration?: number,
 }
 
