@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "npx next dev",
-    "deploy-dev": "npm ci && npm run build && pm2 restart budget-dev",
+    "deploy-dev": "npm i && npm run build && pm2 restart budget-dev",
     "deploy-production": "sudo npm ci && npm run build && pm2 restart budget-prod",
     "build": "npm run build:nexus-typegen && npx next build",
     "start": "next start",
