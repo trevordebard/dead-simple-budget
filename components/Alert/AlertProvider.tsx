@@ -1,6 +1,6 @@
 import { createContext, useCallback, useState } from "react";
 
-export type AlertTypes = 'error' | 'success' | 'neutral'
+export type AlertTypes = 'error' | 'success' | 'neutral' | 'warning'
 interface Alert {
   message: string,
   type?: AlertTypes,

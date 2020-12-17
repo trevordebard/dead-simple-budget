@@ -24,6 +24,7 @@ const AlertWrapper = styled(motion.div) <StyledAlertProps>`
   ${props => (props.type === 'neutral' || !props.type) && AlertNeutralCss};
   ${props => props.type === 'error' && AlertErrorCss};
   ${props => props.type === 'success' && AlertSuccessCss};
+  ${props => props.type === 'warning' && AlertWarningCss};
 `
 const AlertSuccessCss = css`
   background-color: var(--green);
@@ -34,6 +35,10 @@ const AlertErrorCss = css`
 const AlertNeutralCss = css`
   background-color: #ADB4B9;
   color: var(--neutral);
+`
+const AlertWarningCss = css`
+  background-color: #E9DA5E;
+  color: var(--fontColor);
 `
 
 const variants: Variants = {
