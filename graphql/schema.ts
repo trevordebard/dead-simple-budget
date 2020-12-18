@@ -87,7 +87,13 @@ const Mutation = mutationType({
       },
     });
     t.crud.createOneuser();
-    t.crud.deleteOneStack();
+    t.crud.deleteOneStack({
+      async resolve(root, args, ctx, info, originalResolve) {
+        const res = await originalResolve(root, args, ctx, info);
+        await recalcToBeBudgeted(ctx.prisma, res.budgetId);
+        return res;
+      },
+    });
     t.crud.deleteManyTransaction({
       async resolve(root, args, ctx, info, originalResolve) {
         // Sum transactions being deleted
