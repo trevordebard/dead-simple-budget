@@ -7,7 +7,7 @@ interface RowProps extends HTMLProps<HTMLTableRowElement> {
 }
 
 export const TR = styled.tr<RowProps>`
-  background-color: ${props => props.selected && 'var(--green-transparent-400)'};
+  background-color: ${props => props.selected && 'var(--rowActive)'};
   :hover {
     background-color: ${props => (props.selected ? 'none' : 'var(--rowHover)')};
   }

@@ -31,14 +31,14 @@ const AlertWrapper = styled(motion.div) <StyledAlertProps>`
   }
 `
 const AlertSuccessCss = css`
-  background-color: var(--green);
+  background-color: var(--green-500);
 `
 const AlertErrorCss = css`
-  background-color: var(--red);
+  background-color: var(--red-600);
 `
 const AlertNeutralCss = css`
-  background-color: #ADB4B9;
-  color: var(--neutral);
+  background-color: var(--grey-100);
+  color: var(--grey-500);
 `
 
 const variants: Variants = {

@@ -17,6 +17,7 @@ export const GlobalStyle = createGlobalStyle`
   --purple-transparent-400: rgba(141, 67, 173, 0.32);
   --purple-transparent-500: rgba(141, 67, 173, 0.4);
   --purple-transparent-600: rgba(141, 67, 173, 0.48);
+
   --green-100: #D7FADB;
   --green-200: #B0F6C0;
   --green-300: #84E6A4;
@@ -32,21 +33,24 @@ export const GlobalStyle = createGlobalStyle`
   --green-transparent-400: rgba(50, 174, 116, 0.32);
   --green-transparent-500: rgba(50, 174, 116, 0.4);
   --green-transparent-600: rgba(50, 174, 116, 0.48);
-  --aqua-100: #CBFDFB;
-  --aqua-200: #97F7FB;
-  --aqua-300: #63E4F4;
-  --aqua-400: #3BCAE9;
-  --aqua-500: #02A5DB;
-  --aqua-600: #0180BC;
-  --aqua-700: #01609D;
-  --aqua-800: #00447F;
-  --aqua-900: #003169;
-  --aqua-transparent-100: rgba(2, 165, 219, 0.08);
-  --aqua-transparent-200: rgba(2, 165, 219, 0.16);
-  --aqua-transparent-300: rgba(2, 165, 219, 0.24);
-  --aqua-transparent-400: rgba(2, 165, 219, 0.32);
-  --aqua-transparent-500: rgba(2, 165, 219, 0.4);
-  --aqua-transparent-600: rgba(2, 165, 219, 0.48);
+
+  --aqua-100: hsl(185, 94%, 87%);
+  --aqua-200: hsl(184, 80%, 74%);
+  --aqua-300: hsl(184, 65%, 59%);
+  --aqua-400: hsl(185, 57%, 50%);
+  --aqua-500: hsl(185, 62%, 45%);
+  --aqua-600: hsl(184, 90%, 34%);
+  --aqua-700: hsl(184, 77%, 34%);
+  --aqua-800: hsl(185, 81%, 29%);
+  --aqua-900: hsl(185, 84%, 25%);
+  --aqua-800:hsl(184, 91%, 17%);
+  
+  --aqua-transparent-100: hsl(185, 81%, 29%, .08);
+  --aqua-transparent-200: hsl(185, 81%, 29%, .16);
+  --aqua-transparent-300: hsl(185, 81%, 29%, .24);
+  --aqua-transparent-400: hsl(185, 81%, 29%, .32);
+  --aqua-transparent-500: hsl(185, 81%, 29%, .40);
+  
   --yellow-100: #FEFACC;
   --yellow-200: #FEF39A;
   --yellow-300: #FCEA67;
@@ -62,53 +66,46 @@ export const GlobalStyle = createGlobalStyle`
   --yellow-transparent-400: rgba(247, 210, 4, 0.32);
   --yellow-transparent-500: rgba(247, 210, 4, 0.4);
   --yellow-transparent-600: rgba(247, 210, 4, 0.48);
-  --red-100: #FDE8D0;
-  --red-200: #FBCCA1;
-  --red-300: #F4A671;
-  --red-400: #E9814D;
-  --red-500: #DB4C18;
-  --red-600: #BC3311;
-  --red-700: #9D1E0C;
-  --red-800: #7F0E07;
-  --red-900: #690405;
-  --red-transparent-100: rgba(219, 76, 24, 0.08);
-  --red-transparent-200: rgba(219, 76, 24, 0.16);
-  --red-transparent-300: rgba(219, 76, 24, 0.24);
-  --red-transparent-400: rgba(219, 76, 24, 0.32);
-  --red-transparent-500: rgba(219, 76, 24, 0.4);
-  --red-transparent-600: rgba(219, 76, 24, 0.48);
 
-  --black-100: #DAEDF6;
-  --black-200: #B8D9ED;
-  --black-300: #86ADCB;
-  --black-400: #577997;
-  --black-500: #243A52;
-  --black-600: #1A2D46;
-  --black-700: #12213B;
-  --black-800: #0B172F;
-  --black-900: #061027;
+  --red-100: hsl(360, 100%, 95%);
+  --red-200: hsl(360, 100%, 87%);
+  --red-300: hsl(360, 100%, 80%);
+  --red-400: hsl(360, 91%, 69%);
+  --red-500: hsl(360, 83%, 62%);
+  --red-600: hsl(356, 75%, 53%);
+  --red-700: hsl(354, 85%, 44%);
+  --red-800: hsl(352, 90%, 35%);
+  --red-900: hsl(350, 94%, 28%);
+  --red-1000: hsl(348, 94%, 20%);
+  --red-transparent-100: hsl(352, 90%, 35%, 8%);
+  --red-transparent-200: hsl(352, 90%, 35%, 16%);
+  --red-transparent-300: hsl(352, 90%, 35%, 32%);
+  --red-transparent-400: hsl(352, 90%, 35%, 40%);
+  --red-transparent-500: hsl(352, 90%, 35%, 48%);
 
-  --grey-100: #F8FAFB;
-  --grey-200: #F1F6F8;
-  --grey-300: #E0E7EA;
-  --grey-400: #CAD1D5;
-  --grey-500: #ADB4B9;
-  --grey-600: #7E8F9F;
-  --grey-700: #576C85;
-  --grey-800: #374C6B;
-  --grey-900: #213458;
-  --grey-transparent-100: rgba(173, 180, 185, 0.08);
-  --grey-transparent-200: rgba(173, 180, 185, 0.16);
-  --grey-transparent-300: rgba(173, 180, 185, 0.24);
-  --grey-transparent-400: rgba(173, 180, 185, 0.32);
-  --grey-transparent-500: rgba(173, 180, 185, 0.4);
-  --grey-transparent-600: rgba(173, 180, 185, 0.48);
+  --grey-100: hsl(216, 33%, 97%);
+  --grey-200: hsl(214, 15%, 91%);
+  --grey-300: hsl(210, 16%, 82%);
+  --grey-400: hsl(211, 13%, 65%);
+  --grey-500: hsl(211, 10%, 53%);
+  --grey-600: hsl(211, 12%, 43%);
+  --grey-700: hsl(209, 14%, 37%);
+  --grey-800: hsl(209, 18%, 30%);
+  --grey-900: hsl(209, 20%, 25%);
+  --grey-1000: hsl(210, 24%, 16%);
+
+  --grey-transparent-100: hsl(211, 10%, 53%, .08);
+  --grey-transparent-200: hsl(211, 10%, 53%, .16);
+  --grey-transparent-300: hsl(211, 10%, 53%, .32);
+  --grey-transparent-400: hsl(211, 10%, 53%, .40);
+  --grey-transparent-400: hsl(211, 10%, 53%, .48);
+  
   --white: #fff;
 
   --lineColor: #EAEAEA;
-  --backgroundSubtle: hsl(211, 39%, 23%, 3%);
+  --backgroundSubtle: var(--grey-100);
   
-  --fontColor: var(--black-600);
+  --fontColor: var(--grey-1000);
   --fontColorLight: var(--black-500);
   --baseFontSize: 100%;
   --smallFontSize: .8rem;
@@ -116,16 +113,18 @@ export const GlobalStyle = createGlobalStyle`
   --primary: var(--purple-500);
   --primaryHover: var(--purple-400);
   --primarySubtle: var(--purple-transparent-300);
-  --action: var(--aqua-500);
+  --action: var(--aqua-700);
   --actionHover: var(--aqua-600);
-  --actionSubtle: var(--aqua-transparent-500);
-  --danger: var(--red-700);
-  --dangerHover: var(--red-600);
-  --dangerSubtle: var(--red-transparent-600);
-  --neutral: var(--fontColor);
-  --neutralHover: var(--black-o10);
-  --rowHover: var(--green-transparent-200);
-  --rowHoverDark: var(--green-transparent-300);
+  --actionSubtle: var(--aqua-transparent-200);
+  --danger: var(--red-800);
+  --dangerHover: var(--red-800);
+  --dangerSubtle: var(--red-transparent-300);
+  --neutral: var(--grey-1000);
+  --neutralHover: var(--grey-transparent-200);
+
+  --rowHover: var(--grey-transparent-100);
+  --rowActive: var(--grey-transparent-200);
+  --rowHoverDark: var(--grey-300);
 
   --buttonBg: var(--primary);
   --buttonHover: var(--primaryHover);
@@ -149,7 +148,7 @@ body {
   margin: 0;
   padding: 5px;
   color: var(--fontColor);
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Raleway', sans-serif;
   font-weight: 400;
   line-height: 1.65;
 }
@@ -157,8 +156,8 @@ body {
 /* p {margin-bottom: 1.15rem;} */
 
 h1, h2, h3, h4, h5 {
-  font-family: 'Raleway', sans-serif;
-  font-weight: 400;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 300;
   line-height: 1.15;
   margin: 1rem .5rem;
 }

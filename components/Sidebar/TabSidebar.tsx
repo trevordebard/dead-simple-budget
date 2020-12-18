@@ -21,7 +21,7 @@ const TabItem = styled.li<{ active?: boolean }>`
   @media only screen and (max-width: ${smBreakpoint}) {
     a {
       background-color: transparent;
-      color: ${props => (props.active ? 'var(--purp)' : 'var(--fontColor)')};
+      color: ${props => (props.active ? 'var(--purple-800)' : 'var(--fontColor)')};
       margin: 0px;
       :hover {
         background-color: transparent;
@@ -31,7 +31,7 @@ const TabItem = styled.li<{ active?: boolean }>`
     + li {
       margin-top: 0;
     }
-    border-bottom: ${props => props.active && '1px solid black'};
+    border-bottom: ${props => props.active && '1px solid var(--purple-800)'};
   }
 `;
 const Tabs = styled.div`
