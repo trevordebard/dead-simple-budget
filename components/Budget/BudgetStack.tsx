@@ -9,6 +9,7 @@ const StackInput = styled.input<{ danger: boolean }>`
   text-align: right;
   border: none;
   background-color: ${props => (props.danger ? 'var(--dangerSubtle)' : 'transparent')};
+  border-radius: 5px;
   padding: 5px 10px;
   max-width: 100px;
   :hover {

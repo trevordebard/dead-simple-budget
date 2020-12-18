@@ -118,7 +118,7 @@ export const GlobalStyle = createGlobalStyle`
   --actionSubtle: var(--aqua-transparent-200);
   --danger: var(--red-800);
   --dangerHover: var(--red-800);
-  --dangerSubtle: var(--red-transparent-300);
+  --dangerSubtle: var(--red-transparent-200);
   --neutral: var(--grey-1000);
   --neutralHover: var(--grey-transparent-200);
 
