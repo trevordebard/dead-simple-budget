@@ -106,7 +106,8 @@ export const GlobalStyle = createGlobalStyle`
   --backgroundSubtle: var(--grey-100);
   
   --fontColor: var(--grey-1000);
-  --fontColorLight: var(--black-500);
+  --fontColorLight: var(--grey-800);
+  --fontColorLighter: var(--grey-500);
   --baseFontSize: 100%;
   --smallFontSize: .8rem;
   
@@ -117,9 +118,9 @@ export const GlobalStyle = createGlobalStyle`
   --actionHover: var(--aqua-600);
   --actionSubtle: var(--aqua-transparent-200);
   --danger: var(--red-800);
-  --dangerHover: var(--red-800);
+  --dangerHover: var(--red-transparent-200);
   --dangerSubtle: var(--red-transparent-200);
-  --neutral: var(--grey-1000);
+  --neutral: var(--grey-900);
   --neutralHover: var(--grey-transparent-200);
 
   --rowHover: var(--grey-transparent-100);
