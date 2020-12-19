@@ -3,9 +3,8 @@ import styled from 'styled-components';
 import { useState } from 'react';
 import Link from 'next/link';
 import useTransactions from './useTransactions';
-import { Button, RadioButton, RadioGroup } from '../Styled';
-import FormInput, { FormSelect } from '../Shared/FormInput';
-import { formatDate } from '../../lib/formatDate';
+import { Button, Input, RadioButton, RadioGroup, Select } from '../Styled';
+import { useSession } from 'next-auth/client';
 
 const UploadLink = styled.a`
   text-decoration: none;
@@ -17,65 +16,74 @@ const NewtransactionWrapper = styled.form`
   display: flex;
   flex-direction: column;
   margin: 0 auto;
-  text-align: center;
+  width: 500px;
   min-width: 250px;
-  max-width: 400px;
-  > * {
-    margin-bottom: 10px;
+  max-width: 500px;
+  label {
+    color: var(--grey-800);
   }
+  input,
+  select,
+  button {
+    margin-bottom: 15px;
+  }
+  input::placeholder,
+  select:required:invalid {
+    color: var(--fontColorLighter);
+  }
+`;
+
+const ErrorText = styled.span`
+  color: var(--red-500);
+  font-size: 0.9em;
 `;
 
 const NewTransaction = () => {
   const { register, handleSubmit, errors, reset, getValues } = useForm();
+  const [session] = useSession();
   const [selectedStack, setSelectedStack] = useState('');
   const { addTransaction, stackLabels } = useTransactions();
   const [transactionType, setTransactionType] = useState('withdrawal');
 
-  const onSubmit = () => {
-    const data = getValues();
+  const onSubmit = (data) => {
     const { description, stack } = data;
     let { amount, date } = data;
-
+    console.log(data);
     amount = parseFloat(amount);
     if (transactionType === 'withdrawal') {
       amount = -amount;
     }
+    addTransaction({ variables: { amount, description, stack, type: transactionType, date: new Date(date).toISOString(), email: session.user.email } });
 
     reset();
-    addTransaction(description, amount, stack, date, transactionType);
   };
   return (
     <NewtransactionWrapper onSubmit={handleSubmit(onSubmit)}>
-      <h4>New Transaction</h4>
-      <FormInput
-        name="description"
-        errors={errors}
-        register={register}
-        required
-        type="text"
-        placeholder="Description"
-        autoComplete="off"
-      />
-      <FormInput
+      <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+        <h4>New Transaction</h4>
+      </div>
+      <label htmlFor="description">Description {errors.description && <ErrorText> (Required)</ErrorText>}</label>
+      <Input name="description" category="underline" placeholder="Tasy Pizza LLC" ref={register({ required: true })} />
+
+      <label htmlFor="amount">Amount {errors.amount && <ErrorText> (Required)</ErrorText>}</label>
+      <Input
         name="amount"
-        errors={errors}
-        register={register}
+        category="underline"
+        ref={register({ required: true })}
         type="number"
         pattern="\d*"
         step={0.01}
-        placeholder="Amount"
+        placeholder="37.50"
         autoComplete="off"
-        required
       />
-      <FormSelect
+      <label htmlFor="stack">Stack {errors.stack && <ErrorText> (Required)</ErrorText>}</label>
+      <Select
         name="stack"
         value={selectedStack}
-        register={register}
-        errors={errors}
-        required
+        ref={register({ required: true })}
         onChange={e => setSelectedStack(e.target.value)}
       >
-        <option disabled name="select" value="">
+        <option disabled name="select" value="" style={{ color: 'blue' }}>
           Select Stack
         </option>
         {stackLabels &&
@@ -84,14 +92,16 @@ const NewTransaction = () => {
               {label}
             </option>
           ))}
-      </FormSelect>
-      <FormInput
+      </Select>
+      <label htmlFor="date">Date {errors.date && <ErrorText> (Required)</ErrorText>}</label>
+      <Input
         name="date"
-        errors={errors}
-        register={register}
+        category="underline"
+        ref={register({
+          required: true,
+        })}
         type="date"
-        defaultValue={formatDate(new Date())}
-        required
+        placeholder="yyyy-mm-dd"
       />
       <RadioGroup>
         <RadioButton
@@ -108,9 +118,11 @@ const NewTransaction = () => {
       <Button category="ACTION" type="submit">
         Add
       </Button>
-      <Link href="/upload" passHref>
-        <UploadLink>Import Transactions</UploadLink>
-      </Link>
+      <div style={{ textAlign: 'center' }}>
+        <Link href="/upload" passHref>
+          <UploadLink>Import Transactions</UploadLink>
+        </Link>
+      </div>
     </NewtransactionWrapper>
   );
 };
