@@ -33,7 +33,7 @@ const NewtransactionWrapper = styled.form`
   }
 `;
 
-const ErrorText = styled.span`
+export const ErrorText = styled.span`
   color: var(--red-500);
   font-size: 0.9em;
 `;
