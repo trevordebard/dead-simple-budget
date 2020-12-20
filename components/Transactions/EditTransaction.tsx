@@ -3,20 +3,26 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useForm } from 'react-hook-form';
 import { useGetTransactionQuery } from 'graphql/generated/codegen';
-import FormInput, { FormSelect } from '../Shared/FormInput';
 import useTransactions from './useTransactions';
 import { formatDate } from '../../lib/formatDate';
-import { Button, RadioButton, RadioGroup } from '../Styled';
+import { Button, RadioButton, RadioGroup, Input, Select } from '../Styled';
+import { ErrorText } from './NewTransaction';
 
 const EditTransactionWrapper = styled.form`
-  text-align: center;
   display: flex;
   flex-direction: column;
   margin: 0 auto;
+  width: 500px;
   min-width: 250px;
-  max-width: 400px;
-  * {
-    margin-bottom: 10px;
+  max-width: 500px;
+  input,
+  select,
+  button {
+    margin-bottom: 15px;
+  }
+  input::placeholder,
+  select:required:invalid {
+    color: var(--fontColorLighter);
   }
 `;
 const GET_TRANSACTION = gql`
@@ -35,7 +41,7 @@ const GET_TRANSACTION = gql`
 const EditTransaction = ({ transactionId, cancelEdit }) => {
   const { register, handleSubmit, errors } = useForm();
   const { editTransaction, stackLabels } = useTransactions();
-  const [selectedStack, setSelectedStack] = useState();
+  const [selectedStack, setSelectedStack] = useState('');
   const [transactionType, setTransactionType] = useState<string | null>(null);
   const { data, loading } = useGetTransactionQuery({ variables: { id: transactionId }, skip: transactionId === null });
   useEffect(() => {
@@ -62,33 +68,35 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
   }
   return (
     <EditTransactionWrapper onSubmit={handleSubmit(onSubmit)}>
-      <h4>Edit Transaction</h4>
-      <FormInput
+      <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+        <h4>Edit Transaction</h4>
+      </div>
+      <label htmlFor="description">Description {errors.description && <ErrorText> (Required)</ErrorText>}</label>
+      <Input
         name="description"
-        errors={errors}
-        register={register}
-        required
+        category="underline"
+        ref={register({ required: true })}
         type="text"
         defaultValue={data.transaction.description}
         autoComplete="off"
       />
-      <FormInput
+      <label htmlFor="amount">Amount {errors.amount && <ErrorText> (Required)</ErrorText>}</label>
+      <Input
         name="amount"
-        errors={errors}
-        register={register}
+        ref={register({ required: true })}
+        category="underline"
         type="number"
         pattern="\d*"
         step={0.01}
         placeholder="Amount"
         defaultValue={Math.abs(data.transaction.amount)}
         autoComplete="off"
-        required
       />
 
-      <FormSelect
+      <label htmlFor="stack">Stack {errors.stack && <ErrorText> (Required)</ErrorText>}</label>
+      <Select
         name="stack"
-        register={register}
-        errors={errors}
+        ref={register({ required: true })}
         value={selectedStack}
         onChange={e => setSelectedStack(e.target.value)}
       >
@@ -98,11 +106,12 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
               {label}
             </option>
           ))}
-      </FormSelect>
-      <FormInput
+      </Select>
+      <label htmlFor="date">Date {errors.date && <ErrorText> (Required)</ErrorText>}</label>
+      <Input
         name="date"
-        errors={errors}
-        register={register}
+        category="underline"
+        ref={register({ required: true })}
         type="date"
         defaultValue={formatDate(data.transaction.date)}
         required

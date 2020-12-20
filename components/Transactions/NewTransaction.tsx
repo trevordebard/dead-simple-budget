@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import useTransactions from './useTransactions';
 import { Button, Input, RadioButton, RadioGroup, Select } from '../Styled';
+import { useSession } from 'next-auth/client';
 
 const UploadLink = styled.a`
   text-decoration: none;
@@ -32,29 +33,28 @@ const NewtransactionWrapper = styled.form`
   }
 `;
 
-const ErrorText = styled.span`
+export const ErrorText = styled.span`
   color: var(--red-500);
   font-size: 0.9em;
 `;
 
 const NewTransaction = () => {
   const { register, handleSubmit, errors, reset, getValues } = useForm();
+  const [session] = useSession();
   const [selectedStack, setSelectedStack] = useState('');
   const { addTransaction, stackLabels } = useTransactions();
   const [transactionType, setTransactionType] = useState('withdrawal');
 
-  const onSubmit = () => {
-    const data = getValues();
+  const onSubmit = (data) => {
     const { description, stack } = data;
     let { amount, date } = data;
-    console.log(errors);
     amount = parseFloat(amount);
     if (transactionType === 'withdrawal') {
       amount = -amount;
     }
+    addTransaction({ variables: { amount, description, stack, type: transactionType, date: new Date(date).toISOString(), email: session.user.email } });
 
     reset();
-    addTransaction(description, amount, stack, date, transactionType);
   };
   return (
     <NewtransactionWrapper onSubmit={handleSubmit(onSubmit)}>
@@ -80,8 +80,6 @@ const NewTransaction = () => {
         name="stack"
         value={selectedStack}
         ref={register({ required: true })}
-        errors={errors}
-        required
         onChange={e => setSelectedStack(e.target.value)}
       >
         <option disabled name="select" value="" style={{ color: 'blue' }}>
@@ -94,13 +92,11 @@ const NewTransaction = () => {
             </option>
           ))}
       </Select>
-      <label htmlFor="date1">Date {errors.date1 && <ErrorText> (Required)</ErrorText>}</label>
+      <label htmlFor="date">Date {errors.date && <ErrorText> (Required)</ErrorText>}</label>
       <Input
-        name="date1"
+        name="date"
         category="underline"
-        errors={errors}
         ref={register({
-          valueAsDate: true,
           required: true,
         })}
         type="date"
@@ -126,7 +122,7 @@ const NewTransaction = () => {
           <UploadLink>Import Transactions</UploadLink>
         </Link>
       </div>
-    </NewtransactionWrapper>
+    </NewtransactionWrapper >
   );
 };
 export default NewTransaction;

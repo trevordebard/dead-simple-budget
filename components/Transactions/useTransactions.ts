@@ -34,7 +34,7 @@ const useTransactions = () => {
       addAlert({ message: 'There was a problem editing transaction.', type: 'error' });
     },
   });
-  const [addTransactionM] = useAddTransactionMutation({
+  const [addTransaction] = useAddTransactionMutation({
     refetchQueries: ['getTransactions'],
     onError: e => {
       addAlert({ message: 'There was a problem adding transaction.', type: 'error' });
@@ -48,13 +48,6 @@ const useTransactions = () => {
   });
   let stackLabels;
   let transactions;
-  function addTransaction(description, amount, stack, date, type, ...params) {
-    addTransactionM({
-      ...params,
-      refetchQueries: ['getTransaction'],
-      variables: { email: session.user.email, description, amount, stack, date: new Date(date).toISOString(), type },
-    });
-  }
   function editTransaction(
     id: number,
     description: string,
