@@ -15,6 +15,7 @@ export const Center = styled.div`
   display: flex;
   justify-content: center;
   padding: 1rem;
+  min-height: fit-content;
 `;
 
 export const Main = styled.div`
