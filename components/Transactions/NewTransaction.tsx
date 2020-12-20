@@ -82,7 +82,7 @@ const NewTransaction = () => {
         ref={register({ required: true })}
         onChange={e => setSelectedStack(e.target.value)}
       >
-        <option disabled name="select" value="" style={{ color: 'blue' }}>
+        <option disabled value="" >
           Select Stack
         </option>
         {stackLabels &&
