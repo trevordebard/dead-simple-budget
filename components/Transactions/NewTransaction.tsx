@@ -40,7 +40,7 @@ export const ErrorText = styled.span`
 `;
 
 const NewTransaction = () => {
-  const { register, handleSubmit, errors, reset, getValues } = useForm();
+  const { register, handleSubmit, errors, reset } = useForm();
   const [session] = useSession();
   const [selectedStack, setSelectedStack] = useState('');
   const { addTransaction, stackLabels } = useTransactions();

@@ -39,12 +39,14 @@ const useTransactions = () => {
     onError: e => {
       addAlert({ message: 'There was a problem adding transaction.', type: 'error' });
     },
+    onCompleted: () => addAlert({ message: 'Success!', type: 'success', duration: 2 }),
   });
   const [deleteManyTransactionsM] = useDeleteManyTransactionMutation({
     refetchQueries: ['getTransactions'],
     onError: e => {
       addAlert({ message: 'There was a problem deleting transactions.', type: 'error' });
     },
+    onCompleted: () => addAlert({ message: 'Delete successful!', type: 'success' }),
   });
   let stackLabels;
   let transactions;
