@@ -156,16 +156,37 @@ const Mutation = mutationType({
     t.crud.updateOneTransaction({
       async resolve(root, args, ctx, info, originalResolve) {
         const transactionBefore = await ctx.prisma.transaction.findUnique({ where: { id: args.where.id } });
-        const res = await originalResolve(root, args, ctx, info);
-        const difference = transactionBefore.amount - res.amount;
         const { budget } = await ctx.prisma.user.findUnique({
-          where: { id: res.userId },
+          where: { id: transactionBefore.userId },
           include: { budget: true },
         });
+
+        // Offset stack by the original transaction amount
         await ctx.prisma.stack.update({
-          data: { amount: { increment: difference } },
+          where: { budgetId_label_idx: { budgetId: budget.id, label: transactionBefore.stack } },
+          data: { amount: { decrement: transactionBefore.amount } },
+        });
+
+        // Offset total by the orignal transaction amount
+        await ctx.prisma.budget.update({
+          where: { id: budget.id },
+          data: { total: { decrement: transactionBefore.amount } },
+        });
+
+        const res = await originalResolve(root, args, ctx, info);
+
+        // Adjust stack amount by transaction amount
+        await ctx.prisma.stack.update({
+          data: { amount: { increment: res.amount } },
           where: { budgetId_label_idx: { budgetId: budget.id, label: res.stack } },
         });
+
+        // Adjust budget total by transaction amount
+        await ctx.prisma.budget.update({
+          data: { total: { increment: res.amount } },
+          where: { id: budget.id },
+        });
+
         await recalcToBeBudgeted(ctx.prisma, budget.id);
         return res;
       },
