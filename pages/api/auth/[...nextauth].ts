@@ -16,11 +16,11 @@ const options = {
   events: {
     createUser: async message => {
       // TODO: This causes prisma error. I am hoping a future update will fix the error
-      // await prisma.budget.create({ data: { toBeBudgeted: 0, total: 0, user: { connect: { id: message.id } } } });
       try {
-        await prisma.$executeRaw(
-          `INSERT INTO budget("total", "toBeBudgeted", "userId") VALUES (${0}, ${0}, ${message.id})`
-        );
+        await prisma.budget.create({ data: { total: 0, toBeBudgeted: 0, user: { connect: { id: message.id } } } });
+        // await prisma.$executeRaw(
+        //   `INSERT INTO budget("total", "toBeBudgeted", "userId") VALUES (${0}, ${0}, ${message.id})`
+        // );
       } catch (e) {
         console.error(e);
         console.error('Unable to add budget!');
