@@ -5,6 +5,7 @@ import Link from 'next/link';
 import useTransactions from './useTransactions';
 import { Button, Input, RadioButton, RadioGroup, Select } from '../Styled';
 import { useSession } from 'next-auth/client';
+import moment from 'moment'
 
 const UploadLink = styled.a`
   text-decoration: none;
@@ -52,7 +53,7 @@ const NewTransaction = () => {
     if (transactionType === 'withdrawal') {
       amount = -amount;
     }
-    addTransaction({ variables: { amount, description, stack, type: transactionType, date: new Date(date).toISOString(), email: session.user.email } });
+    addTransaction({ variables: { amount, description, stack, type: transactionType, date: moment(date).toISOString(), email: session.user.email } });
 
     reset();
   };

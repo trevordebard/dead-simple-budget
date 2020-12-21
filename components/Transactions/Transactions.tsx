@@ -102,7 +102,7 @@ const Transactions = () => {
                     <TD>{transaction.description}</TD>
                     <TD align="right">${transaction.amount}</TD>
                     <TD align="right">{transaction.stack}</TD>
-                    <TD align="right">{new Date(transaction.date).toDateString() || '9999/9/9'}</TD>
+                    <TD align="right">{new Date(transaction.date).toUTCString() || '9999/9/9'}</TD>
                   </TR>
                 ))}
             </tbody>

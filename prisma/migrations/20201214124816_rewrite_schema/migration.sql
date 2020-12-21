@@ -44,7 +44,7 @@ CREATE TABLE "Transaction" (
     "amount" DECIMAL(65,2) NOT NULL,
     "type" TEXT NOT NULL,
     "userId" INTEGER NOT NULL,
-    "date" TIMESTAMP(3) NOT NULL,
+    "date" TIMESTAMP(3) WITH TIME ZONE NOT NULL,
 
     PRIMARY KEY ("id")
 );
