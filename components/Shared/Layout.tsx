@@ -52,7 +52,6 @@ export const Left = styled.nav`
 export const Right = styled.nav`
   width: 20%;
   border-left: 1px solid var(--lineColor);
-  background-color: var(--white);
 `;
 
 const Layout = ({ children }) => <AppLayout>{children}</AppLayout>;
