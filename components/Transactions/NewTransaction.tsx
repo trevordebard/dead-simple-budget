@@ -53,7 +53,7 @@ const NewTransaction = () => {
     if (transactionType === 'withdrawal') {
       amount = -amount;
     }
-    addTransaction({ variables: { amount, description, stack, type: transactionType, date: moment(date).toISOString(), email: session.user.email } });
+    addTransaction({ variables: { amount, description, stack, type: transactionType, date: moment(date), email: session.user.email } });
 
     reset();
   };

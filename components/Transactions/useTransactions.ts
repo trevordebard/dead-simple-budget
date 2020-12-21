@@ -8,6 +8,7 @@ import {
   useGetTransactionsQuery,
 } from 'graphql/generated/codegen';
 import { useAlert } from 'components/Alert';
+import moment from 'moment';
 import { getStackLabels } from '../../lib/budgetUtils';
 
 const GET_STACK_LABELS = gql`
@@ -61,7 +62,7 @@ const useTransactions = () => {
   ) {
     editTransactionM({
       ...params,
-      variables: { id, description, amount, stack, date: new Date(date).toISOString(), type },
+      variables: { id, description, amount, stack, date: moment(date), type },
     });
   }
   function deleteManyTransactions(transactionIds: number[], params?: MutationHookOptions) {
