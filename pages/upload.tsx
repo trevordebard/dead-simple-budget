@@ -1,23 +1,24 @@
 import { getSession } from 'next-auth/client';
-import { Transactions } from 'components/Transactions';
+import { GET_USER } from 'components/GET_USER';
+import { Upload } from 'components/Transactions';
 import { initializeApollo } from 'lib/apolloClient';
 import Layout, { Main, Left, Center } from 'components/Shared/Layout';
 import { TabSidebar } from 'components/Sidebar';
 import { Nav } from 'components/Nav';
-import { GET_TRANSACTIONS } from 'components/Transactions/queries';
 
-const TransactionPage = () => (
+const UploadPage = () => (
   <Layout>
     <Nav />
     <Main>
       <Left>
         <TabSidebar />
       </Left>
-      <Center><Transactions /></Center>
+      <Center><Upload /></Center>
     </Main>
   </Layout>
 );
-export default TransactionPage;
+export default UploadPage;
+
 export async function getServerSideProps(context) {
   const apolloClient = initializeApollo(null, context);
   const session = await getSession(context);
@@ -26,7 +27,7 @@ export async function getServerSideProps(context) {
     context.res.end();
     return null;
   }
-  await apolloClient.query({ query: GET_TRANSACTIONS, variables: { email: session.user.email } });
+  await apolloClient.query({ query: GET_USER, variables: { email: session.user.email } });
 
   return {
     props: {

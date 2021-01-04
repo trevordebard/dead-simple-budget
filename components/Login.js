@@ -1,6 +1,6 @@
 import { signIn } from 'next-auth/client';
 import styled from 'styled-components';
-import { ActionButton } from './styled';
+import { Button } from './Styled';
 
 const LoginWrapper = styled.div`
   display: grid;
@@ -46,9 +46,9 @@ const Login = () => {
         <Card>
           <h2>Login</h2>
           <hr />
-          <ActionButton transparent onClick={signInUser}>
+          <Button category="ACTION" transparent onClick={signInUser}>
             Sign in with Google
-          </ActionButton>
+          </Button>
         </Card>
       </Content>
     </LoginWrapper>

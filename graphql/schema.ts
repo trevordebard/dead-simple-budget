@@ -1,7 +1,9 @@
-import { makeSchema, objectType, mutationType, queryType } from '@nexus/schema';
+import { makeSchema, objectType, mutationType, queryType, arg } from 'nexus';
 import { nexusSchemaPrisma } from 'nexus-plugin-prisma/schema';
 import path from 'path';
 import { PrismaClient } from '@prisma/client';
+import { importTransactions } from '../lib/importTransactions';
+import { Upload, UploadFile } from './Upload';
 
 const User = objectType({
   name: 'user',
@@ -14,18 +16,18 @@ const User = objectType({
 });
 
 const Budget = objectType({
-  name: 'budget',
+  name: 'Budget',
   definition(t) {
     t.model.id();
     t.model.toBeBudgeted();
     t.model.total();
     t.model.userId();
-    t.model.stacks();
+    t.model.stacks({ ordering: true });
   },
 });
 
 const Transactions = objectType({
-  name: 'transactions',
+  name: 'Transaction',
   definition(t) {
     t.model.amount();
     t.model.description();
@@ -38,7 +40,7 @@ const Transactions = objectType({
 });
 
 const Stacks = objectType({
-  name: 'stacks',
+  name: 'Stack',
   definition(t) {
     t.model.id();
     t.model.label();
@@ -47,44 +49,99 @@ const Stacks = objectType({
     t.model.created_at();
   },
 });
+export const File = objectType({
+  name: 'File',
+  definition(t) {
+    t.id('id');
+    t.string('path');
+    t.string('filename');
+    t.string('mimetype');
+    t.string('encoding');
+  },
+});
+
 const Query = queryType({
   definition(t) {
     t.crud.user();
     t.crud.budget();
-    t.crud.transactions({ filtering: { user: true, userId: true } });
-    t.crud.user();
+    t.crud.transaction();
+    t.crud.transactions({ filtering: { user: true, userId: true }, ordering: { date: true } });
     t.crud.budgets({ filtering: { user: true, userId: true } });
-    t.crud.stacks();
+    t.crud.stacks({ filtering: { id: true } });
   },
 });
 
 const Mutation = mutationType({
   definition(t) {
-    t.crud.createOneuser();
-    t.crud.createOnebudget();
-    t.crud.updateOnebudget({
-      async resolve(root, args, ctx, info, originalResolve) {
-        const res = await originalResolve(root, args, ctx, info);
-        recalcToBeBudgeted(ctx.prisma, res.id);
-        return res;
+    t.field('uploadFile', {
+      type: 'UploadFile',
+      args: {
+        file: arg({ type: 'Upload' }),
+      },
+      resolve: async (_root, args, ctx) => {
+        const { createReadStream, filename } = await args.file;
+        await importTransactions(createReadStream, ctx);
+        return {
+          filename,
+        };
       },
     });
-    t.crud.updateOnestacks({
+    t.crud.createOneuser();
+    t.crud.deleteOneStack({
       async resolve(root, args, ctx, info, originalResolve) {
         const res = await originalResolve(root, args, ctx, info);
         await recalcToBeBudgeted(ctx.prisma, res.budgetId);
         return res;
       },
     });
-    t.crud.createOnestacks();
-    t.crud.createOnetransactions({
+    t.crud.deleteManyTransaction({
+      async resolve(root, args, ctx, info, originalResolve) {
+        // Sum transactions being deleted
+        const sum = await ctx.prisma.transaction.aggregate({
+          sum: { amount: true },
+          where: { id: { in: args.where.id.in } },
+        });
+        const res = await originalResolve(root, args, ctx, info);
+        // Get budget
+        const { budget } = await ctx.prisma.user.findUnique({
+          where: { email: ctx.session.user.email },
+          include: { budget: true },
+        });
+
+        // Update total
+        await ctx.prisma.budget.update({
+          // using negative amount becuase if the amount is negative, we want to increment total since that amount is being deleted
+          data: { total: { increment: -sum.sum.amount } },
+          where: { id: budget.id },
+        });
+        await recalcToBeBudgeted(ctx.prisma, budget.id);
+        return res;
+      },
+    });
+    t.crud.createOneBudget();
+    t.crud.updateOneBudget({
       async resolve(root, args, ctx, info, originalResolve) {
         const res = await originalResolve(root, args, ctx, info);
-        const { budget } = await ctx.prisma.user.findOne({
+        await recalcToBeBudgeted(ctx.prisma, res.id);
+        return res;
+      },
+    });
+    t.crud.updateOneStack({
+      async resolve(root, args, ctx, info, originalResolve) {
+        const res = await originalResolve(root, args, ctx, info);
+        await recalcToBeBudgeted(ctx.prisma, res.budgetId);
+        return res;
+      },
+    });
+    t.crud.createOneStack();
+    t.crud.createOneTransaction({
+      async resolve(root, args, ctx, info, originalResolve) {
+        const res = await originalResolve(root, args, ctx, info);
+        const { budget } = await ctx.prisma.user.findUnique({
           where: { id: res.userId },
           include: { budget: true },
         });
-        await ctx.prisma.stacks.update({
+        await ctx.prisma.stack.update({
           data: { amount: { increment: res.amount } },
           where: { budgetId_label_idx: { budgetId: budget.id, label: res.stack } },
         });
@@ -96,19 +153,40 @@ const Mutation = mutationType({
         return res;
       },
     });
-    t.crud.updateOnetransactions({
+    t.crud.updateOneTransaction({
       async resolve(root, args, ctx, info, originalResolve) {
-        const transactionBefore = await ctx.prisma.transactions.findOne({ where: { id: args.where.id } });
-        const res = await originalResolve(root, args, ctx, info);
-        const difference = transactionBefore.amount - res.amount;
-        const { budget } = await ctx.prisma.user.findOne({
-          where: { id: res.userId },
+        const transactionBefore = await ctx.prisma.transaction.findUnique({ where: { id: args.where.id } });
+        const { budget } = await ctx.prisma.user.findUnique({
+          where: { id: transactionBefore.userId },
           include: { budget: true },
         });
-        await ctx.prisma.stacks.update({
-          data: { amount: { increment: difference } },
+
+        // Offset stack by the original transaction amount
+        await ctx.prisma.stack.update({
+          where: { budgetId_label_idx: { budgetId: budget.id, label: transactionBefore.stack } },
+          data: { amount: { decrement: transactionBefore.amount } },
+        });
+
+        // Offset total by the orignal transaction amount
+        await ctx.prisma.budget.update({
+          where: { id: budget.id },
+          data: { total: { decrement: transactionBefore.amount } },
+        });
+
+        const res = await originalResolve(root, args, ctx, info);
+
+        // Adjust stack amount by transaction amount
+        await ctx.prisma.stack.update({
+          data: { amount: { increment: res.amount } },
           where: { budgetId_label_idx: { budgetId: budget.id, label: res.stack } },
         });
+
+        // Adjust budget total by transaction amount
+        await ctx.prisma.budget.update({
+          data: { total: { increment: res.amount } },
+          where: { id: budget.id },
+        });
+
         await recalcToBeBudgeted(ctx.prisma, budget.id);
         return res;
       },
@@ -116,32 +194,37 @@ const Mutation = mutationType({
   },
 });
 export const schema = makeSchema({
-  types: { Query, Budget, Transactions, Stacks, User, Mutation },
+  types: { Query, Budget, Transactions, Stacks, User, Mutation, Upload, UploadFile },
   plugins: [nexusSchemaPrisma({ experimentalCRUD: true })],
   outputs: {
-    schema: path.join(process.cwd(), 'schema.graphql'),
-    typegen: path.join(process.cwd(), 'nexus.ts'),
+    typegen: path.join(process.cwd(), 'graphql/generated/nexus-typegen.gen.ts'),
+    schema: path.join(process.cwd(), 'graphql/generated/schema.graphql'),
   },
-  typegenAutoConfig: {
-    contextType: 'Context.Context',
-    sources: [
+  sourceTypes: {
+    modules: [
       {
-        source: '@prisma/client',
-        alias: 'prisma',
+        module: '@prisma/client',
+        alias: 'PrismaClient',
+        typeMatch: name => new RegExp(`(?:interface|type|class)\\s+(${name}s?)\\W`, 'g'),
       },
       {
-        source: require.resolve('./context'),
-        alias: 'Context',
+        module: require.resolve('./context'),
+        alias: 'Context.Context',
+        typeMatch: name => new RegExp(`(?:interface|type|class)\\s+(${name}s?)\\W`, 'g'),
       },
     ],
   },
+  contextType: {
+    module: path.join(process.cwd(), 'graphql/context.ts'),
+    export: 'Context',
+  },
 });
 
-async function recalcToBeBudgeted(prisma: PrismaClient, budgetId: number) {
+export async function recalcToBeBudgeted(prisma: PrismaClient, budgetId: number) {
   const {
     sum: { amount: sumOfStacks },
-  } = await prisma.stacks.aggregate({ sum: { amount: true }, where: { budgetId: { equals: budgetId } } });
-  const { total } = await prisma.budget.findOne({ where: { id: budgetId } });
+  } = await prisma.stack.aggregate({ sum: { amount: true }, where: { budgetId: { equals: budgetId } } });
+  const { total } = await prisma.budget.findUnique({ where: { id: budgetId } });
   await prisma.budget.update({
     data: { toBeBudgeted: { set: total - sumOfStacks } },
     where: { id: budgetId },

@@ -1,6 +1,5 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["atomicNumberOperations"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -8,27 +7,27 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model budget {
-  id           Int      @id @default(autoincrement())
-  total        Float?   @default(0)
+model Budget {
+  id           Int     @id @default(autoincrement())
+  total        Float?  @default(0)
   toBeBudgeted Float?
   userId       Int
-  user         user     @relation(fields: [userId], references: [id])
-  stacks       stacks[]
+  user         user    @relation(fields: [userId], references: [id])
+  stacks       Stack[]
 }
 
-model stacks {
+model Stack {
   id         Int      @id @default(autoincrement())
   budgetId   Int
   label      String
   amount     Float    @default(0)
   created_at DateTime @default(now())
-  budget     budget   @relation(fields: [budgetId], references: [id])
+  budget     Budget   @relation(fields: [budgetId], references: [id])
 
   @@unique([budgetId, label], name: "budgetId_label_idx")
 }
 
-model transactions {
+model Transaction {
   id          Int      @id @default(autoincrement())
   description String
   stack       String
@@ -80,8 +79,8 @@ model user {
   createdAt     DateTime  @default(now()) @map("created_at")
   updatedAt     DateTime  @default(now()) @map("updated_at")
 
-  transactions transactions[]
-  budget       budget
+  transactions Transaction[]
+  budget       Budget?
   @@map("users")
 }
 
