@@ -118,11 +118,11 @@ const NewTransaction = () => {
       <Button category="ACTION" type="submit">
         Add
       </Button>
-      <div style={{ textAlign: 'center' }}>
+      {/* <div style={{ textAlign: 'center' }}>
         <Link href="/upload" passHref>
           <UploadLink>Import Transactions</UploadLink>
         </Link>
-      </div>
+      </div> */}
     </NewtransactionWrapper >
   );
 };

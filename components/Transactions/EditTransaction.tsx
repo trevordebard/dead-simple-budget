@@ -63,6 +63,9 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
   if (!data && !loading) {
     return <h1 style={{ textAlign: 'center' }}>Not Found</h1>;
   }
+  if (loading) {
+    return <p>Loading...</p>
+  }
   if (!data) {
     return null;
   }
