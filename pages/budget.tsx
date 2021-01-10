@@ -55,9 +55,12 @@ export async function getServerSideProps(context) {
   const apolloClient = initializeApollo(null, context);
   const session = await getSession(context);
   if (!session) {
-    context.res.writeHead(302, { Location: '/login' });
+    context.res.setHeader("location", "/login");
+    context.res.statusCode = 302;
     context.res.end();
-    return;
+    return {
+      props: null
+    };
   }
   let data;
   try {
