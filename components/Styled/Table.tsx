@@ -20,7 +20,11 @@ export const TD = styled.td`
   }
 `;
 
-export const TH = styled(TD).attrs({ as: 'th' }) <{ sticky?: boolean }>`
+interface iTHProps {
+  stickey?: boolean;
+}
+
+export const TH = styled(TD).attrs({ as: 'th' })<iTHProps>`
   text-align: inherit;
 `;
 
@@ -36,7 +40,6 @@ interface TableProps extends HTMLProps<HTMLTableElement> {
   stickyHeader?: boolean;
 }
 export const Table = styled.table<TableProps>`
-
   thead tr:nth-child(1) th {
     ${props => props.stickyHeader && stickyProps}
   }

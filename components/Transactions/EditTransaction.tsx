@@ -46,10 +46,10 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
   const { data, loading } = useGetTransactionQuery({ variables: { id: transactionId }, skip: transactionId === null });
   useEffect(() => {
     if (data) {
-      setTransactionType('')
-      setTransactionType(data.transaction.type)
+      setTransactionType('');
+      setTransactionType(data.transaction.type);
     }
-  }, [data])
+  }, [data]);
   const onSubmit = payload => {
     const { date, stack, description } = payload;
     let { amount } = payload;
@@ -62,6 +62,9 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
   };
   if (!data && !loading) {
     return <h1 style={{ textAlign: 'center' }}>Not Found</h1>;
+  }
+  if (loading) {
+    return <p>Loading...</p>;
   }
   if (!data) {
     return null;
@@ -131,12 +134,7 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
       <Button category="ACTION" type="submit">
         Save Changes
       </Button>
-      <Button
-        category="TRANSPARENT"
-        small
-        onClick={() => cancelEdit()}
-        style={{ alignSelf: 'center' }}
-      >
+      <Button category="TRANSPARENT" small onClick={() => cancelEdit()} style={{ alignSelf: 'center' }}>
         Cancel
       </Button>
     </EditTransactionWrapper>

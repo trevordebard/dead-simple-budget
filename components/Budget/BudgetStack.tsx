@@ -21,14 +21,14 @@ const StackInput = styled.input<{ danger: boolean }>`
 const BudgetStack = ({ label, budgetId, amount, id }) => {
   const [prevAmount, setPrevAmount] = useState<number>(amount);
   const { updateStack } = useBudget();
-  const budgetContext = useContext(BudgetContext)
+  const budgetContext = useContext(BudgetContext);
   const handleRowClick = () => {
     if (budgetContext.stackInFocus === id) {
-      budgetContext.setStackInFocus(null)
+      budgetContext.setStackInFocus(null);
     } else {
-      budgetContext.setStackInFocus(id)
+      budgetContext.setStackInFocus(id);
     }
-  }
+  };
   return (
     <ListRow selected={id === budgetContext.stackInFocus} onClick={handleRowClick}>
       <p>{label} </p>

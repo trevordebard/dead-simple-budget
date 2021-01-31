@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 
 interface InputProps {
-  category?: 'underline'
+  category?: 'underline';
 }
 
 const Input = styled.input<InputProps>`
@@ -21,5 +21,5 @@ const UnderlineCss = css`
     outline: none;
     border-bottom: 1.5px solid var(--aqua-500);
   }
-`
+`;
 export { Input };

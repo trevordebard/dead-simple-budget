@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Link from 'next/link';
 import useTransactions from './useTransactions';
 import { smBreakpoint } from '../../lib/constants';
-import { Table, THead, TR, TD, TH } from 'components/Styled/Table'
+import { Table, THead, TR, TD, TH } from 'components/Styled/Table';
 
 const TransactionWrapper = styled.div`
   max-width: 100%;
@@ -17,9 +17,9 @@ const TableWrapper = styled.div`
   max-height: 600px;
   font-size: 13px;
   overflow-y: scroll;
-  
+
   @media only screen and (max-width: ${smBreakpoint}) {
-  max-width: 90vw;
+    max-width: 90vw;
   }
 `;
 
@@ -35,7 +35,6 @@ const ActionLink = styled.a`
   cursor: pointer;
   color: var(--fontColorLight);
 `;
-
 
 const Transactions = () => {
   const { transactions, loading, deleteManyTransactions } = useTransactions();

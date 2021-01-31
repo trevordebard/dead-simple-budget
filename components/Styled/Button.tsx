@@ -39,7 +39,12 @@ const DangerButton = styled(StyledButton)`
   --buttonHover: var(--dangerHover);
   --buttonSubtle: var(--dangerSubtle);
 `;
-const TransparentButton = styled(StyledButton) <{ underline?: boolean, discrete?: boolean }>`
+
+interface iTransparentBtnProps {
+  underline?: boolean;
+  dsicrete?: boolean;
+}
+const TransparentButton = styled(StyledButton)<iTransparentBtnProps>`
   --buttonBg: transparent;
   --buttonHover: transparent;
   color: var(--fontColor);
@@ -62,16 +67,19 @@ const outlineCss = css`
   :hover {
     color: white;
   }
-`
+`;
 
 const smallCss = css`
-    font-size: var(--smallFontSize);
-    padding: 5px 15px;
-  `
+  font-size: var(--smallFontSize);
+  padding: 5px 15px;
+`;
 
+interface iRadioBtnProps {
+  active?: boolean;
+}
 // This should be used with side by side buttons
 // where only one should be selected
-const RadioButton = styled(StyledButton) <{ active?: boolean }>`
+const RadioButton = styled(StyledButton)<iRadioBtnProps>`
   --buttonBg: ${props => (props.active ? 'var(--neutral)' : 'transparent')};
   --buttonHover: ${props => (props.active ? 'var(--neutral)' : 'var(--neutralHover)')};
   border: 1px solid var(--neutral);
@@ -109,20 +117,20 @@ const Button: FC<ButtonProps> = ({ category = 'PRIMARY', loading, children, ...p
         {!loading && children}
       </StyledButton>
     </>
-  )
+  );
 };
 function getComponent(category: 'PRIMARY' | 'ACTION' | 'DANGER' | 'TRANSPARENT') {
   if (category === 'PRIMARY') {
-    return StyledButton
+    return StyledButton;
   }
   if (category == 'ACTION') {
-    return ActionButton
+    return ActionButton;
   }
   if (category === 'DANGER') {
-    return DangerButton
+    return DangerButton;
   }
   if (category === 'TRANSPARENT') {
-    return TransparentButton
+    return TransparentButton;
   }
 }
 

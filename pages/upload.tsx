@@ -13,7 +13,9 @@ const UploadPage = () => (
       <Left>
         <TabSidebar />
       </Left>
-      <Center><Upload /></Center>
+      <Center>
+        <Upload />
+      </Center>
     </Main>
   </Layout>
 );
@@ -23,11 +25,11 @@ export async function getServerSideProps(context) {
   const apolloClient = initializeApollo(null, context);
   const session = await getSession(context);
   if (!session) {
-    context.res.setHeader("location", "/login");
+    context.res.setHeader('location', '/login');
     context.res.statusCode = 302;
     context.res.end();
     return {
-      props: null
+      props: null,
     };
   }
   await apolloClient.query({ query: GET_USER, variables: { email: session.user.email } });

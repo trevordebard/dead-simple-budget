@@ -1,7 +1,6 @@
-import { motion } from 'framer-motion'
-import { smBreakpoint } from 'lib/constants'
-import styled from "styled-components"
-
+import { motion } from 'framer-motion';
+import { smBreakpoint } from 'lib/constants';
+import styled from 'styled-components';
 
 export const ActionSidebar = styled(motion.div)`
   @media only screen and (max-width: ${smBreakpoint}) {
@@ -11,4 +10,4 @@ export const ActionSidebar = styled(motion.div)`
     top: 0;
   }
   background-color: var(--white);
-`
+`;

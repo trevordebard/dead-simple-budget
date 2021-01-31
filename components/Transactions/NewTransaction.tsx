@@ -1,11 +1,10 @@
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import { useState } from 'react';
-import Link from 'next/link';
 import useTransactions from './useTransactions';
 import { Button, Input, RadioButton, RadioGroup, Select } from '../Styled';
 import { useSession } from 'next-auth/client';
-import moment from 'moment'
+import moment from 'moment';
 
 const UploadLink = styled.a`
   text-decoration: none;
@@ -46,14 +45,16 @@ const NewTransaction = () => {
   const { addTransaction, stackLabels } = useTransactions();
   const [transactionType, setTransactionType] = useState('withdrawal');
 
-  const onSubmit = (data) => {
+  const onSubmit = data => {
     const { description, stack } = data;
     let { amount, date } = data;
     amount = parseFloat(amount);
     if (transactionType === 'withdrawal') {
       amount = -amount;
     }
-    addTransaction({ variables: { amount, description, stack, type: transactionType, date: moment(date), email: session.user.email } });
+    addTransaction({
+      variables: { amount, description, stack, type: transactionType, date: moment(date), email: session.user.email },
+    });
 
     reset();
   };
@@ -83,7 +84,7 @@ const NewTransaction = () => {
         ref={register({ required: true })}
         onChange={e => setSelectedStack(e.target.value)}
       >
-        <option disabled value="" >
+        <option disabled value="">
           Select Stack
         </option>
         {stackLabels &&
@@ -118,12 +119,12 @@ const NewTransaction = () => {
       <Button category="ACTION" type="submit">
         Add
       </Button>
-      <div style={{ textAlign: 'center' }}>
+      {/* <div style={{ textAlign: 'center' }}>
         <Link href="/upload" passHref>
           <UploadLink>Import Transactions</UploadLink>
         </Link>
-      </div>
-    </NewtransactionWrapper >
+      </div>  */}
+    </NewtransactionWrapper>
   );
 };
 export default NewTransaction;
