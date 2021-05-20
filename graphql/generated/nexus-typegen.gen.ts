@@ -35,42 +35,38 @@ declare global {
 
 export interface NexusGenInputs {
   BudgetCreateInput: { // input type
-    stacks?: NexusGenInputs['StackCreateManyWithoutBudgetInput'] | null; // StackCreateManyWithoutBudgetInput
+    stacks?: NexusGenInputs['StackCreateNestedManyWithoutBudgetInput'] | null; // StackCreateNestedManyWithoutBudgetInput
     toBeBudgeted?: number | null; // Float
     total?: number | null; // Float
-    user: NexusGenInputs['userCreateOneWithoutBudgetInput']; // userCreateOneWithoutBudgetInput!
+    user: NexusGenInputs['userCreateNestedOneWithoutBudgetInput']; // userCreateNestedOneWithoutBudgetInput!
   }
-  BudgetCreateOneWithoutStacksInput: { // input type
+  BudgetCreateNestedOneWithoutStacksInput: { // input type
     connect?: NexusGenInputs['BudgetWhereUniqueInput'] | null; // BudgetWhereUniqueInput
-    connectOrCreate?: NexusGenInputs['BudgetCreateOrConnectWithoutstacksInput'] | null; // BudgetCreateOrConnectWithoutstacksInput
+    connectOrCreate?: NexusGenInputs['BudgetCreateOrConnectWithoutStacksInput'] | null; // BudgetCreateOrConnectWithoutStacksInput
     create?: NexusGenInputs['BudgetCreateWithoutStacksInput'] | null; // BudgetCreateWithoutStacksInput
   }
-  BudgetCreateOneWithoutUserInput: { // input type
+  BudgetCreateNestedOneWithoutUserInput: { // input type
     connect?: NexusGenInputs['BudgetWhereUniqueInput'] | null; // BudgetWhereUniqueInput
-    connectOrCreate?: NexusGenInputs['BudgetCreateOrConnectWithoutuserInput'] | null; // BudgetCreateOrConnectWithoutuserInput
+    connectOrCreate?: NexusGenInputs['BudgetCreateOrConnectWithoutUserInput'] | null; // BudgetCreateOrConnectWithoutUserInput
     create?: NexusGenInputs['BudgetCreateWithoutUserInput'] | null; // BudgetCreateWithoutUserInput
   }
-  BudgetCreateOrConnectWithoutstacksInput: { // input type
+  BudgetCreateOrConnectWithoutStacksInput: { // input type
     create: NexusGenInputs['BudgetCreateWithoutStacksInput']; // BudgetCreateWithoutStacksInput!
     where: NexusGenInputs['BudgetWhereUniqueInput']; // BudgetWhereUniqueInput!
   }
-  BudgetCreateOrConnectWithoutuserInput: { // input type
+  BudgetCreateOrConnectWithoutUserInput: { // input type
     create: NexusGenInputs['BudgetCreateWithoutUserInput']; // BudgetCreateWithoutUserInput!
     where: NexusGenInputs['BudgetWhereUniqueInput']; // BudgetWhereUniqueInput!
   }
   BudgetCreateWithoutStacksInput: { // input type
     toBeBudgeted?: number | null; // Float
     total?: number | null; // Float
-    user: NexusGenInputs['userCreateOneWithoutBudgetInput']; // userCreateOneWithoutBudgetInput!
+    user: NexusGenInputs['userCreateNestedOneWithoutBudgetInput']; // userCreateNestedOneWithoutBudgetInput!
   }
   BudgetCreateWithoutUserInput: { // input type
-    stacks?: NexusGenInputs['StackCreateManyWithoutBudgetInput'] | null; // StackCreateManyWithoutBudgetInput
+    stacks?: NexusGenInputs['StackCreateNestedManyWithoutBudgetInput'] | null; // StackCreateNestedManyWithoutBudgetInput
     toBeBudgeted?: number | null; // Float
     total?: number | null; // Float
-  }
-  BudgetId_label_idxCompoundUniqueInput: { // input type
-    budgetId: number; // Int!
-    label: string; // String!
   }
   BudgetUpdateInput: { // input type
     stacks?: NexusGenInputs['StackUpdateManyWithoutBudgetInput'] | null; // StackUpdateManyWithoutBudgetInput
@@ -80,14 +76,14 @@ export interface NexusGenInputs {
   }
   BudgetUpdateOneRequiredWithoutStacksInput: { // input type
     connect?: NexusGenInputs['BudgetWhereUniqueInput'] | null; // BudgetWhereUniqueInput
-    connectOrCreate?: NexusGenInputs['BudgetCreateOrConnectWithoutstacksInput'] | null; // BudgetCreateOrConnectWithoutstacksInput
+    connectOrCreate?: NexusGenInputs['BudgetCreateOrConnectWithoutStacksInput'] | null; // BudgetCreateOrConnectWithoutStacksInput
     create?: NexusGenInputs['BudgetCreateWithoutStacksInput'] | null; // BudgetCreateWithoutStacksInput
     update?: NexusGenInputs['BudgetUpdateWithoutStacksInput'] | null; // BudgetUpdateWithoutStacksInput
     upsert?: NexusGenInputs['BudgetUpsertWithoutStacksInput'] | null; // BudgetUpsertWithoutStacksInput
   }
   BudgetUpdateOneWithoutUserInput: { // input type
     connect?: NexusGenInputs['BudgetWhereUniqueInput'] | null; // BudgetWhereUniqueInput
-    connectOrCreate?: NexusGenInputs['BudgetCreateOrConnectWithoutuserInput'] | null; // BudgetCreateOrConnectWithoutuserInput
+    connectOrCreate?: NexusGenInputs['BudgetCreateOrConnectWithoutUserInput'] | null; // BudgetCreateOrConnectWithoutUserInput
     create?: NexusGenInputs['BudgetCreateWithoutUserInput'] | null; // BudgetCreateWithoutUserInput
     delete?: boolean | null; // Boolean
     disconnect?: boolean | null; // Boolean
@@ -114,9 +110,9 @@ export interface NexusGenInputs {
   }
   BudgetWhereInput: { // input type
     AND?: NexusGenInputs['BudgetWhereInput'][] | null; // [BudgetWhereInput!]
-    id?: NexusGenInputs['IntFilter'] | null; // IntFilter
     NOT?: NexusGenInputs['BudgetWhereInput'][] | null; // [BudgetWhereInput!]
     OR?: NexusGenInputs['BudgetWhereInput'][] | null; // [BudgetWhereInput!]
+    id?: NexusGenInputs['IntFilter'] | null; // IntFilter
     stacks?: NexusGenInputs['StackListRelationFilter'] | null; // StackListRelationFilter
     toBeBudgeted?: NexusGenInputs['FloatNullableFilter'] | null; // FloatNullableFilter
     total?: NexusGenInputs['FloatNullableFilter'] | null; // FloatNullableFilter
@@ -289,18 +285,33 @@ export interface NexusGenInputs {
     user?: NexusGenInputs['userWhereInput'] | null; // userWhereInput
     userId?: NexusGenInputs['IntFilter'] | null; // IntFilter
   }
+  StackBudgetId_label_idxCompoundUniqueInput: { // input type
+    budgetId: number; // Int!
+    label: string; // String!
+  }
   StackCreateInput: { // input type
     amount?: number | null; // Float
-    budget: NexusGenInputs['BudgetCreateOneWithoutStacksInput']; // BudgetCreateOneWithoutStacksInput!
+    budget: NexusGenInputs['BudgetCreateNestedOneWithoutStacksInput']; // BudgetCreateNestedOneWithoutStacksInput!
     created_at?: NexusGenScalars['DateTime'] | null; // DateTime
     label: string; // String!
   }
-  StackCreateManyWithoutBudgetInput: { // input type
-    connect?: NexusGenInputs['StackWhereUniqueInput'][] | null; // [StackWhereUniqueInput!]
-    connectOrCreate?: NexusGenInputs['StackCreateOrConnectWithoutbudgetInput'][] | null; // [StackCreateOrConnectWithoutbudgetInput!]
-    create?: NexusGenInputs['StackCreateWithoutBudgetInput'][] | null; // [StackCreateWithoutBudgetInput!]
+  StackCreateManyBudgetInput: { // input type
+    amount?: number | null; // Float
+    created_at?: NexusGenScalars['DateTime'] | null; // DateTime
+    id?: number | null; // Int
+    label: string; // String!
   }
-  StackCreateOrConnectWithoutbudgetInput: { // input type
+  StackCreateManyBudgetInputEnvelope: { // input type
+    data?: NexusGenInputs['StackCreateManyBudgetInput'][] | null; // [StackCreateManyBudgetInput!]
+    skipDuplicates?: boolean | null; // Boolean
+  }
+  StackCreateNestedManyWithoutBudgetInput: { // input type
+    connect?: NexusGenInputs['StackWhereUniqueInput'][] | null; // [StackWhereUniqueInput!]
+    connectOrCreate?: NexusGenInputs['StackCreateOrConnectWithoutBudgetInput'][] | null; // [StackCreateOrConnectWithoutBudgetInput!]
+    create?: NexusGenInputs['StackCreateWithoutBudgetInput'][] | null; // [StackCreateWithoutBudgetInput!]
+    createMany?: NexusGenInputs['StackCreateManyBudgetInputEnvelope'] | null; // StackCreateManyBudgetInputEnvelope
+  }
+  StackCreateOrConnectWithoutBudgetInput: { // input type
     create: NexusGenInputs['StackCreateWithoutBudgetInput']; // StackCreateWithoutBudgetInput!
     where: NexusGenInputs['StackWhereUniqueInput']; // StackWhereUniqueInput!
   }
@@ -322,14 +333,14 @@ export interface NexusGenInputs {
     label?: NexusGenEnums['SortOrder'] | null; // SortOrder
   }
   StackScalarWhereInput: { // input type
-    amount?: NexusGenInputs['FloatFilter'] | null; // FloatFilter
     AND?: NexusGenInputs['StackScalarWhereInput'][] | null; // [StackScalarWhereInput!]
+    NOT?: NexusGenInputs['StackScalarWhereInput'][] | null; // [StackScalarWhereInput!]
+    OR?: NexusGenInputs['StackScalarWhereInput'][] | null; // [StackScalarWhereInput!]
+    amount?: NexusGenInputs['FloatFilter'] | null; // FloatFilter
     budgetId?: NexusGenInputs['IntFilter'] | null; // IntFilter
     created_at?: NexusGenInputs['DateTimeFilter'] | null; // DateTimeFilter
     id?: NexusGenInputs['IntFilter'] | null; // IntFilter
     label?: NexusGenInputs['StringFilter'] | null; // StringFilter
-    NOT?: NexusGenInputs['StackScalarWhereInput'][] | null; // [StackScalarWhereInput!]
-    OR?: NexusGenInputs['StackScalarWhereInput'][] | null; // [StackScalarWhereInput!]
   }
   StackUpdateInput: { // input type
     amount?: NexusGenInputs['FloatFieldUpdateOperationsInput'] | null; // FloatFieldUpdateOperationsInput
@@ -348,8 +359,9 @@ export interface NexusGenInputs {
   }
   StackUpdateManyWithoutBudgetInput: { // input type
     connect?: NexusGenInputs['StackWhereUniqueInput'][] | null; // [StackWhereUniqueInput!]
-    connectOrCreate?: NexusGenInputs['StackCreateOrConnectWithoutbudgetInput'][] | null; // [StackCreateOrConnectWithoutbudgetInput!]
+    connectOrCreate?: NexusGenInputs['StackCreateOrConnectWithoutBudgetInput'][] | null; // [StackCreateOrConnectWithoutBudgetInput!]
     create?: NexusGenInputs['StackCreateWithoutBudgetInput'][] | null; // [StackCreateWithoutBudgetInput!]
+    createMany?: NexusGenInputs['StackCreateManyBudgetInputEnvelope'] | null; // StackCreateManyBudgetInputEnvelope
     delete?: NexusGenInputs['StackWhereUniqueInput'][] | null; // [StackWhereUniqueInput!]
     deleteMany?: NexusGenInputs['StackScalarWhereInput'][] | null; // [StackScalarWhereInput!]
     disconnect?: NexusGenInputs['StackWhereUniqueInput'][] | null; // [StackWhereUniqueInput!]
@@ -373,18 +385,18 @@ export interface NexusGenInputs {
     where: NexusGenInputs['StackWhereUniqueInput']; // StackWhereUniqueInput!
   }
   StackWhereInput: { // input type
-    amount?: NexusGenInputs['FloatFilter'] | null; // FloatFilter
     AND?: NexusGenInputs['StackWhereInput'][] | null; // [StackWhereInput!]
+    NOT?: NexusGenInputs['StackWhereInput'][] | null; // [StackWhereInput!]
+    OR?: NexusGenInputs['StackWhereInput'][] | null; // [StackWhereInput!]
+    amount?: NexusGenInputs['FloatFilter'] | null; // FloatFilter
     budget?: NexusGenInputs['BudgetWhereInput'] | null; // BudgetWhereInput
     budgetId?: NexusGenInputs['IntFilter'] | null; // IntFilter
     created_at?: NexusGenInputs['DateTimeFilter'] | null; // DateTimeFilter
     id?: NexusGenInputs['IntFilter'] | null; // IntFilter
     label?: NexusGenInputs['StringFilter'] | null; // StringFilter
-    NOT?: NexusGenInputs['StackWhereInput'][] | null; // [StackWhereInput!]
-    OR?: NexusGenInputs['StackWhereInput'][] | null; // [StackWhereInput!]
   }
   StackWhereUniqueInput: { // input type
-    budgetId_label_idx?: NexusGenInputs['BudgetId_label_idxCompoundUniqueInput'] | null; // BudgetId_label_idxCompoundUniqueInput
+    budgetId_label_idx?: NexusGenInputs['StackBudgetId_label_idxCompoundUniqueInput'] | null; // StackBudgetId_label_idxCompoundUniqueInput
     id?: number | null; // Int
   }
   StringFieldUpdateOperationsInput: { // input type
@@ -424,14 +436,27 @@ export interface NexusGenInputs {
     description: string; // String!
     stack: string; // String!
     type: string; // String!
-    user: NexusGenInputs['userCreateOneWithoutTransactionsInput']; // userCreateOneWithoutTransactionsInput!
+    user: NexusGenInputs['userCreateNestedOneWithoutTransactionsInput']; // userCreateNestedOneWithoutTransactionsInput!
   }
-  TransactionCreateManyWithoutUserInput: { // input type
+  TransactionCreateManyUserInput: { // input type
+    amount: number; // Float!
+    date: NexusGenScalars['DateTime']; // DateTime!
+    description: string; // String!
+    id?: number | null; // Int
+    stack: string; // String!
+    type: string; // String!
+  }
+  TransactionCreateManyUserInputEnvelope: { // input type
+    data?: NexusGenInputs['TransactionCreateManyUserInput'][] | null; // [TransactionCreateManyUserInput!]
+    skipDuplicates?: boolean | null; // Boolean
+  }
+  TransactionCreateNestedManyWithoutUserInput: { // input type
     connect?: NexusGenInputs['TransactionWhereUniqueInput'][] | null; // [TransactionWhereUniqueInput!]
-    connectOrCreate?: NexusGenInputs['TransactionCreateOrConnectWithoutuserInput'][] | null; // [TransactionCreateOrConnectWithoutuserInput!]
+    connectOrCreate?: NexusGenInputs['TransactionCreateOrConnectWithoutUserInput'][] | null; // [TransactionCreateOrConnectWithoutUserInput!]
     create?: NexusGenInputs['TransactionCreateWithoutUserInput'][] | null; // [TransactionCreateWithoutUserInput!]
+    createMany?: NexusGenInputs['TransactionCreateManyUserInputEnvelope'] | null; // TransactionCreateManyUserInputEnvelope
   }
-  TransactionCreateOrConnectWithoutuserInput: { // input type
+  TransactionCreateOrConnectWithoutUserInput: { // input type
     create: NexusGenInputs['TransactionCreateWithoutUserInput']; // TransactionCreateWithoutUserInput!
     where: NexusGenInputs['TransactionWhereUniqueInput']; // TransactionWhereUniqueInput!
   }
@@ -448,13 +473,13 @@ export interface NexusGenInputs {
     some?: NexusGenInputs['TransactionWhereInput'] | null; // TransactionWhereInput
   }
   TransactionScalarWhereInput: { // input type
-    amount?: NexusGenInputs['FloatFilter'] | null; // FloatFilter
     AND?: NexusGenInputs['TransactionScalarWhereInput'][] | null; // [TransactionScalarWhereInput!]
+    NOT?: NexusGenInputs['TransactionScalarWhereInput'][] | null; // [TransactionScalarWhereInput!]
+    OR?: NexusGenInputs['TransactionScalarWhereInput'][] | null; // [TransactionScalarWhereInput!]
+    amount?: NexusGenInputs['FloatFilter'] | null; // FloatFilter
     date?: NexusGenInputs['DateTimeFilter'] | null; // DateTimeFilter
     description?: NexusGenInputs['StringFilter'] | null; // StringFilter
     id?: NexusGenInputs['IntFilter'] | null; // IntFilter
-    NOT?: NexusGenInputs['TransactionScalarWhereInput'][] | null; // [TransactionScalarWhereInput!]
-    OR?: NexusGenInputs['TransactionScalarWhereInput'][] | null; // [TransactionScalarWhereInput!]
     stack?: NexusGenInputs['StringFilter'] | null; // StringFilter
     type?: NexusGenInputs['StringFilter'] | null; // StringFilter
     userId?: NexusGenInputs['IntFilter'] | null; // IntFilter
@@ -480,8 +505,9 @@ export interface NexusGenInputs {
   }
   TransactionUpdateManyWithoutUserInput: { // input type
     connect?: NexusGenInputs['TransactionWhereUniqueInput'][] | null; // [TransactionWhereUniqueInput!]
-    connectOrCreate?: NexusGenInputs['TransactionCreateOrConnectWithoutuserInput'][] | null; // [TransactionCreateOrConnectWithoutuserInput!]
+    connectOrCreate?: NexusGenInputs['TransactionCreateOrConnectWithoutUserInput'][] | null; // [TransactionCreateOrConnectWithoutUserInput!]
     create?: NexusGenInputs['TransactionCreateWithoutUserInput'][] | null; // [TransactionCreateWithoutUserInput!]
+    createMany?: NexusGenInputs['TransactionCreateManyUserInputEnvelope'] | null; // TransactionCreateManyUserInputEnvelope
     delete?: NexusGenInputs['TransactionWhereUniqueInput'][] | null; // [TransactionWhereUniqueInput!]
     deleteMany?: NexusGenInputs['TransactionScalarWhereInput'][] | null; // [TransactionScalarWhereInput!]
     disconnect?: NexusGenInputs['TransactionWhereUniqueInput'][] | null; // [TransactionWhereUniqueInput!]
@@ -507,13 +533,13 @@ export interface NexusGenInputs {
     where: NexusGenInputs['TransactionWhereUniqueInput']; // TransactionWhereUniqueInput!
   }
   TransactionWhereInput: { // input type
-    amount?: NexusGenInputs['FloatFilter'] | null; // FloatFilter
     AND?: NexusGenInputs['TransactionWhereInput'][] | null; // [TransactionWhereInput!]
+    NOT?: NexusGenInputs['TransactionWhereInput'][] | null; // [TransactionWhereInput!]
+    OR?: NexusGenInputs['TransactionWhereInput'][] | null; // [TransactionWhereInput!]
+    amount?: NexusGenInputs['FloatFilter'] | null; // FloatFilter
     date?: NexusGenInputs['DateTimeFilter'] | null; // DateTimeFilter
     description?: NexusGenInputs['StringFilter'] | null; // StringFilter
     id?: NexusGenInputs['IntFilter'] | null; // IntFilter
-    NOT?: NexusGenInputs['TransactionWhereInput'][] | null; // [TransactionWhereInput!]
-    OR?: NexusGenInputs['TransactionWhereInput'][] | null; // [TransactionWhereInput!]
     stack?: NexusGenInputs['StringFilter'] | null; // StringFilter
     type?: NexusGenInputs['StringFilter'] | null; // StringFilter
     user?: NexusGenInputs['userWhereInput'] | null; // userWhereInput
@@ -523,30 +549,30 @@ export interface NexusGenInputs {
     id?: number | null; // Int
   }
   userCreateInput: { // input type
-    budget?: NexusGenInputs['BudgetCreateOneWithoutUserInput'] | null; // BudgetCreateOneWithoutUserInput
+    budget?: NexusGenInputs['BudgetCreateNestedOneWithoutUserInput'] | null; // BudgetCreateNestedOneWithoutUserInput
     createdAt?: NexusGenScalars['DateTime'] | null; // DateTime
     email: string; // String!
     emailVerified?: NexusGenScalars['DateTime'] | null; // DateTime
     image?: string | null; // String
     name?: string | null; // String
-    transactions?: NexusGenInputs['TransactionCreateManyWithoutUserInput'] | null; // TransactionCreateManyWithoutUserInput
+    transactions?: NexusGenInputs['TransactionCreateNestedManyWithoutUserInput'] | null; // TransactionCreateNestedManyWithoutUserInput
     updatedAt?: NexusGenScalars['DateTime'] | null; // DateTime
   }
-  userCreateOneWithoutBudgetInput: { // input type
+  userCreateNestedOneWithoutBudgetInput: { // input type
     connect?: NexusGenInputs['userWhereUniqueInput'] | null; // userWhereUniqueInput
-    connectOrCreate?: NexusGenInputs['userCreateOrConnectWithoutbudgetInput'] | null; // userCreateOrConnectWithoutbudgetInput
+    connectOrCreate?: NexusGenInputs['userCreateOrConnectWithoutBudgetInput'] | null; // userCreateOrConnectWithoutBudgetInput
     create?: NexusGenInputs['userCreateWithoutBudgetInput'] | null; // userCreateWithoutBudgetInput
   }
-  userCreateOneWithoutTransactionsInput: { // input type
+  userCreateNestedOneWithoutTransactionsInput: { // input type
     connect?: NexusGenInputs['userWhereUniqueInput'] | null; // userWhereUniqueInput
-    connectOrCreate?: NexusGenInputs['userCreateOrConnectWithouttransactionsInput'] | null; // userCreateOrConnectWithouttransactionsInput
+    connectOrCreate?: NexusGenInputs['userCreateOrConnectWithoutTransactionsInput'] | null; // userCreateOrConnectWithoutTransactionsInput
     create?: NexusGenInputs['userCreateWithoutTransactionsInput'] | null; // userCreateWithoutTransactionsInput
   }
-  userCreateOrConnectWithoutbudgetInput: { // input type
+  userCreateOrConnectWithoutBudgetInput: { // input type
     create: NexusGenInputs['userCreateWithoutBudgetInput']; // userCreateWithoutBudgetInput!
     where: NexusGenInputs['userWhereUniqueInput']; // userWhereUniqueInput!
   }
-  userCreateOrConnectWithouttransactionsInput: { // input type
+  userCreateOrConnectWithoutTransactionsInput: { // input type
     create: NexusGenInputs['userCreateWithoutTransactionsInput']; // userCreateWithoutTransactionsInput!
     where: NexusGenInputs['userWhereUniqueInput']; // userWhereUniqueInput!
   }
@@ -556,11 +582,11 @@ export interface NexusGenInputs {
     emailVerified?: NexusGenScalars['DateTime'] | null; // DateTime
     image?: string | null; // String
     name?: string | null; // String
-    transactions?: NexusGenInputs['TransactionCreateManyWithoutUserInput'] | null; // TransactionCreateManyWithoutUserInput
+    transactions?: NexusGenInputs['TransactionCreateNestedManyWithoutUserInput'] | null; // TransactionCreateNestedManyWithoutUserInput
     updatedAt?: NexusGenScalars['DateTime'] | null; // DateTime
   }
   userCreateWithoutTransactionsInput: { // input type
-    budget?: NexusGenInputs['BudgetCreateOneWithoutUserInput'] | null; // BudgetCreateOneWithoutUserInput
+    budget?: NexusGenInputs['BudgetCreateNestedOneWithoutUserInput'] | null; // BudgetCreateNestedOneWithoutUserInput
     createdAt?: NexusGenScalars['DateTime'] | null; // DateTime
     email: string; // String!
     emailVerified?: NexusGenScalars['DateTime'] | null; // DateTime
@@ -570,14 +596,14 @@ export interface NexusGenInputs {
   }
   userUpdateOneRequiredWithoutBudgetInput: { // input type
     connect?: NexusGenInputs['userWhereUniqueInput'] | null; // userWhereUniqueInput
-    connectOrCreate?: NexusGenInputs['userCreateOrConnectWithoutbudgetInput'] | null; // userCreateOrConnectWithoutbudgetInput
+    connectOrCreate?: NexusGenInputs['userCreateOrConnectWithoutBudgetInput'] | null; // userCreateOrConnectWithoutBudgetInput
     create?: NexusGenInputs['userCreateWithoutBudgetInput'] | null; // userCreateWithoutBudgetInput
     update?: NexusGenInputs['userUpdateWithoutBudgetInput'] | null; // userUpdateWithoutBudgetInput
     upsert?: NexusGenInputs['userUpsertWithoutBudgetInput'] | null; // userUpsertWithoutBudgetInput
   }
   userUpdateOneRequiredWithoutTransactionsInput: { // input type
     connect?: NexusGenInputs['userWhereUniqueInput'] | null; // userWhereUniqueInput
-    connectOrCreate?: NexusGenInputs['userCreateOrConnectWithouttransactionsInput'] | null; // userCreateOrConnectWithouttransactionsInput
+    connectOrCreate?: NexusGenInputs['userCreateOrConnectWithoutTransactionsInput'] | null; // userCreateOrConnectWithoutTransactionsInput
     create?: NexusGenInputs['userCreateWithoutTransactionsInput'] | null; // userCreateWithoutTransactionsInput
     update?: NexusGenInputs['userUpdateWithoutTransactionsInput'] | null; // userUpdateWithoutTransactionsInput
     upsert?: NexusGenInputs['userUpsertWithoutTransactionsInput'] | null; // userUpsertWithoutTransactionsInput
@@ -610,6 +636,8 @@ export interface NexusGenInputs {
   }
   userWhereInput: { // input type
     AND?: NexusGenInputs['userWhereInput'][] | null; // [userWhereInput!]
+    NOT?: NexusGenInputs['userWhereInput'][] | null; // [userWhereInput!]
+    OR?: NexusGenInputs['userWhereInput'][] | null; // [userWhereInput!]
     budget?: NexusGenInputs['BudgetWhereInput'] | null; // BudgetWhereInput
     createdAt?: NexusGenInputs['DateTimeFilter'] | null; // DateTimeFilter
     email?: NexusGenInputs['StringFilter'] | null; // StringFilter
@@ -617,8 +645,6 @@ export interface NexusGenInputs {
     id?: NexusGenInputs['IntFilter'] | null; // IntFilter
     image?: NexusGenInputs['StringNullableFilter'] | null; // StringNullableFilter
     name?: NexusGenInputs['StringNullableFilter'] | null; // StringNullableFilter
-    NOT?: NexusGenInputs['userWhereInput'][] | null; // [userWhereInput!]
-    OR?: NexusGenInputs['userWhereInput'][] | null; // [userWhereInput!]
     transactions?: NexusGenInputs['TransactionListRelationFilter'] | null; // TransactionListRelationFilter
     updatedAt?: NexusGenInputs['DateTimeFilter'] | null; // DateTimeFilter
   }
@@ -644,7 +670,7 @@ export interface NexusGenScalars {
 }
 
 export interface NexusGenObjects {
-  BatchPayload: { // root type
+  AffectedRowsOutput: { // root type
     count: number; // Int!
   }
   Budget: { // root type
@@ -692,7 +718,7 @@ export type NexusGenRootTypes = NexusGenObjects
 export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars & NexusGenEnums
 
 export interface NexusGenFieldTypes {
-  BatchPayload: { // field return type
+  AffectedRowsOutput: { // field return type
     count: number; // Int!
   }
   Budget: { // field return type
@@ -707,7 +733,7 @@ export interface NexusGenFieldTypes {
     createOneStack: NexusGenRootTypes['Stack']; // Stack!
     createOneTransaction: NexusGenRootTypes['Transaction']; // Transaction!
     createOneuser: NexusGenRootTypes['user']; // user!
-    deleteManyTransaction: NexusGenRootTypes['BatchPayload']; // BatchPayload!
+    deleteManyTransaction: NexusGenRootTypes['AffectedRowsOutput']; // AffectedRowsOutput!
     deleteOneStack: NexusGenRootTypes['Stack'] | null; // Stack
     updateOneBudget: NexusGenRootTypes['Budget'] | null; // Budget
     updateOneStack: NexusGenRootTypes['Stack'] | null; // Stack
@@ -751,7 +777,7 @@ export interface NexusGenFieldTypes {
 }
 
 export interface NexusGenFieldTypeNames {
-  BatchPayload: { // field return type name
+  AffectedRowsOutput: { // field return type name
     count: 'Int'
   }
   Budget: { // field return type name
@@ -766,7 +792,7 @@ export interface NexusGenFieldTypeNames {
     createOneStack: 'Stack'
     createOneTransaction: 'Transaction'
     createOneuser: 'user'
-    deleteManyTransaction: 'BatchPayload'
+    deleteManyTransaction: 'AffectedRowsOutput'
     deleteOneStack: 'Stack'
     updateOneBudget: 'Budget'
     updateOneStack: 'Stack'

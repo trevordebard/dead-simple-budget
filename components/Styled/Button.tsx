@@ -42,7 +42,7 @@ const DangerButton = styled(StyledButton)`
 
 interface iTransparentBtnProps {
   underline?: boolean;
-  dsicrete?: boolean;
+  discrete?: boolean;
 }
 const TransparentButton = styled(StyledButton)<iTransparentBtnProps>`
   --buttonBg: transparent;

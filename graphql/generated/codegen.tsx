@@ -4,6 +4,7 @@ export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+const defaultOptions =  {}
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -11,63 +12,14 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  DateTime: any;
   /** The `Upload` scalar type represents a file upload. */
   Upload: any;
-  DateTime: any;
 };
 
-
-export type Query = {
-  __typename?: 'Query';
-  user?: Maybe<User>;
-  budget?: Maybe<Budget>;
-  transaction?: Maybe<Transaction>;
-  transactions: Array<Transaction>;
-  budgets: Array<Budget>;
-  stacks: Array<Stack>;
-};
-
-
-export type QueryUserArgs = {
-  where: UserWhereUniqueInput;
-};
-
-
-export type QueryBudgetArgs = {
-  where: BudgetWhereUniqueInput;
-};
-
-
-export type QueryTransactionArgs = {
-  where: TransactionWhereUniqueInput;
-};
-
-
-export type QueryTransactionsArgs = {
-  where?: Maybe<QueryTransactionsWhereInput>;
-  orderBy?: Maybe<Array<QueryTransactionsOrderByInput>>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  before?: Maybe<TransactionWhereUniqueInput>;
-  after?: Maybe<TransactionWhereUniqueInput>;
-};
-
-
-export type QueryBudgetsArgs = {
-  where?: Maybe<QueryBudgetsWhereInput>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  before?: Maybe<BudgetWhereUniqueInput>;
-  after?: Maybe<BudgetWhereUniqueInput>;
-};
-
-
-export type QueryStacksArgs = {
-  where?: Maybe<QueryStacksWhereInput>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  before?: Maybe<StackWhereUniqueInput>;
-  after?: Maybe<StackWhereUniqueInput>;
+export type AffectedRowsOutput = {
+  __typename?: 'AffectedRowsOutput';
+  count: Scalars['Int'];
 };
 
 export type Budget = {
@@ -88,40 +40,176 @@ export type BudgetStacksArgs = {
   after?: Maybe<StackWhereUniqueInput>;
 };
 
-export type Transaction = {
-  __typename?: 'Transaction';
-  amount: Scalars['Float'];
-  description: Scalars['String'];
-  id: Scalars['Int'];
-  stack: Scalars['String'];
-  type: Scalars['String'];
-  userId: Scalars['Int'];
-  date: Scalars['DateTime'];
+export type BudgetCreateInput = {
+  total?: Maybe<Scalars['Float']>;
+  toBeBudgeted?: Maybe<Scalars['Float']>;
+  user: UserCreateNestedOneWithoutBudgetInput;
+  stacks?: Maybe<StackCreateNestedManyWithoutBudgetInput>;
 };
 
-export type Stack = {
-  __typename?: 'Stack';
-  id: Scalars['Int'];
-  label: Scalars['String'];
-  amount: Scalars['Float'];
-  budgetId: Scalars['Int'];
-  created_at: Scalars['DateTime'];
+export type BudgetCreateNestedOneWithoutStacksInput = {
+  create?: Maybe<BudgetCreateWithoutStacksInput>;
+  connectOrCreate?: Maybe<BudgetCreateOrConnectWithoutStacksInput>;
+  connect?: Maybe<BudgetWhereUniqueInput>;
 };
 
-export type User = {
-  __typename?: 'user';
-  id: Scalars['Int'];
-  email: Scalars['String'];
-  budget?: Maybe<Budget>;
-  transactions: Array<Transaction>;
+export type BudgetCreateNestedOneWithoutUserInput = {
+  create?: Maybe<BudgetCreateWithoutUserInput>;
+  connectOrCreate?: Maybe<BudgetCreateOrConnectWithoutUserInput>;
+  connect?: Maybe<BudgetWhereUniqueInput>;
+};
+
+export type BudgetCreateOrConnectWithoutStacksInput = {
+  where: BudgetWhereUniqueInput;
+  create: BudgetCreateWithoutStacksInput;
+};
+
+export type BudgetCreateOrConnectWithoutUserInput = {
+  where: BudgetWhereUniqueInput;
+  create: BudgetCreateWithoutUserInput;
+};
+
+export type BudgetCreateWithoutStacksInput = {
+  total?: Maybe<Scalars['Float']>;
+  toBeBudgeted?: Maybe<Scalars['Float']>;
+  user: UserCreateNestedOneWithoutBudgetInput;
+};
+
+export type BudgetCreateWithoutUserInput = {
+  total?: Maybe<Scalars['Float']>;
+  toBeBudgeted?: Maybe<Scalars['Float']>;
+  stacks?: Maybe<StackCreateNestedManyWithoutBudgetInput>;
+};
+
+export type BudgetUpdateInput = {
+  total?: Maybe<NullableFloatFieldUpdateOperationsInput>;
+  toBeBudgeted?: Maybe<NullableFloatFieldUpdateOperationsInput>;
+  user?: Maybe<UserUpdateOneRequiredWithoutBudgetInput>;
+  stacks?: Maybe<StackUpdateManyWithoutBudgetInput>;
+};
+
+export type BudgetUpdateOneRequiredWithoutStacksInput = {
+  create?: Maybe<BudgetCreateWithoutStacksInput>;
+  connectOrCreate?: Maybe<BudgetCreateOrConnectWithoutStacksInput>;
+  upsert?: Maybe<BudgetUpsertWithoutStacksInput>;
+  connect?: Maybe<BudgetWhereUniqueInput>;
+  update?: Maybe<BudgetUpdateWithoutStacksInput>;
+};
+
+export type BudgetUpdateOneWithoutUserInput = {
+  create?: Maybe<BudgetCreateWithoutUserInput>;
+  connectOrCreate?: Maybe<BudgetCreateOrConnectWithoutUserInput>;
+  upsert?: Maybe<BudgetUpsertWithoutUserInput>;
+  connect?: Maybe<BudgetWhereUniqueInput>;
+  disconnect?: Maybe<Scalars['Boolean']>;
+  delete?: Maybe<Scalars['Boolean']>;
+  update?: Maybe<BudgetUpdateWithoutUserInput>;
+};
+
+export type BudgetUpdateWithoutStacksInput = {
+  total?: Maybe<NullableFloatFieldUpdateOperationsInput>;
+  toBeBudgeted?: Maybe<NullableFloatFieldUpdateOperationsInput>;
+  user?: Maybe<UserUpdateOneRequiredWithoutBudgetInput>;
+};
+
+export type BudgetUpdateWithoutUserInput = {
+  total?: Maybe<NullableFloatFieldUpdateOperationsInput>;
+  toBeBudgeted?: Maybe<NullableFloatFieldUpdateOperationsInput>;
+  stacks?: Maybe<StackUpdateManyWithoutBudgetInput>;
+};
+
+export type BudgetUpsertWithoutStacksInput = {
+  update: BudgetUpdateWithoutStacksInput;
+  create: BudgetCreateWithoutStacksInput;
+};
+
+export type BudgetUpsertWithoutUserInput = {
+  update: BudgetUpdateWithoutUserInput;
+  create: BudgetCreateWithoutUserInput;
+};
+
+export type BudgetWhereInput = {
+  AND?: Maybe<Array<BudgetWhereInput>>;
+  OR?: Maybe<Array<BudgetWhereInput>>;
+  NOT?: Maybe<Array<BudgetWhereInput>>;
+  id?: Maybe<IntFilter>;
+  total?: Maybe<FloatNullableFilter>;
+  toBeBudgeted?: Maybe<FloatNullableFilter>;
+  userId?: Maybe<IntFilter>;
+  user?: Maybe<UserWhereInput>;
+  stacks?: Maybe<StackListRelationFilter>;
+};
+
+export type BudgetWhereUniqueInput = {
+  id?: Maybe<Scalars['Int']>;
 };
 
 
-export type UserTransactionsArgs = {
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  before?: Maybe<TransactionWhereUniqueInput>;
-  after?: Maybe<TransactionWhereUniqueInput>;
+export type DateTimeFieldUpdateOperationsInput = {
+  set?: Maybe<Scalars['DateTime']>;
+};
+
+export type DateTimeFilter = {
+  equals?: Maybe<Scalars['DateTime']>;
+  in?: Maybe<Array<Scalars['DateTime']>>;
+  notIn?: Maybe<Array<Scalars['DateTime']>>;
+  lt?: Maybe<Scalars['DateTime']>;
+  lte?: Maybe<Scalars['DateTime']>;
+  gt?: Maybe<Scalars['DateTime']>;
+  gte?: Maybe<Scalars['DateTime']>;
+  not?: Maybe<NestedDateTimeFilter>;
+};
+
+export type DateTimeNullableFilter = {
+  equals?: Maybe<Scalars['DateTime']>;
+  in?: Maybe<Array<Scalars['DateTime']>>;
+  notIn?: Maybe<Array<Scalars['DateTime']>>;
+  lt?: Maybe<Scalars['DateTime']>;
+  lte?: Maybe<Scalars['DateTime']>;
+  gt?: Maybe<Scalars['DateTime']>;
+  gte?: Maybe<Scalars['DateTime']>;
+  not?: Maybe<NestedDateTimeNullableFilter>;
+};
+
+export type FloatFieldUpdateOperationsInput = {
+  set?: Maybe<Scalars['Float']>;
+  increment?: Maybe<Scalars['Float']>;
+  decrement?: Maybe<Scalars['Float']>;
+  multiply?: Maybe<Scalars['Float']>;
+  divide?: Maybe<Scalars['Float']>;
+};
+
+export type FloatFilter = {
+  equals?: Maybe<Scalars['Float']>;
+  in?: Maybe<Array<Scalars['Float']>>;
+  notIn?: Maybe<Array<Scalars['Float']>>;
+  lt?: Maybe<Scalars['Float']>;
+  lte?: Maybe<Scalars['Float']>;
+  gt?: Maybe<Scalars['Float']>;
+  gte?: Maybe<Scalars['Float']>;
+  not?: Maybe<NestedFloatFilter>;
+};
+
+export type FloatNullableFilter = {
+  equals?: Maybe<Scalars['Float']>;
+  in?: Maybe<Array<Scalars['Float']>>;
+  notIn?: Maybe<Array<Scalars['Float']>>;
+  lt?: Maybe<Scalars['Float']>;
+  lte?: Maybe<Scalars['Float']>;
+  gt?: Maybe<Scalars['Float']>;
+  gte?: Maybe<Scalars['Float']>;
+  not?: Maybe<NestedFloatNullableFilter>;
+};
+
+export type IntFilter = {
+  equals?: Maybe<Scalars['Int']>;
+  in?: Maybe<Array<Scalars['Int']>>;
+  notIn?: Maybe<Array<Scalars['Int']>>;
+  lt?: Maybe<Scalars['Int']>;
+  lte?: Maybe<Scalars['Int']>;
+  gt?: Maybe<Scalars['Int']>;
+  gte?: Maybe<Scalars['Int']>;
+  not?: Maybe<NestedIntFilter>;
 };
 
 export type Mutation = {
@@ -129,7 +217,7 @@ export type Mutation = {
   uploadFile?: Maybe<UploadFile>;
   createOneuser: User;
   deleteOneStack?: Maybe<Stack>;
-  deleteManyTransaction: BatchPayload;
+  deleteManyTransaction: AffectedRowsOutput;
   createOneBudget: Budget;
   updateOneBudget?: Maybe<Budget>;
   updateOneStack?: Maybe<Stack>;
@@ -191,134 +279,51 @@ export type MutationUpdateOneTransactionArgs = {
   where: TransactionWhereUniqueInput;
 };
 
-export type UploadFile = {
-  __typename?: 'UploadFile';
-  uri?: Maybe<Scalars['String']>;
-  filename?: Maybe<Scalars['String']>;
+export type NestedDateTimeFilter = {
+  equals?: Maybe<Scalars['DateTime']>;
+  in?: Maybe<Array<Scalars['DateTime']>>;
+  notIn?: Maybe<Array<Scalars['DateTime']>>;
+  lt?: Maybe<Scalars['DateTime']>;
+  lte?: Maybe<Scalars['DateTime']>;
+  gt?: Maybe<Scalars['DateTime']>;
+  gte?: Maybe<Scalars['DateTime']>;
+  not?: Maybe<NestedDateTimeFilter>;
 };
 
-export type UserWhereUniqueInput = {
-  id?: Maybe<Scalars['Int']>;
-  email?: Maybe<Scalars['String']>;
+export type NestedDateTimeNullableFilter = {
+  equals?: Maybe<Scalars['DateTime']>;
+  in?: Maybe<Array<Scalars['DateTime']>>;
+  notIn?: Maybe<Array<Scalars['DateTime']>>;
+  lt?: Maybe<Scalars['DateTime']>;
+  lte?: Maybe<Scalars['DateTime']>;
+  gt?: Maybe<Scalars['DateTime']>;
+  gte?: Maybe<Scalars['DateTime']>;
+  not?: Maybe<NestedDateTimeNullableFilter>;
 };
 
-export type BudgetWhereUniqueInput = {
-  id?: Maybe<Scalars['Int']>;
+export type NestedFloatFilter = {
+  equals?: Maybe<Scalars['Float']>;
+  in?: Maybe<Array<Scalars['Float']>>;
+  notIn?: Maybe<Array<Scalars['Float']>>;
+  lt?: Maybe<Scalars['Float']>;
+  lte?: Maybe<Scalars['Float']>;
+  gt?: Maybe<Scalars['Float']>;
+  gte?: Maybe<Scalars['Float']>;
+  not?: Maybe<NestedFloatFilter>;
 };
 
-export type TransactionWhereUniqueInput = {
-  id?: Maybe<Scalars['Int']>;
+export type NestedFloatNullableFilter = {
+  equals?: Maybe<Scalars['Float']>;
+  in?: Maybe<Array<Scalars['Float']>>;
+  notIn?: Maybe<Array<Scalars['Float']>>;
+  lt?: Maybe<Scalars['Float']>;
+  lte?: Maybe<Scalars['Float']>;
+  gt?: Maybe<Scalars['Float']>;
+  gte?: Maybe<Scalars['Float']>;
+  not?: Maybe<NestedFloatNullableFilter>;
 };
 
-export type QueryTransactionsWhereInput = {
-  userId?: Maybe<IntFilter>;
-  user?: Maybe<UserWhereInput>;
-};
-
-export type QueryTransactionsOrderByInput = {
-  date?: Maybe<SortOrder>;
-};
-
-export type QueryBudgetsWhereInput = {
-  userId?: Maybe<IntFilter>;
-  user?: Maybe<UserWhereInput>;
-};
-
-export type QueryStacksWhereInput = {
-  id?: Maybe<IntFilter>;
-};
-
-export type StackWhereUniqueInput = {
-  id?: Maybe<Scalars['Int']>;
-  budgetId_label_idx?: Maybe<BudgetId_Label_IdxCompoundUniqueInput>;
-};
-
-export type StackOrderByInput = {
-  id?: Maybe<SortOrder>;
-  budgetId?: Maybe<SortOrder>;
-  label?: Maybe<SortOrder>;
-  amount?: Maybe<SortOrder>;
-  created_at?: Maybe<SortOrder>;
-};
-
-
-export type UserCreateInput = {
-  name?: Maybe<Scalars['String']>;
-  email: Scalars['String'];
-  emailVerified?: Maybe<Scalars['DateTime']>;
-  image?: Maybe<Scalars['String']>;
-  createdAt?: Maybe<Scalars['DateTime']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
-  transactions?: Maybe<TransactionCreateManyWithoutUserInput>;
-  budget?: Maybe<BudgetCreateOneWithoutUserInput>;
-};
-
-export type BatchPayload = {
-  __typename?: 'BatchPayload';
-  count: Scalars['Int'];
-};
-
-export type TransactionWhereInput = {
-  AND?: Maybe<Array<TransactionWhereInput>>;
-  OR?: Maybe<Array<TransactionWhereInput>>;
-  NOT?: Maybe<Array<TransactionWhereInput>>;
-  id?: Maybe<IntFilter>;
-  description?: Maybe<StringFilter>;
-  stack?: Maybe<StringFilter>;
-  amount?: Maybe<FloatFilter>;
-  type?: Maybe<StringFilter>;
-  userId?: Maybe<IntFilter>;
-  date?: Maybe<DateTimeFilter>;
-  user?: Maybe<UserWhereInput>;
-};
-
-export type BudgetCreateInput = {
-  total?: Maybe<Scalars['Float']>;
-  toBeBudgeted?: Maybe<Scalars['Float']>;
-  user: UserCreateOneWithoutBudgetInput;
-  stacks?: Maybe<StackCreateManyWithoutBudgetInput>;
-};
-
-export type BudgetUpdateInput = {
-  total?: Maybe<NullableFloatFieldUpdateOperationsInput>;
-  toBeBudgeted?: Maybe<NullableFloatFieldUpdateOperationsInput>;
-  user?: Maybe<UserUpdateOneRequiredWithoutBudgetInput>;
-  stacks?: Maybe<StackUpdateManyWithoutBudgetInput>;
-};
-
-export type StackUpdateInput = {
-  label?: Maybe<StringFieldUpdateOperationsInput>;
-  amount?: Maybe<FloatFieldUpdateOperationsInput>;
-  created_at?: Maybe<DateTimeFieldUpdateOperationsInput>;
-  budget?: Maybe<BudgetUpdateOneRequiredWithoutStacksInput>;
-};
-
-export type StackCreateInput = {
-  label: Scalars['String'];
-  amount?: Maybe<Scalars['Float']>;
-  created_at?: Maybe<Scalars['DateTime']>;
-  budget: BudgetCreateOneWithoutStacksInput;
-};
-
-export type TransactionCreateInput = {
-  description: Scalars['String'];
-  stack: Scalars['String'];
-  amount: Scalars['Float'];
-  type: Scalars['String'];
-  date: Scalars['DateTime'];
-  user: UserCreateOneWithoutTransactionsInput;
-};
-
-export type TransactionUpdateInput = {
-  description?: Maybe<StringFieldUpdateOperationsInput>;
-  stack?: Maybe<StringFieldUpdateOperationsInput>;
-  amount?: Maybe<FloatFieldUpdateOperationsInput>;
-  type?: Maybe<StringFieldUpdateOperationsInput>;
-  date?: Maybe<DateTimeFieldUpdateOperationsInput>;
-  user?: Maybe<UserUpdateOneRequiredWithoutTransactionsInput>;
-};
-
-export type IntFilter = {
+export type NestedIntFilter = {
   equals?: Maybe<Scalars['Int']>;
   in?: Maybe<Array<Scalars['Int']>>;
   notIn?: Maybe<Array<Scalars['Int']>>;
@@ -329,19 +334,124 @@ export type IntFilter = {
   not?: Maybe<NestedIntFilter>;
 };
 
-export type UserWhereInput = {
-  AND?: Maybe<Array<UserWhereInput>>;
-  OR?: Maybe<Array<UserWhereInput>>;
-  NOT?: Maybe<Array<UserWhereInput>>;
+export type NestedStringFilter = {
+  equals?: Maybe<Scalars['String']>;
+  in?: Maybe<Array<Scalars['String']>>;
+  notIn?: Maybe<Array<Scalars['String']>>;
+  lt?: Maybe<Scalars['String']>;
+  lte?: Maybe<Scalars['String']>;
+  gt?: Maybe<Scalars['String']>;
+  gte?: Maybe<Scalars['String']>;
+  contains?: Maybe<Scalars['String']>;
+  startsWith?: Maybe<Scalars['String']>;
+  endsWith?: Maybe<Scalars['String']>;
+  not?: Maybe<NestedStringFilter>;
+};
+
+export type NestedStringNullableFilter = {
+  equals?: Maybe<Scalars['String']>;
+  in?: Maybe<Array<Scalars['String']>>;
+  notIn?: Maybe<Array<Scalars['String']>>;
+  lt?: Maybe<Scalars['String']>;
+  lte?: Maybe<Scalars['String']>;
+  gt?: Maybe<Scalars['String']>;
+  gte?: Maybe<Scalars['String']>;
+  contains?: Maybe<Scalars['String']>;
+  startsWith?: Maybe<Scalars['String']>;
+  endsWith?: Maybe<Scalars['String']>;
+  not?: Maybe<NestedStringNullableFilter>;
+};
+
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Maybe<Scalars['DateTime']>;
+};
+
+export type NullableFloatFieldUpdateOperationsInput = {
+  set?: Maybe<Scalars['Float']>;
+  increment?: Maybe<Scalars['Float']>;
+  decrement?: Maybe<Scalars['Float']>;
+  multiply?: Maybe<Scalars['Float']>;
+  divide?: Maybe<Scalars['Float']>;
+};
+
+export type NullableStringFieldUpdateOperationsInput = {
+  set?: Maybe<Scalars['String']>;
+};
+
+export type Query = {
+  __typename?: 'Query';
+  user?: Maybe<User>;
+  budget?: Maybe<Budget>;
+  transaction?: Maybe<Transaction>;
+  transactions: Array<Transaction>;
+  budgets: Array<Budget>;
+  stacks: Array<Stack>;
+};
+
+
+export type QueryUserArgs = {
+  where: UserWhereUniqueInput;
+};
+
+
+export type QueryBudgetArgs = {
+  where: BudgetWhereUniqueInput;
+};
+
+
+export type QueryTransactionArgs = {
+  where: TransactionWhereUniqueInput;
+};
+
+
+export type QueryTransactionsArgs = {
+  where?: Maybe<QueryTransactionsWhereInput>;
+  orderBy?: Maybe<Array<QueryTransactionsOrderByInput>>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  before?: Maybe<TransactionWhereUniqueInput>;
+  after?: Maybe<TransactionWhereUniqueInput>;
+};
+
+
+export type QueryBudgetsArgs = {
+  where?: Maybe<QueryBudgetsWhereInput>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  before?: Maybe<BudgetWhereUniqueInput>;
+  after?: Maybe<BudgetWhereUniqueInput>;
+};
+
+
+export type QueryStacksArgs = {
+  where?: Maybe<QueryStacksWhereInput>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  before?: Maybe<StackWhereUniqueInput>;
+  after?: Maybe<StackWhereUniqueInput>;
+};
+
+export type QueryBudgetsWhereInput = {
+  userId?: Maybe<IntFilter>;
+  user?: Maybe<UserWhereInput>;
+};
+
+export enum QueryMode {
+  Default = 'default',
+  Insensitive = 'insensitive'
+}
+
+export type QueryStacksWhereInput = {
   id?: Maybe<IntFilter>;
-  name?: Maybe<StringNullableFilter>;
-  email?: Maybe<StringFilter>;
-  emailVerified?: Maybe<DateTimeNullableFilter>;
-  image?: Maybe<StringNullableFilter>;
-  createdAt?: Maybe<DateTimeFilter>;
-  updatedAt?: Maybe<DateTimeFilter>;
-  transactions?: Maybe<TransactionListRelationFilter>;
-  budget?: Maybe<BudgetWhereInput>;
+};
+
+export type QueryTransactionsOrderByInput = {
+  date?: Maybe<SortOrder>;
+};
+
+export type QueryTransactionsWhereInput = {
+  userId?: Maybe<IntFilter>;
+  user?: Maybe<UserWhereInput>;
 };
 
 export enum SortOrder {
@@ -349,21 +459,150 @@ export enum SortOrder {
   Desc = 'desc'
 }
 
-export type BudgetId_Label_IdxCompoundUniqueInput = {
+export type Stack = {
+  __typename?: 'Stack';
+  id: Scalars['Int'];
+  label: Scalars['String'];
+  amount: Scalars['Float'];
+  budgetId: Scalars['Int'];
+  created_at: Scalars['DateTime'];
+};
+
+export type StackBudgetId_Label_IdxCompoundUniqueInput = {
   budgetId: Scalars['Int'];
   label: Scalars['String'];
 };
 
-export type TransactionCreateManyWithoutUserInput = {
-  create?: Maybe<Array<TransactionCreateWithoutUserInput>>;
-  connect?: Maybe<Array<TransactionWhereUniqueInput>>;
-  connectOrCreate?: Maybe<Array<TransactionCreateOrConnectWithoutuserInput>>;
+export type StackCreateInput = {
+  label: Scalars['String'];
+  amount?: Maybe<Scalars['Float']>;
+  created_at?: Maybe<Scalars['DateTime']>;
+  budget: BudgetCreateNestedOneWithoutStacksInput;
 };
 
-export type BudgetCreateOneWithoutUserInput = {
-  create?: Maybe<BudgetCreateWithoutUserInput>;
-  connect?: Maybe<BudgetWhereUniqueInput>;
-  connectOrCreate?: Maybe<BudgetCreateOrConnectWithoutuserInput>;
+export type StackCreateManyBudgetInput = {
+  id?: Maybe<Scalars['Int']>;
+  label: Scalars['String'];
+  amount?: Maybe<Scalars['Float']>;
+  created_at?: Maybe<Scalars['DateTime']>;
+};
+
+export type StackCreateManyBudgetInputEnvelope = {
+  data?: Maybe<Array<StackCreateManyBudgetInput>>;
+  skipDuplicates?: Maybe<Scalars['Boolean']>;
+};
+
+export type StackCreateNestedManyWithoutBudgetInput = {
+  create?: Maybe<Array<StackCreateWithoutBudgetInput>>;
+  connectOrCreate?: Maybe<Array<StackCreateOrConnectWithoutBudgetInput>>;
+  createMany?: Maybe<StackCreateManyBudgetInputEnvelope>;
+  connect?: Maybe<Array<StackWhereUniqueInput>>;
+};
+
+export type StackCreateOrConnectWithoutBudgetInput = {
+  where: StackWhereUniqueInput;
+  create: StackCreateWithoutBudgetInput;
+};
+
+export type StackCreateWithoutBudgetInput = {
+  label: Scalars['String'];
+  amount?: Maybe<Scalars['Float']>;
+  created_at?: Maybe<Scalars['DateTime']>;
+};
+
+export type StackListRelationFilter = {
+  every?: Maybe<StackWhereInput>;
+  some?: Maybe<StackWhereInput>;
+  none?: Maybe<StackWhereInput>;
+};
+
+export type StackOrderByInput = {
+  id?: Maybe<SortOrder>;
+  budgetId?: Maybe<SortOrder>;
+  label?: Maybe<SortOrder>;
+  amount?: Maybe<SortOrder>;
+  created_at?: Maybe<SortOrder>;
+};
+
+export type StackScalarWhereInput = {
+  AND?: Maybe<Array<StackScalarWhereInput>>;
+  OR?: Maybe<Array<StackScalarWhereInput>>;
+  NOT?: Maybe<Array<StackScalarWhereInput>>;
+  id?: Maybe<IntFilter>;
+  budgetId?: Maybe<IntFilter>;
+  label?: Maybe<StringFilter>;
+  amount?: Maybe<FloatFilter>;
+  created_at?: Maybe<DateTimeFilter>;
+};
+
+export type StackUpdateInput = {
+  label?: Maybe<StringFieldUpdateOperationsInput>;
+  amount?: Maybe<FloatFieldUpdateOperationsInput>;
+  created_at?: Maybe<DateTimeFieldUpdateOperationsInput>;
+  budget?: Maybe<BudgetUpdateOneRequiredWithoutStacksInput>;
+};
+
+export type StackUpdateManyMutationInput = {
+  label?: Maybe<StringFieldUpdateOperationsInput>;
+  amount?: Maybe<FloatFieldUpdateOperationsInput>;
+  created_at?: Maybe<DateTimeFieldUpdateOperationsInput>;
+};
+
+export type StackUpdateManyWithWhereWithoutBudgetInput = {
+  where: StackScalarWhereInput;
+  data: StackUpdateManyMutationInput;
+};
+
+export type StackUpdateManyWithoutBudgetInput = {
+  create?: Maybe<Array<StackCreateWithoutBudgetInput>>;
+  connectOrCreate?: Maybe<Array<StackCreateOrConnectWithoutBudgetInput>>;
+  upsert?: Maybe<Array<StackUpsertWithWhereUniqueWithoutBudgetInput>>;
+  createMany?: Maybe<StackCreateManyBudgetInputEnvelope>;
+  connect?: Maybe<Array<StackWhereUniqueInput>>;
+  set?: Maybe<Array<StackWhereUniqueInput>>;
+  disconnect?: Maybe<Array<StackWhereUniqueInput>>;
+  delete?: Maybe<Array<StackWhereUniqueInput>>;
+  update?: Maybe<Array<StackUpdateWithWhereUniqueWithoutBudgetInput>>;
+  updateMany?: Maybe<Array<StackUpdateManyWithWhereWithoutBudgetInput>>;
+  deleteMany?: Maybe<Array<StackScalarWhereInput>>;
+};
+
+export type StackUpdateWithWhereUniqueWithoutBudgetInput = {
+  where: StackWhereUniqueInput;
+  data: StackUpdateWithoutBudgetInput;
+};
+
+export type StackUpdateWithoutBudgetInput = {
+  label?: Maybe<StringFieldUpdateOperationsInput>;
+  amount?: Maybe<FloatFieldUpdateOperationsInput>;
+  created_at?: Maybe<DateTimeFieldUpdateOperationsInput>;
+};
+
+export type StackUpsertWithWhereUniqueWithoutBudgetInput = {
+  where: StackWhereUniqueInput;
+  update: StackUpdateWithoutBudgetInput;
+  create: StackCreateWithoutBudgetInput;
+};
+
+export type StackWhereInput = {
+  AND?: Maybe<Array<StackWhereInput>>;
+  OR?: Maybe<Array<StackWhereInput>>;
+  NOT?: Maybe<Array<StackWhereInput>>;
+  id?: Maybe<IntFilter>;
+  budgetId?: Maybe<IntFilter>;
+  label?: Maybe<StringFilter>;
+  amount?: Maybe<FloatFilter>;
+  created_at?: Maybe<DateTimeFilter>;
+  budget?: Maybe<BudgetWhereInput>;
+};
+
+export type StackWhereUniqueInput = {
+  id?: Maybe<Scalars['Int']>;
+  budgetId_label_idx?: Maybe<StackBudgetId_Label_IdxCompoundUniqueInput>;
+};
+
+export type StringFieldUpdateOperationsInput = {
+  set?: Maybe<Scalars['String']>;
 };
 
 export type StringFilter = {
@@ -381,124 +620,6 @@ export type StringFilter = {
   not?: Maybe<NestedStringFilter>;
 };
 
-export type FloatFilter = {
-  equals?: Maybe<Scalars['Float']>;
-  in?: Maybe<Array<Scalars['Float']>>;
-  notIn?: Maybe<Array<Scalars['Float']>>;
-  lt?: Maybe<Scalars['Float']>;
-  lte?: Maybe<Scalars['Float']>;
-  gt?: Maybe<Scalars['Float']>;
-  gte?: Maybe<Scalars['Float']>;
-  not?: Maybe<NestedFloatFilter>;
-};
-
-export type DateTimeFilter = {
-  equals?: Maybe<Scalars['DateTime']>;
-  in?: Maybe<Array<Scalars['DateTime']>>;
-  notIn?: Maybe<Array<Scalars['DateTime']>>;
-  lt?: Maybe<Scalars['DateTime']>;
-  lte?: Maybe<Scalars['DateTime']>;
-  gt?: Maybe<Scalars['DateTime']>;
-  gte?: Maybe<Scalars['DateTime']>;
-  not?: Maybe<NestedDateTimeFilter>;
-};
-
-export type UserCreateOneWithoutBudgetInput = {
-  create?: Maybe<UserCreateWithoutBudgetInput>;
-  connect?: Maybe<UserWhereUniqueInput>;
-  connectOrCreate?: Maybe<UserCreateOrConnectWithoutbudgetInput>;
-};
-
-export type StackCreateManyWithoutBudgetInput = {
-  create?: Maybe<Array<StackCreateWithoutBudgetInput>>;
-  connect?: Maybe<Array<StackWhereUniqueInput>>;
-  connectOrCreate?: Maybe<Array<StackCreateOrConnectWithoutbudgetInput>>;
-};
-
-export type NullableFloatFieldUpdateOperationsInput = {
-  set?: Maybe<Scalars['Float']>;
-  increment?: Maybe<Scalars['Float']>;
-  decrement?: Maybe<Scalars['Float']>;
-  multiply?: Maybe<Scalars['Float']>;
-  divide?: Maybe<Scalars['Float']>;
-};
-
-export type UserUpdateOneRequiredWithoutBudgetInput = {
-  create?: Maybe<UserCreateWithoutBudgetInput>;
-  connect?: Maybe<UserWhereUniqueInput>;
-  update?: Maybe<UserUpdateWithoutBudgetInput>;
-  upsert?: Maybe<UserUpsertWithoutBudgetInput>;
-  connectOrCreate?: Maybe<UserCreateOrConnectWithoutbudgetInput>;
-};
-
-export type StackUpdateManyWithoutBudgetInput = {
-  create?: Maybe<Array<StackCreateWithoutBudgetInput>>;
-  connect?: Maybe<Array<StackWhereUniqueInput>>;
-  set?: Maybe<Array<StackWhereUniqueInput>>;
-  disconnect?: Maybe<Array<StackWhereUniqueInput>>;
-  delete?: Maybe<Array<StackWhereUniqueInput>>;
-  update?: Maybe<Array<StackUpdateWithWhereUniqueWithoutBudgetInput>>;
-  updateMany?: Maybe<Array<StackUpdateManyWithWhereWithoutBudgetInput>>;
-  deleteMany?: Maybe<Array<StackScalarWhereInput>>;
-  upsert?: Maybe<Array<StackUpsertWithWhereUniqueWithoutBudgetInput>>;
-  connectOrCreate?: Maybe<Array<StackCreateOrConnectWithoutbudgetInput>>;
-};
-
-export type StringFieldUpdateOperationsInput = {
-  set?: Maybe<Scalars['String']>;
-};
-
-export type FloatFieldUpdateOperationsInput = {
-  set?: Maybe<Scalars['Float']>;
-  increment?: Maybe<Scalars['Float']>;
-  decrement?: Maybe<Scalars['Float']>;
-  multiply?: Maybe<Scalars['Float']>;
-  divide?: Maybe<Scalars['Float']>;
-};
-
-export type DateTimeFieldUpdateOperationsInput = {
-  set?: Maybe<Scalars['DateTime']>;
-};
-
-export type BudgetUpdateOneRequiredWithoutStacksInput = {
-  create?: Maybe<BudgetCreateWithoutStacksInput>;
-  connect?: Maybe<BudgetWhereUniqueInput>;
-  update?: Maybe<BudgetUpdateWithoutStacksInput>;
-  upsert?: Maybe<BudgetUpsertWithoutStacksInput>;
-  connectOrCreate?: Maybe<BudgetCreateOrConnectWithoutstacksInput>;
-};
-
-export type BudgetCreateOneWithoutStacksInput = {
-  create?: Maybe<BudgetCreateWithoutStacksInput>;
-  connect?: Maybe<BudgetWhereUniqueInput>;
-  connectOrCreate?: Maybe<BudgetCreateOrConnectWithoutstacksInput>;
-};
-
-export type UserCreateOneWithoutTransactionsInput = {
-  create?: Maybe<UserCreateWithoutTransactionsInput>;
-  connect?: Maybe<UserWhereUniqueInput>;
-  connectOrCreate?: Maybe<UserCreateOrConnectWithouttransactionsInput>;
-};
-
-export type UserUpdateOneRequiredWithoutTransactionsInput = {
-  create?: Maybe<UserCreateWithoutTransactionsInput>;
-  connect?: Maybe<UserWhereUniqueInput>;
-  update?: Maybe<UserUpdateWithoutTransactionsInput>;
-  upsert?: Maybe<UserUpsertWithoutTransactionsInput>;
-  connectOrCreate?: Maybe<UserCreateOrConnectWithouttransactionsInput>;
-};
-
-export type NestedIntFilter = {
-  equals?: Maybe<Scalars['Int']>;
-  in?: Maybe<Array<Scalars['Int']>>;
-  notIn?: Maybe<Array<Scalars['Int']>>;
-  lt?: Maybe<Scalars['Int']>;
-  lte?: Maybe<Scalars['Int']>;
-  gt?: Maybe<Scalars['Int']>;
-  gte?: Maybe<Scalars['Int']>;
-  not?: Maybe<NestedIntFilter>;
-};
-
 export type StringNullableFilter = {
   equals?: Maybe<Scalars['String']>;
   in?: Maybe<Array<Scalars['String']>>;
@@ -514,33 +635,50 @@ export type StringNullableFilter = {
   not?: Maybe<NestedStringNullableFilter>;
 };
 
-export type DateTimeNullableFilter = {
-  equals?: Maybe<Scalars['DateTime']>;
-  in?: Maybe<Array<Scalars['DateTime']>>;
-  notIn?: Maybe<Array<Scalars['DateTime']>>;
-  lt?: Maybe<Scalars['DateTime']>;
-  lte?: Maybe<Scalars['DateTime']>;
-  gt?: Maybe<Scalars['DateTime']>;
-  gte?: Maybe<Scalars['DateTime']>;
-  not?: Maybe<NestedDateTimeNullableFilter>;
+export type Transaction = {
+  __typename?: 'Transaction';
+  amount: Scalars['Float'];
+  description: Scalars['String'];
+  id: Scalars['Int'];
+  stack: Scalars['String'];
+  type: Scalars['String'];
+  userId: Scalars['Int'];
+  date: Scalars['DateTime'];
 };
 
-export type TransactionListRelationFilter = {
-  every?: Maybe<TransactionWhereInput>;
-  some?: Maybe<TransactionWhereInput>;
-  none?: Maybe<TransactionWhereInput>;
+export type TransactionCreateInput = {
+  description: Scalars['String'];
+  stack: Scalars['String'];
+  amount: Scalars['Float'];
+  type: Scalars['String'];
+  date: Scalars['DateTime'];
+  user: UserCreateNestedOneWithoutTransactionsInput;
 };
 
-export type BudgetWhereInput = {
-  AND?: Maybe<Array<BudgetWhereInput>>;
-  OR?: Maybe<Array<BudgetWhereInput>>;
-  NOT?: Maybe<Array<BudgetWhereInput>>;
-  id?: Maybe<IntFilter>;
-  total?: Maybe<FloatNullableFilter>;
-  toBeBudgeted?: Maybe<FloatNullableFilter>;
-  userId?: Maybe<IntFilter>;
-  user?: Maybe<UserWhereInput>;
-  stacks?: Maybe<StackListRelationFilter>;
+export type TransactionCreateManyUserInput = {
+  id?: Maybe<Scalars['Int']>;
+  description: Scalars['String'];
+  stack: Scalars['String'];
+  amount: Scalars['Float'];
+  type: Scalars['String'];
+  date: Scalars['DateTime'];
+};
+
+export type TransactionCreateManyUserInputEnvelope = {
+  data?: Maybe<Array<TransactionCreateManyUserInput>>;
+  skipDuplicates?: Maybe<Scalars['Boolean']>;
+};
+
+export type TransactionCreateNestedManyWithoutUserInput = {
+  create?: Maybe<Array<TransactionCreateWithoutUserInput>>;
+  connectOrCreate?: Maybe<Array<TransactionCreateOrConnectWithoutUserInput>>;
+  createMany?: Maybe<TransactionCreateManyUserInputEnvelope>;
+  connect?: Maybe<Array<TransactionWhereUniqueInput>>;
+};
+
+export type TransactionCreateOrConnectWithoutUserInput = {
+  where: TransactionWhereUniqueInput;
+  create: TransactionCreateWithoutUserInput;
 };
 
 export type TransactionCreateWithoutUserInput = {
@@ -551,299 +689,10 @@ export type TransactionCreateWithoutUserInput = {
   date: Scalars['DateTime'];
 };
 
-export type TransactionCreateOrConnectWithoutuserInput = {
-  where: TransactionWhereUniqueInput;
-  create: TransactionCreateWithoutUserInput;
-};
-
-export type BudgetCreateWithoutUserInput = {
-  total?: Maybe<Scalars['Float']>;
-  toBeBudgeted?: Maybe<Scalars['Float']>;
-  stacks?: Maybe<StackCreateManyWithoutBudgetInput>;
-};
-
-export type BudgetCreateOrConnectWithoutuserInput = {
-  where: BudgetWhereUniqueInput;
-  create: BudgetCreateWithoutUserInput;
-};
-
-export enum QueryMode {
-  Default = 'default',
-  Insensitive = 'insensitive'
-}
-
-export type NestedStringFilter = {
-  equals?: Maybe<Scalars['String']>;
-  in?: Maybe<Array<Scalars['String']>>;
-  notIn?: Maybe<Array<Scalars['String']>>;
-  lt?: Maybe<Scalars['String']>;
-  lte?: Maybe<Scalars['String']>;
-  gt?: Maybe<Scalars['String']>;
-  gte?: Maybe<Scalars['String']>;
-  contains?: Maybe<Scalars['String']>;
-  startsWith?: Maybe<Scalars['String']>;
-  endsWith?: Maybe<Scalars['String']>;
-  not?: Maybe<NestedStringFilter>;
-};
-
-export type NestedFloatFilter = {
-  equals?: Maybe<Scalars['Float']>;
-  in?: Maybe<Array<Scalars['Float']>>;
-  notIn?: Maybe<Array<Scalars['Float']>>;
-  lt?: Maybe<Scalars['Float']>;
-  lte?: Maybe<Scalars['Float']>;
-  gt?: Maybe<Scalars['Float']>;
-  gte?: Maybe<Scalars['Float']>;
-  not?: Maybe<NestedFloatFilter>;
-};
-
-export type NestedDateTimeFilter = {
-  equals?: Maybe<Scalars['DateTime']>;
-  in?: Maybe<Array<Scalars['DateTime']>>;
-  notIn?: Maybe<Array<Scalars['DateTime']>>;
-  lt?: Maybe<Scalars['DateTime']>;
-  lte?: Maybe<Scalars['DateTime']>;
-  gt?: Maybe<Scalars['DateTime']>;
-  gte?: Maybe<Scalars['DateTime']>;
-  not?: Maybe<NestedDateTimeFilter>;
-};
-
-export type UserCreateWithoutBudgetInput = {
-  name?: Maybe<Scalars['String']>;
-  email: Scalars['String'];
-  emailVerified?: Maybe<Scalars['DateTime']>;
-  image?: Maybe<Scalars['String']>;
-  createdAt?: Maybe<Scalars['DateTime']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
-  transactions?: Maybe<TransactionCreateManyWithoutUserInput>;
-};
-
-export type UserCreateOrConnectWithoutbudgetInput = {
-  where: UserWhereUniqueInput;
-  create: UserCreateWithoutBudgetInput;
-};
-
-export type StackCreateWithoutBudgetInput = {
-  label: Scalars['String'];
-  amount?: Maybe<Scalars['Float']>;
-  created_at?: Maybe<Scalars['DateTime']>;
-};
-
-export type StackCreateOrConnectWithoutbudgetInput = {
-  where: StackWhereUniqueInput;
-  create: StackCreateWithoutBudgetInput;
-};
-
-export type UserUpdateWithoutBudgetInput = {
-  name?: Maybe<NullableStringFieldUpdateOperationsInput>;
-  email?: Maybe<StringFieldUpdateOperationsInput>;
-  emailVerified?: Maybe<NullableDateTimeFieldUpdateOperationsInput>;
-  image?: Maybe<NullableStringFieldUpdateOperationsInput>;
-  createdAt?: Maybe<DateTimeFieldUpdateOperationsInput>;
-  updatedAt?: Maybe<DateTimeFieldUpdateOperationsInput>;
-  transactions?: Maybe<TransactionUpdateManyWithoutUserInput>;
-};
-
-export type UserUpsertWithoutBudgetInput = {
-  update: UserUpdateWithoutBudgetInput;
-  create: UserCreateWithoutBudgetInput;
-};
-
-export type StackUpdateWithWhereUniqueWithoutBudgetInput = {
-  where: StackWhereUniqueInput;
-  data: StackUpdateWithoutBudgetInput;
-};
-
-export type StackUpdateManyWithWhereWithoutBudgetInput = {
-  where: StackScalarWhereInput;
-  data: StackUpdateManyMutationInput;
-};
-
-export type StackScalarWhereInput = {
-  AND?: Maybe<Array<StackScalarWhereInput>>;
-  OR?: Maybe<Array<StackScalarWhereInput>>;
-  NOT?: Maybe<Array<StackScalarWhereInput>>;
-  id?: Maybe<IntFilter>;
-  budgetId?: Maybe<IntFilter>;
-  label?: Maybe<StringFilter>;
-  amount?: Maybe<FloatFilter>;
-  created_at?: Maybe<DateTimeFilter>;
-};
-
-export type StackUpsertWithWhereUniqueWithoutBudgetInput = {
-  where: StackWhereUniqueInput;
-  update: StackUpdateWithoutBudgetInput;
-  create: StackCreateWithoutBudgetInput;
-};
-
-export type BudgetCreateWithoutStacksInput = {
-  total?: Maybe<Scalars['Float']>;
-  toBeBudgeted?: Maybe<Scalars['Float']>;
-  user: UserCreateOneWithoutBudgetInput;
-};
-
-export type BudgetUpdateWithoutStacksInput = {
-  total?: Maybe<NullableFloatFieldUpdateOperationsInput>;
-  toBeBudgeted?: Maybe<NullableFloatFieldUpdateOperationsInput>;
-  user?: Maybe<UserUpdateOneRequiredWithoutBudgetInput>;
-};
-
-export type BudgetUpsertWithoutStacksInput = {
-  update: BudgetUpdateWithoutStacksInput;
-  create: BudgetCreateWithoutStacksInput;
-};
-
-export type BudgetCreateOrConnectWithoutstacksInput = {
-  where: BudgetWhereUniqueInput;
-  create: BudgetCreateWithoutStacksInput;
-};
-
-export type UserCreateWithoutTransactionsInput = {
-  name?: Maybe<Scalars['String']>;
-  email: Scalars['String'];
-  emailVerified?: Maybe<Scalars['DateTime']>;
-  image?: Maybe<Scalars['String']>;
-  createdAt?: Maybe<Scalars['DateTime']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
-  budget?: Maybe<BudgetCreateOneWithoutUserInput>;
-};
-
-export type UserCreateOrConnectWithouttransactionsInput = {
-  where: UserWhereUniqueInput;
-  create: UserCreateWithoutTransactionsInput;
-};
-
-export type UserUpdateWithoutTransactionsInput = {
-  name?: Maybe<NullableStringFieldUpdateOperationsInput>;
-  email?: Maybe<StringFieldUpdateOperationsInput>;
-  emailVerified?: Maybe<NullableDateTimeFieldUpdateOperationsInput>;
-  image?: Maybe<NullableStringFieldUpdateOperationsInput>;
-  createdAt?: Maybe<DateTimeFieldUpdateOperationsInput>;
-  updatedAt?: Maybe<DateTimeFieldUpdateOperationsInput>;
-  budget?: Maybe<BudgetUpdateOneWithoutUserInput>;
-};
-
-export type UserUpsertWithoutTransactionsInput = {
-  update: UserUpdateWithoutTransactionsInput;
-  create: UserCreateWithoutTransactionsInput;
-};
-
-export type NestedStringNullableFilter = {
-  equals?: Maybe<Scalars['String']>;
-  in?: Maybe<Array<Scalars['String']>>;
-  notIn?: Maybe<Array<Scalars['String']>>;
-  lt?: Maybe<Scalars['String']>;
-  lte?: Maybe<Scalars['String']>;
-  gt?: Maybe<Scalars['String']>;
-  gte?: Maybe<Scalars['String']>;
-  contains?: Maybe<Scalars['String']>;
-  startsWith?: Maybe<Scalars['String']>;
-  endsWith?: Maybe<Scalars['String']>;
-  not?: Maybe<NestedStringNullableFilter>;
-};
-
-export type NestedDateTimeNullableFilter = {
-  equals?: Maybe<Scalars['DateTime']>;
-  in?: Maybe<Array<Scalars['DateTime']>>;
-  notIn?: Maybe<Array<Scalars['DateTime']>>;
-  lt?: Maybe<Scalars['DateTime']>;
-  lte?: Maybe<Scalars['DateTime']>;
-  gt?: Maybe<Scalars['DateTime']>;
-  gte?: Maybe<Scalars['DateTime']>;
-  not?: Maybe<NestedDateTimeNullableFilter>;
-};
-
-export type FloatNullableFilter = {
-  equals?: Maybe<Scalars['Float']>;
-  in?: Maybe<Array<Scalars['Float']>>;
-  notIn?: Maybe<Array<Scalars['Float']>>;
-  lt?: Maybe<Scalars['Float']>;
-  lte?: Maybe<Scalars['Float']>;
-  gt?: Maybe<Scalars['Float']>;
-  gte?: Maybe<Scalars['Float']>;
-  not?: Maybe<NestedFloatNullableFilter>;
-};
-
-export type StackListRelationFilter = {
-  every?: Maybe<StackWhereInput>;
-  some?: Maybe<StackWhereInput>;
-  none?: Maybe<StackWhereInput>;
-};
-
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: Maybe<Scalars['String']>;
-};
-
-export type NullableDateTimeFieldUpdateOperationsInput = {
-  set?: Maybe<Scalars['DateTime']>;
-};
-
-export type TransactionUpdateManyWithoutUserInput = {
-  create?: Maybe<Array<TransactionCreateWithoutUserInput>>;
-  connect?: Maybe<Array<TransactionWhereUniqueInput>>;
-  set?: Maybe<Array<TransactionWhereUniqueInput>>;
-  disconnect?: Maybe<Array<TransactionWhereUniqueInput>>;
-  delete?: Maybe<Array<TransactionWhereUniqueInput>>;
-  update?: Maybe<Array<TransactionUpdateWithWhereUniqueWithoutUserInput>>;
-  updateMany?: Maybe<Array<TransactionUpdateManyWithWhereWithoutUserInput>>;
-  deleteMany?: Maybe<Array<TransactionScalarWhereInput>>;
-  upsert?: Maybe<Array<TransactionUpsertWithWhereUniqueWithoutUserInput>>;
-  connectOrCreate?: Maybe<Array<TransactionCreateOrConnectWithoutuserInput>>;
-};
-
-export type StackUpdateWithoutBudgetInput = {
-  label?: Maybe<StringFieldUpdateOperationsInput>;
-  amount?: Maybe<FloatFieldUpdateOperationsInput>;
-  created_at?: Maybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type StackUpdateManyMutationInput = {
-  label?: Maybe<StringFieldUpdateOperationsInput>;
-  amount?: Maybe<FloatFieldUpdateOperationsInput>;
-  created_at?: Maybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type BudgetUpdateOneWithoutUserInput = {
-  create?: Maybe<BudgetCreateWithoutUserInput>;
-  connect?: Maybe<BudgetWhereUniqueInput>;
-  disconnect?: Maybe<Scalars['Boolean']>;
-  delete?: Maybe<Scalars['Boolean']>;
-  update?: Maybe<BudgetUpdateWithoutUserInput>;
-  upsert?: Maybe<BudgetUpsertWithoutUserInput>;
-  connectOrCreate?: Maybe<BudgetCreateOrConnectWithoutuserInput>;
-};
-
-export type NestedFloatNullableFilter = {
-  equals?: Maybe<Scalars['Float']>;
-  in?: Maybe<Array<Scalars['Float']>>;
-  notIn?: Maybe<Array<Scalars['Float']>>;
-  lt?: Maybe<Scalars['Float']>;
-  lte?: Maybe<Scalars['Float']>;
-  gt?: Maybe<Scalars['Float']>;
-  gte?: Maybe<Scalars['Float']>;
-  not?: Maybe<NestedFloatNullableFilter>;
-};
-
-export type StackWhereInput = {
-  AND?: Maybe<Array<StackWhereInput>>;
-  OR?: Maybe<Array<StackWhereInput>>;
-  NOT?: Maybe<Array<StackWhereInput>>;
-  id?: Maybe<IntFilter>;
-  budgetId?: Maybe<IntFilter>;
-  label?: Maybe<StringFilter>;
-  amount?: Maybe<FloatFilter>;
-  created_at?: Maybe<DateTimeFilter>;
-  budget?: Maybe<BudgetWhereInput>;
-};
-
-export type TransactionUpdateWithWhereUniqueWithoutUserInput = {
-  where: TransactionWhereUniqueInput;
-  data: TransactionUpdateWithoutUserInput;
-};
-
-export type TransactionUpdateManyWithWhereWithoutUserInput = {
-  where: TransactionScalarWhereInput;
-  data: TransactionUpdateManyMutationInput;
+export type TransactionListRelationFilter = {
+  every?: Maybe<TransactionWhereInput>;
+  some?: Maybe<TransactionWhereInput>;
+  none?: Maybe<TransactionWhereInput>;
 };
 
 export type TransactionScalarWhereInput = {
@@ -859,21 +708,45 @@ export type TransactionScalarWhereInput = {
   date?: Maybe<DateTimeFilter>;
 };
 
-export type TransactionUpsertWithWhereUniqueWithoutUserInput = {
+export type TransactionUpdateInput = {
+  description?: Maybe<StringFieldUpdateOperationsInput>;
+  stack?: Maybe<StringFieldUpdateOperationsInput>;
+  amount?: Maybe<FloatFieldUpdateOperationsInput>;
+  type?: Maybe<StringFieldUpdateOperationsInput>;
+  date?: Maybe<DateTimeFieldUpdateOperationsInput>;
+  user?: Maybe<UserUpdateOneRequiredWithoutTransactionsInput>;
+};
+
+export type TransactionUpdateManyMutationInput = {
+  description?: Maybe<StringFieldUpdateOperationsInput>;
+  stack?: Maybe<StringFieldUpdateOperationsInput>;
+  amount?: Maybe<FloatFieldUpdateOperationsInput>;
+  type?: Maybe<StringFieldUpdateOperationsInput>;
+  date?: Maybe<DateTimeFieldUpdateOperationsInput>;
+};
+
+export type TransactionUpdateManyWithWhereWithoutUserInput = {
+  where: TransactionScalarWhereInput;
+  data: TransactionUpdateManyMutationInput;
+};
+
+export type TransactionUpdateManyWithoutUserInput = {
+  create?: Maybe<Array<TransactionCreateWithoutUserInput>>;
+  connectOrCreate?: Maybe<Array<TransactionCreateOrConnectWithoutUserInput>>;
+  upsert?: Maybe<Array<TransactionUpsertWithWhereUniqueWithoutUserInput>>;
+  createMany?: Maybe<TransactionCreateManyUserInputEnvelope>;
+  connect?: Maybe<Array<TransactionWhereUniqueInput>>;
+  set?: Maybe<Array<TransactionWhereUniqueInput>>;
+  disconnect?: Maybe<Array<TransactionWhereUniqueInput>>;
+  delete?: Maybe<Array<TransactionWhereUniqueInput>>;
+  update?: Maybe<Array<TransactionUpdateWithWhereUniqueWithoutUserInput>>;
+  updateMany?: Maybe<Array<TransactionUpdateManyWithWhereWithoutUserInput>>;
+  deleteMany?: Maybe<Array<TransactionScalarWhereInput>>;
+};
+
+export type TransactionUpdateWithWhereUniqueWithoutUserInput = {
   where: TransactionWhereUniqueInput;
-  update: TransactionUpdateWithoutUserInput;
-  create: TransactionCreateWithoutUserInput;
-};
-
-export type BudgetUpdateWithoutUserInput = {
-  total?: Maybe<NullableFloatFieldUpdateOperationsInput>;
-  toBeBudgeted?: Maybe<NullableFloatFieldUpdateOperationsInput>;
-  stacks?: Maybe<StackUpdateManyWithoutBudgetInput>;
-};
-
-export type BudgetUpsertWithoutUserInput = {
-  update: BudgetUpdateWithoutUserInput;
-  create: BudgetCreateWithoutUserInput;
+  data: TransactionUpdateWithoutUserInput;
 };
 
 export type TransactionUpdateWithoutUserInput = {
@@ -884,12 +757,170 @@ export type TransactionUpdateWithoutUserInput = {
   date?: Maybe<DateTimeFieldUpdateOperationsInput>;
 };
 
-export type TransactionUpdateManyMutationInput = {
-  description?: Maybe<StringFieldUpdateOperationsInput>;
-  stack?: Maybe<StringFieldUpdateOperationsInput>;
-  amount?: Maybe<FloatFieldUpdateOperationsInput>;
-  type?: Maybe<StringFieldUpdateOperationsInput>;
-  date?: Maybe<DateTimeFieldUpdateOperationsInput>;
+export type TransactionUpsertWithWhereUniqueWithoutUserInput = {
+  where: TransactionWhereUniqueInput;
+  update: TransactionUpdateWithoutUserInput;
+  create: TransactionCreateWithoutUserInput;
+};
+
+export type TransactionWhereInput = {
+  AND?: Maybe<Array<TransactionWhereInput>>;
+  OR?: Maybe<Array<TransactionWhereInput>>;
+  NOT?: Maybe<Array<TransactionWhereInput>>;
+  id?: Maybe<IntFilter>;
+  description?: Maybe<StringFilter>;
+  stack?: Maybe<StringFilter>;
+  amount?: Maybe<FloatFilter>;
+  type?: Maybe<StringFilter>;
+  userId?: Maybe<IntFilter>;
+  date?: Maybe<DateTimeFilter>;
+  user?: Maybe<UserWhereInput>;
+};
+
+export type TransactionWhereUniqueInput = {
+  id?: Maybe<Scalars['Int']>;
+};
+
+
+export type UploadFile = {
+  __typename?: 'UploadFile';
+  uri?: Maybe<Scalars['String']>;
+  filename?: Maybe<Scalars['String']>;
+};
+
+export type User = {
+  __typename?: 'user';
+  id: Scalars['Int'];
+  email: Scalars['String'];
+  budget?: Maybe<Budget>;
+  transactions: Array<Transaction>;
+};
+
+
+export type UserTransactionsArgs = {
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  before?: Maybe<TransactionWhereUniqueInput>;
+  after?: Maybe<TransactionWhereUniqueInput>;
+};
+
+export type UserCreateInput = {
+  name?: Maybe<Scalars['String']>;
+  email: Scalars['String'];
+  emailVerified?: Maybe<Scalars['DateTime']>;
+  image?: Maybe<Scalars['String']>;
+  createdAt?: Maybe<Scalars['DateTime']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+  transactions?: Maybe<TransactionCreateNestedManyWithoutUserInput>;
+  budget?: Maybe<BudgetCreateNestedOneWithoutUserInput>;
+};
+
+export type UserCreateNestedOneWithoutBudgetInput = {
+  create?: Maybe<UserCreateWithoutBudgetInput>;
+  connectOrCreate?: Maybe<UserCreateOrConnectWithoutBudgetInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+};
+
+export type UserCreateNestedOneWithoutTransactionsInput = {
+  create?: Maybe<UserCreateWithoutTransactionsInput>;
+  connectOrCreate?: Maybe<UserCreateOrConnectWithoutTransactionsInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+};
+
+export type UserCreateOrConnectWithoutBudgetInput = {
+  where: UserWhereUniqueInput;
+  create: UserCreateWithoutBudgetInput;
+};
+
+export type UserCreateOrConnectWithoutTransactionsInput = {
+  where: UserWhereUniqueInput;
+  create: UserCreateWithoutTransactionsInput;
+};
+
+export type UserCreateWithoutBudgetInput = {
+  name?: Maybe<Scalars['String']>;
+  email: Scalars['String'];
+  emailVerified?: Maybe<Scalars['DateTime']>;
+  image?: Maybe<Scalars['String']>;
+  createdAt?: Maybe<Scalars['DateTime']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+  transactions?: Maybe<TransactionCreateNestedManyWithoutUserInput>;
+};
+
+export type UserCreateWithoutTransactionsInput = {
+  name?: Maybe<Scalars['String']>;
+  email: Scalars['String'];
+  emailVerified?: Maybe<Scalars['DateTime']>;
+  image?: Maybe<Scalars['String']>;
+  createdAt?: Maybe<Scalars['DateTime']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+  budget?: Maybe<BudgetCreateNestedOneWithoutUserInput>;
+};
+
+export type UserUpdateOneRequiredWithoutBudgetInput = {
+  create?: Maybe<UserCreateWithoutBudgetInput>;
+  connectOrCreate?: Maybe<UserCreateOrConnectWithoutBudgetInput>;
+  upsert?: Maybe<UserUpsertWithoutBudgetInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+  update?: Maybe<UserUpdateWithoutBudgetInput>;
+};
+
+export type UserUpdateOneRequiredWithoutTransactionsInput = {
+  create?: Maybe<UserCreateWithoutTransactionsInput>;
+  connectOrCreate?: Maybe<UserCreateOrConnectWithoutTransactionsInput>;
+  upsert?: Maybe<UserUpsertWithoutTransactionsInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+  update?: Maybe<UserUpdateWithoutTransactionsInput>;
+};
+
+export type UserUpdateWithoutBudgetInput = {
+  name?: Maybe<NullableStringFieldUpdateOperationsInput>;
+  email?: Maybe<StringFieldUpdateOperationsInput>;
+  emailVerified?: Maybe<NullableDateTimeFieldUpdateOperationsInput>;
+  image?: Maybe<NullableStringFieldUpdateOperationsInput>;
+  createdAt?: Maybe<DateTimeFieldUpdateOperationsInput>;
+  updatedAt?: Maybe<DateTimeFieldUpdateOperationsInput>;
+  transactions?: Maybe<TransactionUpdateManyWithoutUserInput>;
+};
+
+export type UserUpdateWithoutTransactionsInput = {
+  name?: Maybe<NullableStringFieldUpdateOperationsInput>;
+  email?: Maybe<StringFieldUpdateOperationsInput>;
+  emailVerified?: Maybe<NullableDateTimeFieldUpdateOperationsInput>;
+  image?: Maybe<NullableStringFieldUpdateOperationsInput>;
+  createdAt?: Maybe<DateTimeFieldUpdateOperationsInput>;
+  updatedAt?: Maybe<DateTimeFieldUpdateOperationsInput>;
+  budget?: Maybe<BudgetUpdateOneWithoutUserInput>;
+};
+
+export type UserUpsertWithoutBudgetInput = {
+  update: UserUpdateWithoutBudgetInput;
+  create: UserCreateWithoutBudgetInput;
+};
+
+export type UserUpsertWithoutTransactionsInput = {
+  update: UserUpdateWithoutTransactionsInput;
+  create: UserCreateWithoutTransactionsInput;
+};
+
+export type UserWhereInput = {
+  AND?: Maybe<Array<UserWhereInput>>;
+  OR?: Maybe<Array<UserWhereInput>>;
+  NOT?: Maybe<Array<UserWhereInput>>;
+  id?: Maybe<IntFilter>;
+  name?: Maybe<StringNullableFilter>;
+  email?: Maybe<StringFilter>;
+  emailVerified?: Maybe<DateTimeNullableFilter>;
+  image?: Maybe<StringNullableFilter>;
+  createdAt?: Maybe<DateTimeFilter>;
+  updatedAt?: Maybe<DateTimeFilter>;
+  transactions?: Maybe<TransactionListRelationFilter>;
+  budget?: Maybe<BudgetWhereInput>;
+};
+
+export type UserWhereUniqueInput = {
+  id?: Maybe<Scalars['Int']>;
+  email?: Maybe<Scalars['String']>;
 };
 
 export type GetStackQueryVariables = Exact<{
@@ -1060,15 +1091,15 @@ export type AddTransactionMutation = (
 );
 
 export type DeleteManyTransactionMutationVariables = Exact<{
-  transactionIds?: Maybe<Array<Scalars['Int']>>;
+  transactionIds?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
 }>;
 
 
 export type DeleteManyTransactionMutation = (
   { __typename?: 'Mutation' }
   & { deleteManyTransaction: (
-    { __typename?: 'BatchPayload' }
-    & Pick<BatchPayload, 'count'>
+    { __typename?: 'AffectedRowsOutput' }
+    & Pick<AffectedRowsOutput, 'count'>
   ) }
 );
 
@@ -1151,10 +1182,12 @@ export const GetStackDocument = gql`
  * });
  */
 export function useGetStackQuery(baseOptions: Apollo.QueryHookOptions<GetStackQuery, GetStackQueryVariables>) {
-        return Apollo.useQuery<GetStackQuery, GetStackQueryVariables>(GetStackDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetStackQuery, GetStackQueryVariables>(GetStackDocument, options);
       }
 export function useGetStackLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetStackQuery, GetStackQueryVariables>) {
-          return Apollo.useLazyQuery<GetStackQuery, GetStackQueryVariables>(GetStackDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetStackQuery, GetStackQueryVariables>(GetStackDocument, options);
         }
 export type GetStackQueryHookResult = ReturnType<typeof useGetStackQuery>;
 export type GetStackLazyQueryHookResult = ReturnType<typeof useGetStackLazyQuery>;
@@ -1186,7 +1219,8 @@ export type DeleteOneStackMutationFn = Apollo.MutationFunction<DeleteOneStackMut
  * });
  */
 export function useDeleteOneStackMutation(baseOptions?: Apollo.MutationHookOptions<DeleteOneStackMutation, DeleteOneStackMutationVariables>) {
-        return Apollo.useMutation<DeleteOneStackMutation, DeleteOneStackMutationVariables>(DeleteOneStackDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteOneStackMutation, DeleteOneStackMutationVariables>(DeleteOneStackDocument, options);
       }
 export type DeleteOneStackMutationHookResult = ReturnType<typeof useDeleteOneStackMutation>;
 export type DeleteOneStackMutationResult = Apollo.MutationResult<DeleteOneStackMutation>;
@@ -1221,7 +1255,8 @@ export type AddBudgetMutationFn = Apollo.MutationFunction<AddBudgetMutation, Add
  * });
  */
 export function useAddBudgetMutation(baseOptions?: Apollo.MutationHookOptions<AddBudgetMutation, AddBudgetMutationVariables>) {
-        return Apollo.useMutation<AddBudgetMutation, AddBudgetMutationVariables>(AddBudgetDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddBudgetMutation, AddBudgetMutationVariables>(AddBudgetDocument, options);
       }
 export type AddBudgetMutationHookResult = ReturnType<typeof useAddBudgetMutation>;
 export type AddBudgetMutationResult = Apollo.MutationResult<AddBudgetMutation>;
@@ -1259,7 +1294,8 @@ export type AddStackMutationFn = Apollo.MutationFunction<AddStackMutation, AddSt
  * });
  */
 export function useAddStackMutation(baseOptions?: Apollo.MutationHookOptions<AddStackMutation, AddStackMutationVariables>) {
-        return Apollo.useMutation<AddStackMutation, AddStackMutationVariables>(AddStackDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddStackMutation, AddStackMutationVariables>(AddStackDocument, options);
       }
 export type AddStackMutationHookResult = ReturnType<typeof useAddStackMutation>;
 export type AddStackMutationResult = Apollo.MutationResult<AddStackMutation>;
@@ -1299,10 +1335,12 @@ export const GetBudgetDocument = gql`
  * });
  */
 export function useGetBudgetQuery(baseOptions: Apollo.QueryHookOptions<GetBudgetQuery, GetBudgetQueryVariables>) {
-        return Apollo.useQuery<GetBudgetQuery, GetBudgetQueryVariables>(GetBudgetDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetBudgetQuery, GetBudgetQueryVariables>(GetBudgetDocument, options);
       }
 export function useGetBudgetLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetBudgetQuery, GetBudgetQueryVariables>) {
-          return Apollo.useLazyQuery<GetBudgetQuery, GetBudgetQueryVariables>(GetBudgetDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetBudgetQuery, GetBudgetQueryVariables>(GetBudgetDocument, options);
         }
 export type GetBudgetQueryHookResult = ReturnType<typeof useGetBudgetQuery>;
 export type GetBudgetLazyQueryHookResult = ReturnType<typeof useGetBudgetLazyQuery>;
@@ -1340,7 +1378,8 @@ export type UpdateStackMutationFn = Apollo.MutationFunction<UpdateStackMutation,
  * });
  */
 export function useUpdateStackMutation(baseOptions?: Apollo.MutationHookOptions<UpdateStackMutation, UpdateStackMutationVariables>) {
-        return Apollo.useMutation<UpdateStackMutation, UpdateStackMutationVariables>(UpdateStackDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateStackMutation, UpdateStackMutationVariables>(UpdateStackDocument, options);
       }
 export type UpdateStackMutationHookResult = ReturnType<typeof useUpdateStackMutation>;
 export type UpdateStackMutationResult = Apollo.MutationResult<UpdateStackMutation>;
@@ -1373,7 +1412,8 @@ export type UpdateTotalMutationFn = Apollo.MutationFunction<UpdateTotalMutation,
  * });
  */
 export function useUpdateTotalMutation(baseOptions?: Apollo.MutationHookOptions<UpdateTotalMutation, UpdateTotalMutationVariables>) {
-        return Apollo.useMutation<UpdateTotalMutation, UpdateTotalMutationVariables>(UpdateTotalDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateTotalMutation, UpdateTotalMutationVariables>(UpdateTotalDocument, options);
       }
 export type UpdateTotalMutationHookResult = ReturnType<typeof useUpdateTotalMutation>;
 export type UpdateTotalMutationResult = Apollo.MutationResult<UpdateTotalMutation>;
@@ -1422,10 +1462,12 @@ export const GetUserDocument = gql`
  * });
  */
 export function useGetUserQuery(baseOptions: Apollo.QueryHookOptions<GetUserQuery, GetUserQueryVariables>) {
-        return Apollo.useQuery<GetUserQuery, GetUserQueryVariables>(GetUserDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetUserQuery, GetUserQueryVariables>(GetUserDocument, options);
       }
 export function useGetUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserQuery, GetUserQueryVariables>) {
-          return Apollo.useLazyQuery<GetUserQuery, GetUserQueryVariables>(GetUserDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetUserQuery, GetUserQueryVariables>(GetUserDocument, options);
         }
 export type GetUserQueryHookResult = ReturnType<typeof useGetUserQuery>;
 export type GetUserLazyQueryHookResult = ReturnType<typeof useGetUserLazyQuery>;
@@ -1460,10 +1502,12 @@ export const GetTransactionDocument = gql`
  * });
  */
 export function useGetTransactionQuery(baseOptions: Apollo.QueryHookOptions<GetTransactionQuery, GetTransactionQueryVariables>) {
-        return Apollo.useQuery<GetTransactionQuery, GetTransactionQueryVariables>(GetTransactionDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTransactionQuery, GetTransactionQueryVariables>(GetTransactionDocument, options);
       }
 export function useGetTransactionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTransactionQuery, GetTransactionQueryVariables>) {
-          return Apollo.useLazyQuery<GetTransactionQuery, GetTransactionQueryVariables>(GetTransactionDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTransactionQuery, GetTransactionQueryVariables>(GetTransactionDocument, options);
         }
 export type GetTransactionQueryHookResult = ReturnType<typeof useGetTransactionQuery>;
 export type GetTransactionLazyQueryHookResult = ReturnType<typeof useGetTransactionLazyQuery>;
@@ -1495,7 +1539,8 @@ export type UploadFileMutationFn = Apollo.MutationFunction<UploadFileMutation, U
  * });
  */
 export function useUploadFileMutation(baseOptions?: Apollo.MutationHookOptions<UploadFileMutation, UploadFileMutationVariables>) {
-        return Apollo.useMutation<UploadFileMutation, UploadFileMutationVariables>(UploadFileDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UploadFileMutation, UploadFileMutationVariables>(UploadFileDocument, options);
       }
 export type UploadFileMutationHookResult = ReturnType<typeof useUploadFileMutation>;
 export type UploadFileMutationResult = Apollo.MutationResult<UploadFileMutation>;
@@ -1540,7 +1585,8 @@ export type AddTransactionMutationFn = Apollo.MutationFunction<AddTransactionMut
  * });
  */
 export function useAddTransactionMutation(baseOptions?: Apollo.MutationHookOptions<AddTransactionMutation, AddTransactionMutationVariables>) {
-        return Apollo.useMutation<AddTransactionMutation, AddTransactionMutationVariables>(AddTransactionDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddTransactionMutation, AddTransactionMutationVariables>(AddTransactionDocument, options);
       }
 export type AddTransactionMutationHookResult = ReturnType<typeof useAddTransactionMutation>;
 export type AddTransactionMutationResult = Apollo.MutationResult<AddTransactionMutation>;
@@ -1572,7 +1618,8 @@ export type DeleteManyTransactionMutationFn = Apollo.MutationFunction<DeleteMany
  * });
  */
 export function useDeleteManyTransactionMutation(baseOptions?: Apollo.MutationHookOptions<DeleteManyTransactionMutation, DeleteManyTransactionMutationVariables>) {
-        return Apollo.useMutation<DeleteManyTransactionMutation, DeleteManyTransactionMutationVariables>(DeleteManyTransactionDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteManyTransactionMutation, DeleteManyTransactionMutationVariables>(DeleteManyTransactionDocument, options);
       }
 export type DeleteManyTransactionMutationHookResult = ReturnType<typeof useDeleteManyTransactionMutation>;
 export type DeleteManyTransactionMutationResult = Apollo.MutationResult<DeleteManyTransactionMutation>;
@@ -1616,7 +1663,8 @@ export type EditTransactionMutationFn = Apollo.MutationFunction<EditTransactionM
  * });
  */
 export function useEditTransactionMutation(baseOptions?: Apollo.MutationHookOptions<EditTransactionMutation, EditTransactionMutationVariables>) {
-        return Apollo.useMutation<EditTransactionMutation, EditTransactionMutationVariables>(EditTransactionDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EditTransactionMutation, EditTransactionMutationVariables>(EditTransactionDocument, options);
       }
 export type EditTransactionMutationHookResult = ReturnType<typeof useEditTransactionMutation>;
 export type EditTransactionMutationResult = Apollo.MutationResult<EditTransactionMutation>;
@@ -1651,10 +1699,12 @@ export const GetTransactionsDocument = gql`
  * });
  */
 export function useGetTransactionsQuery(baseOptions: Apollo.QueryHookOptions<GetTransactionsQuery, GetTransactionsQueryVariables>) {
-        return Apollo.useQuery<GetTransactionsQuery, GetTransactionsQueryVariables>(GetTransactionsDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTransactionsQuery, GetTransactionsQueryVariables>(GetTransactionsDocument, options);
       }
 export function useGetTransactionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTransactionsQuery, GetTransactionsQueryVariables>) {
-          return Apollo.useLazyQuery<GetTransactionsQuery, GetTransactionsQueryVariables>(GetTransactionsDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTransactionsQuery, GetTransactionsQueryVariables>(GetTransactionsDocument, options);
         }
 export type GetTransactionsQueryHookResult = ReturnType<typeof useGetTransactionsQuery>;
 export type GetTransactionsLazyQueryHookResult = ReturnType<typeof useGetTransactionsLazyQuery>;
@@ -1689,10 +1739,12 @@ export const GetStackLabelsDocument = gql`
  * });
  */
 export function useGetStackLabelsQuery(baseOptions: Apollo.QueryHookOptions<GetStackLabelsQuery, GetStackLabelsQueryVariables>) {
-        return Apollo.useQuery<GetStackLabelsQuery, GetStackLabelsQueryVariables>(GetStackLabelsDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetStackLabelsQuery, GetStackLabelsQueryVariables>(GetStackLabelsDocument, options);
       }
 export function useGetStackLabelsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetStackLabelsQuery, GetStackLabelsQueryVariables>) {
-          return Apollo.useLazyQuery<GetStackLabelsQuery, GetStackLabelsQueryVariables>(GetStackLabelsDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetStackLabelsQuery, GetStackLabelsQueryVariables>(GetStackLabelsDocument, options);
         }
 export type GetStackLabelsQueryHookResult = ReturnType<typeof useGetStackLabelsQuery>;
 export type GetStackLabelsLazyQueryHookResult = ReturnType<typeof useGetStackLabelsLazyQuery>;

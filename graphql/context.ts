@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
-import { getSession, Session } from 'next-auth/client';
+import { getSession } from 'next-auth/client';
+import { Session } from 'next-auth';
 
 const prisma = new PrismaClient({ log: ['query'] });
 

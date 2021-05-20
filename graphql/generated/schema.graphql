@@ -2,7 +2,7 @@
 ### Do not make changes to this file directly
 
 
-type BatchPayload {
+type AffectedRowsOutput {
   count: Int!
 }
 
@@ -15,30 +15,30 @@ type Budget {
 }
 
 input BudgetCreateInput {
-  stacks: StackCreateManyWithoutBudgetInput
+  stacks: StackCreateNestedManyWithoutBudgetInput
   toBeBudgeted: Float
   total: Float
-  user: userCreateOneWithoutBudgetInput!
+  user: userCreateNestedOneWithoutBudgetInput!
 }
 
-input BudgetCreateOneWithoutStacksInput {
+input BudgetCreateNestedOneWithoutStacksInput {
   connect: BudgetWhereUniqueInput
-  connectOrCreate: BudgetCreateOrConnectWithoutstacksInput
+  connectOrCreate: BudgetCreateOrConnectWithoutStacksInput
   create: BudgetCreateWithoutStacksInput
 }
 
-input BudgetCreateOneWithoutUserInput {
+input BudgetCreateNestedOneWithoutUserInput {
   connect: BudgetWhereUniqueInput
-  connectOrCreate: BudgetCreateOrConnectWithoutuserInput
+  connectOrCreate: BudgetCreateOrConnectWithoutUserInput
   create: BudgetCreateWithoutUserInput
 }
 
-input BudgetCreateOrConnectWithoutstacksInput {
+input BudgetCreateOrConnectWithoutStacksInput {
   create: BudgetCreateWithoutStacksInput!
   where: BudgetWhereUniqueInput!
 }
 
-input BudgetCreateOrConnectWithoutuserInput {
+input BudgetCreateOrConnectWithoutUserInput {
   create: BudgetCreateWithoutUserInput!
   where: BudgetWhereUniqueInput!
 }
@@ -46,18 +46,13 @@ input BudgetCreateOrConnectWithoutuserInput {
 input BudgetCreateWithoutStacksInput {
   toBeBudgeted: Float
   total: Float
-  user: userCreateOneWithoutBudgetInput!
+  user: userCreateNestedOneWithoutBudgetInput!
 }
 
 input BudgetCreateWithoutUserInput {
-  stacks: StackCreateManyWithoutBudgetInput
+  stacks: StackCreateNestedManyWithoutBudgetInput
   toBeBudgeted: Float
   total: Float
-}
-
-input BudgetId_label_idxCompoundUniqueInput {
-  budgetId: Int!
-  label: String!
 }
 
 input BudgetUpdateInput {
@@ -69,7 +64,7 @@ input BudgetUpdateInput {
 
 input BudgetUpdateOneRequiredWithoutStacksInput {
   connect: BudgetWhereUniqueInput
-  connectOrCreate: BudgetCreateOrConnectWithoutstacksInput
+  connectOrCreate: BudgetCreateOrConnectWithoutStacksInput
   create: BudgetCreateWithoutStacksInput
   update: BudgetUpdateWithoutStacksInput
   upsert: BudgetUpsertWithoutStacksInput
@@ -77,7 +72,7 @@ input BudgetUpdateOneRequiredWithoutStacksInput {
 
 input BudgetUpdateOneWithoutUserInput {
   connect: BudgetWhereUniqueInput
-  connectOrCreate: BudgetCreateOrConnectWithoutuserInput
+  connectOrCreate: BudgetCreateOrConnectWithoutUserInput
   create: BudgetCreateWithoutUserInput
   delete: Boolean
   disconnect: Boolean
@@ -109,9 +104,9 @@ input BudgetUpsertWithoutUserInput {
 
 input BudgetWhereInput {
   AND: [BudgetWhereInput!]
-  id: IntFilter
   NOT: [BudgetWhereInput!]
   OR: [BudgetWhereInput!]
+  id: IntFilter
   stacks: StackListRelationFilter
   toBeBudgeted: FloatNullableFilter
   total: FloatNullableFilter
@@ -197,7 +192,7 @@ type Mutation {
   createOneStack(data: StackCreateInput!): Stack!
   createOneTransaction(data: TransactionCreateInput!): Transaction!
   createOneuser(data: userCreateInput!): user!
-  deleteManyTransaction(where: TransactionWhereInput): BatchPayload!
+  deleteManyTransaction(where: TransactionWhereInput): AffectedRowsOutput!
   deleteOneStack(where: StackWhereUniqueInput!): Stack
   updateOneBudget(data: BudgetUpdateInput!, where: BudgetWhereUniqueInput!): Budget
   updateOneStack(data: StackUpdateInput!, where: StackWhereUniqueInput!): Stack
@@ -349,20 +344,38 @@ type Stack {
   label: String!
 }
 
+input StackBudgetId_label_idxCompoundUniqueInput {
+  budgetId: Int!
+  label: String!
+}
+
 input StackCreateInput {
   amount: Float
-  budget: BudgetCreateOneWithoutStacksInput!
+  budget: BudgetCreateNestedOneWithoutStacksInput!
   created_at: DateTime
   label: String!
 }
 
-input StackCreateManyWithoutBudgetInput {
-  connect: [StackWhereUniqueInput!]
-  connectOrCreate: [StackCreateOrConnectWithoutbudgetInput!]
-  create: [StackCreateWithoutBudgetInput!]
+input StackCreateManyBudgetInput {
+  amount: Float
+  created_at: DateTime
+  id: Int
+  label: String!
 }
 
-input StackCreateOrConnectWithoutbudgetInput {
+input StackCreateManyBudgetInputEnvelope {
+  data: [StackCreateManyBudgetInput!]
+  skipDuplicates: Boolean
+}
+
+input StackCreateNestedManyWithoutBudgetInput {
+  connect: [StackWhereUniqueInput!]
+  connectOrCreate: [StackCreateOrConnectWithoutBudgetInput!]
+  create: [StackCreateWithoutBudgetInput!]
+  createMany: StackCreateManyBudgetInputEnvelope
+}
+
+input StackCreateOrConnectWithoutBudgetInput {
   create: StackCreateWithoutBudgetInput!
   where: StackWhereUniqueInput!
 }
@@ -388,14 +401,14 @@ input StackOrderByInput {
 }
 
 input StackScalarWhereInput {
-  amount: FloatFilter
   AND: [StackScalarWhereInput!]
+  NOT: [StackScalarWhereInput!]
+  OR: [StackScalarWhereInput!]
+  amount: FloatFilter
   budgetId: IntFilter
   created_at: DateTimeFilter
   id: IntFilter
   label: StringFilter
-  NOT: [StackScalarWhereInput!]
-  OR: [StackScalarWhereInput!]
 }
 
 input StackUpdateInput {
@@ -411,10 +424,16 @@ input StackUpdateManyMutationInput {
   label: StringFieldUpdateOperationsInput
 }
 
+input StackUpdateManyWithWhereWithoutBudgetInput {
+  data: StackUpdateManyMutationInput!
+  where: StackScalarWhereInput!
+}
+
 input StackUpdateManyWithoutBudgetInput {
   connect: [StackWhereUniqueInput!]
-  connectOrCreate: [StackCreateOrConnectWithoutbudgetInput!]
+  connectOrCreate: [StackCreateOrConnectWithoutBudgetInput!]
   create: [StackCreateWithoutBudgetInput!]
+  createMany: StackCreateManyBudgetInputEnvelope
   delete: [StackWhereUniqueInput!]
   deleteMany: [StackScalarWhereInput!]
   disconnect: [StackWhereUniqueInput!]
@@ -424,20 +443,15 @@ input StackUpdateManyWithoutBudgetInput {
   upsert: [StackUpsertWithWhereUniqueWithoutBudgetInput!]
 }
 
-input StackUpdateManyWithWhereWithoutBudgetInput {
-  data: StackUpdateManyMutationInput!
-  where: StackScalarWhereInput!
+input StackUpdateWithWhereUniqueWithoutBudgetInput {
+  data: StackUpdateWithoutBudgetInput!
+  where: StackWhereUniqueInput!
 }
 
 input StackUpdateWithoutBudgetInput {
   amount: FloatFieldUpdateOperationsInput
   created_at: DateTimeFieldUpdateOperationsInput
   label: StringFieldUpdateOperationsInput
-}
-
-input StackUpdateWithWhereUniqueWithoutBudgetInput {
-  data: StackUpdateWithoutBudgetInput!
-  where: StackWhereUniqueInput!
 }
 
 input StackUpsertWithWhereUniqueWithoutBudgetInput {
@@ -447,19 +461,19 @@ input StackUpsertWithWhereUniqueWithoutBudgetInput {
 }
 
 input StackWhereInput {
-  amount: FloatFilter
   AND: [StackWhereInput!]
+  NOT: [StackWhereInput!]
+  OR: [StackWhereInput!]
+  amount: FloatFilter
   budget: BudgetWhereInput
   budgetId: IntFilter
   created_at: DateTimeFilter
   id: IntFilter
   label: StringFilter
-  NOT: [StackWhereInput!]
-  OR: [StackWhereInput!]
 }
 
 input StackWhereUniqueInput {
-  budgetId_label_idx: BudgetId_label_idxCompoundUniqueInput
+  budgetId_label_idx: StackBudgetId_label_idxCompoundUniqueInput
   id: Int
 }
 
@@ -513,16 +527,31 @@ input TransactionCreateInput {
   description: String!
   stack: String!
   type: String!
-  user: userCreateOneWithoutTransactionsInput!
+  user: userCreateNestedOneWithoutTransactionsInput!
 }
 
-input TransactionCreateManyWithoutUserInput {
+input TransactionCreateManyUserInput {
+  amount: Float!
+  date: DateTime!
+  description: String!
+  id: Int
+  stack: String!
+  type: String!
+}
+
+input TransactionCreateManyUserInputEnvelope {
+  data: [TransactionCreateManyUserInput!]
+  skipDuplicates: Boolean
+}
+
+input TransactionCreateNestedManyWithoutUserInput {
   connect: [TransactionWhereUniqueInput!]
-  connectOrCreate: [TransactionCreateOrConnectWithoutuserInput!]
+  connectOrCreate: [TransactionCreateOrConnectWithoutUserInput!]
   create: [TransactionCreateWithoutUserInput!]
+  createMany: TransactionCreateManyUserInputEnvelope
 }
 
-input TransactionCreateOrConnectWithoutuserInput {
+input TransactionCreateOrConnectWithoutUserInput {
   create: TransactionCreateWithoutUserInput!
   where: TransactionWhereUniqueInput!
 }
@@ -542,13 +571,13 @@ input TransactionListRelationFilter {
 }
 
 input TransactionScalarWhereInput {
-  amount: FloatFilter
   AND: [TransactionScalarWhereInput!]
+  NOT: [TransactionScalarWhereInput!]
+  OR: [TransactionScalarWhereInput!]
+  amount: FloatFilter
   date: DateTimeFilter
   description: StringFilter
   id: IntFilter
-  NOT: [TransactionScalarWhereInput!]
-  OR: [TransactionScalarWhereInput!]
   stack: StringFilter
   type: StringFilter
   userId: IntFilter
@@ -571,10 +600,16 @@ input TransactionUpdateManyMutationInput {
   type: StringFieldUpdateOperationsInput
 }
 
+input TransactionUpdateManyWithWhereWithoutUserInput {
+  data: TransactionUpdateManyMutationInput!
+  where: TransactionScalarWhereInput!
+}
+
 input TransactionUpdateManyWithoutUserInput {
   connect: [TransactionWhereUniqueInput!]
-  connectOrCreate: [TransactionCreateOrConnectWithoutuserInput!]
+  connectOrCreate: [TransactionCreateOrConnectWithoutUserInput!]
   create: [TransactionCreateWithoutUserInput!]
+  createMany: TransactionCreateManyUserInputEnvelope
   delete: [TransactionWhereUniqueInput!]
   deleteMany: [TransactionScalarWhereInput!]
   disconnect: [TransactionWhereUniqueInput!]
@@ -584,9 +619,9 @@ input TransactionUpdateManyWithoutUserInput {
   upsert: [TransactionUpsertWithWhereUniqueWithoutUserInput!]
 }
 
-input TransactionUpdateManyWithWhereWithoutUserInput {
-  data: TransactionUpdateManyMutationInput!
-  where: TransactionScalarWhereInput!
+input TransactionUpdateWithWhereUniqueWithoutUserInput {
+  data: TransactionUpdateWithoutUserInput!
+  where: TransactionWhereUniqueInput!
 }
 
 input TransactionUpdateWithoutUserInput {
@@ -597,11 +632,6 @@ input TransactionUpdateWithoutUserInput {
   type: StringFieldUpdateOperationsInput
 }
 
-input TransactionUpdateWithWhereUniqueWithoutUserInput {
-  data: TransactionUpdateWithoutUserInput!
-  where: TransactionWhereUniqueInput!
-}
-
 input TransactionUpsertWithWhereUniqueWithoutUserInput {
   create: TransactionCreateWithoutUserInput!
   update: TransactionUpdateWithoutUserInput!
@@ -609,13 +639,13 @@ input TransactionUpsertWithWhereUniqueWithoutUserInput {
 }
 
 input TransactionWhereInput {
-  amount: FloatFilter
   AND: [TransactionWhereInput!]
+  NOT: [TransactionWhereInput!]
+  OR: [TransactionWhereInput!]
+  amount: FloatFilter
   date: DateTimeFilter
   description: StringFilter
   id: IntFilter
-  NOT: [TransactionWhereInput!]
-  OR: [TransactionWhereInput!]
   stack: StringFilter
   type: StringFilter
   user: userWhereInput
@@ -642,34 +672,34 @@ type user {
 }
 
 input userCreateInput {
-  budget: BudgetCreateOneWithoutUserInput
+  budget: BudgetCreateNestedOneWithoutUserInput
   createdAt: DateTime
   email: String!
   emailVerified: DateTime
   image: String
   name: String
-  transactions: TransactionCreateManyWithoutUserInput
+  transactions: TransactionCreateNestedManyWithoutUserInput
   updatedAt: DateTime
 }
 
-input userCreateOneWithoutBudgetInput {
+input userCreateNestedOneWithoutBudgetInput {
   connect: userWhereUniqueInput
-  connectOrCreate: userCreateOrConnectWithoutbudgetInput
+  connectOrCreate: userCreateOrConnectWithoutBudgetInput
   create: userCreateWithoutBudgetInput
 }
 
-input userCreateOneWithoutTransactionsInput {
+input userCreateNestedOneWithoutTransactionsInput {
   connect: userWhereUniqueInput
-  connectOrCreate: userCreateOrConnectWithouttransactionsInput
+  connectOrCreate: userCreateOrConnectWithoutTransactionsInput
   create: userCreateWithoutTransactionsInput
 }
 
-input userCreateOrConnectWithoutbudgetInput {
+input userCreateOrConnectWithoutBudgetInput {
   create: userCreateWithoutBudgetInput!
   where: userWhereUniqueInput!
 }
 
-input userCreateOrConnectWithouttransactionsInput {
+input userCreateOrConnectWithoutTransactionsInput {
   create: userCreateWithoutTransactionsInput!
   where: userWhereUniqueInput!
 }
@@ -680,12 +710,12 @@ input userCreateWithoutBudgetInput {
   emailVerified: DateTime
   image: String
   name: String
-  transactions: TransactionCreateManyWithoutUserInput
+  transactions: TransactionCreateNestedManyWithoutUserInput
   updatedAt: DateTime
 }
 
 input userCreateWithoutTransactionsInput {
-  budget: BudgetCreateOneWithoutUserInput
+  budget: BudgetCreateNestedOneWithoutUserInput
   createdAt: DateTime
   email: String!
   emailVerified: DateTime
@@ -696,7 +726,7 @@ input userCreateWithoutTransactionsInput {
 
 input userUpdateOneRequiredWithoutBudgetInput {
   connect: userWhereUniqueInput
-  connectOrCreate: userCreateOrConnectWithoutbudgetInput
+  connectOrCreate: userCreateOrConnectWithoutBudgetInput
   create: userCreateWithoutBudgetInput
   update: userUpdateWithoutBudgetInput
   upsert: userUpsertWithoutBudgetInput
@@ -704,7 +734,7 @@ input userUpdateOneRequiredWithoutBudgetInput {
 
 input userUpdateOneRequiredWithoutTransactionsInput {
   connect: userWhereUniqueInput
-  connectOrCreate: userCreateOrConnectWithouttransactionsInput
+  connectOrCreate: userCreateOrConnectWithoutTransactionsInput
   create: userCreateWithoutTransactionsInput
   update: userUpdateWithoutTransactionsInput
   upsert: userUpsertWithoutTransactionsInput
@@ -742,6 +772,8 @@ input userUpsertWithoutTransactionsInput {
 
 input userWhereInput {
   AND: [userWhereInput!]
+  NOT: [userWhereInput!]
+  OR: [userWhereInput!]
   budget: BudgetWhereInput
   createdAt: DateTimeFilter
   email: StringFilter
@@ -749,8 +781,6 @@ input userWhereInput {
   id: IntFilter
   image: StringNullableFilter
   name: StringNullableFilter
-  NOT: [userWhereInput!]
-  OR: [userWhereInput!]
   transactions: TransactionListRelationFilter
   updatedAt: DateTimeFilter
 }

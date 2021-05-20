@@ -39,7 +39,7 @@ export const ErrorText = styled.span`
 `;
 
 const NewTransaction = () => {
-  const { register, handleSubmit, errors, reset } = useForm();
+  const { register, handleSubmit, formState: { errors }, reset } = useForm();
   const [session] = useSession();
   const [selectedStack, setSelectedStack] = useState('');
   const { addTransaction, stackLabels } = useTransactions();
@@ -64,13 +64,13 @@ const NewTransaction = () => {
         <h4>New Transaction</h4>
       </div>
       <label htmlFor="description">Description {errors.description && <ErrorText> (Required)</ErrorText>}</label>
-      <Input name="description" category="underline" placeholder="Tasy Pizza LLC" ref={register({ required: true })} />
+      <Input name="description" category="underline" placeholder="Tasy Pizza LLC" {...register('description', { required: true })} />
 
       <label htmlFor="amount">Amount {errors.amount && <ErrorText> (Required)</ErrorText>}</label>
       <Input
         name="amount"
         category="underline"
-        ref={register({ required: true })}
+        {...register('amount', { required: true })}
         type="number"
         pattern="\d*"
         step={0.01}
@@ -81,7 +81,7 @@ const NewTransaction = () => {
       <Select
         name="stack"
         value={selectedStack}
-        ref={register({ required: true })}
+        {...register('stack', { required: true })}
         onChange={e => setSelectedStack(e.target.value)}
       >
         <option disabled value="">
@@ -98,9 +98,7 @@ const NewTransaction = () => {
       <Input
         name="date"
         category="underline"
-        ref={register({
-          required: true,
-        })}
+        {...register('date', { required: true })}
         type="date"
         placeholder="yyyy-mm-dd"
       />

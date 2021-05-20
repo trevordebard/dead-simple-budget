@@ -39,7 +39,7 @@ const GET_TRANSACTION = gql`
 `;
 
 const EditTransaction = ({ transactionId, cancelEdit }) => {
-  const { register, handleSubmit, errors } = useForm();
+  const { register, handleSubmit, formState: { errors } } = useForm();
   const { editTransaction, stackLabels } = useTransactions();
   const [selectedStack, setSelectedStack] = useState('');
   const [transactionType, setTransactionType] = useState<string | null>(null);
@@ -78,7 +78,7 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
       <Input
         name="description"
         category="underline"
-        ref={register({ required: true })}
+        {...register('description', { required: true })}
         type="text"
         defaultValue={data.transaction.description}
         autoComplete="off"
@@ -86,7 +86,7 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
       <label htmlFor="amount">Amount {errors.amount && <ErrorText> (Required)</ErrorText>}</label>
       <Input
         name="amount"
-        ref={register({ required: true })}
+        {...register('amount', { required: true })}
         category="underline"
         type="number"
         pattern="\d*"
@@ -99,7 +99,7 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
       <label htmlFor="stack">Stack {errors.stack && <ErrorText> (Required)</ErrorText>}</label>
       <Select
         name="stack"
-        ref={register({ required: true })}
+        {...register('stack', { required: true })}
         value={selectedStack}
         onChange={e => setSelectedStack(e.target.value)}
       >
@@ -114,7 +114,7 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
       <Input
         name="date"
         category="underline"
-        ref={register({ required: true })}
+        {...register('date', { required: true })}
         type="date"
         defaultValue={formatDate(data.transaction.date)}
         required
