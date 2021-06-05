@@ -6,6 +6,106 @@ type AffectedRowsOutput {
   count: Int!
 }
 
+input BankAccoutCreateManyUserInput {
+  id: Int
+  plaidAccessToken: String!
+  plaidItemId: String!
+}
+
+input BankAccoutCreateManyUserInputEnvelope {
+  data: [BankAccoutCreateManyUserInput!]
+  skipDuplicates: Boolean
+}
+
+input BankAccoutCreateNestedManyWithoutUserInput {
+  connect: [BankAccoutWhereUniqueInput!]
+  connectOrCreate: [BankAccoutCreateOrConnectWithoutUserInput!]
+  create: [BankAccoutCreateWithoutUserInput!]
+  createMany: BankAccoutCreateManyUserInputEnvelope
+}
+
+input BankAccoutCreateOrConnectWithoutUserInput {
+  create: BankAccoutCreateWithoutUserInput!
+  where: BankAccoutWhereUniqueInput!
+}
+
+input BankAccoutCreateWithoutUserInput {
+  plaidAccessToken: String!
+  plaidItemId: String!
+}
+
+input BankAccoutListRelationFilter {
+  every: BankAccoutWhereInput
+  none: BankAccoutWhereInput
+  some: BankAccoutWhereInput
+}
+
+input BankAccoutScalarWhereInput {
+  AND: [BankAccoutScalarWhereInput!]
+  NOT: [BankAccoutScalarWhereInput!]
+  OR: [BankAccoutScalarWhereInput!]
+  id: IntFilter
+  plaidAccessToken: StringFilter
+  plaidItemId: StringFilter
+  userId: IntFilter
+}
+
+input BankAccoutUpdateManyMutationInput {
+  plaidAccessToken: StringFieldUpdateOperationsInput
+  plaidItemId: StringFieldUpdateOperationsInput
+}
+
+input BankAccoutUpdateManyWithWhereWithoutUserInput {
+  data: BankAccoutUpdateManyMutationInput!
+  where: BankAccoutScalarWhereInput!
+}
+
+input BankAccoutUpdateManyWithoutUserInput {
+  connect: [BankAccoutWhereUniqueInput!]
+  connectOrCreate: [BankAccoutCreateOrConnectWithoutUserInput!]
+  create: [BankAccoutCreateWithoutUserInput!]
+  createMany: BankAccoutCreateManyUserInputEnvelope
+  delete: [BankAccoutWhereUniqueInput!]
+  deleteMany: [BankAccoutScalarWhereInput!]
+  disconnect: [BankAccoutWhereUniqueInput!]
+  set: [BankAccoutWhereUniqueInput!]
+  update: [BankAccoutUpdateWithWhereUniqueWithoutUserInput!]
+  updateMany: [BankAccoutUpdateManyWithWhereWithoutUserInput!]
+  upsert: [BankAccoutUpsertWithWhereUniqueWithoutUserInput!]
+}
+
+input BankAccoutUpdateWithWhereUniqueWithoutUserInput {
+  data: BankAccoutUpdateWithoutUserInput!
+  where: BankAccoutWhereUniqueInput!
+}
+
+input BankAccoutUpdateWithoutUserInput {
+  plaidAccessToken: StringFieldUpdateOperationsInput
+  plaidItemId: StringFieldUpdateOperationsInput
+}
+
+input BankAccoutUpsertWithWhereUniqueWithoutUserInput {
+  create: BankAccoutCreateWithoutUserInput!
+  update: BankAccoutUpdateWithoutUserInput!
+  where: BankAccoutWhereUniqueInput!
+}
+
+input BankAccoutWhereInput {
+  AND: [BankAccoutWhereInput!]
+  NOT: [BankAccoutWhereInput!]
+  OR: [BankAccoutWhereInput!]
+  id: IntFilter
+  plaidAccessToken: StringFilter
+  plaidItemId: StringFilter
+  user: userWhereInput
+  userId: IntFilter
+}
+
+input BankAccoutWhereUniqueInput {
+  id: Int
+  plaidItemId: String
+}
+
 type Budget {
   id: Int!
   stacks(after: StackWhereUniqueInput, before: StackWhereUniqueInput, first: Int, last: Int, orderBy: [StackOrderByInput!]): [Stack!]!
@@ -672,6 +772,7 @@ type user {
 }
 
 input userCreateInput {
+  bankAccounts: BankAccoutCreateNestedManyWithoutUserInput
   budget: BudgetCreateNestedOneWithoutUserInput
   createdAt: DateTime
   email: String!
@@ -705,6 +806,7 @@ input userCreateOrConnectWithoutTransactionsInput {
 }
 
 input userCreateWithoutBudgetInput {
+  bankAccounts: BankAccoutCreateNestedManyWithoutUserInput
   createdAt: DateTime
   email: String!
   emailVerified: DateTime
@@ -715,6 +817,7 @@ input userCreateWithoutBudgetInput {
 }
 
 input userCreateWithoutTransactionsInput {
+  bankAccounts: BankAccoutCreateNestedManyWithoutUserInput
   budget: BudgetCreateNestedOneWithoutUserInput
   createdAt: DateTime
   email: String!
@@ -741,6 +844,7 @@ input userUpdateOneRequiredWithoutTransactionsInput {
 }
 
 input userUpdateWithoutBudgetInput {
+  bankAccounts: BankAccoutUpdateManyWithoutUserInput
   createdAt: DateTimeFieldUpdateOperationsInput
   email: StringFieldUpdateOperationsInput
   emailVerified: NullableDateTimeFieldUpdateOperationsInput
@@ -751,6 +855,7 @@ input userUpdateWithoutBudgetInput {
 }
 
 input userUpdateWithoutTransactionsInput {
+  bankAccounts: BankAccoutUpdateManyWithoutUserInput
   budget: BudgetUpdateOneWithoutUserInput
   createdAt: DateTimeFieldUpdateOperationsInput
   email: StringFieldUpdateOperationsInput
@@ -774,6 +879,7 @@ input userWhereInput {
   AND: [userWhereInput!]
   NOT: [userWhereInput!]
   OR: [userWhereInput!]
+  bankAccounts: BankAccoutListRelationFilter
   budget: BudgetWhereInput
   createdAt: DateTimeFilter
   email: StringFilter

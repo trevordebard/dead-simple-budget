@@ -34,6 +34,91 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  BankAccoutCreateManyUserInput: { // input type
+    id?: number | null; // Int
+    plaidAccessToken: string; // String!
+    plaidItemId: string; // String!
+  }
+  BankAccoutCreateManyUserInputEnvelope: { // input type
+    data?: NexusGenInputs['BankAccoutCreateManyUserInput'][] | null; // [BankAccoutCreateManyUserInput!]
+    skipDuplicates?: boolean | null; // Boolean
+  }
+  BankAccoutCreateNestedManyWithoutUserInput: { // input type
+    connect?: NexusGenInputs['BankAccoutWhereUniqueInput'][] | null; // [BankAccoutWhereUniqueInput!]
+    connectOrCreate?: NexusGenInputs['BankAccoutCreateOrConnectWithoutUserInput'][] | null; // [BankAccoutCreateOrConnectWithoutUserInput!]
+    create?: NexusGenInputs['BankAccoutCreateWithoutUserInput'][] | null; // [BankAccoutCreateWithoutUserInput!]
+    createMany?: NexusGenInputs['BankAccoutCreateManyUserInputEnvelope'] | null; // BankAccoutCreateManyUserInputEnvelope
+  }
+  BankAccoutCreateOrConnectWithoutUserInput: { // input type
+    create: NexusGenInputs['BankAccoutCreateWithoutUserInput']; // BankAccoutCreateWithoutUserInput!
+    where: NexusGenInputs['BankAccoutWhereUniqueInput']; // BankAccoutWhereUniqueInput!
+  }
+  BankAccoutCreateWithoutUserInput: { // input type
+    plaidAccessToken: string; // String!
+    plaidItemId: string; // String!
+  }
+  BankAccoutListRelationFilter: { // input type
+    every?: NexusGenInputs['BankAccoutWhereInput'] | null; // BankAccoutWhereInput
+    none?: NexusGenInputs['BankAccoutWhereInput'] | null; // BankAccoutWhereInput
+    some?: NexusGenInputs['BankAccoutWhereInput'] | null; // BankAccoutWhereInput
+  }
+  BankAccoutScalarWhereInput: { // input type
+    AND?: NexusGenInputs['BankAccoutScalarWhereInput'][] | null; // [BankAccoutScalarWhereInput!]
+    NOT?: NexusGenInputs['BankAccoutScalarWhereInput'][] | null; // [BankAccoutScalarWhereInput!]
+    OR?: NexusGenInputs['BankAccoutScalarWhereInput'][] | null; // [BankAccoutScalarWhereInput!]
+    id?: NexusGenInputs['IntFilter'] | null; // IntFilter
+    plaidAccessToken?: NexusGenInputs['StringFilter'] | null; // StringFilter
+    plaidItemId?: NexusGenInputs['StringFilter'] | null; // StringFilter
+    userId?: NexusGenInputs['IntFilter'] | null; // IntFilter
+  }
+  BankAccoutUpdateManyMutationInput: { // input type
+    plaidAccessToken?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
+    plaidItemId?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
+  }
+  BankAccoutUpdateManyWithWhereWithoutUserInput: { // input type
+    data: NexusGenInputs['BankAccoutUpdateManyMutationInput']; // BankAccoutUpdateManyMutationInput!
+    where: NexusGenInputs['BankAccoutScalarWhereInput']; // BankAccoutScalarWhereInput!
+  }
+  BankAccoutUpdateManyWithoutUserInput: { // input type
+    connect?: NexusGenInputs['BankAccoutWhereUniqueInput'][] | null; // [BankAccoutWhereUniqueInput!]
+    connectOrCreate?: NexusGenInputs['BankAccoutCreateOrConnectWithoutUserInput'][] | null; // [BankAccoutCreateOrConnectWithoutUserInput!]
+    create?: NexusGenInputs['BankAccoutCreateWithoutUserInput'][] | null; // [BankAccoutCreateWithoutUserInput!]
+    createMany?: NexusGenInputs['BankAccoutCreateManyUserInputEnvelope'] | null; // BankAccoutCreateManyUserInputEnvelope
+    delete?: NexusGenInputs['BankAccoutWhereUniqueInput'][] | null; // [BankAccoutWhereUniqueInput!]
+    deleteMany?: NexusGenInputs['BankAccoutScalarWhereInput'][] | null; // [BankAccoutScalarWhereInput!]
+    disconnect?: NexusGenInputs['BankAccoutWhereUniqueInput'][] | null; // [BankAccoutWhereUniqueInput!]
+    set?: NexusGenInputs['BankAccoutWhereUniqueInput'][] | null; // [BankAccoutWhereUniqueInput!]
+    update?: NexusGenInputs['BankAccoutUpdateWithWhereUniqueWithoutUserInput'][] | null; // [BankAccoutUpdateWithWhereUniqueWithoutUserInput!]
+    updateMany?: NexusGenInputs['BankAccoutUpdateManyWithWhereWithoutUserInput'][] | null; // [BankAccoutUpdateManyWithWhereWithoutUserInput!]
+    upsert?: NexusGenInputs['BankAccoutUpsertWithWhereUniqueWithoutUserInput'][] | null; // [BankAccoutUpsertWithWhereUniqueWithoutUserInput!]
+  }
+  BankAccoutUpdateWithWhereUniqueWithoutUserInput: { // input type
+    data: NexusGenInputs['BankAccoutUpdateWithoutUserInput']; // BankAccoutUpdateWithoutUserInput!
+    where: NexusGenInputs['BankAccoutWhereUniqueInput']; // BankAccoutWhereUniqueInput!
+  }
+  BankAccoutUpdateWithoutUserInput: { // input type
+    plaidAccessToken?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
+    plaidItemId?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
+  }
+  BankAccoutUpsertWithWhereUniqueWithoutUserInput: { // input type
+    create: NexusGenInputs['BankAccoutCreateWithoutUserInput']; // BankAccoutCreateWithoutUserInput!
+    update: NexusGenInputs['BankAccoutUpdateWithoutUserInput']; // BankAccoutUpdateWithoutUserInput!
+    where: NexusGenInputs['BankAccoutWhereUniqueInput']; // BankAccoutWhereUniqueInput!
+  }
+  BankAccoutWhereInput: { // input type
+    AND?: NexusGenInputs['BankAccoutWhereInput'][] | null; // [BankAccoutWhereInput!]
+    NOT?: NexusGenInputs['BankAccoutWhereInput'][] | null; // [BankAccoutWhereInput!]
+    OR?: NexusGenInputs['BankAccoutWhereInput'][] | null; // [BankAccoutWhereInput!]
+    id?: NexusGenInputs['IntFilter'] | null; // IntFilter
+    plaidAccessToken?: NexusGenInputs['StringFilter'] | null; // StringFilter
+    plaidItemId?: NexusGenInputs['StringFilter'] | null; // StringFilter
+    user?: NexusGenInputs['userWhereInput'] | null; // userWhereInput
+    userId?: NexusGenInputs['IntFilter'] | null; // IntFilter
+  }
+  BankAccoutWhereUniqueInput: { // input type
+    id?: number | null; // Int
+    plaidItemId?: string | null; // String
+  }
   BudgetCreateInput: { // input type
     stacks?: NexusGenInputs['StackCreateNestedManyWithoutBudgetInput'] | null; // StackCreateNestedManyWithoutBudgetInput
     toBeBudgeted?: number | null; // Float
@@ -549,6 +634,7 @@ export interface NexusGenInputs {
     id?: number | null; // Int
   }
   userCreateInput: { // input type
+    bankAccounts?: NexusGenInputs['BankAccoutCreateNestedManyWithoutUserInput'] | null; // BankAccoutCreateNestedManyWithoutUserInput
     budget?: NexusGenInputs['BudgetCreateNestedOneWithoutUserInput'] | null; // BudgetCreateNestedOneWithoutUserInput
     createdAt?: NexusGenScalars['DateTime'] | null; // DateTime
     email: string; // String!
@@ -577,6 +663,7 @@ export interface NexusGenInputs {
     where: NexusGenInputs['userWhereUniqueInput']; // userWhereUniqueInput!
   }
   userCreateWithoutBudgetInput: { // input type
+    bankAccounts?: NexusGenInputs['BankAccoutCreateNestedManyWithoutUserInput'] | null; // BankAccoutCreateNestedManyWithoutUserInput
     createdAt?: NexusGenScalars['DateTime'] | null; // DateTime
     email: string; // String!
     emailVerified?: NexusGenScalars['DateTime'] | null; // DateTime
@@ -586,6 +673,7 @@ export interface NexusGenInputs {
     updatedAt?: NexusGenScalars['DateTime'] | null; // DateTime
   }
   userCreateWithoutTransactionsInput: { // input type
+    bankAccounts?: NexusGenInputs['BankAccoutCreateNestedManyWithoutUserInput'] | null; // BankAccoutCreateNestedManyWithoutUserInput
     budget?: NexusGenInputs['BudgetCreateNestedOneWithoutUserInput'] | null; // BudgetCreateNestedOneWithoutUserInput
     createdAt?: NexusGenScalars['DateTime'] | null; // DateTime
     email: string; // String!
@@ -609,6 +697,7 @@ export interface NexusGenInputs {
     upsert?: NexusGenInputs['userUpsertWithoutTransactionsInput'] | null; // userUpsertWithoutTransactionsInput
   }
   userUpdateWithoutBudgetInput: { // input type
+    bankAccounts?: NexusGenInputs['BankAccoutUpdateManyWithoutUserInput'] | null; // BankAccoutUpdateManyWithoutUserInput
     createdAt?: NexusGenInputs['DateTimeFieldUpdateOperationsInput'] | null; // DateTimeFieldUpdateOperationsInput
     email?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
     emailVerified?: NexusGenInputs['NullableDateTimeFieldUpdateOperationsInput'] | null; // NullableDateTimeFieldUpdateOperationsInput
@@ -618,6 +707,7 @@ export interface NexusGenInputs {
     updatedAt?: NexusGenInputs['DateTimeFieldUpdateOperationsInput'] | null; // DateTimeFieldUpdateOperationsInput
   }
   userUpdateWithoutTransactionsInput: { // input type
+    bankAccounts?: NexusGenInputs['BankAccoutUpdateManyWithoutUserInput'] | null; // BankAccoutUpdateManyWithoutUserInput
     budget?: NexusGenInputs['BudgetUpdateOneWithoutUserInput'] | null; // BudgetUpdateOneWithoutUserInput
     createdAt?: NexusGenInputs['DateTimeFieldUpdateOperationsInput'] | null; // DateTimeFieldUpdateOperationsInput
     email?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
@@ -638,6 +728,7 @@ export interface NexusGenInputs {
     AND?: NexusGenInputs['userWhereInput'][] | null; // [userWhereInput!]
     NOT?: NexusGenInputs['userWhereInput'][] | null; // [userWhereInput!]
     OR?: NexusGenInputs['userWhereInput'][] | null; // [userWhereInput!]
+    bankAccounts?: NexusGenInputs['BankAccoutListRelationFilter'] | null; // BankAccoutListRelationFilter
     budget?: NexusGenInputs['BudgetWhereInput'] | null; // BudgetWhereInput
     createdAt?: NexusGenInputs['DateTimeFilter'] | null; // DateTimeFilter
     email?: NexusGenInputs['StringFilter'] | null; // StringFilter

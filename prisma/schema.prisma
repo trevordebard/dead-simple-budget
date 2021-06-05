@@ -81,6 +81,7 @@ model user {
 
   transactions Transaction[]
   budget       Budget?
+  bankAccounts BankAccout[]
   @@map("users")
 }
 
@@ -93,4 +94,12 @@ model VerificationRequest {
   updatedAt  DateTime @default(now()) @map("updated_at")
 
   @@map("verification_requests")
+}
+
+model BankAccout {
+  id               Int    @id @default(autoincrement())
+  plaidAccessToken String
+  plaidItemId      String @unique
+  userId           Int
+  user             user   @relation(fields: [userId], references: [id])
 }
