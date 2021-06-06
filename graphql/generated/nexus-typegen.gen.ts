@@ -120,6 +120,7 @@ export interface NexusGenInputs {
     plaidItemId?: string | null; // String
   }
   BudgetCreateInput: { // input type
+    createdAt?: NexusGenScalars['DateTime'] | null; // DateTime
     stacks?: NexusGenInputs['StackCreateNestedManyWithoutBudgetInput'] | null; // StackCreateNestedManyWithoutBudgetInput
     toBeBudgeted?: number | null; // Float
     total?: number | null; // Float
@@ -144,16 +145,19 @@ export interface NexusGenInputs {
     where: NexusGenInputs['BudgetWhereUniqueInput']; // BudgetWhereUniqueInput!
   }
   BudgetCreateWithoutStacksInput: { // input type
+    createdAt?: NexusGenScalars['DateTime'] | null; // DateTime
     toBeBudgeted?: number | null; // Float
     total?: number | null; // Float
     user: NexusGenInputs['userCreateNestedOneWithoutBudgetInput']; // userCreateNestedOneWithoutBudgetInput!
   }
   BudgetCreateWithoutUserInput: { // input type
+    createdAt?: NexusGenScalars['DateTime'] | null; // DateTime
     stacks?: NexusGenInputs['StackCreateNestedManyWithoutBudgetInput'] | null; // StackCreateNestedManyWithoutBudgetInput
     toBeBudgeted?: number | null; // Float
     total?: number | null; // Float
   }
   BudgetUpdateInput: { // input type
+    createdAt?: NexusGenInputs['DateTimeFieldUpdateOperationsInput'] | null; // DateTimeFieldUpdateOperationsInput
     stacks?: NexusGenInputs['StackUpdateManyWithoutBudgetInput'] | null; // StackUpdateManyWithoutBudgetInput
     toBeBudgeted?: NexusGenInputs['NullableFloatFieldUpdateOperationsInput'] | null; // NullableFloatFieldUpdateOperationsInput
     total?: NexusGenInputs['NullableFloatFieldUpdateOperationsInput'] | null; // NullableFloatFieldUpdateOperationsInput
@@ -176,11 +180,13 @@ export interface NexusGenInputs {
     upsert?: NexusGenInputs['BudgetUpsertWithoutUserInput'] | null; // BudgetUpsertWithoutUserInput
   }
   BudgetUpdateWithoutStacksInput: { // input type
+    createdAt?: NexusGenInputs['DateTimeFieldUpdateOperationsInput'] | null; // DateTimeFieldUpdateOperationsInput
     toBeBudgeted?: NexusGenInputs['NullableFloatFieldUpdateOperationsInput'] | null; // NullableFloatFieldUpdateOperationsInput
     total?: NexusGenInputs['NullableFloatFieldUpdateOperationsInput'] | null; // NullableFloatFieldUpdateOperationsInput
     user?: NexusGenInputs['userUpdateOneRequiredWithoutBudgetInput'] | null; // userUpdateOneRequiredWithoutBudgetInput
   }
   BudgetUpdateWithoutUserInput: { // input type
+    createdAt?: NexusGenInputs['DateTimeFieldUpdateOperationsInput'] | null; // DateTimeFieldUpdateOperationsInput
     stacks?: NexusGenInputs['StackUpdateManyWithoutBudgetInput'] | null; // StackUpdateManyWithoutBudgetInput
     toBeBudgeted?: NexusGenInputs['NullableFloatFieldUpdateOperationsInput'] | null; // NullableFloatFieldUpdateOperationsInput
     total?: NexusGenInputs['NullableFloatFieldUpdateOperationsInput'] | null; // NullableFloatFieldUpdateOperationsInput
@@ -197,6 +203,7 @@ export interface NexusGenInputs {
     AND?: NexusGenInputs['BudgetWhereInput'][] | null; // [BudgetWhereInput!]
     NOT?: NexusGenInputs['BudgetWhereInput'][] | null; // [BudgetWhereInput!]
     OR?: NexusGenInputs['BudgetWhereInput'][] | null; // [BudgetWhereInput!]
+    createdAt?: NexusGenInputs['DateTimeFilter'] | null; // DateTimeFilter
     id?: NexusGenInputs['IntFilter'] | null; // IntFilter
     stacks?: NexusGenInputs['StackListRelationFilter'] | null; // StackListRelationFilter
     toBeBudgeted?: NexusGenInputs['FloatNullableFilter'] | null; // FloatNullableFilter
@@ -517,6 +524,7 @@ export interface NexusGenInputs {
   }
   TransactionCreateInput: { // input type
     amount: number; // Float!
+    createdAt?: NexusGenScalars['DateTime'] | null; // DateTime
     date: NexusGenScalars['DateTime']; // DateTime!
     description: string; // String!
     stack: string; // String!
@@ -525,6 +533,7 @@ export interface NexusGenInputs {
   }
   TransactionCreateManyUserInput: { // input type
     amount: number; // Float!
+    createdAt?: NexusGenScalars['DateTime'] | null; // DateTime
     date: NexusGenScalars['DateTime']; // DateTime!
     description: string; // String!
     id?: number | null; // Int
@@ -547,6 +556,7 @@ export interface NexusGenInputs {
   }
   TransactionCreateWithoutUserInput: { // input type
     amount: number; // Float!
+    createdAt?: NexusGenScalars['DateTime'] | null; // DateTime
     date: NexusGenScalars['DateTime']; // DateTime!
     description: string; // String!
     stack: string; // String!
@@ -562,6 +572,7 @@ export interface NexusGenInputs {
     NOT?: NexusGenInputs['TransactionScalarWhereInput'][] | null; // [TransactionScalarWhereInput!]
     OR?: NexusGenInputs['TransactionScalarWhereInput'][] | null; // [TransactionScalarWhereInput!]
     amount?: NexusGenInputs['FloatFilter'] | null; // FloatFilter
+    createdAt?: NexusGenInputs['DateTimeFilter'] | null; // DateTimeFilter
     date?: NexusGenInputs['DateTimeFilter'] | null; // DateTimeFilter
     description?: NexusGenInputs['StringFilter'] | null; // StringFilter
     id?: NexusGenInputs['IntFilter'] | null; // IntFilter
@@ -571,6 +582,7 @@ export interface NexusGenInputs {
   }
   TransactionUpdateInput: { // input type
     amount?: NexusGenInputs['FloatFieldUpdateOperationsInput'] | null; // FloatFieldUpdateOperationsInput
+    createdAt?: NexusGenInputs['DateTimeFieldUpdateOperationsInput'] | null; // DateTimeFieldUpdateOperationsInput
     date?: NexusGenInputs['DateTimeFieldUpdateOperationsInput'] | null; // DateTimeFieldUpdateOperationsInput
     description?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
     stack?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
@@ -579,6 +591,7 @@ export interface NexusGenInputs {
   }
   TransactionUpdateManyMutationInput: { // input type
     amount?: NexusGenInputs['FloatFieldUpdateOperationsInput'] | null; // FloatFieldUpdateOperationsInput
+    createdAt?: NexusGenInputs['DateTimeFieldUpdateOperationsInput'] | null; // DateTimeFieldUpdateOperationsInput
     date?: NexusGenInputs['DateTimeFieldUpdateOperationsInput'] | null; // DateTimeFieldUpdateOperationsInput
     description?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
     stack?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
@@ -607,6 +620,7 @@ export interface NexusGenInputs {
   }
   TransactionUpdateWithoutUserInput: { // input type
     amount?: NexusGenInputs['FloatFieldUpdateOperationsInput'] | null; // FloatFieldUpdateOperationsInput
+    createdAt?: NexusGenInputs['DateTimeFieldUpdateOperationsInput'] | null; // DateTimeFieldUpdateOperationsInput
     date?: NexusGenInputs['DateTimeFieldUpdateOperationsInput'] | null; // DateTimeFieldUpdateOperationsInput
     description?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
     stack?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
@@ -622,6 +636,7 @@ export interface NexusGenInputs {
     NOT?: NexusGenInputs['TransactionWhereInput'][] | null; // [TransactionWhereInput!]
     OR?: NexusGenInputs['TransactionWhereInput'][] | null; // [TransactionWhereInput!]
     amount?: NexusGenInputs['FloatFilter'] | null; // FloatFilter
+    createdAt?: NexusGenInputs['DateTimeFilter'] | null; // DateTimeFilter
     date?: NexusGenInputs['DateTimeFilter'] | null; // DateTimeFilter
     description?: NexusGenInputs['StringFilter'] | null; // StringFilter
     id?: NexusGenInputs['IntFilter'] | null; // IntFilter

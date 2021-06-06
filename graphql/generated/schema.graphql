@@ -115,6 +115,7 @@ type Budget {
 }
 
 input BudgetCreateInput {
+  createdAt: DateTime
   stacks: StackCreateNestedManyWithoutBudgetInput
   toBeBudgeted: Float
   total: Float
@@ -144,18 +145,21 @@ input BudgetCreateOrConnectWithoutUserInput {
 }
 
 input BudgetCreateWithoutStacksInput {
+  createdAt: DateTime
   toBeBudgeted: Float
   total: Float
   user: userCreateNestedOneWithoutBudgetInput!
 }
 
 input BudgetCreateWithoutUserInput {
+  createdAt: DateTime
   stacks: StackCreateNestedManyWithoutBudgetInput
   toBeBudgeted: Float
   total: Float
 }
 
 input BudgetUpdateInput {
+  createdAt: DateTimeFieldUpdateOperationsInput
   stacks: StackUpdateManyWithoutBudgetInput
   toBeBudgeted: NullableFloatFieldUpdateOperationsInput
   total: NullableFloatFieldUpdateOperationsInput
@@ -181,12 +185,14 @@ input BudgetUpdateOneWithoutUserInput {
 }
 
 input BudgetUpdateWithoutStacksInput {
+  createdAt: DateTimeFieldUpdateOperationsInput
   toBeBudgeted: NullableFloatFieldUpdateOperationsInput
   total: NullableFloatFieldUpdateOperationsInput
   user: userUpdateOneRequiredWithoutBudgetInput
 }
 
 input BudgetUpdateWithoutUserInput {
+  createdAt: DateTimeFieldUpdateOperationsInput
   stacks: StackUpdateManyWithoutBudgetInput
   toBeBudgeted: NullableFloatFieldUpdateOperationsInput
   total: NullableFloatFieldUpdateOperationsInput
@@ -206,6 +212,7 @@ input BudgetWhereInput {
   AND: [BudgetWhereInput!]
   NOT: [BudgetWhereInput!]
   OR: [BudgetWhereInput!]
+  createdAt: DateTimeFilter
   id: IntFilter
   stacks: StackListRelationFilter
   toBeBudgeted: FloatNullableFilter
@@ -623,6 +630,7 @@ type Transaction {
 
 input TransactionCreateInput {
   amount: Float!
+  createdAt: DateTime
   date: DateTime!
   description: String!
   stack: String!
@@ -632,6 +640,7 @@ input TransactionCreateInput {
 
 input TransactionCreateManyUserInput {
   amount: Float!
+  createdAt: DateTime
   date: DateTime!
   description: String!
   id: Int
@@ -658,6 +667,7 @@ input TransactionCreateOrConnectWithoutUserInput {
 
 input TransactionCreateWithoutUserInput {
   amount: Float!
+  createdAt: DateTime
   date: DateTime!
   description: String!
   stack: String!
@@ -675,6 +685,7 @@ input TransactionScalarWhereInput {
   NOT: [TransactionScalarWhereInput!]
   OR: [TransactionScalarWhereInput!]
   amount: FloatFilter
+  createdAt: DateTimeFilter
   date: DateTimeFilter
   description: StringFilter
   id: IntFilter
@@ -685,6 +696,7 @@ input TransactionScalarWhereInput {
 
 input TransactionUpdateInput {
   amount: FloatFieldUpdateOperationsInput
+  createdAt: DateTimeFieldUpdateOperationsInput
   date: DateTimeFieldUpdateOperationsInput
   description: StringFieldUpdateOperationsInput
   stack: StringFieldUpdateOperationsInput
@@ -694,6 +706,7 @@ input TransactionUpdateInput {
 
 input TransactionUpdateManyMutationInput {
   amount: FloatFieldUpdateOperationsInput
+  createdAt: DateTimeFieldUpdateOperationsInput
   date: DateTimeFieldUpdateOperationsInput
   description: StringFieldUpdateOperationsInput
   stack: StringFieldUpdateOperationsInput
@@ -726,6 +739,7 @@ input TransactionUpdateWithWhereUniqueWithoutUserInput {
 
 input TransactionUpdateWithoutUserInput {
   amount: FloatFieldUpdateOperationsInput
+  createdAt: DateTimeFieldUpdateOperationsInput
   date: DateTimeFieldUpdateOperationsInput
   description: StringFieldUpdateOperationsInput
   stack: StringFieldUpdateOperationsInput
@@ -743,6 +757,7 @@ input TransactionWhereInput {
   NOT: [TransactionWhereInput!]
   OR: [TransactionWhereInput!]
   amount: FloatFilter
+  createdAt: DateTimeFilter
   date: DateTimeFilter
   description: StringFilter
   id: IntFilter
