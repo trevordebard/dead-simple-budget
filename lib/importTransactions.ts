@@ -1,8 +1,9 @@
 import { Prisma, Transaction } from '@prisma/client';
+import plaid from 'plaid';
 import * as csv from 'fast-csv';
 import { recalcToBeBudgeted } from 'graphql/schema';
 import { Context } from '../graphql/context';
-
+import { format  } from 'date-fns';
 // Converts transaction readstream to array of transaction objects
 async function parseTransactionCsv(createReadStream, ctx: Context): Promise<Prisma.TransactionCreateInput[]> {
   return new Promise((resolve, reject) => {
@@ -44,7 +45,7 @@ function removeExistingTransactions(
   return uniqueResultOne;
 }
 
-export async function importTransactions(createReadStream, ctx: Context) {
+export async function importTransactionsFromCSV(createReadStream, ctx: Context) {
   // Convert transaction CSV to array of transactions
   const parsedTransactions = await parseTransactionCsv(createReadStream, ctx);
   const existingTransactions = await ctx.prisma.transaction.findMany({
@@ -82,4 +83,62 @@ export async function importTransactions(createReadStream, ctx: Context) {
     console.error('Error inserting transaction batch!');
     throw e;
   }
+}
+
+export async function importTransactionsFromPlaid(startDate: Date, accessToken: string, ctx: Context) {
+  const PLAID_CLIENT_ID = process.env.PLAID_CLIENT_ID;
+  const PLAID_SECRET = process.env.PLAID_SECRET_SANDBOX;
+
+  const plaidClient = new plaid.Client({
+    clientID: PLAID_CLIENT_ID,
+    secret: PLAID_SECRET,
+    env: plaid.environments.sandbox, // TODO: make env
+
+    options: {
+      version: '2020-09-14',
+      timeout: 30 * 60 * 1000, // 30 minutes }
+    },
+  });
+  let start = format(startDate, 'yyyy-MM-dd')
+  let end = format(new Date(), 'yyyy-MM-dd')
+
+  const data = await plaidClient.getTransactions(accessToken, start, end);
+  const existingTransactions = await ctx.prisma.transaction.findMany({ where: { date: { gte: startDate } } })
+  const uniqueTransactions = getUniquePlaidTransactions(data.transactions, existingTransactions)
+  const preparedTransactions = preparePlaidTransactionsForUpload(uniqueTransactions, existingTransactions[0].userId)
+
+  await ctx.prisma.transaction.createMany({ data: preparedTransactions })
+
+  // TODO: 
+  return null;
+}
+
+function getUniquePlaidTransactions(
+  plaidTransactions: plaid.Transaction[],
+  existingTransactions: Transaction[]
+): plaid.Transaction[] {
+  const uniquePlaidTransactions = plaidTransactions.filter(
+    newTrasaction =>
+      !existingTransactions.some(
+        existing =>
+          newTrasaction.amount === existing.amount &&
+          newTrasaction.name === existing.description 
+      )
+  );
+  return uniquePlaidTransactions;
+}
+
+function convertPlaidTransactionToPrismaInput(transaction: plaid.Transaction, userId: number): Prisma.TransactionCreateManyInput {
+  return {
+    amount: transaction.amount,
+    description: transaction.name,
+    date: new Date(transaction.date),
+    stack: 'Imported',
+    type: transaction.amount < 0 ? 'withdrawal' : 'deposit', // TODO:
+    userId: userId
+  }
+}
+
+function preparePlaidTransactionsForUpload(transactions: plaid.Transaction[], userId: number) {
+  return transactions.map(transaction => convertPlaidTransactionToPrismaInput(transaction, userId))
 }
