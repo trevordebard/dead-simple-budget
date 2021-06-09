@@ -10,6 +10,7 @@ import {
 import { useAlert } from 'components/Alert';
 import moment from 'moment';
 import { getStackLabels } from '../../lib/budgetUtils';
+import { useEffect, useState } from 'react';
 
 const GET_STACK_LABELS = gql`
   query getStackLabels($email: String!) {
@@ -24,7 +25,19 @@ const GET_STACK_LABELS = gql`
   }
 `;
 
+interface iUITransaction {
+  id: string | number,
+  description: string
+  stack: string
+  amount: number
+  type: string
+  date: Date
+  userId?: string
+}
+
 const useTransactions = () => {
+  const [transactions, setTransactions] = useState<iUITransaction[]>([])
+  const [stackLabels, setStackLabels] = useState<string[] | null>()
   const [session] = useSession();
   const { addAlert } = useAlert();
   const { data, loading } = useGetTransactionsQuery({ variables: { email: session.user.email } });
@@ -49,8 +62,17 @@ const useTransactions = () => {
     },
     onCompleted: () => addAlert({ message: 'Delete successful!', type: 'success' }),
   });
-  let stackLabels;
-  let transactions;
+  useEffect(() => {
+    if (data) {
+      setTransactions(data.transactions)
+    }
+  }, [data])
+  useEffect(() => {
+    if (stackLabelRes) {
+      const labels = getStackLabels(stackLabelRes.user.budget);
+      setStackLabels(labels)
+    }
+  }, [stackLabelRes])
   function editTransaction(
     id: number,
     description: string,
@@ -70,12 +92,6 @@ const useTransactions = () => {
       ...params,
       variables: { transactionIds },
     });
-  }
-  if (data) {
-    transactions = data.transactions;
-  }
-  if (stackLabelRes) {
-    stackLabels = getStackLabels(stackLabelRes.user.budget);
   }
 
   return { loading, transactions, addTransaction, stackLabels, editTransaction, deleteManyTransactions };

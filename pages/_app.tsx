@@ -7,6 +7,7 @@ import { useApollo } from '../lib/apolloClient';
 import Head from '../components/head';
 import { GlobalStyle } from 'components/Shared/GlobalStyle';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
 
 function MyApp({ Component, pageProps }) {
   const apolloClient = useApollo(pageProps.initialApolloState, null);
@@ -21,6 +22,7 @@ function MyApp({ Component, pageProps }) {
             <ApolloProvider client={apolloClient}>
               <Alert />
               <Component {...pageProps} />
+              <ReactQueryDevtools initialIsOpen={true} />
             </ApolloProvider>
           </AlertProvider>
         </QueryClientProvider>
