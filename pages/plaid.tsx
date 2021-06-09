@@ -6,6 +6,7 @@ import { GetServerSideProps } from 'next';
 import { getSession } from 'next-auth/client';
 import { PrismaClient } from '.prisma/client';
 import { useQuery } from 'react-query';
+import { useRouter } from 'next/router';
 
 async function fetchTransactions(params) {
   const [, { accessTokens }] = params.queryKey;
@@ -15,21 +16,16 @@ async function fetchTransactions(params) {
   return response;
 }
 
-const Plaid = ({ linkToken, plaidAccessTokens }) => {
-  const [accessTokens, setAccessTokens] = useState<string[]>(plaidAccessTokens);
+const Plaid = ({ linkToken }) => {
+  const router = useRouter();
   const [transactions, setTransactions] = useState<null | string>();
-  const { data, error: e } = useQuery(['transactions', { accessTokens }], fetchTransactions, {
-    enabled: accessTokens.length > 0,
-  });
-  useEffect(() => {
-    if (data) {
-      setTransactions(data.data);
-    }
-  }, [data]);
   const onSuccess = useCallback(async (publicToken, metadata) => {
     // assuming user will not call this method if they already have a bank account on file
-    const data = await axios.get('/api/plaid/exchange_public_token', { params: { publicToken } });
-    setAccessTokens([...accessTokens, data.data.access_token]);
+    const data = await axios.get<plaid.TokenResponse>('/api/plaid/exchange_public_token', { params: { publicToken } });
+    if (data.data.access_token) {
+      // TODO: could we make this dynamic?
+      router.push('/transactions');
+    }
   }, []);
 
   const config: PlaidLinkOptions = {
@@ -38,9 +34,9 @@ const Plaid = ({ linkToken, plaidAccessTokens }) => {
   };
 
   const { open } = usePlaidLink(config);
+  open();
   return (
     <div>
-      <button onClick={() => open()}>Connect a bank account</button>
       <pre>{transactions && JSON.stringify(transactions, null, 2)}</pre>
     </div>
   );
@@ -48,6 +44,15 @@ const Plaid = ({ linkToken, plaidAccessTokens }) => {
 export default Plaid;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await getSession(context);
+  if (!session) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: '/login',
+      },
+    };
+  }
   const PLAID_CLIENT_ID = process.env.PLAID_CLIENT_ID;
   const PLAID_SECRET = process.env.PLAID_SECRET_SANDBOX;
 
@@ -62,15 +67,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     },
   });
 
-  const prisma = new PrismaClient();
-  const session = await getSession(context);
-
-  const accessTokenResponse = await prisma.user.findUnique({
-    where: { email: session.user.email },
-    include: { bankAccounts: true },
-  });
-  const accessTokens = accessTokenResponse.bankAccounts.map((entry) => entry.plaidAccessToken);
-
   const linktokenResponse = await plaidClient.createLinkToken({
     client_name: 'dead simple budget',
     country_codes: ['US'],
@@ -82,7 +78,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
       linkToken: linktokenResponse.link_token,
-      plaidAccessTokens: accessTokens,
     },
   };
 };

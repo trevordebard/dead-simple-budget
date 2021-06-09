@@ -5,6 +5,7 @@ import Layout, { Main, Left, Center } from 'components/Shared/Layout';
 import { TabSidebar } from 'components/Sidebar';
 import { Nav } from 'components/Nav';
 import { GET_TRANSACTIONS } from 'components/Transactions/queries';
+import { PrismaClient } from '.prisma/client';
 
 const TransactionPage = () => (
   <Layout>
@@ -24,14 +25,28 @@ export async function getServerSideProps(context) {
   const apolloClient = initializeApollo(null, context);
   const session = await getSession(context);
   if (!session) {
-    context.res.setHeader('location', '/login');
-    context.res.statusCode = 302;
-    context.res.end();
     return {
-      props: null,
+      redirect: {
+        permanent: false,
+        destination: '/login',
+      },
     };
   }
-  await apolloClient.query({ query: GET_TRANSACTIONS, variables: { email: session.user.email } });
+
+  const prisma = new PrismaClient();
+  const accessTokenResponse = await prisma.user.findUnique({
+    where: { email: session.user.email },
+    include: { bankAccounts: true },
+  });
+  const accessTokens = accessTokenResponse.bankAccounts.map((entry) => entry.plaidAccessToken);
+  if (accessTokens.length < 1) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: '/plaid',
+      },
+    };
+  }
 
   return {
     props: {
