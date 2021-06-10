@@ -4,6 +4,7 @@ import path from 'path';
 import { PrismaClient } from '@prisma/client';
 import { importTransactionsFromCSV, importTransactionsFromPlaid } from '../lib/importTransactions';
 import { Upload, UploadFile } from './Upload'
+import { format } from 'date-fns';
 
 const User = objectType({
   name: 'user',
@@ -68,21 +69,25 @@ const Query = queryType({
     t.crud.transactions({
       filtering: { user: true, userId: true }, ordering: { date: true },
       async resolve(root, args, ctx, info, originalResolve) {
-        
+        if(!ctx.session.user) {
+          throw Error("User not logged in")
+        }
         const bankAccount = await ctx.prisma.bankAccout.findFirst({ where: { user: { email: info.variableValues.email } } })
         // Get transactions from latest date
         if (bankAccount) {
-          const latestTransaction = await ctx.prisma.transaction.findMany({ where: { user: { email: info.variableValues.email } }, orderBy: { createdAt: 'desc' }, take: 1 })
-          console.log(latestTransaction);
+          const latestTransaction = await ctx.prisma.transaction.findMany({ where: { user: { email: info.variableValues.email } }, orderBy: { date: 'desc' }, take: 1 })
+          let startDate;
+          if(latestTransaction.length < 1) {
+            startDate = format(new Date(), 'yyyy-MM-dd');
+          } else {
+            startDate = format(latestTransaction[0].date, 'yyyy-MM-dd')
+          }
           
           // TODO: if this is the user's first time logging in, need to pull back lots of data.
           // Maybe we should just import from join date forward and not grab history
-          if(latestTransaction.length > 0) {
-            await importTransactionsFromPlaid(latestTransaction[0].date, bankAccount.plaidAccessToken, ctx)
-          }
+          await importTransactionsFromPlaid(startDate, bankAccount.plaidAccessToken, ctx)
         }
         const res = await originalResolve(root, args, ctx, info)
-        console.log('logic after the resolver')
         return res
       }
     });
