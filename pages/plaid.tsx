@@ -1,11 +1,10 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import plaid from 'plaid';
 import { PlaidLinkOptions, usePlaidLink } from 'react-plaid-link';
 import axios from 'axios';
 import { GetServerSideProps } from 'next';
 import { getSession } from 'next-auth/client';
-import { PrismaClient } from '.prisma/client';
-import { useQuery } from 'react-query';
+import { plaidClient } from 'lib/plaidClient';
 import { useRouter } from 'next/router';
 
 async function fetchTransactions(params) {
@@ -53,19 +52,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     };
   }
-  const PLAID_CLIENT_ID = process.env.PLAID_CLIENT_ID;
-  const PLAID_SECRET = process.env.PLAID_SECRET_SANDBOX;
-
-  const plaidClient = new plaid.Client({
-    clientID: PLAID_CLIENT_ID,
-    secret: PLAID_SECRET,
-    env: plaid.environments.sandbox, // TODO: make env
-
-    options: {
-      version: '2020-09-14',
-      timeout: 30 * 60 * 1000, // 30 minutes }
-    },
-  });
 
   const linktokenResponse = await plaidClient.createLinkToken({
     client_name: 'dead simple budget',

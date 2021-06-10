@@ -4,6 +4,7 @@ import * as csv from 'fast-csv';
 import { recalcToBeBudgeted } from 'graphql/schema';
 import { Context } from '../graphql/context';
 import { format } from 'date-fns';
+import { plaidClient } from 'lib/plaidClient'
 // Converts transaction readstream to array of transaction objects
 async function parseTransactionCsv(createReadStream, ctx: Context): Promise<Prisma.TransactionCreateInput[]> {
   return new Promise((resolve, reject) => {
@@ -86,22 +87,8 @@ export async function importTransactionsFromCSV(createReadStream, ctx: Context) 
 }
 
 export async function importTransactionsFromPlaid(startDate: string, accessToken: string, ctx: Context) {
-  const PLAID_CLIENT_ID = process.env.PLAID_CLIENT_ID;
-  const PLAID_SECRET = process.env.PLAID_SECRET_SANDBOX;
-
-  const plaidClient = new plaid.Client({
-    clientID: PLAID_CLIENT_ID,
-    secret: PLAID_SECRET,
-    env: plaid.environments.sandbox, // TODO: make env
-
-    options: {
-      version: '2020-09-14',
-      timeout: 30 * 60 * 1000, // 30 minutes }
-    },
-  });
-  let end = format(new Date(), 'yyyy-MM-dd')
-
-  const [year, month, day] = startDate.split('-')
+  let end = format(new Date(), 'yyyy-MM-dd');
+  const [year, month, day] = startDate.split('-');
   const start = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
 
   const data = await plaidClient.getTransactions(accessToken, startDate, end);
