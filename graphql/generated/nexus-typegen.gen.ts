@@ -37,11 +37,15 @@ export interface NexusGenInputs {
   BankAccoutCreateManyUserInput: { // input type
     id?: number | null; // Int
     plaidAccessToken: string; // String!
+    plaidAccountIds?: NexusGenInputs['BankAccoutCreateManyplaidAccountIdsInput'] | null; // BankAccoutCreateManyplaidAccountIdsInput
     plaidItemId: string; // String!
   }
   BankAccoutCreateManyUserInputEnvelope: { // input type
     data?: NexusGenInputs['BankAccoutCreateManyUserInput'][] | null; // [BankAccoutCreateManyUserInput!]
     skipDuplicates?: boolean | null; // Boolean
+  }
+  BankAccoutCreateManyplaidAccountIdsInput: { // input type
+    set?: string[] | null; // [String!]
   }
   BankAccoutCreateNestedManyWithoutUserInput: { // input type
     connect?: NexusGenInputs['BankAccoutWhereUniqueInput'][] | null; // [BankAccoutWhereUniqueInput!]
@@ -55,7 +59,11 @@ export interface NexusGenInputs {
   }
   BankAccoutCreateWithoutUserInput: { // input type
     plaidAccessToken: string; // String!
+    plaidAccountIds?: NexusGenInputs['BankAccoutCreateplaidAccountIdsInput'] | null; // BankAccoutCreateplaidAccountIdsInput
     plaidItemId: string; // String!
+  }
+  BankAccoutCreateplaidAccountIdsInput: { // input type
+    set?: string[] | null; // [String!]
   }
   BankAccoutListRelationFilter: { // input type
     every?: NexusGenInputs['BankAccoutWhereInput'] | null; // BankAccoutWhereInput
@@ -68,11 +76,13 @@ export interface NexusGenInputs {
     OR?: NexusGenInputs['BankAccoutScalarWhereInput'][] | null; // [BankAccoutScalarWhereInput!]
     id?: NexusGenInputs['IntFilter'] | null; // IntFilter
     plaidAccessToken?: NexusGenInputs['StringFilter'] | null; // StringFilter
+    plaidAccountIds?: NexusGenInputs['StringNullableListFilter'] | null; // StringNullableListFilter
     plaidItemId?: NexusGenInputs['StringFilter'] | null; // StringFilter
     userId?: NexusGenInputs['IntFilter'] | null; // IntFilter
   }
   BankAccoutUpdateManyMutationInput: { // input type
     plaidAccessToken?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
+    plaidAccountIds?: NexusGenInputs['BankAccoutUpdateplaidAccountIdsInput'] | null; // BankAccoutUpdateplaidAccountIdsInput
     plaidItemId?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
   }
   BankAccoutUpdateManyWithWhereWithoutUserInput: { // input type
@@ -98,7 +108,12 @@ export interface NexusGenInputs {
   }
   BankAccoutUpdateWithoutUserInput: { // input type
     plaidAccessToken?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
+    plaidAccountIds?: NexusGenInputs['BankAccoutUpdateplaidAccountIdsInput'] | null; // BankAccoutUpdateplaidAccountIdsInput
     plaidItemId?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
+  }
+  BankAccoutUpdateplaidAccountIdsInput: { // input type
+    push?: string | null; // String
+    set?: string[] | null; // [String!]
   }
   BankAccoutUpsertWithWhereUniqueWithoutUserInput: { // input type
     create: NexusGenInputs['BankAccoutCreateWithoutUserInput']; // BankAccoutCreateWithoutUserInput!
@@ -111,6 +126,7 @@ export interface NexusGenInputs {
     OR?: NexusGenInputs['BankAccoutWhereInput'][] | null; // [BankAccoutWhereInput!]
     id?: NexusGenInputs['IntFilter'] | null; // IntFilter
     plaidAccessToken?: NexusGenInputs['StringFilter'] | null; // StringFilter
+    plaidAccountIds?: NexusGenInputs['StringNullableListFilter'] | null; // StringNullableListFilter
     plaidItemId?: NexusGenInputs['StringFilter'] | null; // StringFilter
     user?: NexusGenInputs['userWhereInput'] | null; // userWhereInput
     userId?: NexusGenInputs['IntFilter'] | null; // IntFilter
@@ -521,6 +537,13 @@ export interface NexusGenInputs {
     not?: NexusGenInputs['NestedStringNullableFilter'] | null; // NestedStringNullableFilter
     notIn?: string[] | null; // [String!]
     startsWith?: string | null; // String
+  }
+  StringNullableListFilter: { // input type
+    equals?: string[] | null; // [String!]
+    has?: string | null; // String
+    hasEvery?: string[] | null; // [String!]
+    hasSome?: string[] | null; // [String!]
+    isEmpty?: boolean | null; // Boolean
   }
   TransactionCreateInput: { // input type
     amount: number; // Float!

@@ -12,7 +12,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const data = await plaidClient.exchangePublicToken(req.query.publicToken as string)
 
     // add bank account and access token to db
-    await prisma.bankAccout.create({ data: { plaidAccessToken: data.access_token, plaidItemId: data.item_id, user: { connect: { email: session.user.email } } } })
+    const accountsResponse = await plaidClient.getAccounts(data.access_token);
+    const accountIds = accountsResponse.accounts.filter(account => account.type === 'depository' && account.subtype === "checking").map(acct => acct.account_id)
+    
+    await prisma.bankAccout.create({ data: { plaidAccessToken: data.access_token, plaidItemId: data.item_id, plaidAccountIds: accountIds , user: { connect: { email: session.user.email } } } })
     res.status(200).json(data)
 }
 

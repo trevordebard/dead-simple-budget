@@ -85,7 +85,7 @@ const Query = queryType({
           
           // TODO: if this is the user's first time logging in, need to pull back lots of data.
           // Maybe we should just import from join date forward and not grab history
-          await importTransactionsFromPlaid(startDate, bankAccount.plaidAccessToken, ctx)
+          await importTransactionsFromPlaid(startDate, bankAccount, ctx)
         }
         const res = await originalResolve(root, args, ctx, info)
         return res

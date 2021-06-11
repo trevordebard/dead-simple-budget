@@ -9,12 +9,17 @@ type AffectedRowsOutput {
 input BankAccoutCreateManyUserInput {
   id: Int
   plaidAccessToken: String!
+  plaidAccountIds: BankAccoutCreateManyplaidAccountIdsInput
   plaidItemId: String!
 }
 
 input BankAccoutCreateManyUserInputEnvelope {
   data: [BankAccoutCreateManyUserInput!]
   skipDuplicates: Boolean
+}
+
+input BankAccoutCreateManyplaidAccountIdsInput {
+  set: [String!]
 }
 
 input BankAccoutCreateNestedManyWithoutUserInput {
@@ -31,7 +36,12 @@ input BankAccoutCreateOrConnectWithoutUserInput {
 
 input BankAccoutCreateWithoutUserInput {
   plaidAccessToken: String!
+  plaidAccountIds: BankAccoutCreateplaidAccountIdsInput
   plaidItemId: String!
+}
+
+input BankAccoutCreateplaidAccountIdsInput {
+  set: [String!]
 }
 
 input BankAccoutListRelationFilter {
@@ -46,12 +56,14 @@ input BankAccoutScalarWhereInput {
   OR: [BankAccoutScalarWhereInput!]
   id: IntFilter
   plaidAccessToken: StringFilter
+  plaidAccountIds: StringNullableListFilter
   plaidItemId: StringFilter
   userId: IntFilter
 }
 
 input BankAccoutUpdateManyMutationInput {
   plaidAccessToken: StringFieldUpdateOperationsInput
+  plaidAccountIds: BankAccoutUpdateplaidAccountIdsInput
   plaidItemId: StringFieldUpdateOperationsInput
 }
 
@@ -81,7 +93,13 @@ input BankAccoutUpdateWithWhereUniqueWithoutUserInput {
 
 input BankAccoutUpdateWithoutUserInput {
   plaidAccessToken: StringFieldUpdateOperationsInput
+  plaidAccountIds: BankAccoutUpdateplaidAccountIdsInput
   plaidItemId: StringFieldUpdateOperationsInput
+}
+
+input BankAccoutUpdateplaidAccountIdsInput {
+  push: String
+  set: [String!]
 }
 
 input BankAccoutUpsertWithWhereUniqueWithoutUserInput {
@@ -96,6 +114,7 @@ input BankAccoutWhereInput {
   OR: [BankAccoutWhereInput!]
   id: IntFilter
   plaidAccessToken: StringFilter
+  plaidAccountIds: StringNullableListFilter
   plaidItemId: StringFilter
   user: userWhereInput
   userId: IntFilter
@@ -616,6 +635,14 @@ input StringNullableFilter {
   not: NestedStringNullableFilter
   notIn: [String!]
   startsWith: String
+}
+
+input StringNullableListFilter {
+  equals: [String!]
+  has: String
+  hasEvery: [String!]
+  hasSome: [String!]
+  isEmpty: Boolean
 }
 
 type Transaction {

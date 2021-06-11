@@ -1,4 +1,4 @@
-import { Prisma, Transaction } from '@prisma/client';
+import { BankAccout, Prisma, Transaction } from '@prisma/client';
 import plaid from 'plaid';
 import * as csv from 'fast-csv';
 import { recalcToBeBudgeted } from 'graphql/schema';
@@ -86,12 +86,12 @@ export async function importTransactionsFromCSV(createReadStream, ctx: Context) 
   }
 }
 
-export async function importTransactionsFromPlaid(startDate: string, accessToken: string, ctx: Context) {
+export async function importTransactionsFromPlaid(startDate: string, bankAccount: BankAccout, ctx: Context) {
   let end = format(new Date(), 'yyyy-MM-dd');
   const [year, month, day] = startDate.split('-');
   const start = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
 
-  const data = await plaidClient.getTransactions(accessToken, startDate, end);
+  const data = await plaidClient.getTransactions(bankAccount.plaidAccessToken, startDate, end, {account_ids: bankAccount.plaidAccountIds});
   const user = await ctx.prisma.user.findFirst({ where: { email: ctx.session.user.email } })
   let existingTransactions;
   existingTransactions = await ctx.prisma.transaction.findMany({ where: { date: { gte: start }, userId: user.id } })
