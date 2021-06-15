@@ -11,7 +11,7 @@ export const plaidClient = new plaid.Client({
   env: plaid.environments.sandbox, // TODO: make env
 
   options: {
-      version: '2020-09-14',
-      timeout: 30 * 60 * 1000, // 30 minutes }
-  }
+    version: '2020-09-14',
+    timeout: 30 * 60 * 1000, // 30 minutes }
+  },
 });

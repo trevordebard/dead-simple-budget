@@ -39,7 +39,11 @@ const GET_TRANSACTION = gql`
 `;
 
 const EditTransaction = ({ transactionId, cancelEdit }) => {
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
   const { editTransaction, stackLabels } = useTransactions();
   const [selectedStack, setSelectedStack] = useState('');
   const [transactionType, setTransactionType] = useState<string | null>(null);

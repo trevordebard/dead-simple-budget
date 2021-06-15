@@ -26,18 +26,18 @@ const GET_STACK_LABELS = gql`
 `;
 
 interface iUITransaction {
-  id: string | number,
-  description: string
-  stack: string
-  amount: number
-  type: string
-  date: Date
-  userId?: string
+  id: string | number;
+  description: string;
+  stack: string;
+  amount: number;
+  type: string;
+  date: Date;
+  userId?: string;
 }
 
 const useTransactions = () => {
-  const [transactions, setTransactions] = useState<iUITransaction[]>([])
-  const [stackLabels, setStackLabels] = useState<string[] | null>()
+  const [transactions, setTransactions] = useState<iUITransaction[]>([]);
+  const [stackLabels, setStackLabels] = useState<string[] | null>();
   const [session] = useSession();
   const { addAlert } = useAlert();
   const { data, loading } = useGetTransactionsQuery({ variables: { email: session.user.email } });
@@ -64,15 +64,15 @@ const useTransactions = () => {
   });
   useEffect(() => {
     if (data) {
-      setTransactions(data.transactions)
+      setTransactions(data.transactions);
     }
-  }, [data])
+  }, [data]);
   useEffect(() => {
     if (stackLabelRes) {
       const labels = getStackLabels(stackLabelRes.user.budget);
-      setStackLabels(labels)
+      setStackLabels(labels);
     }
-  }, [stackLabelRes])
+  }, [stackLabelRes]);
   function editTransaction(
     id: number,
     description: string,

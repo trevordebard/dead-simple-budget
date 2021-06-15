@@ -92,15 +92,15 @@ const Transactions = () => {
             </THead>
             <tbody>
               {transactions &&
-                transactions.map((transaction) => (
+                transactions.map(transaction => (
                   <TR key={transaction.id} selected={selectedTransactions.includes(transaction.id)}>
                     <TD>
                       <input
                         key={transaction.id}
                         type="checkbox"
-                        onChange={(e) => {
+                        onChange={e => {
                           if (!e.target.checked) {
-                            setSelectedTransactions(selectedTransactions.filter((item) => item !== transaction.id));
+                            setSelectedTransactions(selectedTransactions.filter(item => item !== transaction.id));
                           } else {
                             setSelectedTransactions([...selectedTransactions, transaction.id]);
                           }

@@ -38,7 +38,7 @@ export async function getServerSideProps(context) {
     where: { email: session.user.email },
     include: { bankAccounts: true },
   });
-  const accessTokens = accessTokenResponse.bankAccounts.map((entry) => entry.plaidAccessToken);
+  const accessTokens = accessTokenResponse.bankAccounts.map(entry => entry.plaidAccessToken);
   if (accessTokens.length < 1) {
     return {
       redirect: {
