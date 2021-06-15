@@ -5,7 +5,7 @@ import { plaidClient } from 'lib/plaidClient';
 
 const prisma = new PrismaClient({});
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // TODO: redirect if user is not logged in
   const session = await getSession({ req });
   console.log(req.body.publicToken);
@@ -26,4 +26,4 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     },
   });
   res.status(200).json(data);
-};
+}

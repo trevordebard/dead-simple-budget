@@ -18,14 +18,19 @@ async function fetchTransactions(params) {
 const Plaid = ({ linkToken }) => {
   const router = useRouter();
   const [transactions, setTransactions] = useState<null | string>();
-  const onSuccess = useCallback(async (publicToken, metadata) => {
-    // assuming user will not call this method if they already have a bank account on file
-    const data = await axios.get<plaid.TokenResponse>('/api/plaid/exchange_public_token', { params: { publicToken } });
-    if (data.data.access_token) {
-      // TODO: could we make this dynamic?
-      router.push('/transactions');
-    }
-  }, []);
+  const onSuccess = useCallback(
+    async (publicToken, metadata) => {
+      // assuming user will not call this method if they already have a bank account on file
+      const data = await axios.get<plaid.TokenResponse>('/api/plaid/exchange_public_token', {
+        params: { publicToken },
+      });
+      if (data.data.access_token) {
+        // TODO: could we make this dynamic?
+        router.push('/transactions');
+      }
+    },
+    [router]
+  );
 
   const config: PlaidLinkOptions = {
     token: linkToken,

@@ -55,12 +55,12 @@ const Transactions = () => {
           <h1>Transactions</h1>
           <Actions>
             {selectedTransactions.length === 0 && (
-              <Link href="/transactions/new">
+              <Link href="/transactions/new" passHref>
                 <ActionLink>Add</ActionLink>
               </Link>
             )}
             {selectedTransactions.length === 1 && (
-              <Link href={`/transactions/edit/${selectedTransactions[0]}`}>
+              <Link passHref href={`/transactions/edit/${selectedTransactions[0]}`}>
                 <ActionLink>Edit</ActionLink>
               </Link>
             )}

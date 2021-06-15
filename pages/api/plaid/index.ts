@@ -35,48 +35,41 @@ handler.post(async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     if (public_token) {
       console.log('exchanging');
-      client
-        .exchangePublicToken(public_token, function (error, tokenResponse) {
-          console.log('client: ', client);
-          console.log('tokenResponse: ', tokenResponse);
-          ACCESS_TOKEN = tokenResponse.access_token;
-          ITEM_ID = tokenResponse.item_id;
-          console.log('access token below');
-          console.log(ACCESS_TOKEN);
+      client.exchangePublicToken(public_token, function (error, tokenResponse) {
+        console.log('client: ', client);
+        console.log('tokenResponse: ', tokenResponse);
+        ACCESS_TOKEN = tokenResponse.access_token;
+        ITEM_ID = tokenResponse.item_id;
+        console.log('access token below');
+        console.log(ACCESS_TOKEN);
 
-          // Pull transactions for the last 30 days
-          let startDate = moment().subtract(30, 'days').format('YYYY-MM-DD');
-          let endDate = moment().format('YYYY-MM-DD');
-          console.log('ACCESS TOKEN ->', ACCESS_TOKEN);
-          client.getTransactions(
-            ACCESS_TOKEN,
-            startDate,
-            endDate,
-            {
-              count: 250,
-              offset: 0,
-            },
-            function (error, transactionsResponse) {
-              const { transactions } = transactionsResponse;
-              // TRANSACTIONS LOGGED BELOW!
-              // They will show up in the terminal that you are running the server in
-              console.log('transactions:', transactions);
-              res.json({
-                ok: true,
-                message: 'Success!',
-                access_token: ACCESS_TOKEN,
-                item_id: ITEM_ID,
-                transactions: transactions,
-              });
-            }
-          );
-        })
-        .catch(err =>
-          res.json({
-            ok: false,
-            message: err.toString(),
-          })
-        ); // Plaid Error
+        // Pull transactions for the last 30 days
+        let startDate = moment().subtract(30, 'days').format('YYYY-MM-DD');
+        let endDate = moment().format('YYYY-MM-DD');
+        console.log('ACCESS TOKEN ->', ACCESS_TOKEN);
+        client.getTransactions(
+          ACCESS_TOKEN,
+          startDate,
+          endDate,
+          {
+            count: 250,
+            offset: 0,
+          },
+          function (error, transactionsResponse) {
+            const { transactions } = transactionsResponse;
+            // TRANSACTIONS LOGGED BELOW!
+            // They will show up in the terminal that you are running the server in
+            console.log('transactions:', transactions);
+            res.json({
+              ok: true,
+              message: 'Success!',
+              access_token: ACCESS_TOKEN,
+              item_id: ITEM_ID,
+              transactions: transactions,
+            });
+          }
+        );
+      });
     } else {
       console.log('nope');
       const oh = await client.createLinkToken({

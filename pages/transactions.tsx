@@ -5,7 +5,7 @@ import Layout, { Main, Left, Center } from 'components/Shared/Layout';
 import { TabSidebar } from 'components/Sidebar';
 import { Nav } from 'components/Nav';
 import { GET_TRANSACTIONS } from 'components/Transactions/queries';
-import { PrismaClient } from '.prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 const TransactionPage = () => (
   <Layout>
@@ -38,6 +38,10 @@ export async function getServerSideProps(context) {
     where: { email: session.user.email },
     include: { bankAccounts: true },
   });
+
+  // const accessTokenResponse = {
+  //   bankAccounts: ['hi'],
+  // };
   const accessTokens = accessTokenResponse.bankAccounts.map(entry => entry.plaidAccessToken);
   if (accessTokens.length < 1) {
     return {
