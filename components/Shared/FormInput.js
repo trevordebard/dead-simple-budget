@@ -14,11 +14,7 @@ const FormInput = ({ register, name, errors, required = false, ...rest }) => (
 
 const FormSelect = ({ children, register, name, errors, required = false, ...rest }) => (
   <>
-    <Input as="select"
-      name={name}
-      {...register(name, { required: true })}
-      {...rest}
-    >
+    <Input as="select" name={name} {...register(name, { required: true })} {...rest}>
       {children}
     </Input>
     {errors && errors[name] && (

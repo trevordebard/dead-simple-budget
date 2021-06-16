@@ -53,14 +53,14 @@ const TabSidebar = () => {
   return (
     <Tabs>
       <ul>
-        <Link href="/budget">
+        <Link href="/budget" passHref>
           <TabItem active={router.pathname === '/budget'}>
             <Button category="TRANSPARENT" as="a">
               Budget
             </Button>
           </TabItem>
         </Link>
-        <Link href="/transactions">
+        <Link href="/transactions" passHref>
           <TabItem active={router.pathname === '/transactions'}>
             <Button category="TRANSPARENT" as="a">
               Transactions

@@ -39,7 +39,12 @@ export const ErrorText = styled.span`
 `;
 
 const NewTransaction = () => {
-  const { register, handleSubmit, formState: { errors }, reset } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm();
   const [session] = useSession();
   const [selectedStack, setSelectedStack] = useState('');
   const { addTransaction, stackLabels } = useTransactions();
@@ -64,7 +69,12 @@ const NewTransaction = () => {
         <h4>New Transaction</h4>
       </div>
       <label htmlFor="description">Description {errors.description && <ErrorText> (Required)</ErrorText>}</label>
-      <Input name="description" category="underline" placeholder="Tasy Pizza LLC" {...register('description', { required: true })} />
+      <Input
+        name="description"
+        category="underline"
+        placeholder="Tasy Pizza LLC"
+        {...register('description', { required: true })}
+      />
 
       <label htmlFor="amount">Amount {errors.amount && <ErrorText> (Required)</ErrorText>}</label>
       <Input

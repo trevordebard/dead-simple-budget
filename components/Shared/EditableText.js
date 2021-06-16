@@ -43,8 +43,8 @@ const EditableText = ({ update, inputType = 'text', text: textDefault }) => {
           }}
         />
       ) : (
-          <span onClick={() => setInputVisible(true)}>{text}</span>
-        )}
+        <span onClick={() => setInputVisible(true)}>{text}</span>
+      )}
     </>
   );
 };

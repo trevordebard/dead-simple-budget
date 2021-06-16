@@ -11,6 +11,7 @@ const TransactionWrapper = styled.div`
 
 const Title = styled.div`
   text-align: center;
+  max-width: 500px;
 `;
 
 const TableWrapper = styled.div`
@@ -39,6 +40,14 @@ const ActionLink = styled.a`
 const Transactions = () => {
   const { transactions, loading, deleteManyTransactions } = useTransactions();
   const [selectedTransactions, setSelectedTransactions] = useState([]);
+  if (loading)
+    return (
+      <TransactionWrapper>
+        <Title>
+          <h3>One moment. Retrieving your latest transactions.</h3>
+        </Title>
+      </TransactionWrapper>
+    );
   if (!loading) {
     return (
       <TransactionWrapper>
@@ -46,12 +55,12 @@ const Transactions = () => {
           <h1>Transactions</h1>
           <Actions>
             {selectedTransactions.length === 0 && (
-              <Link href="/transactions/new">
+              <Link href="/transactions/new" passHref>
                 <ActionLink>Add</ActionLink>
               </Link>
             )}
             {selectedTransactions.length === 1 && (
-              <Link href={`/transactions/edit/${selectedTransactions[0]}`}>
+              <Link passHref href={`/transactions/edit/${selectedTransactions[0]}`}>
                 <ActionLink>Edit</ActionLink>
               </Link>
             )}

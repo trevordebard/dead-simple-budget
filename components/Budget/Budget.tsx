@@ -16,7 +16,7 @@ const BudgetWrapper = styled.div`
   margin: 0 auto;
   width: 400px;
 `;
-const Amount = styled.span<{ danger?: boolean, editable?: boolean }>`
+const Amount = styled.span<{ danger?: boolean; editable?: boolean }>`
   font-weight: 500;
   color: ${props => (props.danger ? 'var(--danger)' : 'var(--fontColor)')};
   ::before {
@@ -45,7 +45,7 @@ const NewStackWrapper = styled.div`
 function Budget() {
   const { budget, loading, error, updateTotal } = useBudget();
   const [editTotalVisible, setEditTotalVisible] = useState(false);
-  const { addAlert, removeAlert, alert } = useAlert()
+  const { addAlert, removeAlert, alert } = useAlert();
 
   if (loading || !budget) {
     return <span>loading...</span>;
@@ -67,7 +67,8 @@ function Budget() {
                     total: parseFloat(total),
                     budgetId: budget.id,
                   },
-                })}
+                })
+              }
               inputType="number"
             />
           </Amount>
@@ -88,37 +89,40 @@ function Budget() {
 }
 
 const Stacks = ({ stacks, budgetId }) => {
-  return (
-    stacks.map(item => (
-      <div key={item.id}>
-        <BudgetStack id={item.id} label={item.label} budgetId={budgetId} amount={item.amount} />
-      </div>
-    ))
-  )
+  return stacks.map(item => (
+    <div key={item.id}>
+      <BudgetStack id={item.id} label={item.label} budgetId={budgetId} amount={item.amount} />
+    </div>
+  ));
 };
 
 const NewStack = ({ budgetId }) => {
-  const { addAlert } = useAlert()
+  const { addAlert } = useAlert();
   const { addStack } = useBudget();
-  const [newStack, setNewStack] = useState<string>("")
+  const [newStack, setNewStack] = useState<string>('');
   const handleAddStack = (stackName: string) => {
     if (!newStack || newStack.trim() === '') {
-      addAlert({ message: "Stack name cannot be empty.", type: 'error' })
+      addAlert({ message: 'Stack name cannot be empty.', type: 'error' });
     } else {
       addStack({
         variables: { newStackLabel: newStack, budgetId },
       });
-      setNewStack("")
+      setNewStack('');
     }
   };
   return (
-
     <>
-      <Input name="newStack" placeholder="Stack Name" autoComplete="off" value={newStack} onChange={e => setNewStack(e.target.value)} />
+      <Input
+        name="newStack"
+        placeholder="Stack Name"
+        autoComplete="off"
+        value={newStack}
+        onChange={e => setNewStack(e.target.value)}
+      />
       <Button category="ACTION" name="addStack" onClick={() => handleAddStack(newStack)}>
         Add Stack
-    </Button>
+      </Button>
     </>
-  )
-}
+  );
+};
 export default Budget;

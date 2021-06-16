@@ -5,11 +5,11 @@ import { createUploadLink } from 'apollo-upload-client';
 import { setContext } from '@apollo/client/link/context';
 
 let apolloClient;
-const getCookies = function(request): any {
+const getCookies = function (request): any {
   const cookies = {};
   if (request.headers.cookie) {
     request.headers &&
-      request.headers.cookie.split(';').forEach(function(cookie) {
+      request.headers.cookie.split(';').forEach(function (cookie) {
         const parts = cookie.match(/(.*?)=(.*)$/);
         cookies[parts[1].trim()] = (parts[2] || '').trim();
       });
