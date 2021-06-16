@@ -1,9 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
 import { getSession } from 'next-auth/client';
 import { plaidClient } from 'lib/plaidClient';
-
-const prisma = new PrismaClient({});
+import prisma from 'lib/prismaClient';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // TODO: redirect if user is not logged in

@@ -4,8 +4,7 @@ import { initializeApollo } from 'lib/apolloClient';
 import Layout, { Main, Left, Center } from 'components/Shared/Layout';
 import { TabSidebar } from 'components/Sidebar';
 import { Nav } from 'components/Nav';
-import { GET_TRANSACTIONS } from 'components/Transactions/queries';
-import { PrismaClient } from '@prisma/client';
+import prisma from 'lib/prismaClient';
 
 const TransactionPage = () => (
   <Layout>
@@ -33,7 +32,6 @@ export async function getServerSideProps(context) {
     };
   }
 
-  const prisma = new PrismaClient();
   const accessTokenResponse = await prisma.user.findUnique({
     where: { email: session.user.email },
     include: { bankAccounts: true },

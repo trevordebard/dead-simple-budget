@@ -1,9 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import { getSession } from 'next-auth/client';
 import { Session } from 'next-auth';
-
-const prisma = new PrismaClient();
-
+import prisma from 'lib/prismaClient';
 export interface Context {
   prisma: PrismaClient;
   session: Session;
