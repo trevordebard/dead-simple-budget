@@ -118,7 +118,9 @@ function getUniquePlaidTransactions(
   const uniquePlaidTransactions = plaidTransactions.filter(
     newTrasaction =>
       !existingTransactions.some(
-        existing => newTrasaction.amount === existing.amount && newTrasaction.name === existing.description
+        existing =>
+          // checking absolute value in case user edits transaction to be a deposit/withdrawal
+          Math.abs(newTrasaction.amount) === Math.abs(existing.amount) && newTrasaction.name === existing.description
       )
   );
   return uniquePlaidTransactions;
@@ -130,7 +132,8 @@ function convertPlaidTransactionToPrismaInput(
 ): Prisma.TransactionCreateManyInput {
   const [year, month, day] = transaction.date.split('-');
   return {
-    amount: transaction.amount,
+    // deposits are negative in plaid and withdrawals are positive, so this will reverse that
+    amount: transaction.amount * -1,
     description: transaction.name,
     date: new Date(parseInt(year), parseInt(month) - 1, parseInt(day)),
     stack: 'Imported',

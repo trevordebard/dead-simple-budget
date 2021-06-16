@@ -3,7 +3,7 @@ import { nexusSchemaPrisma } from 'nexus-plugin-prisma/schema';
 import path from 'path';
 import { PrismaClient } from '@prisma/client';
 import { importTransactionsFromCSV, importTransactionsFromPlaid } from '../lib/importTransactions';
-import { Upload, UploadFile } from './Upload'
+import { Upload, UploadFile } from './Upload';
 import { format } from 'date-fns';
 
 const User = objectType({
@@ -67,29 +67,37 @@ const Query = queryType({
     t.crud.budget();
     t.crud.transaction();
     t.crud.transactions({
-      filtering: { user: true, userId: true }, ordering: { date: true },
+      filtering: { user: true, userId: true },
+      ordering: { date: true },
       async resolve(root, args, ctx, info, originalResolve) {
-        if(!ctx.session.user) {
-          throw Error("User not logged in")
+        if (!ctx.session.user) {
+          throw Error('User not logged in');
         }
-        const bankAccount = await ctx.prisma.bankAccout.findFirst({ where: { user: { email: info.variableValues.email } } })
+        const bankAccount = await ctx.prisma.bankAccout.findFirst({
+          where: { user: { email: info.variableValues.email } },
+        });
         // Get transactions from latest date
         if (bankAccount) {
-          const latestTransaction = await ctx.prisma.transaction.findMany({ where: { user: { email: info.variableValues.email } }, orderBy: { date: 'desc' }, take: 1 })
+          const latestTransaction = await ctx.prisma.transaction.findMany({
+            where: { user: { email: info.variableValues.email } },
+            orderBy: { date: 'desc' },
+            take: 1,
+          });
           let startDate;
-          if(latestTransaction.length < 1) {
+          if (latestTransaction.length < 1) {
             startDate = format(new Date(), 'yyyy-MM-dd');
           } else {
-            startDate = format(latestTransaction[0].date, 'yyyy-MM-dd')
+            startDate = format(latestTransaction[0].date, 'yyyy-MM-dd');
           }
-          
+
           // TODO: if this is the user's first time logging in, need to pull back lots of data.
           // Maybe we should just import from join date forward and not grab history
-          await importTransactionsFromPlaid(startDate, bankAccount, ctx)
+          // TODO: Set up logic to only import transactions if we haven't checked with plaid in last hour
+          await importTransactionsFromPlaid(startDate, bankAccount, ctx);
         }
-        const res = await originalResolve(root, args, ctx, info)
-        return res
-      }
+        const res = await originalResolve(root, args, ctx, info);
+        return res;
+      },
     });
     t.crud.budgets({ filtering: { user: true, userId: true } });
     t.crud.stacks({ filtering: { id: true } });
@@ -186,38 +194,37 @@ const Mutation = mutationType({
             where: { id: transactionBefore.userId },
             include: { budget: true },
           });
-  
-          if(transactionBefore.stack !== 'Imported') {
+
+          if (transactionBefore.stack !== 'Imported') {
             // Offset stack by the original transaction amount
             await ctx.prisma.stack.update({
               where: { budgetId_label_idx: { budgetId: budget.id, label: transactionBefore.stack } },
               data: { amount: { decrement: transactionBefore.amount } },
             });
-    
+
             // Offset total by the orignal transaction amount
             await ctx.prisma.budget.update({
               where: { id: budget.id },
               data: { total: { decrement: transactionBefore.amount } },
             });
-    
           }
           const res = await originalResolve(root, args, ctx, info);
-  
+
           // Adjust stack amount by transaction amount
           await ctx.prisma.stack.update({
             data: { amount: { increment: res.amount } },
             where: { budgetId_label_idx: { budgetId: budget.id, label: res.stack } },
           });
-  
+
           // Adjust budget total by transaction amount
           await ctx.prisma.budget.update({
             data: { total: { increment: res.amount } },
             where: { id: budget.id },
           });
-  
+
           await recalcToBeBudgeted(ctx.prisma, budget.id);
           return res;
-        } catch(e) {
+        } catch (e) {
           console.log('error');
           console.log(e);
           throw e;
