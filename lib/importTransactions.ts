@@ -119,6 +119,7 @@ function getUniquePlaidTransactions(
     newTrasaction =>
       !existingTransactions.some(
         existing =>
+          // TODO: we should probably just store the plaid item id and see if already exists! This will help if the user edits the description
           // checking absolute value in case user edits transaction to be a deposit/withdrawal
           Math.abs(newTrasaction.amount) === Math.abs(existing.amount) && newTrasaction.name === existing.description
       )

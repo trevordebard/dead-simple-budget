@@ -61,7 +61,16 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
     if (transactionType === 'withdrawal') {
       amount = -amount;
     }
-    editTransaction(transactionId, description, amount, stack, date, transactionType, null);
+    editTransaction({
+      transactionId,
+      transactionInput: {
+        description,
+        stack,
+        amount,
+        type: transactionType,
+        date,
+      },
+    });
     cancelEdit();
   };
   if (!data && !loading) {
