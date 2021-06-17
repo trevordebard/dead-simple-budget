@@ -13,11 +13,13 @@ Action:
 
 ## API Routes
 
-transaction
+transactions
 - GET
   - Get all transactions for a user id
   - Requirements:
     - user id
+  
+transaction
 - DELETE
   - Delete one or many transactions
   - Required params:
