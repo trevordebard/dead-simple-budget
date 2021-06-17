@@ -37,9 +37,6 @@ export async function getServerSideProps(context) {
     include: { bankAccounts: true },
   });
 
-  // const accessTokenResponse = {
-  //   bankAccounts: ['hi'],
-  // };
   const accessTokens = accessTokenResponse.bankAccounts.map(entry => entry.plaidAccessToken);
   if (accessTokens.length < 1) {
     return {

@@ -3,15 +3,7 @@ import styled from 'styled-components';
 import { useState } from 'react';
 import useTransactions from './useTransactions';
 import { Button, Input, RadioButton, RadioGroup, Select } from '../Styled';
-import { useSession } from 'next-auth/client';
-import moment from 'moment';
 
-const UploadLink = styled.a`
-  text-decoration: none;
-  color: inherit;
-  font-size: var(--smallFontSize);
-  text-decoration: underline;
-`;
 const NewtransactionWrapper = styled.form`
   display: flex;
   flex-direction: column;
@@ -45,9 +37,8 @@ const NewTransaction = () => {
     formState: { errors },
     reset,
   } = useForm();
-  const [session] = useSession();
   const [selectedStack, setSelectedStack] = useState('');
-  const { addTransaction, stackLabels } = useTransactions();
+  const { createTransaction, stackLabels } = useTransactions();
   const [transactionType, setTransactionType] = useState('withdrawal');
 
   const onSubmit = data => {
@@ -57,9 +48,7 @@ const NewTransaction = () => {
     if (transactionType === 'withdrawal') {
       amount = -amount;
     }
-    addTransaction({
-      variables: { amount, description, stack, type: transactionType, date: moment(date), email: session.user.email },
-    });
+    createTransaction({ transactionInput: { amount, description, stack, type: transactionType, date } });
 
     reset();
   };
@@ -127,11 +116,6 @@ const NewTransaction = () => {
       <Button category="ACTION" type="submit">
         Add
       </Button>
-      {/* <div style={{ textAlign: 'center' }}>
-        <Link href="/upload" passHref>
-          <UploadLink>Import Transactions</UploadLink>
-        </Link>
-      </div>  */}
     </NewtransactionWrapper>
   );
 };

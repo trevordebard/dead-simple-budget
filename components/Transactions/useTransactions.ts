@@ -12,6 +12,7 @@ import { useEffect, useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
 import { Transaction } from '.prisma/client';
 import { editTransaction } from 'components/Transactions/mutations/editTransaction';
+import { createTransaction } from './mutations/createTransaction';
 
 const GET_STACK_LABELS = gql`
   query getStackLabels($email: String!) {
@@ -33,15 +34,9 @@ const useTransactions = () => {
   const { addAlert } = useAlert();
   const { data, error: e, isLoading } = useQuery('transactions', fetchTransactions);
   const { mutate: editTransactionMutation } = useMutation(editTransaction);
+  const { mutate: createTransactionMutation } = useMutation(createTransaction);
   const { data: stackLabelRes } = useGetStackLabelsQuery({ variables: { email: session.user.email } });
 
-  const [addTransaction] = useAddTransactionMutation({
-    refetchQueries: ['getTransactions'],
-    onError: e => {
-      addAlert({ message: 'There was a problem adding transaction.', type: 'error' });
-    },
-    onCompleted: () => addAlert({ message: 'Success!', type: 'success', duration: 2 }),
-  });
   const [deleteManyTransactionsM] = useDeleteManyTransactionMutation({
     refetchQueries: ['getTransactions'],
     onError: e => {
@@ -71,7 +66,7 @@ const useTransactions = () => {
   return {
     loading: isLoading,
     transactions,
-    addTransaction,
+    createTransaction: createTransactionMutation,
     stackLabels,
     editTransaction: editTransactionMutation,
     deleteManyTransactions,

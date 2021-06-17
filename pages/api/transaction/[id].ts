@@ -3,7 +3,7 @@ import prisma from 'lib/prismaClient';
 import { iEditTransactionInput } from 'types/transactions';
 import { NextApiRequest, NextApiResponse } from 'next';
 
-export default async function transactionHandler(req: NextApiRequest, res: NextApiResponse) {
+export default async function transactionByIdHandler(req: NextApiRequest, res: NextApiResponse) {
   const {
     query: { id },
     method,
