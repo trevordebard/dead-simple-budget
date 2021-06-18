@@ -1,6 +1,8 @@
+import { deleteTransactions } from 'lib/api-helpers/deleteTransactions';
 import { getUser } from 'lib/api-helpers/getUser';
 import prisma from 'lib/prismaClient';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { iDeleteTransactionsInput } from 'types/transactions';
 
 export default async function transactionsHanler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
@@ -13,9 +15,18 @@ export default async function transactionsHanler(req: NextApiRequest, res: NextA
       const transactions = await getTransactions(user.id);
       res.status(200).json(transactions);
       break;
-
+    case 'DELETE':
+      let transactionIdInput: iDeleteTransactionsInput;
+      try {
+        transactionIdInput = JSON.parse(req.body);
+      } catch (e) {
+        transactionIdInput = req.body;
+      }
+      const deleteResponse = await deleteTransactions(transactionIdInput);
+      res.status(200).json(deleteResponse);
+      break;
     default:
-      res.setHeader('Allow', ['GET']);
+      res.setHeader('Allow', ['GET', 'DELETE']);
       res.status(405).end(`Method ${method} Not Allowed`);
   }
 }

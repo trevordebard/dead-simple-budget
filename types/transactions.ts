@@ -1,5 +1,3 @@
-import { user } from '.prisma/client';
-
 export interface iEditTransactionInput {
   description?: string;
   stack?: string;
@@ -14,4 +12,8 @@ export interface iCreateTransactionInput {
   amount: number;
   type: string;
   date: string;
+}
+
+export interface iDeleteTransactionsInput {
+  transactionIds: number[];
 }

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import useTransactions from './useTransactions';
 import { smBreakpoint } from '../../lib/constants';
 import { Table, THead, TR, TD, TH } from 'components/Styled/Table';
+import { useQueryClient } from 'react-query';
 
 const TransactionWrapper = styled.div`
   max-width: 100%;
@@ -40,6 +41,7 @@ const ActionLink = styled.a`
 const Transactions = () => {
   const { transactions, loading, deleteManyTransactions } = useTransactions();
   const [selectedTransactions, setSelectedTransactions] = useState([]);
+  const queryClient = useQueryClient();
   if (loading)
     return (
       <TransactionWrapper>
@@ -68,7 +70,14 @@ const Transactions = () => {
               <ActionLink
                 role="button"
                 onClick={() => {
-                  deleteManyTransactions(selectedTransactions);
+                  deleteManyTransactions(
+                    { transactionIds: selectedTransactions },
+                    {
+                      onSuccess: () => {
+                        queryClient.invalidateQueries('fetch-transactions');
+                      },
+                    }
+                  );
                   setSelectedTransactions([]);
                 }}
               >
