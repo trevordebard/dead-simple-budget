@@ -7,6 +7,7 @@
     "deploy-production": "sudo npm ci && npm run build && pm2 restart budget-prod",
     "build": "npm run build:nexus-typegen && npx next build",
     "start": "next start",
+    "ts-node": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\"",
     "start-dev": "next start -p 4000",
     "start-production": "next start -p 5000",
     "build:nexus-typegen": "ts-node -r tsconfig-paths/register --compiler-options '{\"module\":\"CommonJS\"}' --transpile-only graphql/schema",
