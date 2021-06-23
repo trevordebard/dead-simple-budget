@@ -28,16 +28,7 @@ async function main() {
       image: process.env['SEED_USER_image'],
     },
   });
-  await prisma.budget.upsert({
-    where: { id: 1 },
-    update: {},
-    create: {
-      id: 1,
-      total: 100,
-      toBeBudgeted: 1,
-      userId: 1,
-    },
-  });
+
   await prisma.session.upsert({
     where: { id: 1 },
     update: {},
