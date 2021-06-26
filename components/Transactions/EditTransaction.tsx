@@ -1,12 +1,13 @@
-import { gql } from '@apollo/client';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useForm } from 'react-hook-form';
-import { useGetTransactionQuery } from 'graphql/generated/codegen';
 import useTransactions from './useTransactions';
 import { formatDate } from '../../lib/formatDate';
 import { Button, RadioButton, RadioGroup, Input, Select } from '../Styled';
 import { ErrorText } from './NewTransaction';
+import { useQuery } from 'react-query';
+import { Transaction } from '.prisma/client';
+import { fetchTransactionById } from './queries/getTransactionById';
 
 const EditTransactionWrapper = styled.form`
   display: flex;
@@ -25,36 +26,28 @@ const EditTransactionWrapper = styled.form`
     color: var(--fontColorLighter);
   }
 `;
-const GET_TRANSACTION = gql`
-  query getTransaction($id: Int!) {
-    transaction(where: { id: $id }) {
-      id
-      amount
-      date
-      stack
-      description
-      type
-    }
-  }
-`;
 
 const EditTransaction = ({ transactionId, cancelEdit }) => {
+  const [transaction, setTransaction] = useState<Transaction>();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
   const { editTransaction, stackLabels } = useTransactions();
+
   const [selectedStack, setSelectedStack] = useState('');
   const [transactionType, setTransactionType] = useState<string | null>(null);
-  // TODO: use react-query
-  const { data, loading } = useGetTransactionQuery({ variables: { id: transactionId }, skip: transactionId === null });
+  const { data: fetchResponse, isLoading: loading } = useQuery(
+    [`fetch-transaction-${transactionId}`, { transactionId }],
+    fetchTransactionById
+  );
   useEffect(() => {
-    if (data) {
-      setTransactionType('');
-      setTransactionType(data.transaction.type);
+    if (fetchResponse) {
+      setTransaction(fetchResponse.data);
     }
-  }, [data]);
+  }, [fetchResponse]);
+
   const onSubmit = payload => {
     const { date, stack, description } = payload;
     let { amount } = payload;
@@ -74,13 +67,13 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
     });
     cancelEdit();
   };
-  if (!data && !loading) {
+  if (!transaction && !loading) {
     return <h1 style={{ textAlign: 'center' }}>Not Found</h1>;
   }
   if (loading) {
     return <p>Loading...</p>;
   }
-  if (!data) {
+  if (!transaction) {
     return null;
   }
   return (
@@ -94,7 +87,7 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
         category="underline"
         {...register('description', { required: true })}
         type="text"
-        defaultValue={data.transaction.description}
+        defaultValue={transaction.description}
         autoComplete="off"
       />
       <label htmlFor="amount">Amount {errors.amount && <ErrorText> (Required)</ErrorText>}</label>
@@ -106,7 +99,7 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
         pattern="\d*"
         step={0.01}
         placeholder="Amount"
-        defaultValue={Math.abs(data.transaction.amount)}
+        defaultValue={Math.abs(transaction.amount)}
         autoComplete="off"
       />
 
@@ -130,7 +123,7 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
         category="underline"
         {...register('date', { required: true })}
         type="date"
-        defaultValue={formatDate(data.transaction.date)}
+        defaultValue={formatDate(transaction.date)}
         required
       />
       <RadioGroup>

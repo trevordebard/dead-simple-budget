@@ -1,4 +1,3 @@
-import { useSession } from 'next-auth/client';
 import { fetchTransactions } from 'components/Transactions/queries/getTransactions';
 import { useAlert } from 'components/Alert';
 import { getStackLabels } from '../../lib/budgetUtils';
@@ -17,8 +16,22 @@ const useTransactions = () => {
   const { data, error: e, isLoading } = useQuery('fetch-transactions', fetchTransactions);
   // TODO: create a useStack hook that includes this logic
   const { data: stacksResponse } = useQuery('fetch-stacks', fetchStacks);
-  const { mutate: editTransactionMutation } = useMutation(editTransaction);
-  const { mutate: createTransactionMutation } = useMutation(createTransaction);
+  const { mutate: editTransactionMutation } = useMutation(editTransaction, {
+    onError: () => {
+      addAlert({ message: 'There was a problem editing transaction', type: 'error' });
+    },
+    onSuccess: () => {
+      addAlert({ message: 'Transaction updated', type: 'success' });
+    },
+  });
+  const { mutate: createTransactionMutation } = useMutation(createTransaction, {
+    onError: () => {
+      addAlert({ message: 'There was a problem adding transaction.', type: 'error' });
+    },
+    onSuccess: () => {
+      addAlert({ message: 'Transaction added', type: 'success' });
+    },
+  });
   const { mutate: deleteTransactionsMutation } = useMutation(deleteTransactions);
 
   useEffect(() => {
