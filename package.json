@@ -12,15 +12,12 @@
     "start-production": "next start -p 5000"
   },
   "dependencies": {
-    "@apollo/client": "^3.3.19",
     "@prisma/client": "^2.23.0",
     "@types/mathjs": "^9.3.0",
     "@types/next-auth": "^3.13.0",
     "@types/styled-components": "^5.1.9",
-    "apollo-upload-client": "^15.0.0",
     "date-fns": "^2.22.1",
     "framer-motion": "^4.1.17",
-    "graphql": "^15.5.0",
     "mathjs": "^9.4.0",
     "moment": "^2.29.1",
     "next": "^11.0.0",

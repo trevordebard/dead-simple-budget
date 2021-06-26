@@ -1,6 +1,5 @@
 import { getSession } from 'next-auth/client';
 import { Transactions } from 'components/Transactions';
-import { initializeApollo } from 'lib/apolloClient';
 import Layout, { Main, Left, Center } from 'components/Shared/Layout';
 import { TabSidebar } from 'components/Sidebar';
 import { Nav } from 'components/Nav';
@@ -21,7 +20,6 @@ const TransactionPage = () => (
 );
 export default TransactionPage;
 export async function getServerSideProps(context) {
-  const apolloClient = initializeApollo(null, context);
   const session = await getSession(context);
   if (!session) {
     return {
@@ -49,7 +47,6 @@ export async function getServerSideProps(context) {
 
   return {
     props: {
-      initialApolloState: apolloClient.cache.extract(),
       session,
     },
   };

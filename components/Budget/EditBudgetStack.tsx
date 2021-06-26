@@ -1,4 +1,3 @@
-import { gql } from '@apollo/client';
 import { BudgetContext } from 'pages/budget';
 import { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -8,23 +7,6 @@ import { fetchStackById } from './queries/getStackById';
 import { useQuery } from 'react-query';
 import { Stack } from '.prisma/client';
 
-const GET_STACK = gql`
-  query getStack($id: Int!) {
-    stacks(where: { id: { equals: $id } }) {
-      amount
-      label
-      id
-    }
-  }
-`;
-
-const DELETE_ONE_STACK = gql`
-  mutation deleteOneStack($stackId: Int!) {
-    deleteOneStack(where: { id: $stackId }) {
-      id
-    }
-  }
-`;
 const EditStackWrapper = styled.div`
   margin: 1rem auto;
   padding: 0 1rem;

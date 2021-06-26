@@ -1,11 +1,11 @@
 import React from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
-import { useApolloClient } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
 import { useSession, signOut } from 'next-auth/client';
 import Logo from './Logo.svg';
 import { Button } from '../Styled';
+import { useQueryClient } from 'react-query';
 
 const NavContainer = styled.div`
   display: grid;
@@ -45,8 +45,8 @@ const Nav = () => {
 };
 
 const LoggedInNav = ({ email }) => {
-  const client = useApolloClient();
   const router = useRouter();
+  const queryClient = useQueryClient();
   return (
     <>
       <LogoWrapper>
@@ -63,7 +63,7 @@ const LoggedInNav = ({ email }) => {
           category="TRANSPARENT"
           onClick={async () => {
             signOut();
-            await client.clearStore();
+            queryClient.clear();
             router.push('/login');
           }}
         >

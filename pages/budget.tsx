@@ -1,5 +1,4 @@
 import { getSession } from 'next-auth/client';
-import { initializeApollo } from 'lib/apolloClient';
 import { Budget, EditBudgetStack } from 'components/Budget';
 import Layout, { Main, Left, Center, Right } from 'components/Shared/Layout';
 import { TabSidebar, ActionSidebar } from 'components/Sidebar';
@@ -55,7 +54,6 @@ const BudgetPage = () => {
 export default BudgetPage;
 
 export async function getServerSideProps(context) {
-  const apolloClient = initializeApollo(null, context);
   const session = await getSession(context);
   if (!session) {
     context.res.setHeader('location', '/login');
@@ -67,7 +65,6 @@ export async function getServerSideProps(context) {
   }
   return {
     props: {
-      initialApolloState: apolloClient.cache.extract(),
       session,
     },
   };
