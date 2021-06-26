@@ -1,56 +1,11 @@
 import { BankAccout, Prisma, Transaction } from '@prisma/client';
 import plaid from 'plaid';
-import * as csv from 'fast-csv';
-import { Context } from '../graphql/context';
 import { format } from 'date-fns';
 import { plaidClient } from 'lib/plaidClient';
-// Converts transaction readstream to array of transaction objects
-async function parseTransactionCsv(createReadStream, ctx: Context): Promise<Prisma.TransactionCreateInput[]> {
-  return new Promise((resolve, reject) => {
-    const res = [];
-    createReadStream()
-      .pipe(
-        csv.parse({
-          delimiter: ',',
-          headers: headers => headers.map(h => h?.toLowerCase()),
-          ltrim: true,
-          rtrim: true,
-        })
-      )
-      .on('error', error => reject(error))
-      .on('data', row => {
-        const transaction: Prisma.TransactionCreateInput = {
-          amount: parseFloat(row.amount),
-          date: new Date(row.date),
-          description: row.description,
-          stack: 'Imported',
-          type: row.type.toLowerCase(),
-          user: { connect: { email: ctx.session.user.email } },
-        };
-        res.push(transaction);
-      })
-      .on('end', () => resolve(res));
-  });
-}
+import { User } from 'next-auth';
+import prisma from './prismaClient';
 
-function removeExistingTransactions(
-  newTransactions: Prisma.TransactionCreateInput[],
-  existingTransactions: Transaction[]
-): Prisma.TransactionCreateInput[] {
-  const uniqueResultOne = newTransactions.filter(
-    newTrasaction =>
-      !existingTransactions.some(
-        existing =>
-          newTrasaction.amount === existing.amount &&
-          newTrasaction.description === existing.description &&
-          new Date(newTrasaction.date).getTime() === existing.date.getTime() &&
-          newTrasaction.type === existing.type
-      )
-  );
-  return uniqueResultOne;
-}
-
-export async function importTransactionsFromPlaid(startDate: string, bankAccount: BankAccout, ctx: Context) {
+export async function importTransactionsFromPlaid(startDate: string, bankAccount: BankAccout, user: User) {
   let end = format(new Date(), 'yyyy-MM-dd');
   const [year, month, day] = startDate.split('-');
   const start = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
@@ -58,13 +13,13 @@ export async function importTransactionsFromPlaid(startDate: string, bankAccount
   const data = await plaidClient.getTransactions(bankAccount.plaidAccessToken, startDate, end, {
     account_ids: bankAccount.plaidAccountIds,
   });
-  const user = await ctx.prisma.user.findFirst({ where: { email: ctx.session.user.email } });
+  const fullUser = await prisma.user.findFirst({ where: { email: user.email } });
   let existingTransactions;
-  existingTransactions = await ctx.prisma.transaction.findMany({ where: { date: { gte: start }, userId: user.id } });
+  existingTransactions = await prisma.transaction.findMany({ where: { date: { gte: start }, userId: fullUser.id } });
   const uniqueTransactions = getUniquePlaidTransactions(data.transactions, existingTransactions);
-  const preparedTransactions = preparePlaidTransactionsForUpload(uniqueTransactions, user.id);
+  const preparedTransactions = preparePlaidTransactionsForUpload(uniqueTransactions, fullUser.id);
 
-  await ctx.prisma.transaction.createMany({ data: preparedTransactions });
+  await prisma.transaction.createMany({ data: preparedTransactions });
 
   // TODO:
   return null;
