@@ -3,7 +3,7 @@ import axios from 'axios';
 
 async function fetchStacks() {
   const response = await axios.get<Stack[]>('/api/stacks');
-  return response;
+  return response.data;
 }
 
 export { fetchStacks };

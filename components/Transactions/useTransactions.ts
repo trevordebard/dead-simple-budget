@@ -3,19 +3,21 @@ import { useAlert } from 'components/Alert';
 import { getStackLabels } from '../../lib/budgetUtils';
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
-import { Transaction } from '.prisma/client';
 import { editTransaction } from 'components/Transactions/mutations/editTransaction';
 import { createTransaction } from './mutations/createTransaction';
 import { deleteTransactions } from './mutations/deleteTransactions';
 import { fetchStacks } from 'components/Budget/queries/getStacks';
 
 const useTransactions = () => {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [stackLabels, setStackLabels] = useState<string[] | null>();
   const { addAlert } = useAlert();
-  const { data, error: e, isLoading } = useQuery('fetch-transactions', fetchTransactions);
+  const {
+    data: transactionsResponse,
+    error: e,
+    isLoading,
+  } = useQuery('fetch-transactions', fetchTransactions, { staleTime: 500000 });
   // TODO: create a useStack hook that includes this logic
-  const { data: stacksResponse } = useQuery('fetch-stacks', fetchStacks);
+  const { data: stacks } = useQuery('fetch-stacks-from-usetransaction', fetchStacks);
   const { mutate: editTransactionMutation } = useMutation(editTransaction, {
     onError: () => {
       addAlert({ message: 'There was a problem editing transaction', type: 'error' });
@@ -35,23 +37,18 @@ const useTransactions = () => {
   const { mutate: deleteTransactionsMutation } = useMutation(deleteTransactions);
 
   useEffect(() => {
-    if (data) {
-      setTransactions(data.data);
-    }
-  }, [data]);
-
-  useEffect(() => {
-    if (stacksResponse) {
-      const labels = getStackLabels(stacksResponse.data);
+    if (stacks) {
+      const labels = getStackLabels(stacks);
       setStackLabels(labels);
     }
-  }, [stacksResponse]);
+  }, [stacks]);
 
   return {
-    loading: isLoading,
-    transactions,
+    loading: isLoading && !transactionsResponse?.data,
+    transactions: transactionsResponse?.data,
     createTransaction: createTransactionMutation,
     stackLabels,
+    error: e,
     editTransaction: editTransactionMutation,
     deleteManyTransactions: deleteTransactionsMutation,
   };

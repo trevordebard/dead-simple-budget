@@ -1,10 +1,8 @@
 //TODO: refactor into useTotals and useStacks hooks
 import { useSession } from 'next-auth/client';
-import { useEffect, useState } from 'react';
 import { useAlert } from 'components/Alert';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { fetchStacks } from './queries/getStacks';
-import { Stack } from '.prisma/client';
 import { updateStack as updateStackMutation } from './mutations/updateStack';
 import { createStack as createStackMutation } from './mutations/createStack';
 import { deleteStack as deleteStackMutation } from './mutations/deleteStack';
@@ -18,15 +16,19 @@ interface iBudgetTotals {
 
 const useBudget = () => {
   const queryClient = useQueryClient();
-  const [stacks, setStacks] = useState<Stack[]>();
   const [session] = useSession();
-  const [userTotals, setUserTotals] = useState<iBudgetTotals>({ toBeBudgeted: 0, total: 0 });
-  const { data: fetchStacksResponse, error, isLoading } = useQuery('fetch-stacks', fetchStacks);
-  const { data: fetchUserTotalsResp, error: fetchBudgetError } = useQuery(
-    ['fetch-user-totals', { email: session.user.email }],
-    fetchUserTotals,
-    { enabled: !!session.user.email }
-  );
+  const {
+    data: stacks,
+    error: fetchStacksError,
+    isLoading,
+  } = useQuery('fetch-stacks', fetchStacks, { staleTime: 1000000 });
+  const {
+    data: fetchUserTotalsResp,
+    isLoading: fetchUserTotalsLoading,
+    error: fetchTotalsError,
+  } = useQuery(['fetch-user-totals', { email: session.user.email }], fetchUserTotals, {
+    enabled: !!session.user.email,
+  });
   const { mutate: updateStack } = useMutation('update-stack', updateStackMutation);
   const { mutate: createStack } = useMutation('update-stack', createStackMutation, {
     onSuccess: () => {
@@ -53,24 +55,12 @@ const useBudget = () => {
     },
   });
   const { addAlert } = useAlert();
-  useEffect(() => {
-    if (fetchStacksResponse) {
-      setStacks(fetchStacksResponse.data);
-    }
-  }, [stacks, fetchStacksResponse]);
-  useEffect(() => {
-    if (fetchUserTotalsResp) {
-      const { total, toBeBudgeted } = fetchUserTotalsResp.data;
-      console.log(total);
-      setUserTotals({ total, toBeBudgeted });
-    }
-  }, [fetchUserTotalsResp]);
 
   return {
-    loading: isLoading,
-    userTotals,
-    stacks: fetchStacksResponse?.data,
-    error,
+    loading: isLoading || fetchUserTotalsLoading,
+    userTotals: fetchUserTotalsResp?.data,
+    stacks,
+    error: fetchTotalsError || fetchStacksError,
     createStack,
     updateStack,
     updateUserTotal,
