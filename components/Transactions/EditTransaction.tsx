@@ -47,6 +47,7 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
   const { editTransaction, stackLabels } = useTransactions();
   const [selectedStack, setSelectedStack] = useState('');
   const [transactionType, setTransactionType] = useState<string | null>(null);
+  // TODO: use react-query
   const { data, loading } = useGetTransactionQuery({ variables: { id: transactionId }, skip: transactionId === null });
   useEffect(() => {
     if (data) {

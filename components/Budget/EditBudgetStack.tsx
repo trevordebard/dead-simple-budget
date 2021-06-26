@@ -1,9 +1,12 @@
 import { gql } from '@apollo/client';
-import { useDeleteOneStackMutation, useGetStackQuery } from 'graphql/generated/codegen';
 import { BudgetContext } from 'pages/budget';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Button } from '../Styled';
+import useBudget from './useBudget';
+import { fetchStackById } from './queries/getStackById';
+import { useQuery } from 'react-query';
+import { Stack } from '.prisma/client';
 
 const GET_STACK = gql`
   query getStack($id: Int!) {
@@ -37,20 +40,26 @@ const EditStackWrapper = styled.div`
   }
 `;
 const EditBudgetStack = ({ id }: { id: number }) => {
+  const [stack, setStack] = useState<Stack>();
   const budgetContext = useContext(BudgetContext);
-  const { data, loading } = useGetStackQuery({ variables: { id }, skip: id === null });
-  const [deleteStack] = useDeleteOneStackMutation();
-  if (!loading && !data?.stacks) return null;
+  const { data: fetchResponse, isLoading: loading } = useQuery([`fetch-stack-${id}`, { stackId: id }], fetchStackById);
+  useEffect(() => {
+    if (fetchResponse) {
+      setStack(fetchResponse.data);
+    }
+  }, [fetchResponse]);
+  const { deleteStack } = useBudget();
+  if (!loading && !stack) return null;
   return (
     <EditStackWrapper>
-      <h4>{loading ? 'Loading...' : data.stacks[0].label}</h4>
-      <p>Amount: {!loading && data.stacks[0].amount}</p>
+      <h4>{loading ? 'Loading...' : stack.label}</h4>
+      <p>Amount: {!loading && stack.amount}</p>
       <Button
         outline
         small
         category="DANGER"
         onClick={() => {
-          deleteStack({ variables: { stackId: id }, refetchQueries: ['getBudget'] });
+          deleteStack({ stackId: id });
           budgetContext.setStackInFocus(null);
         }}
       >

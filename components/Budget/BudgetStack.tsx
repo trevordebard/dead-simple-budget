@@ -42,13 +42,7 @@ const BudgetStack = ({ label, budgetId, amount, id }) => {
           const newVal = evaluate(e.target.value);
           // Prevent api call if vlaue didn't change
           if (newVal !== prevAmount) {
-            updateStack({
-              variables: {
-                budgetId,
-                label,
-                amount: newVal,
-              },
-            });
+            updateStack({ id, label, amount: newVal });
             setPrevAmount(newVal);
           }
         }}

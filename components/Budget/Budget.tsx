@@ -5,6 +5,7 @@ import BudgetStack from './BudgetStack';
 import { Button, Input } from 'components/Styled';
 import EditableText from 'components/Shared/EditableText';
 import { useAlert } from 'components/Alert';
+import { useSession } from 'next-auth/client';
 
 const ToplineBudget = styled.div`
   text-align: center;
@@ -43,11 +44,11 @@ const NewStackWrapper = styled.div`
 `;
 
 function Budget() {
-  const { budget, loading, error, updateTotal } = useBudget();
+  const { stacks, loading, error, userTotals, updateUserTotal, createStack } = useBudget();
+  const [session] = useSession();
   const [editTotalVisible, setEditTotalVisible] = useState(false);
   const { addAlert, removeAlert, alert } = useAlert();
-
-  if (loading || !budget) {
+  if (loading) {
     return <span>loading...</span>;
   }
   if (error) {
@@ -58,30 +59,25 @@ function Budget() {
       <ToplineBudget>
         <h1>Budget</h1>
         <h5>
-          <Amount editable danger={budget.total < 0} onClick={() => setEditTotalVisible(!editTotalVisible)}>
+          <Amount editable danger={userTotals.total < 0} onClick={() => setEditTotalVisible(!editTotalVisible)}>
             <EditableText
-              text={budget.total}
-              update={total =>
-                updateTotal({
-                  variables: {
-                    total: parseFloat(total),
-                    budgetId: budget.id,
-                  },
-                })
-              }
+              text={userTotals.total}
+              update={total => {
+                updateUserTotal({ email: session.user.email, total: parseFloat(total) });
+              }}
               inputType="number"
             />
           </Amount>
           <SubText> in account</SubText>
         </h5>
         <h5>
-          <Amount danger={budget.toBeBudgeted < 0}>{budget.toBeBudgeted}</Amount>
+          <Amount danger={userTotals.toBeBudgeted < 0}>{userTotals.toBeBudgeted}</Amount>
           <SubText> to be budgeted</SubText>
         </h5>
       </ToplineBudget>
-      <Stacks stacks={budget.stacks} budgetId={budget.id} />
+      <Stacks stacks={stacks} budgetId={1} />
       <NewStackWrapper>
-        <NewStack budgetId={budget.id} />
+        <NewStack />
       </NewStackWrapper>
       <br />
     </BudgetWrapper>
@@ -89,24 +85,25 @@ function Budget() {
 }
 
 const Stacks = ({ stacks, budgetId }) => {
-  return stacks.map(item => (
-    <div key={item.id}>
-      <BudgetStack id={item.id} label={item.label} budgetId={budgetId} amount={item.amount} />
-    </div>
-  ));
+  if (stacks) {
+    return stacks.map(item => (
+      <div key={item.id}>
+        <BudgetStack id={item.id} label={item.label} budgetId={budgetId} amount={item.amount} />
+      </div>
+    ));
+  }
+  return <></>;
 };
 
-const NewStack = ({ budgetId }) => {
+const NewStack = () => {
   const { addAlert } = useAlert();
-  const { addStack } = useBudget();
+  const { createStack } = useBudget();
   const [newStack, setNewStack] = useState<string>('');
   const handleAddStack = (stackName: string) => {
     if (!newStack || newStack.trim() === '') {
       addAlert({ message: 'Stack name cannot be empty.', type: 'error' });
     } else {
-      addStack({
-        variables: { newStackLabel: newStack, budgetId },
-      });
+      createStack({ label: newStack });
       setNewStack('');
     }
   };

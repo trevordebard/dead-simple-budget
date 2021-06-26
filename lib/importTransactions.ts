@@ -1,7 +1,6 @@
 import { BankAccout, Prisma, Transaction } from '@prisma/client';
 import plaid from 'plaid';
 import * as csv from 'fast-csv';
-import { recalcToBeBudgeted } from 'graphql/schema';
 import { Context } from '../graphql/context';
 import { format } from 'date-fns';
 import { plaidClient } from 'lib/plaidClient';
@@ -49,46 +48,6 @@ function removeExistingTransactions(
       )
   );
   return uniqueResultOne;
-}
-
-export async function importTransactionsFromCSV(createReadStream, ctx: Context) {
-  // Convert transaction CSV to array of transactions
-  const parsedTransactions = await parseTransactionCsv(createReadStream, ctx);
-  const existingTransactions = await ctx.prisma.transaction.findMany({
-    where: { user: { email: { equals: ctx.session.user.email } } },
-  });
-  const transactionsToUpload = removeExistingTransactions(parsedTransactions, existingTransactions);
-
-  let sumOfTransactions = 0;
-  // Create list of prisma calls which will create a transaction (i.e. our data model, "transaction";
-  // not to be confused with the prisma call, "$transaction")
-  // Tracking https://github.com/prisma/prisma-client-js/issues/332 for native prisma batch create
-
-  const prismaCalls = transactionsToUpload.map(transaction => {
-    sumOfTransactions += transaction.amount;
-    return ctx.prisma.transaction.create({
-      data: transaction,
-    });
-  });
-  try {
-    // Attempt running all prismaCalls. If one call fails, the others will be rolled back
-    const results = await ctx.prisma.$transaction(prismaCalls);
-
-    // Get user budget given the user id from one of the responses
-    const { budget } = await ctx.prisma.user.findUnique({
-      where: { id: results[0].userId },
-      include: { budget: true },
-    });
-    // Update increment budget total by sum of all transactions imported
-    await ctx.prisma.budget.update({
-      data: { total: { increment: sumOfTransactions } },
-      where: { id: budget.id },
-    });
-    await recalcToBeBudgeted(ctx.prisma, budget.id);
-  } catch (e) {
-    console.error('Error inserting transaction batch!');
-    throw e;
-  }
 }
 
 export async function importTransactionsFromPlaid(startDate: string, bankAccount: BankAccout, ctx: Context) {

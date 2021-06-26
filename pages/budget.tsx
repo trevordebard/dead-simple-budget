@@ -1,5 +1,4 @@
 import { getSession } from 'next-auth/client';
-import { ADD_BUDGET } from 'components/Budget/queries/ADD_BUDGET';
 import { initializeApollo } from 'lib/apolloClient';
 import { Budget, EditBudgetStack } from 'components/Budget';
 import Layout, { Main, Left, Center, Right } from 'components/Shared/Layout';
@@ -8,7 +7,6 @@ import { Nav } from 'components/Nav';
 import { createContext, useState } from 'react';
 import { AnimatePresence, Variants } from 'framer-motion';
 import { StickyWrapper } from 'components/Styled/StickyWrapper';
-import { GET_BUDGET } from 'components/Budget/queries/GET_BUDGET';
 const variants: Variants = {
   open: { x: 0, transition: { type: 'just' }, opacity: 1 },
   closed: { x: '+100%', opacity: 0 },
@@ -66,19 +64,6 @@ export async function getServerSideProps(context) {
     return {
       props: null,
     };
-  }
-  let data;
-  try {
-    data = await apolloClient.query({ query: GET_BUDGET, variables: { email: session.user.email } });
-  } catch (e) {
-    console.log('couldnt find user!');
-    console.log(session.user.email);
-    await apolloClient.mutate({ mutation: ADD_BUDGET, variables: { email: session.user.email } });
-    data = await apolloClient.query({ query: GET_BUDGET, variables: { email: session.user.email } });
-  }
-  if (data.data.budgets.length === 0) {
-    await apolloClient.mutate({ mutation: ADD_BUDGET, variables: { email: session.user.email } });
-    data = await apolloClient.query({ query: GET_BUDGET, variables: { email: session.user.email } });
   }
   return {
     props: {

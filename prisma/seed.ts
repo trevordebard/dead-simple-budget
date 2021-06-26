@@ -22,13 +22,14 @@ async function main() {
     update: {},
     create: {
       id: 1,
+      total: 1000,
+      toBeBudgeted: 800,
       name: process.env['SEED_USER_name'],
       email: process.env['SEED_USER_email'],
       emailVerified: null,
       image: process.env['SEED_USER_image'],
     },
   });
-
   await prisma.session.upsert({
     where: { id: 1 },
     update: {},
@@ -63,6 +64,12 @@ async function main() {
       plaidAccountIds: [process.env['SEED_BANKACCOUNT_plaidAccountId']],
       userId: 1,
     },
+  });
+  await prisma.stack.createMany({
+    data: [
+      { label: 'Eating Out', amount: 100, userId: 1 },
+      { label: 'Rent', amount: 100, userId: 1 },
+    ],
   });
 }
 
