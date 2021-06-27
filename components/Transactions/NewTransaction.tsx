@@ -1,8 +1,9 @@
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import { useState } from 'react';
-import useTransactions from './useTransactions';
 import { Button, Input, RadioButton, RadioGroup, Select } from '../Styled';
+import { useCreateTransaction } from 'lib/hooks';
+import useStackLabels from 'lib/hooks/stack/useStackLabels';
 
 const NewtransactionWrapper = styled.form`
   display: flex;
@@ -38,7 +39,8 @@ const NewTransaction = () => {
     reset,
   } = useForm();
   const [selectedStack, setSelectedStack] = useState('');
-  const { createTransaction, stackLabels } = useTransactions();
+  const { mutate: createTransaction } = useCreateTransaction();
+  const { stackLabels } = useStackLabels();
   const [transactionType, setTransactionType] = useState('withdrawal');
 
   const onSubmit = data => {

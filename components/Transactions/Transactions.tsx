@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
-import useTransactions from './useTransactions';
+import { useDeleteTransactions, useTransactions } from 'lib/hooks';
 import { smBreakpoint } from '../../lib/constants';
 import { Table, THead, TR, TD, TH } from 'components/Styled/Table';
 import { useQueryClient } from 'react-query';
@@ -39,10 +39,11 @@ const ActionLink = styled.a`
 `;
 
 const Transactions = () => {
-  const { transactions, loading, deleteManyTransactions } = useTransactions();
+  const { data: transactions, isLoading } = useTransactions();
+  const { mutate: deleteTransactions } = useDeleteTransactions();
   const [selectedTransactions, setSelectedTransactions] = useState([]);
   const queryClient = useQueryClient();
-  if (loading)
+  if (isLoading)
     return (
       <TransactionWrapper>
         <Title>
@@ -50,7 +51,7 @@ const Transactions = () => {
         </Title>
       </TransactionWrapper>
     );
-  if (!loading) {
+  if (!isLoading) {
     return (
       <TransactionWrapper>
         <Title>
@@ -70,7 +71,7 @@ const Transactions = () => {
               <ActionLink
                 role="button"
                 onClick={() => {
-                  deleteManyTransactions(
+                  deleteTransactions(
                     { transactionIds: selectedTransactions },
                     {
                       onSuccess: () => {

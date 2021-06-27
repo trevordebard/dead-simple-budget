@@ -1,13 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 import { useForm } from 'react-hook-form';
-import useTransactions from './useTransactions';
 import { formatDate } from '../../lib/formatDate';
 import { Button, RadioButton, RadioGroup, Input, Select } from '../Styled';
 import { ErrorText } from './NewTransaction';
-import { useQuery } from 'react-query';
-import { Transaction } from '.prisma/client';
-import { fetchTransactionById } from './queries/getTransactionById';
+import { useEditTransaction, useTransaction } from 'lib/hooks';
+import useStackLabels from 'lib/hooks/stack/useStackLabels';
 
 const EditTransactionWrapper = styled.form`
   display: flex;
@@ -28,25 +26,17 @@ const EditTransactionWrapper = styled.form`
 `;
 
 const EditTransaction = ({ transactionId, cancelEdit }) => {
-  const [transaction, setTransaction] = useState<Transaction>();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const { editTransaction, stackLabels } = useTransactions();
+  const { stackLabels } = useStackLabels();
+  const { mutate: editTransaction } = useEditTransaction();
 
   const [selectedStack, setSelectedStack] = useState('');
   const [transactionType, setTransactionType] = useState<string | null>(null);
-  const { data: fetchResponse, isLoading: loading } = useQuery(
-    [`fetch-transaction-${transactionId}`, { transactionId }],
-    fetchTransactionById
-  );
-  useEffect(() => {
-    if (fetchResponse) {
-      setTransaction(fetchResponse.data);
-    }
-  }, [fetchResponse]);
+  const { data: transaction, isLoading: isLoadingTransaction } = useTransaction(transactionId);
 
   const onSubmit = payload => {
     const { date, stack, description } = payload;
@@ -67,10 +57,10 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
     });
     cancelEdit();
   };
-  if (!transaction && !loading) {
+  if (!transaction && !isLoadingTransaction) {
     return <h1 style={{ textAlign: 'center' }}>Not Found</h1>;
   }
-  if (loading) {
+  if (isLoadingTransaction) {
     return <p>Loading...</p>;
   }
   if (!transaction) {

@@ -2,10 +2,7 @@ import { BudgetContext } from 'pages/budget';
 import { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Button } from '../Styled';
-import useBudget from './useBudget';
-import { fetchStackById } from './queries/getStackById';
-import { useQuery } from 'react-query';
-import { Stack } from '.prisma/client';
+import { useDeleteStack, useStack } from 'lib/hooks';
 
 const EditStackWrapper = styled.div`
   margin: 1rem auto;
@@ -22,20 +19,14 @@ const EditStackWrapper = styled.div`
   }
 `;
 const EditBudgetStack = ({ id }: { id: number }) => {
-  const [stack, setStack] = useState<Stack>();
   const budgetContext = useContext(BudgetContext);
-  const { data: fetchResponse, isLoading: loading } = useQuery([`fetch-stack-${id}`, { stackId: id }], fetchStackById);
-  useEffect(() => {
-    if (fetchResponse) {
-      setStack(fetchResponse.data);
-    }
-  }, [fetchResponse]);
-  const { deleteStack } = useBudget();
-  if (!loading && !stack) return null;
+  const { stack, isLoading } = useStack(id);
+  const { mutate: deleteStack } = useDeleteStack();
+  if (!isLoading && !stack) return null;
   return (
     <EditStackWrapper>
-      <h4>{loading ? 'Loading...' : stack.label}</h4>
-      <p>Amount: {!loading && stack.amount}</p>
+      <h4>{isLoading ? 'Loading...' : stack.label}</h4>
+      <p>Amount: {!isLoading && stack.amount}</p>
       <Button
         outline
         small

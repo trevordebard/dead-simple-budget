@@ -1,9 +1,9 @@
 import { useState, memo, useContext } from 'react';
 import styled from 'styled-components';
 import { evaluate } from 'mathjs';
-import useBudget from 'components/Budget/useBudget';
 import { ListRow } from '../Styled';
 import { BudgetContext } from 'pages/budget';
+import { useUpdateStack } from 'lib/hooks';
 
 const StackInput = styled.input<{ danger: boolean }>`
   text-align: right;
@@ -18,9 +18,9 @@ const StackInput = styled.input<{ danger: boolean }>`
   }
 `;
 
-const BudgetStack = ({ label, budgetId, amount, id }) => {
+const BudgetStack = ({ label, amount, id }) => {
   const [prevAmount, setPrevAmount] = useState<number>(amount);
-  const { updateStack } = useBudget();
+  const { mutate: updateStack } = useUpdateStack();
   const budgetContext = useContext(BudgetContext);
   const handleRowClick = () => {
     if (budgetContext.stackInFocus === id) {
