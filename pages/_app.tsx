@@ -5,9 +5,11 @@ import Head from '../components/head';
 import { GlobalStyle } from 'components/Shared/GlobalStyle';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
+import { useState } from 'react';
+import { Hydrate } from 'react-query/hydration';
 
 function MyApp({ Component, pageProps }) {
-  const queryClient = new QueryClient();
+  const [queryClient] = useState(() => new QueryClient());
   return (
     <>
       <GlobalStyle />
@@ -16,7 +18,9 @@ function MyApp({ Component, pageProps }) {
         <QueryClientProvider client={queryClient}>
           <AlertProvider>
             <Alert />
-            <Component {...pageProps} />
+            <Hydrate state={pageProps.dehydratedState}>
+              <Component {...pageProps} />
+            </Hydrate>
             <ReactQueryDevtools initialIsOpen={true} />
           </AlertProvider>
         </QueryClientProvider>
