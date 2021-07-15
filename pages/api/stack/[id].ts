@@ -1,5 +1,6 @@
 import { Stack } from '.prisma/client';
 import { getUser } from 'lib/api-helpers/getUser';
+import { recalcToBeBudgeted } from 'lib/api-helpers/recalcToBeBudgeted';
 import prisma from 'lib/prismaClient';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { iUpdateStackInput } from 'types/stack';
@@ -22,10 +23,12 @@ export default async function stackHandler(req: NextApiRequest, res: NextApiResp
       let updateResponse: Stack;
       try {
         updateResponse = await updateStack(updateInput, stackId);
+        await recalcToBeBudgeted(user);
       } catch (e) {
         if (e.code === 'P2002') {
           return res.status(400).json({ error: true, message: 'A stack with that label already exists.' });
         }
+        return res.status(400).json({ error: true, message: 'An unknown error occurred' });
       }
       return res.status(200).json(updateResponse);
     case 'DELETE':

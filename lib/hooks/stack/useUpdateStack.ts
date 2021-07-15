@@ -8,6 +8,7 @@ export function useUpdateStack() {
   return useMutation('update-stack', updateStack, {
     onSuccess: async (_, variables) => {
       await queryClient.refetchQueries(`fetch-stack-${variables.id}`);
+      await queryClient.refetchQueries(`fetch-user-totals`);
     },
   });
 }

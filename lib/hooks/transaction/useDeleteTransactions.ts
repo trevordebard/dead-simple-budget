@@ -8,7 +8,7 @@ export function useDeleteTransactions() {
   const { addAlert } = useAlert();
   return useMutation(deleteTransactions, {
     onError: () => {
-      addAlert({ message: 'There was a problem adding transaction.', type: 'error' });
+      addAlert({ message: 'There was a problem deleting transaction.', type: 'error' });
     },
   });
 }

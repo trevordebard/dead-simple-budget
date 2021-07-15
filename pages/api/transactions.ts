@@ -23,7 +23,7 @@ export default async function transactionsHanler(req: NextApiRequest, res: NextA
       } catch (e) {
         transactionIdInput = req.body;
       }
-      const deleteResponse = await deleteTransactions(transactionIdInput);
+      const deleteResponse = await deleteTransactions(transactionIdInput, user);
       res.status(200).json(deleteResponse);
       break;
     default:
