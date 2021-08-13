@@ -26,7 +26,7 @@
     "graphql": "^15.3.0",
     "mathjs": "^7.2.0",
     "moment": "^2.29.1",
-    "next": "^10.0.0",
+    "next": "^11.1.0",
     "next-auth": "^3.1.0",
     "nexus": "^1.0.0",
     "nexus-plugin-prisma": "^0.27.0",
