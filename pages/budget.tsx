@@ -56,11 +56,11 @@ export default BudgetPage;
 export async function getServerSideProps(context) {
   const session = await getSession(context);
   if (!session) {
-    context.res.setHeader('location', '/login');
-    context.res.statusCode = 302;
-    context.res.end();
     return {
-      props: null,
+      redirect: {
+        permanent: false,
+        destination: '/login',
+      },
     };
   }
   return {
