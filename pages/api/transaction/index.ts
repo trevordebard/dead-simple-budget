@@ -4,6 +4,7 @@ import { iCreateTransactionInput } from 'types/transactions';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { recalcToBeBudgeted } from 'lib/api-helpers/recalcToBeBudgeted';
 import { user } from '.prisma/client';
+import { DateTime } from 'luxon';
 
 export default async function transactionHandler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
@@ -31,9 +32,9 @@ async function createTransaction(user: user, transaction: iCreateTransactionInpu
     where: { id: user.id },
     data: { total: { increment: transaction.amount } },
   });
-
+  const date = DateTime.fromFormat(transaction.date, 'yyyy-MM-dd').toISO();
   const createResponse = await prisma.transaction.create({
-    data: { ...transaction, userId: user.id, date: new Date(transaction.date) },
+    data: { ...transaction, userId: user.id, date },
   });
   await recalcToBeBudgeted(updatedUser);
   return createResponse;

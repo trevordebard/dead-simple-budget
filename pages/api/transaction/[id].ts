@@ -4,6 +4,7 @@ import { iEditTransactionInput } from 'types/transactions';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { user } from '.prisma/client';
 import { recalcToBeBudgeted } from 'lib/api-helpers/recalcToBeBudgeted';
+import { DateTime } from 'luxon';
 
 export default async function transactionByIdHandler(req: NextApiRequest, res: NextApiResponse) {
   const {
@@ -39,7 +40,7 @@ async function editTransaction(user: user, transactionId: number, transaction: i
 
   // Update transaction and user total with new transaction amount
   const updatedTransaction = await prisma.transaction.update({
-    data: { ...transaction, date: new Date(transaction.date) },
+    data: { ...transaction, date: DateTime.fromFormat(transaction.date, 'yyyy-MM-dd').toISO() },
     where: { id: transactionId },
   });
   const updatedUser = await prisma.user.update({
