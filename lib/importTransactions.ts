@@ -25,7 +25,7 @@ export async function importTransactionsFromPlaid(startDate: string, bankAccount
   return null;
 }
 
-function getUniquePlaidTransactions(
+export function getUniquePlaidTransactions(
   plaidTransactions: plaid.Transaction[],
   existingTransactions: Transaction[]
 ): plaid.Transaction[] {
