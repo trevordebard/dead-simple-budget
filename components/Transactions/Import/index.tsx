@@ -1,10 +1,11 @@
 import { Button, ListRow } from 'components/Styled';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import axios from 'axios';
 
 import styled from 'styled-components';
 import { useEffect, useState } from 'react';
 import { Transaction as PlaidTransaction } from 'plaid';
+import { useAlert } from 'components/Alert';
 const List = styled.div`
   display: flex;
   flex-direction: column;
@@ -22,6 +23,9 @@ async function postTransactions(transactions: PlaidTransaction[]) {
 
 export function Import() {
   const [fetchTrans, setFetchTrans] = useState(false);
+  const queryClient = useQueryClient();
+
+  const { addAlert } = useAlert();
   const [selectedTransactions, setSelectedTransactions] = useState([]);
   const { data: transactions, isLoading } = useQuery('fetch-transactions-from-bank', fetchTransactions, {
     enabled: fetchTrans,
@@ -47,7 +51,12 @@ export function Import() {
     const selected = transactions.filter(
       transaction => selectedTransactions.indexOf(transaction.transaction_id) !== -1
     );
-    uploadTransactions(selected);
+    uploadTransactions(selected, {
+      onSuccess: () => {
+        addAlert({ message: 'Success!', type: 'success' });
+        queryClient.refetchQueries('fetch-transactions-from-bank');
+      },
+    });
   };
 
   if (!transactions) {
