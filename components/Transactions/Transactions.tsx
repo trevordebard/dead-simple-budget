@@ -68,6 +68,9 @@ const Transactions = () => {
                 <ActionLink>Edit</ActionLink>
               </Link>
             )}
+            <Link href="/import" passHref>
+              <ActionLink>Import</ActionLink>
+            </Link>
             {selectedTransactions.length > 0 && (
               <ActionLink
                 role="button"

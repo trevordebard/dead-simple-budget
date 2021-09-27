@@ -1,8 +1,10 @@
 import { deleteTransactions } from 'lib/api-helpers/deleteTransactions';
 import { getUser } from 'lib/api-helpers/getUser';
+import { convertPlaidTransactionToPrismaInput } from 'lib/importTransactions';
 import prisma from 'lib/prismaClient';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { iDeleteTransactionsInput } from 'types/transactions';
+import { Transaction } from 'plaid';
+import { iCreateManyTransactionsInput, iDeleteTransactionsInput } from 'types/transactions';
 
 export default async function transactionsHanler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
@@ -10,8 +12,9 @@ export default async function transactionsHanler(req: NextApiRequest, res: NextA
   const user = await getUser(req);
 
   switch (method) {
+    case 'POST':
+      createManyTransactions(user.id, req.body);
     case 'GET':
-      // TODO: import from plaid
       // Get data from database
       const transactions = await getTransactions(user.id);
       res.status(200).json(transactions);
@@ -34,6 +37,11 @@ export default async function transactionsHanler(req: NextApiRequest, res: NextA
 
 async function getTransactions(userId: number) {
   return await prisma.transaction.findMany({ where: { userId } });
+}
+
+async function createManyTransactions(userId: number, transactions: Transaction[]) {
+  const input = transactions.map(transaction => convertPlaidTransactionToPrismaInput(transaction, userId));
+  const response = await prisma.transaction.createMany({ data: input });
 }
 
 // Logic from grapqhl that can be reused

@@ -5,7 +5,7 @@ import { TabSidebar } from 'components/Sidebar';
 import { Nav } from 'components/Nav';
 import prisma from 'lib/prismaClient';
 
-const TransactionPage = () => (
+const ImportPage = () => (
   <Layout>
     <Nav />
     <Main>
@@ -18,7 +18,8 @@ const TransactionPage = () => (
     </Main>
   </Layout>
 );
-export default TransactionPage;
+export default ImportPage;
+
 export async function getServerSideProps(context) {
   const session = await getSession(context);
   if (!session) {

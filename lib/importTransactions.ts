@@ -41,7 +41,7 @@ export function getUniquePlaidTransactions(
   return uniquePlaidTransactions;
 }
 
-function convertPlaidTransactionToPrismaInput(
+export function convertPlaidTransactionToPrismaInput(
   transaction: plaid.Transaction,
   userId: number
 ): Prisma.TransactionCreateManyInput {

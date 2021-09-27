@@ -14,6 +14,10 @@ export interface iCreateTransactionInput {
   date: string;
 }
 
+export interface iCreateManyTransactionsInput {
+  transactions: iCreateTransactionInput[];
+}
+
 export interface iDeleteTransactionsInput {
   transactionIds: number[];
 }
