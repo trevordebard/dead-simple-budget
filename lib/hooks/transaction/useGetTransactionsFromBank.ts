@@ -1,14 +1,18 @@
-import { useQuery } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { Transaction } from '.prisma/client';
 import { DateTime } from 'luxon';
 import axios from 'axios';
+import { Transaction as PlaidTransaction } from 'plaid';
 
 interface iUITransaction extends Omit<Transaction, 'date'> {
   date: string;
 }
 
-export function useTransactions() {
-  return useQuery('fetch-transactions', fetchTransactions);
+export function useGetTransactionsFromBank(options: UseQueryOptions<iUITransaction[], unknown, PlaidTransaction[]>) {
+  return useQuery('fetch-transactions-from-bank', fetchTransactions, {
+    staleTime: 10800000, // 3hrs
+    ...options,
+  });
 }
 
 async function fetchTransactions() {
