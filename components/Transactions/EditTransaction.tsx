@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useForm } from 'react-hook-form';
 import { formatDate } from '../../lib/formatDate';
@@ -34,9 +34,16 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
   const { stackLabels } = useStackLabels();
   const { mutate: editTransaction } = useEditTransaction();
 
-  const [selectedStack, setSelectedStack] = useState('');
-  const [transactionType, setTransactionType] = useState<string | null>(null);
+  const [selectedStack, setSelectedStack] = useState<string>();
+  const [transactionType, setTransactionType] = useState<string | null>();
   const { data: transaction, isLoading: isLoadingTransaction } = useTransaction(transactionId);
+
+  useEffect(() => {
+    if (transaction) {
+      setSelectedStack(transaction.stack);
+      setTransactionType(transaction.type);
+    }
+  }, [transaction, setTransactionType, setSelectedStack]);
 
   const onSubmit = payload => {
     const { date, stack, description } = payload;
@@ -45,17 +52,19 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
     if (transactionType === 'withdrawal') {
       amount = -amount;
     }
-    editTransaction({
-      transactionId,
-      transactionInput: {
-        description,
-        stack,
-        amount,
-        type: transactionType,
-        date,
+    editTransaction(
+      {
+        transactionId,
+        transactionInput: {
+          description,
+          stack,
+          amount,
+          type: transactionType,
+          date,
+        },
       },
-    });
-    cancelEdit();
+      { onSuccess: () => cancelEdit() }
+    );
   };
   if (!transaction && !isLoadingTransaction) {
     return <h1 style={{ textAlign: 'center' }}>Not Found</h1>;
@@ -96,10 +105,16 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
       <label htmlFor="stack">Stack {errors.stack && <ErrorText> (Required)</ErrorText>}</label>
       <Select
         name="stack"
-        {...register('stack', { required: true })}
-        value={selectedStack}
+        {...register('stack', {
+          required: true,
+          validate: value => {
+            return value !== 'Imported';
+          },
+        })}
+        defaultValue={transaction.stack}
         onChange={e => setSelectedStack(e.target.value)}
       >
+        {transaction.stack === 'Imported' && <option disabled>Imported</option>}
         {stackLabels &&
           stackLabels.map(label => (
             <option key={`${label}-${Date.now()}`} value={label}>
