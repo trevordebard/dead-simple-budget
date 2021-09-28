@@ -13,6 +13,13 @@ const EditableText = ({ update, inputType = 'text', text: textDefault }) => {
       setInputVisible(false);
     }
   }
+  useEffect(() => {
+    if (!inputVisible && textDefault !== text) {
+      console.log('default change', textDefault);
+      setText(textDefault);
+    }
+    console.log(textDefault);
+  }, [textDefault, inputVisible, text]);
 
   useEffect(() => {
     // Handle outside clicks on mounted state

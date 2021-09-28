@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
-import useTransactions from './useTransactions';
+import { useDeleteTransactions, useTransactions } from 'lib/hooks';
 import { smBreakpoint } from '../../lib/constants';
 import { Table, THead, TR, TD, TH } from 'components/Styled/Table';
+import { useQueryClient } from 'react-query';
+import { DateTime } from 'luxon';
 
 const TransactionWrapper = styled.div`
   max-width: 100%;
@@ -38,9 +40,11 @@ const ActionLink = styled.a`
 `;
 
 const Transactions = () => {
-  const { transactions, loading, deleteManyTransactions } = useTransactions();
+  const { data: transactions, isLoading } = useTransactions();
+  const { mutate: deleteTransactions } = useDeleteTransactions();
   const [selectedTransactions, setSelectedTransactions] = useState([]);
-  if (loading)
+  const queryClient = useQueryClient();
+  if (isLoading)
     return (
       <TransactionWrapper>
         <Title>
@@ -48,7 +52,7 @@ const Transactions = () => {
         </Title>
       </TransactionWrapper>
     );
-  if (!loading) {
+  if (!isLoading) {
     return (
       <TransactionWrapper>
         <Title>
@@ -64,11 +68,21 @@ const Transactions = () => {
                 <ActionLink>Edit</ActionLink>
               </Link>
             )}
+            <Link href="/import" passHref>
+              <ActionLink>Import</ActionLink>
+            </Link>
             {selectedTransactions.length > 0 && (
               <ActionLink
                 role="button"
                 onClick={() => {
-                  deleteManyTransactions(selectedTransactions);
+                  deleteTransactions(
+                    { transactionIds: selectedTransactions },
+                    {
+                      onSuccess: () => {
+                        queryClient.invalidateQueries('fetch-transactions');
+                      },
+                    }
+                  );
                   setSelectedTransactions([]);
                 }}
               >
@@ -110,7 +124,7 @@ const Transactions = () => {
                     <TD>{transaction.description}</TD>
                     <TD align="right">${transaction.amount}</TD>
                     <TD align="right">{transaction.stack}</TD>
-                    <TD align="right">{new Date(transaction.date).toLocaleDateString() || '9999/9/9'}</TD>
+                    <TD align="right">{DateTime.fromISO(transaction.date).toLocaleString()}</TD>
                   </TR>
                 ))}
             </tbody>

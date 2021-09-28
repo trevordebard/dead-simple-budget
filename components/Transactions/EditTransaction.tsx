@@ -1,12 +1,11 @@
-import { gql } from '@apollo/client';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useForm } from 'react-hook-form';
-import { useGetTransactionQuery } from 'graphql/generated/codegen';
-import useTransactions from './useTransactions';
 import { formatDate } from '../../lib/formatDate';
 import { Button, RadioButton, RadioGroup, Input, Select } from '../Styled';
 import { ErrorText } from './NewTransaction';
+import { useEditTransaction, useTransaction } from 'lib/hooks';
+import useStackLabels from 'lib/hooks/stack/useStackLabels';
 
 const EditTransactionWrapper = styled.form`
   display: flex;
@@ -25,18 +24,6 @@ const EditTransactionWrapper = styled.form`
     color: var(--fontColorLighter);
   }
 `;
-const GET_TRANSACTION = gql`
-  query getTransaction($id: Int!) {
-    transaction(where: { id: $id }) {
-      id
-      amount
-      date
-      stack
-      description
-      type
-    }
-  }
-`;
 
 const EditTransaction = ({ transactionId, cancelEdit }) => {
   const {
@@ -44,16 +31,20 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const { editTransaction, stackLabels } = useTransactions();
-  const [selectedStack, setSelectedStack] = useState('');
-  const [transactionType, setTransactionType] = useState<string | null>(null);
-  const { data, loading } = useGetTransactionQuery({ variables: { id: transactionId }, skip: transactionId === null });
+  const { stackLabels } = useStackLabels();
+  const { mutate: editTransaction } = useEditTransaction();
+
+  const [selectedStack, setSelectedStack] = useState<string>();
+  const [transactionType, setTransactionType] = useState<string | null>();
+  const { data: transaction, isLoading: isLoadingTransaction } = useTransaction(transactionId);
+
   useEffect(() => {
-    if (data) {
-      setTransactionType('');
-      setTransactionType(data.transaction.type);
+    if (transaction) {
+      setSelectedStack(transaction.stack);
+      setTransactionType(transaction.type);
     }
-  }, [data]);
+  }, [transaction, setTransactionType, setSelectedStack]);
+
   const onSubmit = payload => {
     const { date, stack, description } = payload;
     let { amount } = payload;
@@ -61,16 +52,27 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
     if (transactionType === 'withdrawal') {
       amount = -amount;
     }
-    editTransaction(transactionId, description, amount, stack, date, transactionType, null);
-    cancelEdit();
+    editTransaction(
+      {
+        transactionId,
+        transactionInput: {
+          description,
+          stack,
+          amount,
+          type: transactionType,
+          date,
+        },
+      },
+      { onSuccess: () => cancelEdit() }
+    );
   };
-  if (!data && !loading) {
+  if (!transaction && !isLoadingTransaction) {
     return <h1 style={{ textAlign: 'center' }}>Not Found</h1>;
   }
-  if (loading) {
+  if (isLoadingTransaction) {
     return <p>Loading...</p>;
   }
-  if (!data) {
+  if (!transaction) {
     return null;
   }
   return (
@@ -84,7 +86,7 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
         category="underline"
         {...register('description', { required: true })}
         type="text"
-        defaultValue={data.transaction.description}
+        defaultValue={transaction.description}
         autoComplete="off"
       />
       <label htmlFor="amount">Amount {errors.amount && <ErrorText> (Required)</ErrorText>}</label>
@@ -96,17 +98,23 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
         pattern="\d*"
         step={0.01}
         placeholder="Amount"
-        defaultValue={Math.abs(data.transaction.amount)}
+        defaultValue={Math.abs(transaction.amount)}
         autoComplete="off"
       />
 
       <label htmlFor="stack">Stack {errors.stack && <ErrorText> (Required)</ErrorText>}</label>
       <Select
         name="stack"
-        {...register('stack', { required: true })}
-        value={selectedStack}
+        {...register('stack', {
+          required: true,
+          validate: value => {
+            return value !== 'Imported';
+          },
+        })}
+        defaultValue={transaction.stack}
         onChange={e => setSelectedStack(e.target.value)}
       >
+        {transaction.stack === 'Imported' && <option disabled>Imported</option>}
         {stackLabels &&
           stackLabels.map(label => (
             <option key={`${label}-${Date.now()}`} value={label}>
@@ -120,7 +128,7 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
         category="underline"
         {...register('date', { required: true })}
         type="date"
-        defaultValue={formatDate(data.transaction.date)}
+        defaultValue={formatDate(transaction.date)}
         required
       />
       <RadioGroup>
