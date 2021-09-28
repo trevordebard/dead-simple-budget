@@ -46,13 +46,15 @@ export function convertPlaidTransactionToPrismaInput(
   userId: number
 ): Prisma.TransactionCreateManyInput {
   const [year, month, day] = transaction.date.split('-');
+
+  // deposits are negative in plaid and withdrawals are positive, so this will reverse that
+  const amount = transaction.amount * -1;
   return {
-    // deposits are negative in plaid and withdrawals are positive, so this will reverse that
-    amount: transaction.amount * -1,
+    amount,
     description: transaction.name,
     date: new Date(parseInt(year), parseInt(month) - 1, parseInt(day)),
     stack: 'Imported',
-    type: transaction.amount < 0 ? 'withdrawal' : 'deposit', // TODO:
+    type: amount < 0 ? 'withdrawal' : 'deposit', // TODO:
     userId: userId,
   };
 }
