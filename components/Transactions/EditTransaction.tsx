@@ -149,7 +149,15 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
       <Button category="ACTION" type="submit">
         Save Changes
       </Button>
-      <Button category="TRANSPARENT" small onClick={() => cancelEdit()} style={{ alignSelf: 'center' }}>
+      <Button
+        category="TRANSPARENT"
+        small
+        onClick={e => {
+          e.preventDefault();
+          cancelEdit();
+        }}
+        style={{ alignSelf: 'center' }}
+      >
         Cancel
       </Button>
     </EditTransactionWrapper>
