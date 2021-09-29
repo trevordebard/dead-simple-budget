@@ -31,10 +31,6 @@ export default class MyDocument extends Document {
       <Html>
         <Head>
           <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=optional" rel="stylesheet" />
-          <link
-            href="https://fonts.googleapis.com/css?family=Raleway:400|Roboto:400&display=optional"
-            rel="stylesheet"
-          />
         </Head>
         <body>
           <Main />
