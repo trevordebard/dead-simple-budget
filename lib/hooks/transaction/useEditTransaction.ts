@@ -21,8 +21,6 @@ interface params {
   transactionInput: iEditTransactionInput;
 }
 async function editTransaction(transaction: params) {
-  console.log(transaction.transactionId);
-  console.log(transaction.transactionInput);
   const response = await axios.put<Transaction>(
     `/api/transaction/${transaction.transactionId}`,
     transaction.transactionInput

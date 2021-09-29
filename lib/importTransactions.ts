@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 import { plaidClient } from 'lib/plaidClient';
 import { User } from 'next-auth';
 import prisma from './prismaClient';
+import { dollarsToCents } from './money';
 
 export async function importTransactionsFromPlaid(startDate: string, bankAccount: BankAccout, user: User) {
   let end = format(new Date(), 'yyyy-MM-dd');
@@ -35,7 +36,8 @@ export function getUniquePlaidTransactions(
         existing =>
           // TODO: we should probably just store the plaid item id and see if already exists! This will help if the user edits the description
           // checking absolute value in case user edits transaction to be a deposit/withdrawal
-          Math.abs(newTrasaction.amount) === Math.abs(existing.amount) && newTrasaction.name === existing.description
+          Math.abs(dollarsToCents(newTrasaction.amount)) === Math.abs(existing.amount) &&
+          newTrasaction.name === existing.description
       )
   );
   return uniquePlaidTransactions;
@@ -47,8 +49,9 @@ export function convertPlaidTransactionToPrismaInput(
 ): Prisma.TransactionCreateManyInput {
   const [year, month, day] = transaction.date.split('-');
 
+  let amount = dollarsToCents(transaction.amount);
   // deposits are negative in plaid and withdrawals are positive, so this will reverse that
-  const amount = transaction.amount * -1;
+  amount = amount * -1;
   return {
     amount,
     description: transaction.name,

@@ -1,8 +1,9 @@
 import { BudgetContext } from 'pages/budget';
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 import styled from 'styled-components';
 import { Button } from '../Styled';
 import { useDeleteStack, useStack } from 'lib/hooks';
+import { centsToDollars } from 'lib/money';
 
 const EditStackWrapper = styled.div`
   margin: 1rem auto;
@@ -26,7 +27,7 @@ const EditBudgetStack = ({ id }: { id: number }) => {
   return (
     <EditStackWrapper>
       <h4>{isLoading ? 'Loading...' : stack.label}</h4>
-      <p>Amount: {!isLoading && stack.amount}</p>
+      <p>Amount: {!isLoading && centsToDollars(stack.amount)}</p>
       <Button
         outline
         small

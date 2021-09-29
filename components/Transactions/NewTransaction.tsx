@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Button, Input, RadioButton, RadioGroup, Select } from '../Styled';
 import { useCreateTransaction } from 'lib/hooks';
 import useStackLabels from 'lib/hooks/stack/useStackLabels';
+import { dollarsToCents } from 'lib/money';
 
 const NewtransactionWrapper = styled.form`
   display: flex;
@@ -47,12 +48,15 @@ const NewTransaction = () => {
     const { description, stack } = data;
     let { amount, date } = data;
     amount = parseFloat(amount);
+    amount = dollarsToCents(amount);
     if (transactionType === 'withdrawal') {
-      amount = -amount;
+      amount = amount * -1;
     }
-    createTransaction({ transactionInput: { amount, description, stack, type: transactionType, date } });
 
-    reset();
+    createTransaction(
+      { transactionInput: { amount, description, stack, type: transactionType, date } },
+      { onSuccess: () => reset() }
+    );
   };
   return (
     <NewtransactionWrapper onSubmit={handleSubmit(onSubmit)}>

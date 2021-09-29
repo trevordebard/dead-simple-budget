@@ -4,6 +4,7 @@ import { evaluate } from 'mathjs';
 import { ListRow } from '../Styled';
 import { BudgetContext } from 'pages/budget';
 import { useUpdateStack } from 'lib/hooks';
+import { centsToDollars, dollarsToCents } from 'lib/money';
 
 const StackInput = styled.input<{ danger: boolean }>`
   text-align: right;
@@ -35,14 +36,14 @@ const BudgetStack = ({ label, amount, id }) => {
       <StackInput
         name={label}
         type=""
-        defaultValue={amount}
+        defaultValue={centsToDollars(amount)}
         danger={amount < 0}
         onClick={e => e.stopPropagation()} // Prevent ListRow from being selected
         onBlur={e => {
           const newVal = evaluate(e.target.value);
           // Prevent api call if vlaue didn't change
           if (newVal !== prevAmount) {
-            updateStack({ id, label, amount: newVal });
+            updateStack({ id, label, amount: dollarsToCents(newVal) });
             setPrevAmount(newVal);
           }
         }}

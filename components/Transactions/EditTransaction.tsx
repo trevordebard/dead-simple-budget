@@ -6,6 +6,7 @@ import { Button, RadioButton, RadioGroup, Input, Select } from '../Styled';
 import { ErrorText } from './NewTransaction';
 import { useEditTransaction, useTransaction } from 'lib/hooks';
 import useStackLabels from 'lib/hooks/stack/useStackLabels';
+import { centsToDollars, dollarsToCents } from 'lib/money';
 
 const EditTransactionWrapper = styled.form`
   display: flex;
@@ -49,6 +50,8 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
     const { date, stack, description } = payload;
     let { amount } = payload;
     amount = parseFloat(amount);
+    amount = dollarsToCents(amount);
+
     if (transactionType === 'withdrawal') {
       amount = -amount;
     }
@@ -98,7 +101,7 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
         pattern="\d*"
         step={0.01}
         placeholder="Amount"
-        defaultValue={Math.abs(transaction.amount)}
+        defaultValue={centsToDollars(Math.abs(transaction.amount))}
         autoComplete="off"
       />
 

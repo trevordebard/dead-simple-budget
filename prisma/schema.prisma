@@ -11,7 +11,7 @@ model Stack {
   id         Int      @id @default(autoincrement())
   label      String
   category   String   @default("Not Categorized")
-  amount     Float    @default(0)
+  amount     Int      @default(0)
   created_at DateTime @default(now())
   userId     Int
   user       user?    @relation(fields: [userId], references: [id])
@@ -23,7 +23,7 @@ model Transaction {
   id          Int      @id @default(autoincrement())
   description String
   stack       String
-  amount      Float
+  amount      Int
   type        String
   userId      Int
   date        DateTime

@@ -20,5 +20,5 @@ async function fetchTransactions() {
   const transactions = response.data.sort((a, b) => {
     return DateTime.fromISO(b.date).toMillis() - DateTime.fromISO(a.date).toMillis();
   });
-  return response.data;
+  return transactions;
 }
