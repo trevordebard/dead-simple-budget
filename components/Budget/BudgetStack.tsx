@@ -1,4 +1,4 @@
-import { useState, memo, useContext } from 'react';
+import { useState, memo, useContext, useEffect } from 'react';
 import styled from 'styled-components';
 import { evaluate } from 'mathjs';
 import { ListRow } from '../Styled';
@@ -20,7 +20,8 @@ const StackInput = styled.input<{ danger: boolean }>`
 `;
 
 const BudgetStack = ({ label, amount, id }) => {
-  const [prevAmount, setPrevAmount] = useState<number>(amount);
+  const [prevAmount, setPrevAmount] = useState<string>(amount);
+  const [inputAmount, setInputAmount] = useState(centsToDollars(amount));
   const { mutate: updateStack } = useUpdateStack();
   const budgetContext = useContext(BudgetContext);
   const handleRowClick = () => {
@@ -30,21 +31,29 @@ const BudgetStack = ({ label, amount, id }) => {
       budgetContext.setStackInFocus(id);
     }
   };
+  useEffect(() => {
+    setInputAmount(centsToDollars(amount));
+  }, [amount, setInputAmount]);
+
   return (
     <ListRow selected={id === budgetContext.stackInFocus} onClick={handleRowClick}>
       <p>{label} </p>
       <StackInput
         name={label}
-        type=""
-        defaultValue={centsToDollars(amount)}
-        danger={amount < 0}
+        value={inputAmount}
+        onChange={e => setInputAmount(e.target.value)}
+        onFocus={e => {
+          setPrevAmount(e.target.value.replace(/\,/g, ''));
+        }}
+        danger={parseFloat(inputAmount) < 0}
         onClick={e => e.stopPropagation()} // Prevent ListRow from being selected
         onBlur={e => {
-          const newVal = evaluate(e.target.value);
-          // Prevent api call if vlaue didn't change
-          if (newVal !== prevAmount) {
-            updateStack({ id, label, amount: dollarsToCents(newVal) });
-            setPrevAmount(newVal);
+          console.log(prevAmount, e.target.value);
+          let newAmt = e.target.value.replace(/\,/g, '');
+          if (prevAmount !== newAmt) {
+            newAmt = evaluate(newAmt);
+            setInputAmount(newAmt);
+            updateStack({ id, label, amount: dollarsToCents(newAmt) });
           }
         }}
       />
