@@ -16,7 +16,6 @@
     "@types/mathjs": "^9.3.0",
     "@types/next-auth": "^3.13.0",
     "@types/styled-components": "^5.1.9",
-    "date-fns": "^2.22.1",
     "framer-motion": "^4.1.17",
     "luxon": "^2.0.1",
     "mathjs": "^9.4.0",

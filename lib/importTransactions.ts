@@ -1,30 +1,6 @@
-import { BankAccout, Prisma, Transaction } from '@prisma/client';
+import { Prisma, Transaction } from '@prisma/client';
 import plaid from 'plaid';
-import { format } from 'date-fns';
-import { plaidClient } from 'lib/plaidClient';
-import { User } from 'next-auth';
-import prisma from './prismaClient';
 import { dollarsToCents } from './money';
-
-export async function importTransactionsFromPlaid(startDate: string, bankAccount: BankAccout, user: User) {
-  let end = format(new Date(), 'yyyy-MM-dd');
-  const [year, month, day] = startDate.split('-');
-  const start = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-
-  const data = await plaidClient.getTransactions(bankAccount.plaidAccessToken, startDate, end, {
-    account_ids: bankAccount.plaidAccountIds,
-  });
-  const fullUser = await prisma.user.findFirst({ where: { email: user.email } });
-  let existingTransactions;
-  existingTransactions = await prisma.transaction.findMany({ where: { date: { gte: start }, userId: fullUser.id } });
-  const uniqueTransactions = getUniquePlaidTransactions(data.transactions, existingTransactions);
-  const preparedTransactions = preparePlaidTransactionsForUpload(uniqueTransactions, fullUser.id);
-
-  await prisma.transaction.createMany({ data: preparedTransactions });
-
-  // TODO:
-  return null;
-}
 
 export function getUniquePlaidTransactions(
   plaidTransactions: plaid.Transaction[],
