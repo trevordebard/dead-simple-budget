@@ -24,7 +24,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   let start = DateTime.fromJSDate(latestTransaction[0].date).toFormat('yyyy-MM-dd');
   let end = DateTime.now().toFormat('yyyy-MM-dd');
 
-  const plaidResponse = await plaidClient.getTransactions(plaidAccessToken, start, end);
+  const plaidResponse = await plaidClient.getTransactions(plaidAccessToken, start, end, {
+    account_ids: user.bankAccounts[0].plaidAccountIds,
+  });
   const plaidTransactions = plaidResponse.transactions;
 
   let existingTransactions = await prismaClient.transaction.findMany({
