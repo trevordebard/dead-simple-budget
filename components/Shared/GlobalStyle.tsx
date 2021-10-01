@@ -149,7 +149,7 @@ body {
   margin: 0;
   padding: 5px;
   color: var(--fontColor);
-  font-family: 'Raleway', sans-serif;
+  font-family: sans-serif;
   font-weight: 400;
   line-height: 1.65;
 }

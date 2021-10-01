@@ -6,6 +6,7 @@ import { smBreakpoint } from '../../lib/constants';
 import { Table, THead, TR, TD, TH } from 'components/Styled/Table';
 import { useQueryClient } from 'react-query';
 import { DateTime } from 'luxon';
+import { centsToDollars } from 'lib/money';
 
 const TransactionWrapper = styled.div`
   max-width: 100%;
@@ -122,7 +123,7 @@ const Transactions = () => {
                       />
                     </TD>
                     <TD>{transaction.description}</TD>
-                    <TD align="right">${transaction.amount}</TD>
+                    <TD align="right">${centsToDollars(transaction.amount)}</TD>
                     <TD align="right">{transaction.stack}</TD>
                     <TD align="right">{DateTime.fromISO(transaction.date).toLocaleString()}</TD>
                   </TR>

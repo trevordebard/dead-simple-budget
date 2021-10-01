@@ -81,7 +81,8 @@ export function Import() {
                 <p>{transaction.name}</p>
               </div>
               <span>
-                <p>{transaction.amount}</p>
+                {/* Deposits are negative in plaid and withdrawals are positive, so this will reverse that */}
+                <p>{transaction.amount * -1}</p>
                 <p>{transaction.pending ? 'Pending' : transaction.date}</p>
               </span>
             </ListRow>

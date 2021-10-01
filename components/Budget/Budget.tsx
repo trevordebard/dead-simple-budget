@@ -6,6 +6,7 @@ import EditableText from 'components/Shared/EditableText';
 import { useAlert } from 'components/Alert';
 import { useSession } from 'next-auth/client';
 import { useUpdateUserTotal, useStacks, useUser, useCreateStack } from 'lib/hooks';
+import { centsToDollars, dollarsToCents } from 'lib/money';
 
 const ToplineBudget = styled.div`
   text-align: center;
@@ -63,9 +64,11 @@ function Budget() {
         <h5>
           <Amount editable danger={user?.total < 0} onClick={() => setEditTotalVisible(!editTotalVisible)}>
             <EditableText
-              text={user.total}
+              text={centsToDollars(user.total)}
               update={total => {
-                updateUserTotal({ email: session.user.email, total: parseFloat(total) });
+                let newTotal = parseFloat(total);
+                newTotal = dollarsToCents(newTotal);
+                updateUserTotal({ email: session.user.email, total: newTotal });
               }}
               inputType="number"
             />
@@ -73,7 +76,7 @@ function Budget() {
           <SubText> in account</SubText>
         </h5>
         <h5>
-          <Amount danger={user.toBeBudgeted < 0}>{user.toBeBudgeted}</Amount>
+          <Amount danger={user.toBeBudgeted < 0}>{centsToDollars(user.toBeBudgeted)}</Amount>
           <SubText> to be budgeted</SubText>
         </h5>
       </ToplineBudget>

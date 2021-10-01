@@ -48,6 +48,17 @@ async function editTransaction(user: user, transactionId: number, transaction: i
     data: { total: { increment: transaction.amount } },
   });
 
+  // Only update stack amount if transaction is changing from imported to a definted stack
+  // This is an intentional decision to not update stack amounts for every transaction edit.
+  // In the future, it may make sense to update for every transaction edit. I'm not sure
+  // what a user would generally expect.
+  if (prevTransaction.stack === 'Imported') {
+    await prisma.stack.update({
+      where: { label_userId: { userId: user.id, label: transaction.stack } },
+      data: { amount: { increment: transaction.amount } },
+    });
+  }
+
   await recalcToBeBudgeted(updatedUser);
 
   return updatedTransaction;

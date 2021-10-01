@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { format, sub } from 'date-fns';
 import { DateTime } from 'luxon';
 import { plaidClient } from 'lib/plaidClient';
 import { getSession } from 'next-auth/client';
@@ -22,10 +21,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const plaidAccessToken = user.bankAccounts[0].plaidAccessToken;
 
   // Only fetch transactions on or after the day of the most recent transaction already saved
-  let start = format(latestTransaction[0].date, 'yyyy-MM-dd');
-  let end = format(DateTime.now().toMillis(), 'yyyy-MM-dd');
+  let start = DateTime.fromJSDate(latestTransaction[0].date).toFormat('yyyy-MM-dd');
+  let end = DateTime.now().toFormat('yyyy-MM-dd');
 
-  const plaidResponse = await plaidClient.getTransactions(plaidAccessToken, start, end);
+  const plaidResponse = await plaidClient.getTransactions(plaidAccessToken, start, end, {
+    account_ids: user.bankAccounts[0].plaidAccountIds,
+  });
   const plaidTransactions = plaidResponse.transactions;
 
   let existingTransactions = await prismaClient.transaction.findMany({

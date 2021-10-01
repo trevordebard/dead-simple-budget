@@ -22,8 +22,8 @@ async function main() {
     update: {},
     create: {
       id: 1,
-      total: 1000,
-      toBeBudgeted: 800,
+      total: 100000,
+      toBeBudgeted: 80000,
       name: process.env['SEED_USER_name'],
       email: process.env['SEED_USER_email'],
       emailVerified: null,
@@ -46,7 +46,7 @@ async function main() {
     update: {},
     create: {
       id: 1,
-      amount: 32,
+      amount: 3200,
       date: new Date('2021-06-22'),
       description: 'Yummy pizza',
       stack: 'food',
@@ -67,8 +67,8 @@ async function main() {
   });
   await prisma.stack.createMany({
     data: [
-      { label: 'Eating Out', amount: 100, userId: 1 },
-      { label: 'Rent', amount: 100, userId: 1 },
+      { label: 'Eating Out', amount: 10000, userId: 1 },
+      { label: 'Rent', amount: 10000, userId: 1 },
     ],
   });
 }
