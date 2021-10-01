@@ -19,7 +19,6 @@
     "framer-motion": "^4.1.17",
     "luxon": "^2.0.1",
     "mathjs": "^9.4.0",
-    "moment": "^2.29.1",
     "next": "^11.0.0",
     "next-auth": "^3.23.1",
     "next-connect": "^0.10.1",
