@@ -8,7 +8,8 @@ import { smBreakpoint } from 'lib/constants';
 interface StyledAlertProps {
   type?: AlertTypes;
 }
-const AlertWrapper = styled(motion.div)<StyledAlertProps>`
+// eslint-disable-next-line prettier/prettier
+const AlertWrapper = styled(motion.div) <StyledAlertProps>`
   position: fixed;
   color: var(--white);
   width: 70vw;
@@ -29,6 +30,7 @@ const AlertWrapper = styled(motion.div)<StyledAlertProps>`
     padding: 10px;
     min-width: 85vw;
   }
+  z-index: 100;
 `;
 const AlertSuccessCss = css`
   background-color: var(--green-500);

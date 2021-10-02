@@ -114,7 +114,7 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
             return value !== 'Imported';
           },
         })}
-        defaultValue={transaction.stack}
+        value={selectedStack}
         onChange={e => setSelectedStack(e.target.value)}
       >
         {transaction.stack === 'Imported' && <option disabled>Imported</option>}
