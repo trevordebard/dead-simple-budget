@@ -100,9 +100,7 @@ const Transactions = () => {
                 <TH align="left">Description</TH>
                 <TH align="right">Amount</TH>
                 <TH align="right">Stack</TH>
-                <TH style={{ minWidth: '115px' }} align="right">
-                  Date
-                </TH>
+                <TH align="right">Date</TH>
               </TR>
             </THead>
             <tbody>

@@ -14,9 +14,11 @@ export const TR = styled.tr<RowProps>`
 `;
 
 export const TD = styled.td`
-  padding: 0.3rem;
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--grey-200);
   @media only screen and (max-width: ${smBreakpoint}) {
-    padding: 0.2rem;
+    padding: 0.4rem;
+    font-size: 0.9em;
   }
 `;
 
@@ -24,7 +26,7 @@ interface iTHProps {
   stickey?: boolean;
 }
 
-export const TH = styled(TD).attrs({ as: 'th' })<iTHProps>`
+export const TH = styled(TD).attrs({ as: 'th' }) <iTHProps>`
   text-align: inherit;
 `;
 
