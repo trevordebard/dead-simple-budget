@@ -10,7 +10,7 @@ import { centsToDollars, dollarsToCents } from 'lib/money';
 
 const ToplineBudget = styled.div`
   text-align: center;
-  margin-bottom: 30px; /*TODO: temporary */
+  margin-bottom: 30px;
 `;
 
 const BudgetWrapper = styled.div`
@@ -19,7 +19,7 @@ const BudgetWrapper = styled.div`
   width: 400px;
 `;
 const Amount = styled.span<{ danger?: boolean; editable?: boolean }>`
-  font-weight: 500;
+  font-weight: 400;
   color: ${props => (props.danger ? 'var(--danger)' : 'var(--fontColor)')};
   ::before {
     content: '$';
@@ -32,7 +32,6 @@ const Amount = styled.span<{ danger?: boolean; editable?: boolean }>`
   }
 `;
 const SubText = styled.span`
-  font-weight: 400;
   color: var(--fontColor-o60);
 `;
 
