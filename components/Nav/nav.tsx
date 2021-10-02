@@ -5,6 +5,8 @@ import { useSession, signOut } from 'next-auth/client';
 import { useState } from 'react';
 import { Popover } from 'react-tiny-popover';
 import { Button } from 'components/Styled';
+import { useQueryClient } from 'react-query';
+import { useRouter } from 'next/router';
 
 const NavContainer = styled.div`
   display: grid;
@@ -25,7 +27,7 @@ const LogoWrapper = styled.div`
 `;
 
 const Logo = styled.a`
-  font-weight: 600;
+  font-weight: 500;
   color: var(--grey-1000);
   cursor: pointer;
 `;
@@ -80,6 +82,8 @@ const LoggedInNav = ({ email }) => {
 export default Nav;
 
 const ProfileMenu = () => {
+  const queryClient = useQueryClient();
+  const router = useRouter();
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [session] = useSession();
   return (
