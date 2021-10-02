@@ -8,6 +8,7 @@ import { smBreakpoint } from 'lib/constants';
 interface StyledAlertProps {
   type?: AlertTypes;
 }
+// eslint-disable-next-line prettier/prettier
 const AlertWrapper = styled(motion.div) <StyledAlertProps>`
   position: fixed;
   color: var(--white);

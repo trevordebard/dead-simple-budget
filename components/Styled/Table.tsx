@@ -26,6 +26,7 @@ interface iTHProps {
   stickey?: boolean;
 }
 
+// eslint-disable-next-line prettier/prettier
 export const TH = styled(TD).attrs({ as: 'th' }) <iTHProps>`
   text-align: inherit;
 `;
