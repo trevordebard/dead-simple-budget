@@ -1,4 +1,5 @@
 import { Prisma, Transaction } from '@prisma/client';
+import { DateTime } from 'luxon';
 import plaid from 'plaid';
 import { dollarsToCents } from './money';
 
@@ -31,7 +32,7 @@ export function convertPlaidTransactionToPrismaInput(
   return {
     amount,
     description: transaction.name,
-    date: new Date(parseInt(year), parseInt(month) - 1, parseInt(day)),
+    date: DateTime.fromFormat(transaction.date, 'yyyy-MM-dd').toJSDate(),
     stack: 'Imported',
     type: amount < 0 ? 'withdrawal' : 'deposit', // TODO:
     userId: userId,
