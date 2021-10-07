@@ -4,9 +4,21 @@ import { centsToDollars } from 'lib/money';
 import { useState } from 'react';
 import { Popover } from 'react-tiny-popover';
 
-export const StackDropdown = ({ onCancel = null, onSelect, defaultStack, isDefaultOpened = false }) => {
+interface iStackDropdownProps {
+  defaultStack: string; // stack selected by default
+  onSelect: (value: string) => void; // callback that contains the value selected after a stack is selected
+  isOpenByDefault?: boolean; // specifies whether dropdown should be visible on first render
+  onCancel?: () => void; // what to do when a user clicks away from dropdown without selecting
+}
+
+export const StackDropdown = ({
+  onCancel = null,
+  onSelect,
+  defaultStack,
+  isOpenByDefault = false,
+}: iStackDropdownProps) => {
   const { data: stacks } = useStacks();
-  const [isOpen, setOpen] = useState(isDefaultOpened);
+  const [isOpen, setOpen] = useState(isOpenByDefault);
   const toggleDropdown = () => setOpen(!isOpen);
   const [selectedStack, setSelectedStack] = useState<string>(defaultStack);
   if (!stacks) {
