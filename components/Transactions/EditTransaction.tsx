@@ -1,13 +1,14 @@
-import React, { useEffect, useState, forwardRef } from 'react';
-import styled, { css } from 'styled-components';
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
 import { Controller, useForm } from 'react-hook-form';
 import { formatDate } from '../../lib/formatDate';
-import { Button, RadioButton, RadioGroup, Input, Select, ListRow } from '../Styled';
+import { Button, RadioButton, RadioGroup, Input, ListRow } from '../Styled';
 import { ErrorText } from './NewTransaction';
 import { useEditTransaction, useStacks, useTransaction } from 'lib/hooks';
-import useStackLabels from 'lib/hooks/stack/useStackLabels';
 import { centsToDollars, dollarsToCents } from 'lib/money';
 import ClickAwayListener from 'components/Shared/ClickAway';
+import { DropdownBody, DropdownWrapper, DropdownHeader } from 'components/Styled';
+import { Stack } from '.prisma/client';
 
 const EditTransactionWrapper = styled.form`
   display: flex;
@@ -39,52 +40,41 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
     handleSubmit,
     formState: { errors },
     control,
-    setValue,
   } = useForm();
-  const { stackLabels } = useStackLabels();
   const { data: stacks } = useStacks();
   const { mutate: editTransaction } = useEditTransaction();
-  const [isOpen, setOpen] = useState(false);
-  const toggleDropdown = () => setOpen(!isOpen);
 
-  const [selectedStack, setSelectedStack] = useState<string>();
   const [transactionType, setTransactionType] = useState<string | null>();
   const { data: transaction, isLoading: isLoadingTransaction } = useTransaction(transactionId);
 
   useEffect(() => {
     if (transaction) {
-      setSelectedStack(transaction.stack);
       setTransactionType(transaction.type);
     }
-  }, [transaction, setTransactionType, setSelectedStack]);
-
-  useEffect(() => {
-    setValue('stack', selectedStack);
-  }, [setValue, selectedStack]);
+  }, [transaction, setTransactionType]);
 
   const onSubmit = payload => {
-    console.log({ ...payload });
-    // const { date, stack, description } = payload;
-    // let { amount } = payload;
-    // amount = parseFloat(amount);
-    // amount = dollarsToCents(amount);
+    const { date, stack, description } = payload;
+    let { amount } = payload;
+    amount = parseFloat(amount);
+    amount = dollarsToCents(amount);
 
-    // if (transactionType === 'withdrawal') {
-    //   amount = -amount;
-    // }
-    // editTransaction(
-    //   {
-    //     transactionId,
-    //     transactionInput: {
-    //       description,
-    //       stack,
-    //       amount,
-    //       type: transactionType,
-    //       date,
-    //     },
-    //   },
-    //   { onSuccess: () => cancelEdit() }
-    // );
+    if (transactionType === 'withdrawal') {
+      amount = -amount;
+    }
+    editTransaction(
+      {
+        transactionId,
+        transactionInput: {
+          description,
+          stack,
+          amount,
+          type: transactionType,
+          date,
+        },
+      },
+      { onSuccess: () => cancelEdit() }
+    );
   };
   if (!transaction && !isLoadingTransaction) {
     return <h1 style={{ textAlign: 'center' }}>Not Found</h1>;
@@ -92,7 +82,7 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
   if (isLoadingTransaction) {
     return <p>Loading...</p>;
   }
-  if (!transaction) {
+  if (!transaction || !stacks) {
     return null;
   }
   return (
@@ -126,30 +116,13 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
       <Controller
         control={control}
         name="stack"
-        rules={{ validate: value => value !== 'Imported' }}
-        render={({ field }) => (
-          <div>
-            <DropdownWrapper>
-              <DropdownHeader onClick={toggleDropdown} tabIndex={0}>
-                {selectedStack}
-              </DropdownHeader>
-              <DropdownBody isOpen={isOpen}>
-                {stacks.map(stack => (
-                  <div
-                    onClick={e => {
-                      field.onChange(stack.label);
-                      setSelectedStack(stack.label);
-                    }}
-                    key={stack.id}
-                  >
-                    <div>{stack.label}</div>
-                    <div>{stack.amount}</div>
-                  </div>
-                ))}
-              </DropdownBody>
-            </DropdownWrapper>
-          </div>
-        )}
+        defaultValue={transaction.stack}
+        rules={{
+          validate: value => {
+            return value !== 'Imported';
+          },
+        }}
+        render={({ field }) => <StackSelectorField field={field} defaultStack={transaction.stack} />}
       />
 
       <label htmlFor="date">Date {errors.date && <ErrorText> (Required)</ErrorText>}</label>
@@ -192,31 +165,47 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
 };
 export default EditTransaction;
 
-const StackSelectorField = ({ value, onChange }) => <StackSelector seletedStack={value} setSelectedStack={onChange} />;
-
-const StackSelector = ({ seletedStack, setSelectedStack }) => {
-  const [isOpen, setOpen] = useState(false);
+const StackSelectorField = ({ field, defaultStack = 'Imported' }) => {
   const { data: stacks } = useStacks();
-
+  const [isOpen, setOpen] = useState(false);
   const toggleDropdown = () => setOpen(!isOpen);
-
-  const handleItemClick = label => {
-    seletedStack == label ? setSelectedStack(null) : setSelectedStack(label);
-  };
+  const [selectedStack, setSelectedStack] = useState<string>(defaultStack);
 
   if (!stacks) {
     return null;
   }
-
+  const handleRowSelected = (e, stack: Stack) => {
+    // If enter key was pressed or if no key was pressed (aka something was clicked)
+    if (!e.key || e.key === 'Enter') {
+      field.onChange(stack.label);
+      setSelectedStack(stack.label);
+      setOpen(false);
+    }
+  };
   return (
     <ClickAwayListener onClickAway={() => setOpen(false)}>
       <DropdownWrapper>
-        <DropdownHeader onClick={toggleDropdown} tabIndex={0}>
-          {seletedStack}
+        <DropdownHeader
+          onClick={toggleDropdown}
+          onKeyPress={e => {
+            console.log(e.key);
+            if (e.key === 'Enter') {
+              toggleDropdown();
+            }
+          }}
+          tabIndex={0}
+        >
+          {selectedStack}
         </DropdownHeader>
         <DropdownBody isOpen={isOpen}>
           {stacks.map(stack => (
-            <ListRow selected={seletedStack === stack.id} onClick={e => handleItemClick(stack.label)} key={stack.id}>
+            <ListRow
+              selected={selectedStack === stack.label}
+              onClick={e => handleRowSelected(e, stack)}
+              onKeyPress={e => handleRowSelected(e, stack)}
+              key={stack.id}
+              tabIndex={0}
+            >
               <div>{stack.label}</div>
               <div>{centsToDollars(stack.amount)}</div>
             </ListRow>
@@ -226,30 +215,3 @@ const StackSelector = ({ seletedStack, setSelectedStack }) => {
     </ClickAwayListener>
   );
 };
-
-StackSelector.displayName = 'StackSelector';
-
-const DropdownWrapper = styled.div`
-  border-radius: 5px;
-  position: relative;
-  border: 1px solid var(--grey-800);
-`;
-const DropdownHeader = styled.div`
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.4rem;
-`;
-const DropdownBody = styled.div<{ isOpen: boolean }>`
-  padding: 5px;
-  border: 1px solid black;
-  display: ${props => (props.isOpen ? 'block' : 'none')};
-  position: absolute;
-  left: 0;
-  right: 0;
-  margin-top: 5px;
-  background-color: white;
-`;
-
-const DropdownItemDot = styled.span``;
