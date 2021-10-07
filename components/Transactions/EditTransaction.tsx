@@ -6,9 +6,8 @@ import { Button, RadioButton, RadioGroup, Input, ListRow } from '../Styled';
 import { ErrorText } from './NewTransaction';
 import { useEditTransaction, useStacks, useTransaction } from 'lib/hooks';
 import { centsToDollars, dollarsToCents } from 'lib/money';
-import ClickAwayListener from 'components/Shared/ClickAway';
 import { DropdownBody, DropdownWrapper, DropdownHeader } from 'components/Styled';
-import { Stack } from '.prisma/client';
+import { Popover } from 'react-tiny-popover';
 
 const EditTransactionWrapper = styled.form`
   display: flex;
@@ -122,7 +121,9 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
             return value !== 'Imported';
           },
         }}
-        render={({ field }) => <StackSelectorField field={field} defaultStack={transaction.stack} />}
+        render={({ field }) => (
+          <StackDropdown defaultStack={transaction.stack} onSelect={value => field.onChange(value)} />
+        )}
       />
 
       <label htmlFor="date">Date {errors.date && <ErrorText> (Required)</ErrorText>}</label>
@@ -165,25 +166,44 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
 };
 export default EditTransaction;
 
-const StackSelectorField = ({ field, defaultStack = 'Imported' }) => {
+export const StackDropdown = ({ onCancel = null, onSelect, defaultStack, isDefaultOpened = false }) => {
   const { data: stacks } = useStacks();
-  const [isOpen, setOpen] = useState(false);
+  const [isOpen, setOpen] = useState(isDefaultOpened);
   const toggleDropdown = () => setOpen(!isOpen);
   const [selectedStack, setSelectedStack] = useState<string>(defaultStack);
-
   if (!stacks) {
     return null;
   }
-  const handleRowSelected = (e, stack: Stack) => {
-    // If enter key was pressed or if no key was pressed (aka something was clicked)
-    if (!e.key || e.key === 'Enter') {
-      field.onChange(stack.label);
-      setSelectedStack(stack.label);
-      setOpen(false);
-    }
-  };
   return (
-    <ClickAwayListener onClickAway={() => setOpen(false)}>
+    <Popover
+      isOpen={isOpen}
+      positions={['bottom', 'left']}
+      onClickOutside={() => {
+        setOpen(false);
+        if (onCancel) {
+          onCancel();
+        }
+      }}
+      content={({ position, nudgedLeft, nudgedTop }) => (
+        <DropdownBody>
+          {stacks.map(stack => (
+            <ListRow
+              selected={selectedStack === stack.label}
+              onClick={e => {
+                setSelectedStack(stack.label);
+                setOpen(false);
+                onSelect(stack.label);
+              }}
+              key={stack.id}
+              tabIndex={0}
+            >
+              <div>{stack.label}</div>
+              <div>{centsToDollars(stack.amount)}</div>
+            </ListRow>
+          ))}
+        </DropdownBody>
+      )}
+    >
       <DropdownWrapper>
         <DropdownHeader
           onClick={toggleDropdown}
@@ -197,21 +217,7 @@ const StackSelectorField = ({ field, defaultStack = 'Imported' }) => {
         >
           {selectedStack}
         </DropdownHeader>
-        <DropdownBody isOpen={isOpen}>
-          {stacks.map(stack => (
-            <ListRow
-              selected={selectedStack === stack.label}
-              onClick={e => handleRowSelected(e, stack)}
-              onKeyPress={e => handleRowSelected(e, stack)}
-              key={stack.id}
-              tabIndex={0}
-            >
-              <div>{stack.label}</div>
-              <div>{centsToDollars(stack.amount)}</div>
-            </ListRow>
-          ))}
-        </DropdownBody>
       </DropdownWrapper>
-    </ClickAwayListener>
+    </Popover>
   );
 };
