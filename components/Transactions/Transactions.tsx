@@ -99,7 +99,7 @@ const Transactions = () => {
               <ListItem key={transaction.id} value={transaction.id.toString()}>
                 <TransactionCard
                   description={transaction.description}
-                  amount={centsToDollars(transaction.amount)}
+                  amount={parseFloat(centsToDollars(transaction.amount))}
                   date={DateTime.fromISO(transaction.date).toLocaleString()}
                   stack={transaction.stack}
                   isActive={selectedTransactions.includes(transaction.id.toString())}

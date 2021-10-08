@@ -39,9 +39,16 @@ const SubtleContent = styled.div`
   color: var(--fontColorLight);
 `;
 
-export function TransactionCard({ description, date, amount, stack, isActive = false, ...props }) {
+interface iTransactionCardProps {
+  description: string;
+  date: string;
+  amount: number | string;
+  stack?: string;
+  isActive?: boolean;
+}
+export function TransactionCard({ description, date, amount, stack = null, isActive = false }: iTransactionCardProps) {
   return (
-    <TransactionCardWrapper {...props}>
+    <TransactionCardWrapper>
       <Left>
         <input
           type="checkbox"
