@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Controller, useForm } from 'react-hook-form';
 import { formatDate } from '../../lib/formatDate';
-import { Button, RadioButton, RadioGroup, Input, ListRow } from '../Styled';
+import { Button, RadioButton, RadioGroup, Input } from '../Styled';
 import { ErrorText } from './NewTransaction';
 import { useEditTransaction, useStacks, useTransaction } from 'lib/hooks';
 import { centsToDollars, dollarsToCents } from 'lib/money';

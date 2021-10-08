@@ -3,5 +3,4 @@ import { Button, RadioButton, RadioGroup } from './Button';
 import { Input } from './Input';
 import { Select } from './Select';
 
-export * from './Dropdown';
 export { ListRow, Button, RadioButton, Input, RadioGroup, Select };
