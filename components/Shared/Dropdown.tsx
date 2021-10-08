@@ -81,7 +81,14 @@ interface iDropdownHeader {
 export function DropdownHeader({ inline = false, defaultValue }: iDropdownHeader) {
   const { toggleIsOpen, selectedItem } = useSelectContext();
   return (
-    <SelectHeaderWrapper inline={inline} onClick={toggleIsOpen}>
+    <SelectHeaderWrapper
+      inline={inline}
+      onClick={e => {
+        // Prevent unintentional side effects such as onClick of a wrapper component being fired when the dropdown is clicked
+        e.stopPropagation();
+        toggleIsOpen();
+      }}
+    >
       {selectedItem ? selectedItem : defaultValue}
     </SelectHeaderWrapper>
   );
@@ -115,7 +122,8 @@ export function DropdownItem({ children, value }: iDropdownItem) {
   }
   return (
     <div
-      onClick={() => {
+      onClick={e => {
+        e.stopPropagation();
         onItemSelected(value);
         toggleIsOpen();
       }}
