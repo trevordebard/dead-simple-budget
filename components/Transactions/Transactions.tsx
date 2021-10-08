@@ -3,9 +3,10 @@ import styled from 'styled-components';
 import Link from 'next/link';
 import { useDeleteTransactions, useTransactions } from 'lib/hooks';
 import { smBreakpoint } from '../../lib/constants';
-import { Table, THead, TR, TD, TH } from 'components/Styled/Table';
 import { useQueryClient } from 'react-query';
 import { DateTime } from 'luxon';
+import { TransactionCard } from './TransactionCard';
+import { ListItem, MultiSelectList } from 'components/Shared/MultiSelectList';
 import { centsToDollars } from 'lib/money';
 
 const TransactionWrapper = styled.div`
@@ -92,43 +93,20 @@ const Transactions = () => {
             )}
           </Actions>
         </Title>
-        <TableWrapper>
-          <Table cellSpacing="0" cellPadding="0" stickyHeader>
-            <THead>
-              <TR>
-                <TH> </TH>
-                <TH align="left">Description</TH>
-                <TH align="right">Amount</TH>
-                <TH align="right">Stack</TH>
-                <TH align="right">Date</TH>
-              </TR>
-            </THead>
-            <tbody>
-              {transactions &&
-                transactions.map(transaction => (
-                  <TR key={transaction.id} selected={selectedTransactions.includes(transaction.id)}>
-                    <TD>
-                      <input
-                        key={transaction.id}
-                        type="checkbox"
-                        onChange={e => {
-                          if (!e.target.checked) {
-                            setSelectedTransactions(selectedTransactions.filter(item => item !== transaction.id));
-                          } else {
-                            setSelectedTransactions([...selectedTransactions, transaction.id]);
-                          }
-                        }}
-                      />
-                    </TD>
-                    <TD>{transaction.description}</TD>
-                    <TD align="right">${centsToDollars(transaction.amount)}</TD>
-                    <TD align="right">{transaction.stack}</TD>
-                    <TD align="right">{DateTime.fromISO(transaction.date).toLocaleString()}</TD>
-                  </TR>
-                ))}
-            </tbody>
-          </Table>
-        </TableWrapper>
+        <MultiSelectList onChange={selected => setSelectedTransactions(selected)}>
+          {transactions &&
+            transactions.map(transaction => (
+              <ListItem key={transaction.id} value={transaction.id.toString()}>
+                <TransactionCard
+                  description={transaction.description}
+                  amount={centsToDollars(transaction.amount)}
+                  date={DateTime.fromISO(transaction.date).toLocaleString()}
+                  stack={transaction.stack}
+                  isActive={selectedTransactions.includes(transaction.id.toString())}
+                />
+              </ListItem>
+            ))}
+        </MultiSelectList>
       </TransactionWrapper>
     );
   }

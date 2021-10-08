@@ -23,3 +23,20 @@ export function centsToDollars(amount = 0) {
 
   return formatter.format(amount / 100);
 }
+
+export function formatDollars(amountInDollars) {
+  const options = {
+    style: 'currency',
+    // style: 'decimal',
+    currency: 'USD',
+    minimumFractionDigits: 2,
+  };
+
+  // check if its a clean dollar amount
+  if (amountInDollars % 100 === 0) {
+    options.minimumFractionDigits = 0;
+  }
+
+  const formatter = Intl.NumberFormat('en-US', options);
+  return formatter.format(amountInDollars);
+}

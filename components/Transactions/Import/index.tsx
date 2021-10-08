@@ -1,12 +1,15 @@
 import { Button, ListRow } from 'components/Styled';
 
 import styled from 'styled-components';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useGetTransactionsFromBank } from 'lib/hooks/transaction/useGetTransactionsFromBank';
 import { useImportBankTransactions } from 'lib/hooks/transaction/useImportBankTransactions';
-const List = styled.div`
+import { ListItem, MultiSelectList } from 'components/Shared/MultiSelectList';
+import { TransactionCard } from '../TransactionCard';
+
+const ButtonContainer = styled.div`
   display: flex;
-  flex-direction: column;
+  justify-content: flex-end;
 `;
 
 export function Import() {
@@ -14,16 +17,6 @@ export function Import() {
   const [selectedTransactions, setSelectedTransactions] = useState([]);
   const { data: transactions } = useGetTransactionsFromBank({ enabled: fetchTrans });
   const { mutate: uploadTransactions } = useImportBankTransactions();
-
-  useEffect(() => {
-    if (transactions) {
-      const ids = [];
-      transactions.forEach(transaction => {
-        ids.push(transaction.transaction_id);
-      });
-      setSelectedTransactions(ids);
-    }
-  }, [transactions, setSelectedTransactions]);
 
   const handleImport = () => {
     setFetchTrans(true);
@@ -47,48 +40,33 @@ export function Import() {
 
   return (
     <div style={{ width: '100%' }}>
-      <Button category="ACTION" onClick={handleUpload}>
-        Import Selected
-      </Button>
-      <Button category="PRIMARY" onClick={() => setSelectedTransactions([])}>
-        Unselect All
-      </Button>
-      <List>
+      <ButtonContainer>
+        <Button category="ACTION" onClick={handleUpload}>
+          Import Selected
+        </Button>
+        <Button category="PRIMARY" onClick={() => setSelectedTransactions([])}>
+          Unselect All
+        </Button>
+      </ButtonContainer>
+      <MultiSelectList
+        onChange={value => {
+          setSelectedTransactions(value);
+        }}
+      >
         {transactions.map(transaction => {
           return (
-            <ListRow
-              key={transaction.transaction_id}
-              selected={selectedTransactions.indexOf(transaction.transaction_id) !== -1}
-              onClick={() => {
-                const index = selectedTransactions.indexOf(transaction.transaction_id);
-                if (index === -1) {
-                  setSelectedTransactions([...selectedTransactions, transaction.transaction_id]);
-                } else {
-                  const selected = [...selectedTransactions];
-                  selected.splice(index, 1);
-                  setSelectedTransactions(selected);
-                }
-              }}
-            >
-              <div>
-                <input
-                  type="checkbox"
-                  checked={selectedTransactions.indexOf(transaction.transaction_id) !== -1}
-                  onChange={() => {
-                    //do nothing
-                  }}
-                />
-                <p>{transaction.name}</p>
-              </div>
-              <span>
-                {/* Deposits are negative in plaid and withdrawals are positive, so this will reverse that */}
-                <p>{transaction.amount * -1}</p>
-                <p>{transaction.pending ? 'Pending' : transaction.date}</p>
-              </span>
-            </ListRow>
+            <ListItem key={transaction.transaction_id} value={transaction.transaction_id}>
+              <TransactionCard
+                date={transaction.pending ? 'Pending' : transaction.date}
+                amount={transaction.amount * -1}
+                description={transaction.name}
+                key={transaction.transaction_id}
+                isActive={selectedTransactions.includes(transaction.transaction_id)}
+              />
+            </ListItem>
           );
         })}
-      </List>
+      </MultiSelectList>
     </div>
   );
 }
