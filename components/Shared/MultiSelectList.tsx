@@ -1,9 +1,14 @@
-import React, { createContext, ReactNode, useContext, useState } from 'react';
+import React, { createContext, ReactNode, useContext } from 'react';
 
 // const food = ['burger', 'pizza', 'gumbo', 'jambalaya', 'hotdogs'];
 // function ExampleMultiSelectUsage() {
 //   const [selectedFood, setSelectedFood] = useState([]);
 //   const { data: transactions } = useTransactions();
+//   const handleItemSelected = itemSelected => {
+//     const newArr = addOrRemoveFromArray(selectedFood, itemSelected);
+//     setSelectedFood(newArr);
+//   };
+
 //   if (!transactions) {
 //     return null;
 //   }
@@ -14,7 +19,7 @@ import React, { createContext, ReactNode, useContext, useState } from 'react';
 //         <p key={food}>{food}</p>
 //       ))}
 //       <h5>Options</h5>
-//       <MultiSelectList onChange={items => setSelectedFood(items)}>
+//       <MultiSelectList onItemSelected={item => handleItemSelected(item)}>
 //         {food &&
 //           food.map(item => (
 //             <ListItem key={item} value={item}>
@@ -27,14 +32,11 @@ import React, { createContext, ReactNode, useContext, useState } from 'react';
 // }
 
 interface iMultiSelectListContext {
-  selectedItems: string[];
-  toggleItem: (item: string) => void;
-  onChange?: (value: string) => void;
+  onItemSelected?: (value: string) => void;
 }
 
 const defaultContext: iMultiSelectListContext = {
-  selectedItems: [],
-  toggleItem: () => null,
+  onItemSelected: () => null,
 };
 
 const MultiSelectListContext = createContext(defaultContext);
@@ -48,32 +50,11 @@ interface iMultiSelectListProps {
   children: ReactNode;
   // Function to be called when a ListItem is selected
   // value will be a list of all selected ListItems
-  onChange?: (value: string[]) => void;
+  onItemSelected?: (value: string) => void;
 }
 
-export function MultiSelectList({ children, onChange = null }: iMultiSelectListProps) {
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
-
-  const toggleItem = (item: string) => {
-    const index = selectedItems.indexOf(item);
-    if (index === -1) {
-      const newArray = [...selectedItems, item];
-      setSelectedItems(newArray);
-      if (onChange) {
-        onChange(newArray);
-      }
-    } else {
-      const filteredArray = selectedItems.filter(i => i !== item);
-      setSelectedItems(filteredArray);
-      if (onChange) {
-        onChange(filteredArray);
-      }
-    }
-  };
-
-  return (
-    <MultiSelectListContext.Provider value={{ selectedItems, toggleItem }}>{children}</MultiSelectListContext.Provider>
-  );
+export function MultiSelectList({ children, onItemSelected = null }: iMultiSelectListProps) {
+  return <MultiSelectListContext.Provider value={{ onItemSelected }}>{children}</MultiSelectListContext.Provider>;
 }
 
 interface iListItem {
@@ -82,12 +63,12 @@ interface iListItem {
 }
 
 export function ListItem({ children, value }: iListItem) {
-  const { toggleItem } = useListContext();
+  const { onItemSelected } = useListContext();
 
   return (
     <div
       onClick={() => {
-        toggleItem(value);
+        onItemSelected(value);
       }}
       style={{ cursor: 'pointer' }}
     >

@@ -8,6 +8,7 @@ import { DateTime } from 'luxon';
 import { TransactionCard } from './TransactionCard';
 import { ListItem, MultiSelectList } from 'components/Shared/MultiSelectList';
 import { centsToDollars } from 'lib/money';
+import { addOrRemoveFromArray } from 'lib/addOrRemoveFromArray';
 
 const TransactionWrapper = styled.div`
   max-width: 100%;
@@ -46,6 +47,11 @@ const Transactions = () => {
   const { mutate: deleteTransactions } = useDeleteTransactions();
   const [selectedTransactions, setSelectedTransactions] = useState([]);
   const queryClient = useQueryClient();
+
+  const handleTransactionSelected = selectedId => {
+    setSelectedTransactions(addOrRemoveFromArray(selectedTransactions, selectedId));
+  };
+
   if (isLoading)
     return (
       <TransactionWrapper>
@@ -93,7 +99,7 @@ const Transactions = () => {
             )}
           </Actions>
         </Title>
-        <MultiSelectList onChange={selected => setSelectedTransactions(selected)}>
+        <MultiSelectList onItemSelected={selected => handleTransactionSelected(selected)}>
           {transactions &&
             transactions.map(transaction => (
               <ListItem key={transaction.id} value={transaction.id.toString()}>

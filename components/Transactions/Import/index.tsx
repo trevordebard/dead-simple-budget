@@ -1,4 +1,4 @@
-import { Button, ListRow } from 'components/Styled';
+import { Button } from 'components/Styled';
 
 import styled from 'styled-components';
 import { useState } from 'react';
@@ -6,6 +6,7 @@ import { useGetTransactionsFromBank } from 'lib/hooks/transaction/useGetTransact
 import { useImportBankTransactions } from 'lib/hooks/transaction/useImportBankTransactions';
 import { ListItem, MultiSelectList } from 'components/Shared/MultiSelectList';
 import { TransactionCard } from '../TransactionCard';
+import { addOrRemoveFromArray } from 'lib/addOrRemoveFromArray';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -21,6 +22,11 @@ export function Import() {
   const handleImport = () => {
     setFetchTrans(true);
   };
+
+  const handleTransactionSelected = selectedId => {
+    setSelectedTransactions(addOrRemoveFromArray(selectedTransactions, selectedId));
+  };
+
   const handleUpload = () => {
     const selected = transactions.filter(
       transaction => selectedTransactions.indexOf(transaction.transaction_id) !== -1
@@ -44,13 +50,19 @@ export function Import() {
         <Button category="ACTION" onClick={handleUpload}>
           Import Selected
         </Button>
-        <Button category="PRIMARY" onClick={() => setSelectedTransactions([])}>
+        <Button
+          category="PRIMARY"
+          onClick={() => {
+            console.log(selectedTransactions);
+            setSelectedTransactions([]);
+          }}
+        >
           Unselect All
         </Button>
       </ButtonContainer>
       <MultiSelectList
-        onChange={value => {
-          setSelectedTransactions(value);
+        onItemSelected={value => {
+          handleTransactionSelected(value);
         }}
       >
         {transactions.map(transaction => {
