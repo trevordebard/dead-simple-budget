@@ -8,7 +8,6 @@ import { DateTime } from 'luxon';
 import { TransactionCard } from './TransactionCard';
 import { ListItem, MultiSelectList } from 'components/Shared/MultiSelectList';
 import { centsToDollars } from 'lib/money';
-import { addOrRemoveFromArray } from 'lib/addOrRemoveFromArray';
 
 const TransactionWrapper = styled.div`
   max-width: 100%;
@@ -45,11 +44,18 @@ const ActionLink = styled.a`
 const Transactions = () => {
   const { data: transactions, isLoading } = useTransactions();
   const { mutate: deleteTransactions } = useDeleteTransactions();
-  const [selectedTransactions, setSelectedTransactions] = useState([]);
+  const [selectedTransactions, setSelectedTransactions] = useState<number[]>([]);
   const queryClient = useQueryClient();
 
-  const handleTransactionSelected = selectedId => {
-    setSelectedTransactions(addOrRemoveFromArray(selectedTransactions, selectedId));
+  const handleTransactionSelected = (selectedId: number) => {
+    let newArr = [];
+    const index = selectedTransactions.indexOf(selectedId);
+    if (index === -1) {
+      newArr = [...selectedTransactions, selectedId];
+    } else {
+      newArr = selectedTransactions.filter(i => i !== selectedId);
+    }
+    setSelectedTransactions(newArr);
   };
 
   if (isLoading)
@@ -99,7 +105,7 @@ const Transactions = () => {
             )}
           </Actions>
         </Title>
-        <MultiSelectList onItemSelected={selected => handleTransactionSelected(selected)}>
+        <MultiSelectList onItemSelected={selected => handleTransactionSelected(Number(selected))}>
           {transactions &&
             transactions.map(transaction => (
               <ListItem key={transaction.id} value={transaction.id.toString()}>
@@ -108,7 +114,7 @@ const Transactions = () => {
                   amount={parseFloat(centsToDollars(transaction.amount))}
                   date={DateTime.fromISO(transaction.date).toLocaleString()}
                   stack={transaction.stack}
-                  isActive={selectedTransactions.includes(transaction.id.toString())}
+                  isActive={selectedTransactions.includes(transaction.id)}
                 />
               </ListItem>
             ))}

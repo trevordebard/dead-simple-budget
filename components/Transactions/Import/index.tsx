@@ -6,7 +6,6 @@ import { useGetTransactionsFromBank } from 'lib/hooks/transaction/useGetTransact
 import { useImportBankTransactions } from 'lib/hooks/transaction/useImportBankTransactions';
 import { ListItem, MultiSelectList } from 'components/Shared/MultiSelectList';
 import { TransactionCard } from '../TransactionCard';
-import { addOrRemoveFromArray } from 'lib/addOrRemoveFromArray';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -15,7 +14,7 @@ const ButtonContainer = styled.div`
 
 export function Import() {
   const [fetchTrans, setFetchTrans] = useState(false);
-  const [selectedTransactions, setSelectedTransactions] = useState([]);
+  const [selectedTransactions, setSelectedTransactions] = useState<string[]>([]);
   const { data: transactions } = useGetTransactionsFromBank({ enabled: fetchTrans });
   const { mutate: uploadTransactions } = useImportBankTransactions();
 
@@ -23,8 +22,15 @@ export function Import() {
     setFetchTrans(true);
   };
 
-  const handleTransactionSelected = selectedId => {
-    setSelectedTransactions(addOrRemoveFromArray(selectedTransactions, selectedId));
+  const handleTransactionSelected = (selectedId: string) => {
+    let newArr = [];
+    const index = selectedTransactions.indexOf(selectedId);
+    if (index === -1) {
+      newArr = [...selectedTransactions, selectedId];
+    } else {
+      newArr = selectedTransactions.filter(i => i !== selectedId);
+    }
+    setSelectedTransactions(newArr);
   };
 
   const handleUpload = () => {
