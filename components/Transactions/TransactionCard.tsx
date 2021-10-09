@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { StackDropdown } from 'components/Stack';
 import { formatDollars } from 'lib/money';
+import { smBreakpoint } from 'lib/constants';
 
 const TransactionCardWrapper = styled.div`
   display: flex;
@@ -8,9 +9,11 @@ const TransactionCardWrapper = styled.div`
   padding: 5px;
   border-bottom: 1px solid var(--grey-200);
   cursor: pointer;
-  font-size: 0.8rem;
   :hover {
     background-color: var(--grey-100);
+  }
+  @media only screen and (max-width: ${smBreakpoint}) {
+    font-size: var(--smallFontSize);
   }
 `;
 
@@ -57,7 +60,7 @@ export function TransactionCard({ description, date, amount, stack = null, isAct
             //do nothing
           }}
         />
-        <div style={{ marginLeft: '20px' }}>
+        <div style={{ marginLeft: '15px' }}>
           <Description>{description}</Description>
           <SubtleContent>{stack ? <p>{stack}</p> : <StackDropdown inline defaultStack="Select Stack" />}</SubtleContent>
         </div>
