@@ -1,31 +1,10 @@
 import { Controller, useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import { useState } from 'react';
-import { Button, Input, RadioButton, RadioGroup, Select } from '../Styled';
+import { Button, Input, RadioButton, RadioGroup, SimpleFormWrapper } from '../Styled';
 import { useCreateTransaction } from 'lib/hooks';
 import { dollarsToCents } from 'lib/money';
 import { StackDropdown } from 'components/Stack';
-
-const NewtransactionWrapper = styled.form`
-  display: flex;
-  flex-direction: column;
-  margin: 0 auto;
-  width: 500px;
-  min-width: 250px;
-  max-width: 500px;
-  label {
-    color: var(--grey-800);
-  }
-  input,
-  select,
-  button {
-    margin-bottom: 15px;
-  }
-  input::placeholder,
-  select:required:invalid {
-    color: var(--fontColorLighter);
-  }
-`;
 
 export const ErrorText = styled.span`
   color: var(--red-500);
@@ -58,7 +37,7 @@ const NewTransaction = () => {
     );
   };
   return (
-    <NewtransactionWrapper onSubmit={handleSubmit(onSubmit)}>
+    <SimpleFormWrapper onSubmit={handleSubmit(onSubmit)}>
       <div style={{ textAlign: 'center', marginBottom: '20px' }}>
         <h4>New Transaction</h4>
       </div>
@@ -118,7 +97,7 @@ const NewTransaction = () => {
       <Button category="ACTION" type="submit">
         Add
       </Button>
-    </NewtransactionWrapper>
+    </SimpleFormWrapper>
   );
 };
 export default NewTransaction;

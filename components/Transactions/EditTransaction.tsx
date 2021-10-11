@@ -1,36 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
 import { Controller, useForm } from 'react-hook-form';
 import { formatDate } from '../../lib/formatDate';
-import { Button, RadioButton, RadioGroup, Input } from '../Styled';
+import { Button, RadioButton, RadioGroup, Input, SimpleFormWrapper } from '../Styled';
 import { ErrorText } from './NewTransaction';
 import { useEditTransaction, useStacks, useTransaction } from 'lib/hooks';
 import { centsToDollars, dollarsToCents } from 'lib/money';
 import { StackDropdown } from 'components/Stack';
-
-const EditTransactionWrapper = styled.form`
-  display: flex;
-  flex-direction: column;
-  margin: 0 auto;
-  width: 500px;
-  min-width: 250px;
-  max-width: 500px;
-  input,
-  select,
-  button {
-    margin-bottom: 15px;
-  }
-  input::placeholder,
-  select:required:invalid {
-    color: var(--fontColorLighter);
-  }
-`;
-
-const options = [
-  { value: 'chocolate', label: 'Chocolate' },
-  { value: 'strawberry', label: 'Strawberry' },
-  { value: 'vanilla', label: 'Vanilla' },
-];
 
 const EditTransaction = ({ transactionId, cancelEdit }) => {
   const {
@@ -84,7 +59,7 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
     return null;
   }
   return (
-    <EditTransactionWrapper onSubmit={handleSubmit(onSubmit)}>
+    <SimpleFormWrapper onSubmit={handleSubmit(onSubmit)}>
       <div style={{ textAlign: 'center', marginBottom: '20px' }}>
         <h4>Edit Transaction</h4>
       </div>
@@ -160,7 +135,7 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
       >
         Cancel
       </Button>
-    </EditTransactionWrapper>
+    </SimpleFormWrapper>
   );
 };
 export default EditTransaction;
