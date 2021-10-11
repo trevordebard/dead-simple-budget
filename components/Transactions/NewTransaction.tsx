@@ -1,10 +1,10 @@
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import { useState } from 'react';
 import { Button, Input, RadioButton, RadioGroup, Select } from '../Styled';
 import { useCreateTransaction } from 'lib/hooks';
-import useStackLabels from 'lib/hooks/stack/useStackLabels';
 import { dollarsToCents } from 'lib/money';
+import { StackDropdown } from 'components/Stack';
 
 const NewtransactionWrapper = styled.form`
   display: flex;
@@ -38,10 +38,9 @@ const NewTransaction = () => {
     handleSubmit,
     formState: { errors },
     reset,
+    control,
   } = useForm();
-  const [selectedStack, setSelectedStack] = useState('');
   const { mutate: createTransaction } = useCreateTransaction();
-  const { stackLabels } = useStackLabels();
   const [transactionType, setTransactionType] = useState('withdrawal');
 
   const onSubmit = data => {
@@ -83,22 +82,19 @@ const NewTransaction = () => {
         autoComplete="off"
       />
       <label htmlFor="stack">Stack {errors.stack && <ErrorText> (Required)</ErrorText>}</label>
-      <Select
+      <Controller
+        control={control}
         name="stack"
-        value={selectedStack}
-        {...register('stack', { required: true })}
-        onChange={e => setSelectedStack(e.target.value)}
-      >
-        <option disabled value="">
-          Select Stack
-        </option>
-        {stackLabels &&
-          stackLabels.map(label => (
-            <option key={`${label}-${Date.now()}`} value={label}>
-              {label}
-            </option>
-          ))}
-      </Select>
+        defaultValue="Select a Stack"
+        rules={{
+          validate: value => {
+            return value !== 'Select a Stack';
+          },
+        }}
+        render={({ field }) => (
+          <StackDropdown defaultStack="Select a Stack" onSelect={value => field.onChange(value)} />
+        )}
+      />
       <label htmlFor="date">Date {errors.date && <ErrorText> (Required)</ErrorText>}</label>
       <Input
         name="date"

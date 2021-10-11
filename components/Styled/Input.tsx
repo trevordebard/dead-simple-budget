@@ -6,7 +6,7 @@ interface InputProps {
 
 const Input = styled.input<InputProps>`
   border-radius: 5px;
-  padding: 0.4em;
+  padding: 0.4rem;
   border: 1px solid var(--grey-800);
   ${props => props.category === 'underline' && UnderlineCss}
 `;

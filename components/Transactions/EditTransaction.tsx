@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { formatDate } from '../../lib/formatDate';
-import { Button, RadioButton, RadioGroup, Input, Select } from '../Styled';
+import { Button, RadioButton, RadioGroup, Input } from '../Styled';
 import { ErrorText } from './NewTransaction';
-import { useEditTransaction, useTransaction } from 'lib/hooks';
-import useStackLabels from 'lib/hooks/stack/useStackLabels';
+import { useEditTransaction, useStacks, useTransaction } from 'lib/hooks';
 import { centsToDollars, dollarsToCents } from 'lib/money';
+import { StackDropdown } from 'components/Stack';
 
 const EditTransactionWrapper = styled.form`
   display: flex;
@@ -26,25 +26,30 @@ const EditTransactionWrapper = styled.form`
   }
 `;
 
+const options = [
+  { value: 'chocolate', label: 'Chocolate' },
+  { value: 'strawberry', label: 'Strawberry' },
+  { value: 'vanilla', label: 'Vanilla' },
+];
+
 const EditTransaction = ({ transactionId, cancelEdit }) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
+    control,
   } = useForm();
-  const { stackLabels } = useStackLabels();
+  const { data: stacks } = useStacks();
   const { mutate: editTransaction } = useEditTransaction();
 
-  const [selectedStack, setSelectedStack] = useState<string>();
   const [transactionType, setTransactionType] = useState<string | null>();
   const { data: transaction, isLoading: isLoadingTransaction } = useTransaction(transactionId);
 
   useEffect(() => {
     if (transaction) {
-      setSelectedStack(transaction.stack);
       setTransactionType(transaction.type);
     }
-  }, [transaction, setTransactionType, setSelectedStack]);
+  }, [transaction, setTransactionType]);
 
   const onSubmit = payload => {
     const { date, stack, description } = payload;
@@ -75,7 +80,7 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
   if (isLoadingTransaction) {
     return <p>Loading...</p>;
   }
-  if (!transaction) {
+  if (!transaction || !stacks) {
     return null;
   }
   return (
@@ -106,25 +111,20 @@ const EditTransaction = ({ transactionId, cancelEdit }) => {
       />
 
       <label htmlFor="stack">Stack {errors.stack && <ErrorText> (Required)</ErrorText>}</label>
-      <Select
+      <Controller
+        control={control}
         name="stack"
-        {...register('stack', {
-          required: true,
+        defaultValue={transaction.stack}
+        rules={{
           validate: value => {
             return value !== 'Imported';
           },
-        })}
-        value={selectedStack}
-        onChange={e => setSelectedStack(e.target.value)}
-      >
-        {transaction.stack === 'Imported' && <option disabled>Imported</option>}
-        {stackLabels &&
-          stackLabels.map(label => (
-            <option key={`${label}-${Date.now()}`} value={label}>
-              {label}
-            </option>
-          ))}
-      </Select>
+        }}
+        render={({ field }) => (
+          <StackDropdown defaultStack={transaction.stack} onSelect={value => field.onChange(value)} />
+        )}
+      />
+
       <label htmlFor="date">Date {errors.date && <ErrorText> (Required)</ErrorText>}</label>
       <Input
         name="date"
