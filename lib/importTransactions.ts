@@ -35,6 +35,7 @@ export function convertPlaidTransactionToPrismaInput(
     date: DateTime.fromFormat(transaction.date, 'yyyy-MM-dd').toJSDate(),
     stack: 'Imported',
     type: amount < 0 ? 'withdrawal' : 'deposit', // TODO:
+    plaidTransactionId: transaction.transaction_id,
     userId: userId,
   };
 }
