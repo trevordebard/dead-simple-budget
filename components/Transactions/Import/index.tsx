@@ -1,4 +1,4 @@
-import { Button } from 'components/Styled';
+import { Button, Select, SimpleFormWrapper } from 'components/Styled';
 
 import styled from 'styled-components';
 import { useState } from 'react';
@@ -6,6 +6,7 @@ import { useGetTransactionsFromBank } from 'lib/hooks/transaction/useGetTransact
 import { useImportBankTransactions } from 'lib/hooks/transaction/useImportBankTransactions';
 import { ListItem, MultiSelectList } from 'components/Shared/MultiSelectList';
 import { TransactionCard } from '../TransactionCard';
+import { useForm } from 'react-hook-form';
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -14,13 +15,13 @@ const ButtonContainer = styled.div`
 
 export function Import() {
   const [fetchTrans, setFetchTrans] = useState(false);
+  const [dateRange, setDateRange] = useState<string>('30');
   const [selectedTransactions, setSelectedTransactions] = useState<string[]>([]);
-  const { data: transactions } = useGetTransactionsFromBank({ enabled: fetchTrans });
+  const { data: transactions } = useGetTransactionsFromBank({ enabled: fetchTrans, queryKey: dateRange });
+
   const { mutate: uploadTransactions } = useImportBankTransactions();
 
-  const handleImport = () => {
-    setFetchTrans(true);
-  };
+  const { register, handleSubmit } = useForm();
 
   const handleTransactionSelected = (selectedId: string) => {
     let newArr = [];
@@ -40,13 +41,25 @@ export function Import() {
     uploadTransactions(selected);
   };
 
+  const handleSubmitRange = payload => {
+    console.log(payload);
+    setDateRange(payload['date-range']);
+    setFetchTrans(true);
+  };
+
   if (!transactions) {
     return (
-      <div>
-        <Button onClick={handleImport} category="TRANSPARENT">
+      <SimpleFormWrapper onSubmit={handleSubmit(handleSubmitRange)}>
+        <label htmlFor="date-range">Date Range</label>
+        <Select name="date-range" defaultValue={dateRange} {...register('date-range', { required: true })}>
+          <option value="30">30 Days</option>
+          <option value="60">60 Days</option>
+          <option value="120">120 Days</option>
+        </Select>
+        <Button type="submit" category="ACTION">
           Import
         </Button>
-      </div>
+      </SimpleFormWrapper>
     );
   }
 
