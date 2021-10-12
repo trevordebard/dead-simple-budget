@@ -56,6 +56,7 @@ export function TransactionCard({ description, date, amount, stack = null, isAct
         <input
           type="checkbox"
           checked={isActive}
+          disabled={date.toLowerCase() === 'pending'}
           onChange={() => {
             //do nothing
           }}
