@@ -7,6 +7,7 @@ const defaultOGURL = '';
 const defaultOGImage = '';
 const Head = props => (
   <NextHead>
+    <link rel="stylesheet" type="text/css" href="static/nprogress.css" />
     <meta charSet="UTF-8" />
     <title>{props.title || ''}</title>
     <meta name="description" content={props.description || defaultDescription} />
