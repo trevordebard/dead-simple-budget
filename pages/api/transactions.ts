@@ -49,12 +49,21 @@ async function createManyTransactions(userId: number, { transactions, stack }: i
     sum += dollarsToCents(transaction.amount * -1);
     return convertPlaidTransactionToPrismaInput(transaction, userId, stack);
   });
+  const response = await prisma.transaction.createMany({ data: input });
 
   const updatedUser = await prisma.user.update({
     where: { id: userId },
     data: { total: { increment: sum } },
   });
+
+  if (stack && stack !== 'Imported') {
+    // console.log(stack);
+    await prisma.stack.update({
+      where: { label_userId: { userId: userId, label: stack } },
+      data: { amount: { increment: sum } },
+    });
+  }
+
   await recalcToBeBudgeted(updatedUser);
-  const response = await prisma.transaction.createMany({ data: input });
   return response;
 }
