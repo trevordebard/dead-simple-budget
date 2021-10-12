@@ -39,6 +39,7 @@ const Title = styled.div`
 
 const ImportedTransactions = styled.div`
   overflow-y: scroll;
+  max-height: 70vh;
 
   @media only screen and (max-width: ${smBreakpoint}) {
     max-height: 50vh;
