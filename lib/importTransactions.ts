@@ -16,7 +16,8 @@ export function getUniquePlaidTransactions(
 
 export function convertPlaidTransactionToPrismaInput(
   transaction: plaid.Transaction,
-  userId: number
+  userId: number,
+  stack: string = 'Imported'
 ): Prisma.TransactionCreateManyInput {
   const [year, month, day] = transaction.date.split('-');
 
@@ -27,7 +28,7 @@ export function convertPlaidTransactionToPrismaInput(
     amount,
     description: transaction.name,
     date: DateTime.fromFormat(transaction.date, 'yyyy-MM-dd').toJSDate(),
-    stack: 'Imported',
+    stack,
     type: amount < 0 ? 'withdrawal' : 'deposit', // TODO:
     plaidTransactionId: transaction.transaction_id,
     userId: userId,
