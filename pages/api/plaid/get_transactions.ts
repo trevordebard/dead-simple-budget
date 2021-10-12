@@ -17,8 +17,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const plaidAccessToken = user.bankAccounts[0].plaidAccessToken;
 
   // Only fetch transactions on or after the day of the most recent transaction already saved
-  let start = DateTime.now().minus({ days: dateRange });
-  let end = DateTime.now().toFormat('yyyy-MM-dd');
+  let start = DateTime.now().startOf('day').minus({ days: dateRange });
+  let end = DateTime.now().startOf('day').toFormat('yyyy-MM-dd');
 
   const plaidResponse = await plaidClient.getTransactions(plaidAccessToken, start.toFormat('yyyy-MM-dd'), end, {
     account_ids: user.bankAccounts[0].plaidAccountIds,
