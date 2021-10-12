@@ -25,6 +25,11 @@ export function Import() {
 
   const handleTransactionSelected = (selectedId: string) => {
     let newArr = [];
+
+    // If transaction is pending, null will be returned as the value on click
+    if (!selectedId) {
+      return;
+    }
     const index = selectedTransactions.indexOf(selectedId);
     if (index === -1) {
       newArr = [...selectedTransactions, selectedId];
@@ -86,7 +91,7 @@ export function Import() {
       >
         {transactions.map(transaction => {
           return (
-            <ListItem key={transaction.transaction_id} value={transaction.transaction_id}>
+            <ListItem key={transaction.transaction_id} value={transaction.pending ? null : transaction.transaction_id}>
               <TransactionCard
                 date={transaction.pending ? 'Pending' : transaction.date}
                 amount={transaction.amount * -1}
