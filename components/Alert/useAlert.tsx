@@ -1,9 +1,9 @@
-import { useContext } from 'react'
-import { AlertContext } from './AlertProvider'
+import { useContext } from 'react';
+import { AlertContext } from './AlertProvider';
 
 function useAlert() {
-  const { alert, addAlert, removeAlert } = useContext(AlertContext)
-  return { alert, addAlert, removeAlert }
+  const { alert, addAlert, removeAlert } = useContext(AlertContext);
+  return { alert, addAlert, removeAlert };
 }
 
-export { useAlert }
+export { useAlert };

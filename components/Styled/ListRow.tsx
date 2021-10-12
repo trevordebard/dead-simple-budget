@@ -6,7 +6,7 @@ const ListRow = styled.div<{ selected: boolean }>`
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid var(--lineColor);
-  padding: 5px;
+  padding: 10px;
   background-color: ${props => props.selected && 'var(--rowActive)'};
   :hover {
     background-color: ${props => !props.selected && 'var(--rowHover)'};

@@ -7,35 +7,29 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Budget {
-  id           Int     @id @default(autoincrement())
-  total        Float?  @default(0)
-  toBeBudgeted Float?
-  userId       Int
-  user         user    @relation(fields: [userId], references: [id])
-  stacks       Stack[]
-}
-
 model Stack {
   id         Int      @id @default(autoincrement())
-  budgetId   Int
   label      String
-  amount     Float    @default(0)
+  category   String   @default("Not Categorized")
+  amount     Int      @default(0)
   created_at DateTime @default(now())
-  budget     Budget   @relation(fields: [budgetId], references: [id])
+  userId     Int
+  user       user?    @relation(fields: [userId], references: [id])
 
-  @@unique([budgetId, label], name: "budgetId_label_idx")
+  @@unique([label, userId])
 }
 
 model Transaction {
-  id          Int      @id @default(autoincrement())
-  description String
-  stack       String
-  amount      Float
-  type        String
-  userId      Int
-  date        DateTime
-  user        user     @relation(fields: [userId], references: [id])
+  id                 Int      @id @default(autoincrement())
+  plaidTransactionId String?  @unique
+  description        String
+  stack              String
+  amount             Int
+  type               String
+  userId             Int
+  date               DateTime
+  createdAt          DateTime @default(now()) @map("created_at")
+  user               user     @relation(fields: [userId], references: [id])
 
 }
 
@@ -71,16 +65,19 @@ model Session {
 }
 
 model user {
-  id            Int       @id @default(autoincrement())
+  id            Int           @id @default(autoincrement())
   name          String?
-  email         String    @unique
-  emailVerified DateTime? @map("email_verified")
+  email         String        @unique
+  emailVerified DateTime?     @map("email_verified")
   image         String?
-  createdAt     DateTime  @default(now()) @map("created_at")
-  updatedAt     DateTime  @default(now()) @map("updated_at")
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @default(now()) @map("updated_at")
+  total         Int           @default(0)
+  toBeBudgeted  Int           @default(0)
+  stacks        Stack[]
+  transactions  Transaction[]
+  bankAccounts  BankAccout[]
 
-  transactions Transaction[]
-  budget       Budget?
   @@map("users")
 }
 
@@ -93,4 +90,13 @@ model VerificationRequest {
   updatedAt  DateTime @default(now()) @map("updated_at")
 
   @@map("verification_requests")
+}
+
+model BankAccout {
+  id               Int      @id @default(autoincrement())
+  plaidAccessToken String
+  plaidItemId      String   @unique
+  plaidAccountIds  String[]
+  userId           Int
+  user             user     @relation(fields: [userId], references: [id])
 }

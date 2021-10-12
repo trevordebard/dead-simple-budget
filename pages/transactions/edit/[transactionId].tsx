@@ -1,5 +1,4 @@
 import { EditTransaction } from 'components/Transactions';
-import { initializeApollo } from 'lib/apolloClient';
 import { getSession } from 'next-auth/client';
 import { useRouter } from 'next/router';
 import Layout, { Main, Left, Center } from 'components/Shared/Layout';
@@ -25,20 +24,18 @@ const Transaction = () => {
 };
 export default Transaction;
 export async function getServerSideProps(context) {
-  const apolloClient = initializeApollo(null, context);
   const session = await getSession(context);
   if (!session) {
-    context.res.setHeader("location", "/login");
-    context.res.statusCode = 302;
-    context.res.end();
     return {
-      props: null
+      redirect: {
+        permanent: false,
+        destination: '/login',
+      },
     };
   }
 
   return {
     props: {
-      initialApolloState: apolloClient.cache.extract(),
       session,
     },
   };

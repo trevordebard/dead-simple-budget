@@ -1,4 +1,5 @@
-import { createGlobalStyle } from "styled-components";
+import { smBreakpoint } from 'lib/constants';
+import { createGlobalStyle } from 'styled-components';
 
 export const GlobalStyle = createGlobalStyle`
 :root {
@@ -109,7 +110,7 @@ export const GlobalStyle = createGlobalStyle`
   --fontColorLight: var(--grey-800);
   --fontColorLighter: var(--grey-500);
   --baseFontSize: 100%;
-  --smallFontSize: .8rem;
+  --smallFontSize: .9rem;
   
   --primary: var(--purple-500);
   --primaryHover: var(--purple-400);
@@ -135,6 +136,7 @@ export const GlobalStyle = createGlobalStyle`
   --level1: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
   --level2: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   --level3: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
 }
 div#__next{
   height: 100%;
@@ -149,7 +151,7 @@ body {
   margin: 0;
   padding: 5px;
   color: var(--fontColor);
-  font-family: 'Raleway', sans-serif;
+  font-family: sans-serif;
   font-weight: 400;
   line-height: 1.65;
 }

@@ -1,5 +1,4 @@
 import { NewTransaction } from 'components/Transactions';
-import { initializeApollo } from 'lib/apolloClient';
 import { getSession } from 'next-auth/client';
 import { useRouter } from 'next/router';
 import { FunctionComponent } from 'react';
@@ -18,27 +17,27 @@ const NewTransactionPage: FunctionComponent = () => {
         <Left>
           <TabSidebar />
         </Left>
-        <Center><NewTransaction /></Center>
+        <Center>
+          <NewTransaction />
+        </Center>
       </Main>
     </Layout>
   );
 };
 export default NewTransactionPage;
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const apolloClient = initializeApollo(null, context);
   const session = await getSession(context);
   if (!session) {
-    context.res.setHeader("location", "/login");
-    context.res.statusCode = 302;
-    context.res.end();
     return {
-      props: null
+      redirect: {
+        permanent: false,
+        destination: '/login',
+      },
     };
   }
 
   return {
     props: {
-      initialApolloState: apolloClient.cache.extract(),
       session,
     },
   };

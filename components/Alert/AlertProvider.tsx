@@ -1,23 +1,23 @@
-import { createContext, useCallback, useState } from "react";
+import { createContext, useCallback, useState } from 'react';
 
-export type AlertTypes = 'error' | 'success' | 'neutral'
+export type AlertTypes = 'error' | 'success' | 'neutral';
 interface Alert {
-  message: string,
-  type?: AlertTypes,
-  duration?: number,
+  message: string;
+  type?: AlertTypes;
+  duration?: number;
 }
 
 interface AlertContextProps {
-  alert: Alert,
-  addAlert(a: Alert): void,
-  removeAlert(): void,
+  alert: Alert;
+  addAlert(a: Alert): void;
+  removeAlert(): void;
 }
 
 const initialContext: AlertContextProps = {
   alert: null,
-  addAlert: (a: Alert) => { },
-  removeAlert: () => { },
-}
+  addAlert: (a: Alert) => {},
+  removeAlert: () => {},
+};
 
 export const AlertContext = createContext(initialContext);
 
@@ -29,11 +29,9 @@ export function AlertProvider({ children }) {
 
   const contextValue = {
     alert,
-    addAlert: useCallback((a) => addAlert(a), []),
+    addAlert: useCallback(a => addAlert(a), []),
     removeAlert: useCallback(() => removeAlert(), []),
   };
 
-  return <AlertContext.Provider value={contextValue}>
-    {children}
-  </AlertContext.Provider>
+  return <AlertContext.Provider value={contextValue}>{children}</AlertContext.Provider>;
 }

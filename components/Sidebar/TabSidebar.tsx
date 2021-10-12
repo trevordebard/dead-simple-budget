@@ -5,7 +5,10 @@ import { useRouter } from 'next/dist/client/router';
 import { smBreakpoint } from '../../lib/constants';
 import { Button } from 'components/Styled';
 
-const TabItem = styled.li<{ active?: boolean }>`
+interface iTabProps {
+  active?: boolean;
+}
+const TabItem = styled.li<iTabProps>`
   + li {
     margin-top: 1em;
   }
@@ -50,14 +53,18 @@ const TabSidebar = () => {
   return (
     <Tabs>
       <ul>
-        <Link href="/budget">
+        <Link href="/budget" passHref>
           <TabItem active={router.pathname === '/budget'}>
-            <Button category="TRANSPARENT" as="a">Budget</Button>
+            <Button category="TRANSPARENT" as="a">
+              Budget
+            </Button>
           </TabItem>
         </Link>
-        <Link href="/transactions">
+        <Link href="/transactions" passHref>
           <TabItem active={router.pathname === '/transactions'}>
-            <Button category="TRANSPARENT" as="a">Transactions</Button>
+            <Button category="TRANSPARENT" as="a">
+              Transactions
+            </Button>
           </TabItem>
         </Link>
       </ul>
