@@ -2,11 +2,11 @@ import styled from 'styled-components';
 
 export const SimpleFormWrapper = styled.form`
   display: flex;
+  background-color: white;
   flex-direction: column;
   margin: 0 auto;
-  width: 500px;
+  width: 100%;
   min-width: 250px;
-  max-width: 500px;
   label {
     color: var(--grey-800);
   }

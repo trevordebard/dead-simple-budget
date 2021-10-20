@@ -23,6 +23,10 @@ const Actions = styled.div`
   }
 `;
 
+const ImportWrapper = styled.div`
+  max-width: 500px;
+`
+
 const StackDropdownWrapper = styled.div`
   color: var(--grey-700);
   margin-bottom: 10px;
@@ -31,7 +35,7 @@ const StackDropdownWrapper = styled.div`
 const Title = styled.div`
   text-align: center;
   max-width: 500px;
-  margin-bottom: 10px;
+  margin: 0px auto 10px auto;
   @media only screen and (max-width: ${smBreakpoint}) {
     font-size: 0.9rem;
   }
@@ -39,7 +43,7 @@ const Title = styled.div`
 
 const ImportedTransactions = styled.div`
   overflow-y: scroll;
-  max-height: 70vh;
+  max-height: 65vh;
 
   @media only screen and (max-width: ${smBreakpoint}) {
     max-height: 50vh;
@@ -92,19 +96,22 @@ export function Import() {
     setFetchTrans(true);
   };
 
+
   if (!transactions) {
     return (
-      <SimpleFormWrapper onSubmit={handleSubmit(handleSubmitRange)}>
-        <label htmlFor="date-range">Date Range</label>
-        <Select name="date-range" defaultValue={dateRange} {...register('date-range', { required: true })}>
-          <option value="30">30 Days</option>
-          <option value="60">60 Days</option>
-          <option value="120">120 Days</option>
-        </Select>
-        <Button type="submit" category="ACTION">
-          Import
-        </Button>
-      </SimpleFormWrapper>
+      <ImportWrapper>
+        <SimpleFormWrapper onSubmit={handleSubmit(handleSubmitRange)}>
+          <label htmlFor="date-range">Date Range</label>
+          <Select name="date-range" defaultValue={dateRange} {...register('date-range', { required: true })}>
+            <option value="30">30 Days</option>
+            <option value="60">60 Days</option>
+            <option value="120">120 Days</option>
+          </Select>
+          <Button type="submit" category="ACTION">
+            Import
+          </Button>
+        </SimpleFormWrapper>
+      </ImportWrapper>
     );
   }
 

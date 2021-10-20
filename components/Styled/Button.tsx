@@ -9,7 +9,7 @@ interface StyledButtonProps extends HTMLProps<HTMLButtonElement> {
 const StyledButton = styled.button<StyledButtonProps>`
   background-color: var(--buttonBg);
   color: white;
-  border-radius: 45px;
+  border-radius: 5px;
   border: 0px;
   padding: 5px 20px;
   cursor: pointer;
@@ -40,11 +40,17 @@ const DangerButton = styled(StyledButton)`
   --buttonSubtle: var(--dangerSubtle);
 `;
 
+const NeutralButton = styled(StyledButton)`
+  --buttonBg: var(--grey-800);
+  --buttonHover: var(--grey-800);
+  --buttonSubtle: var(--fontColorLight);
+`;
+
 interface iTransparentBtnProps {
   underline?: boolean;
   discrete?: boolean;
 }
-const TransparentButton = styled(StyledButton)<iTransparentBtnProps>`
+const TransparentButton = styled(StyledButton) <iTransparentBtnProps>`
   --buttonBg: transparent;
   --buttonHover: transparent;
   color: var(--fontColor);
@@ -79,7 +85,7 @@ interface iRadioBtnProps {
 }
 // This should be used with side by side buttons
 // where only one should be selected
-const RadioButton = styled(StyledButton)<iRadioBtnProps>`
+const RadioButton = styled(StyledButton) <iRadioBtnProps>`
   --buttonBg: ${props => (props.active ? 'var(--neutral)' : 'transparent')};
   --buttonHover: ${props => (props.active ? 'var(--neutral)' : 'var(--neutralHover)')};
   border: 1px solid var(--neutral);
@@ -105,7 +111,7 @@ const RadioGroup = styled.div`
 
 interface ButtonProps extends StyledButtonProps {
   loading?: boolean;
-  category: 'PRIMARY' | 'ACTION' | 'DANGER' | 'TRANSPARENT';
+  category: 'PRIMARY' | 'ACTION' | 'DANGER' | 'TRANSPARENT' | 'NEUTRAL';
   children: ReactNode;
 }
 
@@ -119,7 +125,7 @@ const Button: FC<ButtonProps> = ({ category = 'PRIMARY', loading, children, ...p
     </>
   );
 };
-function getComponent(category: 'PRIMARY' | 'ACTION' | 'DANGER' | 'TRANSPARENT') {
+function getComponent(category: 'PRIMARY' | 'ACTION' | 'DANGER' | 'TRANSPARENT' | 'NEUTRAL') {
   if (category === 'PRIMARY') {
     return StyledButton;
   }
@@ -131,6 +137,9 @@ function getComponent(category: 'PRIMARY' | 'ACTION' | 'DANGER' | 'TRANSPARENT')
   }
   if (category === 'TRANSPARENT') {
     return TransparentButton;
+  }
+  if (category === 'NEUTRAL') {
+    return NeutralButton;
   }
 }
 
