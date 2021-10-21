@@ -1,10 +1,10 @@
 {
   "extends": [
     "next",
-    "eslint-config-prettier"
+    "prettier"
   ],
   "plugins": [
-    "eslint-plugin-prettier"
+    "prettier"
   ],
   "rules": {
     "arrow-parens": [
@@ -19,6 +19,7 @@
         "printWidth": 120,
         "tabWidth": 2,
         "arrowParens": "avoid"
+        // "bracketSpacing": false
       }
     ]
   }

@@ -25,7 +25,7 @@ const Actions = styled.div`
 
 const ImportWrapper = styled.div`
   max-width: 500px;
-`
+`;
 
 const StackDropdownWrapper = styled.div`
   color: var(--grey-700);
@@ -95,7 +95,6 @@ export function Import() {
     setDateRange(payload['date-range']);
     setFetchTrans(true);
   };
-
 
   if (!transactions) {
     return (

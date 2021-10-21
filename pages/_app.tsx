@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { Hydrate } from 'react-query/hydration';
 import { Router } from 'next/router';
 import NProgress from 'nprogress';
+import 'public/static/nprogress.css';
 
 Router.events.on('routeChangeStart', url => {
   console.log(`Loading: ${url}`);
