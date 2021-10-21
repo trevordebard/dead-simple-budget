@@ -11,6 +11,11 @@ export const ErrorText = styled.span`
   font-size: 0.9em;
 `;
 
+const NewTransactionWrapper = styled.div`
+  max-width: 500px;
+  width: 100%;
+`;
+
 const NewTransaction = () => {
   const {
     register,
@@ -37,67 +42,73 @@ const NewTransaction = () => {
     );
   };
   return (
-    <SimpleFormWrapper onSubmit={handleSubmit(onSubmit)}>
-      <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-        <h4>New Transaction</h4>
-      </div>
-      <label htmlFor="description">Description {errors.description && <ErrorText> (Required)</ErrorText>}</label>
-      <Input
-        name="description"
-        category="underline"
-        placeholder="Tasy Pizza LLC"
-        {...register('description', { required: true })}
-      />
+    <NewTransactionWrapper>
+      <SimpleFormWrapper onSubmit={handleSubmit(onSubmit)}>
+        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+          <h4>New Transaction</h4>
+        </div>
+        <label htmlFor="description">Description {errors.description && <ErrorText> (Required)</ErrorText>}</label>
+        <Input
+          name="description"
+          category="underline"
+          placeholder="Tasy Pizza LLC"
+          {...register('description', { required: true })}
+        />
 
-      <label htmlFor="amount">Amount {errors.amount && <ErrorText> (Required)</ErrorText>}</label>
-      <Input
-        name="amount"
-        category="underline"
-        {...register('amount', { required: true })}
-        type="number"
-        pattern="\d*"
-        step={0.01}
-        placeholder="37.50"
-        autoComplete="off"
-      />
-      <label htmlFor="stack">Stack {errors.stack && <ErrorText> (Required)</ErrorText>}</label>
-      <Controller
-        control={control}
-        name="stack"
-        defaultValue="Select a Stack"
-        rules={{
-          validate: value => {
-            return value !== 'Select a Stack';
-          },
-        }}
-        render={({ field }) => (
-          <StackDropdown defaultStack="Select a Stack" onSelect={value => field.onChange(value)} />
-        )}
-      />
-      <label htmlFor="date">Date {errors.date && <ErrorText> (Required)</ErrorText>}</label>
-      <Input
-        name="date"
-        category="underline"
-        {...register('date', { required: true })}
-        type="date"
-        placeholder="yyyy-mm-dd"
-      />
-      <RadioGroup>
-        <RadioButton
-          type="button"
-          active={transactionType === 'withdrawal'}
-          onClick={() => setTransactionType('withdrawal')}
-        >
-          Withdrawal
-        </RadioButton>
-        <RadioButton type="button" active={transactionType === 'deposit'} onClick={() => setTransactionType('deposit')}>
-          Deposit
-        </RadioButton>
-      </RadioGroup>
-      <Button category="ACTION" type="submit">
-        Add
-      </Button>
-    </SimpleFormWrapper>
+        <label htmlFor="amount">Amount {errors.amount && <ErrorText> (Required)</ErrorText>}</label>
+        <Input
+          name="amount"
+          category="underline"
+          {...register('amount', { required: true })}
+          type="number"
+          pattern="\d*"
+          step={0.01}
+          placeholder="37.50"
+          autoComplete="off"
+        />
+        <label htmlFor="stack">Stack {errors.stack && <ErrorText> (Required)</ErrorText>}</label>
+        <Controller
+          control={control}
+          name="stack"
+          defaultValue="Select a Stack"
+          rules={{
+            validate: value => {
+              return value !== 'Select a Stack';
+            },
+          }}
+          render={({ field }) => (
+            <StackDropdown defaultStack="Select a Stack" onSelect={value => field.onChange(value)} />
+          )}
+        />
+        <label htmlFor="date">Date {errors.date && <ErrorText> (Required)</ErrorText>}</label>
+        <Input
+          name="date"
+          category="underline"
+          {...register('date', { required: true })}
+          type="date"
+          placeholder="yyyy-mm-dd"
+        />
+        <RadioGroup>
+          <RadioButton
+            type="button"
+            active={transactionType === 'withdrawal'}
+            onClick={() => setTransactionType('withdrawal')}
+          >
+            Withdrawal
+          </RadioButton>
+          <RadioButton
+            type="button"
+            active={transactionType === 'deposit'}
+            onClick={() => setTransactionType('deposit')}
+          >
+            Deposit
+          </RadioButton>
+        </RadioGroup>
+        <Button category="ACTION" type="submit">
+          Add
+        </Button>
+      </SimpleFormWrapper>
+    </NewTransactionWrapper>
   );
 };
 export default NewTransaction;

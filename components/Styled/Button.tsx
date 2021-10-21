@@ -1,4 +1,4 @@
-import { FC, HTMLProps, ReactNode } from 'react';
+import { forwardRef, HTMLProps, ReactNode } from 'react';
 import styled, { css } from 'styled-components';
 
 interface StyledButtonProps extends HTMLProps<HTMLButtonElement> {
@@ -50,7 +50,7 @@ interface iTransparentBtnProps {
   underline?: boolean;
   discrete?: boolean;
 }
-const TransparentButton = styled(StyledButton) <iTransparentBtnProps>`
+const TransparentButton = styled(StyledButton)<iTransparentBtnProps>`
   --buttonBg: transparent;
   --buttonHover: transparent;
   color: var(--fontColor);
@@ -85,7 +85,8 @@ interface iRadioBtnProps {
 }
 // This should be used with side by side buttons
 // where only one should be selected
-const RadioButton = styled(StyledButton) <iRadioBtnProps>`
+
+const RadioButton = styled(StyledButton)<iRadioBtnProps>`
   --buttonBg: ${props => (props.active ? 'var(--neutral)' : 'transparent')};
   --buttonHover: ${props => (props.active ? 'var(--neutral)' : 'var(--neutralHover)')};
   border: 1px solid var(--neutral);
@@ -115,16 +116,18 @@ interface ButtonProps extends StyledButtonProps {
   children: ReactNode;
 }
 
-const Button: FC<ButtonProps> = ({ category = 'PRIMARY', loading, children, ...props }: ButtonProps) => {
+const Button = forwardRef(({ category = 'PRIMARY', loading, children, ...props }: ButtonProps, ref) => {
   return (
     <>
-      <StyledButton as={getComponent(category)} {...props}>
+      <StyledButton as={getComponent(category)} {...props} ref={ref}>
         {loading && <p>Loading...</p>}
         {!loading && children}
       </StyledButton>
     </>
   );
-};
+});
+Button.displayName = 'Buton';
+
 function getComponent(category: 'PRIMARY' | 'ACTION' | 'DANGER' | 'TRANSPARENT' | 'NEUTRAL') {
   if (category === 'PRIMARY') {
     return StyledButton;

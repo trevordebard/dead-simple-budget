@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion';
 import styled from 'styled-components';
 import { smBreakpoint } from '../../lib/constants';
 
@@ -52,6 +51,7 @@ export const Left = styled.nav`
 export const Right = styled.nav`
   width: 20%;
   border-left: 1px solid var(--lineColor);
+  padding: 1rem;
 `;
 
 const Layout = ({ children }) => <AppLayout>{children}</AppLayout>;
