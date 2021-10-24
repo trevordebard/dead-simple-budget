@@ -1,5 +1,5 @@
 import { Nav } from 'components/Nav';
-import { TabSidebar } from 'components/Sidebar';
+import { ActionSidebar, TabSidebar } from 'components/Sidebar';
 import { EditTransaction, TransactionPageContext, Transactions } from 'components/Transactions';
 import Layout, { Main, Left, Center, Right } from 'components/Shared/Layout';
 import { getSession } from 'next-auth/client';
@@ -10,6 +10,8 @@ import { useState } from 'react';
 import { Button } from 'components/Styled';
 import { useDeleteTransactions } from 'lib/hooks';
 import { useQueryClient } from 'react-query';
+import { smBreakpoint } from 'lib/constants';
+import { AnimatePresence, Variants } from 'framer-motion';
 
 function TransactionPage() {
   const { mutate: deleteTransactions } = useDeleteTransactions();
@@ -38,47 +40,58 @@ function TransactionPage() {
             <Transactions />
           </Center>
           <Right>
-            {selectedTransactionIds.length === 0 && (
-              <ButtonWrapper>
-                <Link passHref href="/import">
-                  <Button category="NEUTRAL" outline small>
-                    Add From Bank
-                  </Button>
-                </Link>
+            <TransactionActionWrapper>
+              {selectedTransactionIds.length === 0 && (
+                <ButtonWrapper>
+                  <Link passHref href="/import">
+                    <Button category="NEUTRAL" outline small>
+                      Add From Bank
+                    </Button>
+                  </Link>
 
-                <Link passHref href="/transactions/new">
-                  <Button category="NEUTRAL" outline small>
-                    Add Manual Transaction
+                  <Link passHref href="/transactions/new">
+                    <Button category="NEUTRAL" outline small>
+                      Manual Transaction
+                    </Button>
+                  </Link>
+                </ButtonWrapper>
+              )}
+              <AnimatePresence>
+                {selectedTransactionIds.length === 1 && (
+                  <ActionSidebar
+                    initial="closed"
+                    animate={selectedTransactionIds.length === 1 ? 'open' : 'closed'}
+                    variants={variants}
+                    exit="closed"
+                  >
+                    <EditTransaction
+                      transactionId={selectedTransactionIds[0]}
+                      cancelEdit={() => setSelectedTransactionIds([])}
+                    />
+                  </ActionSidebar>
+                )}
+              </AnimatePresence>
+              {selectedTransactionIds.length > 1 && (
+                <ButtonWrapper>
+                  <Button
+                    category="DANGER"
+                    onClick={() => {
+                      deleteTransactions(
+                        { transactionIds: selectedTransactionIds },
+                        {
+                          onSuccess: () => {
+                            queryClient.invalidateQueries('fetch-transactions');
+                            setSelectedTransactionIds([]);
+                          },
+                        }
+                      );
+                    }}
+                  >
+                    Delete Selected
                   </Button>
-                </Link>
-              </ButtonWrapper>
-            )}
-            {selectedTransactionIds.length === 1 && (
-              <EditTransaction
-                transactionId={selectedTransactionIds[0]}
-                cancelEdit={() => setSelectedTransactionIds([])}
-              />
-            )}
-            {selectedTransactionIds.length > 1 && (
-              <ButtonWrapper>
-                <Button
-                  category="DANGER"
-                  onClick={() => {
-                    deleteTransactions(
-                      { transactionIds: selectedTransactionIds },
-                      {
-                        onSuccess: () => {
-                          queryClient.invalidateQueries('fetch-transactions');
-                          setSelectedTransactionIds([]);
-                        },
-                      }
-                    );
-                  }}
-                >
-                  Delete Selected
-                </Button>
-              </ButtonWrapper>
-            )}
+                </ButtonWrapper>
+              )}
+            </TransactionActionWrapper>
           </Right>
         </Main>
       </Layout>
@@ -94,12 +107,22 @@ export async function getServerSideProps(ctx) {
   };
 }
 
+const TransactionActionWrapper = styled.div`
+  padding: 1rem;
+`;
 const ButtonWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  * {
-    margin-bottom: 10px;
+  gap: 10px;
+
+  @media only screen and (max-width: ${smBreakpoint}) {
+    flex-direction: row;
+    justify-content: center;
   }
 `;
 
+const variants: Variants = {
+  open: { x: 0, transition: { type: 'just' }, opacity: 1 },
+  closed: { x: '+100%', opacity: 0 },
+};
 export default TransactionPage;
