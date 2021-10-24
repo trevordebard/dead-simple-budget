@@ -3,15 +3,15 @@ import { createGlobalStyle } from 'styled-components';
 
 export const GlobalStyle = createGlobalStyle`
 :root {
-  --purple-100: #F9DCFA;
-  --purple-200: #F0BAF6;
-  --purple-300: #D891E6;
-  --purple-400: #B76FCD;
-  --purple-500: #8D43AD;
-  --purple-600: #6F3094;
-  --purple-700: #55217C;
-  --purple-800: #3C1564;
-  --purple-900: #2B0C53;
+  --purple-100: #EBD0F7;
+  --purple-200: #D4A3EF;
+  --purple-300: #A86DD0;
+  --purple-400: #7642A2;
+  --purple-500: #3C1564;
+  --purple-600: #2E0F56;
+  --purple-700: #220A48;
+  --purple-800: #18063A;
+  --purple-900: #110430;
   --purple-transparent-100: rgba(141, 67, 173, 0.08);
   --purple-transparent-200: rgba(141, 67, 173, 0.16);
   --purple-transparent-300: rgba(141, 67, 173, 0.24);
