@@ -1,12 +1,12 @@
 import { Nav } from 'components/Nav';
 import { ActionSidebar, TabSidebar } from 'components/Sidebar';
-import { EditTransaction, TransactionPageContext, Transactions } from 'components/Transactions';
+import { EditTransaction, NewTransaction, TransactionPageContext, Transactions } from 'components/Transactions';
 import Layout, { Main, Left, Center, Right } from 'components/Shared/Layout';
 import { getSession } from 'next-auth/client';
 import styled from 'styled-components';
 import Link from 'next/link';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from 'components/Styled';
 import { useDeleteTransactions } from 'lib/hooks';
 import { useQueryClient } from 'react-query';
@@ -16,6 +16,8 @@ import { AnimatePresence, Variants } from 'framer-motion';
 function TransactionPage() {
   const { mutate: deleteTransactions } = useDeleteTransactions();
   const [selectedTransactionIds, setSelectedTransactionIds] = useState<number[]>([]);
+  const [newTransactionVisible, setNewTransactionVisible] = useState<boolean>(false);
+
   const queryClient = useQueryClient();
 
   const toggleSelectedTransaction = (transactionId: number) => {
@@ -28,6 +30,15 @@ function TransactionPage() {
     }
     setSelectedTransactionIds(newArr);
   };
+
+  const toggleNewTransactionVisible = () => setNewTransactionVisible(!newTransactionVisible);
+
+  useEffect(() => {
+    if (selectedTransactionIds.length > 0) {
+      setNewTransactionVisible(false);
+    }
+  }, [setNewTransactionVisible, selectedTransactionIds]);
+
   return (
     <TransactionPageContext.Provider value={{ selectedTransactionIds, toggleSelectedTransaction }}>
       <Layout>
@@ -41,7 +52,7 @@ function TransactionPage() {
           </Center>
           <Right>
             <TransactionActionWrapper>
-              {selectedTransactionIds.length === 0 && (
+              {selectedTransactionIds.length === 0 && !newTransactionVisible && (
                 <ButtonWrapper>
                   <Link passHref href="/import">
                     <Button category="NEUTRAL" outline small>
@@ -49,27 +60,28 @@ function TransactionPage() {
                     </Button>
                   </Link>
 
-                  <Link passHref href="/transactions/new">
-                    <Button category="NEUTRAL" outline small>
-                      Manual Transaction
-                    </Button>
-                  </Link>
+                  {/* <Link passHref href="/transactions/new"> */}
+                  <Button onClick={toggleNewTransactionVisible} category="NEUTRAL" outline small>
+                    Manual Transaction
+                  </Button>
+                  {/* </Link> */}
                 </ButtonWrapper>
               )}
               <AnimatePresence>
-                {selectedTransactionIds.length === 1 && (
-                  <ActionSidebar
-                    initial="closed"
-                    animate={selectedTransactionIds.length === 1 ? 'open' : 'closed'}
-                    variants={variants}
-                    exit="closed"
-                  >
+                <ActionSidebar
+                  initial="closed"
+                  animate={selectedTransactionIds.length === 1 || newTransactionVisible ? 'open' : 'closed'}
+                  variants={variants}
+                  exit="closed"
+                >
+                  {selectedTransactionIds.length === 1 && (
                     <EditTransaction
                       transactionId={selectedTransactionIds[0]}
                       cancelEdit={() => setSelectedTransactionIds([])}
                     />
-                  </ActionSidebar>
-                )}
+                  )}
+                  {newTransactionVisible && <NewTransaction cancelCreateNew={() => setNewTransactionVisible(false)} />}
+                </ActionSidebar>
               </AnimatePresence>
               {selectedTransactionIds.length > 1 && (
                 <ButtonWrapper>

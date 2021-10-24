@@ -16,7 +16,10 @@ const NewTransactionWrapper = styled.div`
   width: 100%;
 `;
 
-const NewTransaction = () => {
+interface iNewTransactionProps {
+  cancelCreateNew?: () => void;
+}
+const NewTransaction = ({ cancelCreateNew }: iNewTransactionProps) => {
   const {
     register,
     handleSubmit,
@@ -107,6 +110,19 @@ const NewTransaction = () => {
         <Button category="ACTION" type="submit">
           Add
         </Button>
+        {cancelCreateNew && (
+          <Button
+            category="TRANSPARENT"
+            small
+            onClick={e => {
+              e.preventDefault();
+              cancelCreateNew();
+            }}
+            style={{ alignSelf: 'center' }}
+          >
+            Cancel
+          </Button>
+        )}
       </SimpleFormWrapper>
     </NewTransactionWrapper>
   );
