@@ -68,20 +68,24 @@ function TransactionPage() {
                 </ButtonWrapper>
               )}
               <AnimatePresence>
-                <ActionSidebar
-                  initial="closed"
-                  animate={selectedTransactionIds.length === 1 || newTransactionVisible ? 'open' : 'closed'}
-                  variants={variants}
-                  exit="closed"
-                >
-                  {selectedTransactionIds.length === 1 && (
-                    <EditTransaction
-                      transactionId={selectedTransactionIds[0]}
-                      cancelEdit={() => setSelectedTransactionIds([])}
-                    />
-                  )}
-                  {newTransactionVisible && <NewTransaction cancelCreateNew={() => setNewTransactionVisible(false)} />}
-                </ActionSidebar>
+                {(selectedTransactionIds.length === 1 || newTransactionVisible) && (
+                  <ActionSidebar
+                    initial="closed"
+                    animate={selectedTransactionIds.length === 1 || newTransactionVisible ? 'open' : 'closed'}
+                    variants={variants}
+                    exit="closed"
+                  >
+                    {selectedTransactionIds.length === 1 && (
+                      <EditTransaction
+                        transactionId={selectedTransactionIds[0]}
+                        cancelEdit={() => setSelectedTransactionIds([])}
+                      />
+                    )}
+                    {newTransactionVisible && (
+                      <NewTransaction cancelCreateNew={() => setNewTransactionVisible(false)} />
+                    )}
+                  </ActionSidebar>
+                )}
               </AnimatePresence>
               {selectedTransactionIds.length > 1 && (
                 <ButtonWrapper>
