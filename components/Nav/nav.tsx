@@ -108,7 +108,7 @@ const ProfileMenu = () => {
       )}
     >
       <AvatarWrapper onClick={() => setIsPopoverOpen(!isPopoverOpen)}>
-        <ProfileAvatar width="30" height="30" fill="hsl(210, 24%, 16%)" />
+        <ProfileAvatar width="30" height="30" fill="var(--grey-900)" />
       </AvatarWrapper>
     </Popover>
   );

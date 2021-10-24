@@ -12,9 +12,6 @@ const EditStackWrapper = styled.div`
   display: flex;
   flex-direction: column;
   max-width: 400px;
-  h4 {
-    font-weight: bold;
-  }
   p {
     margin-bottom: 1rem;
   }

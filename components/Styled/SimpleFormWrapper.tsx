@@ -6,7 +6,6 @@ export const SimpleFormWrapper = styled.form`
   flex-direction: column;
   margin: 0 auto;
   width: 100%;
-  min-width: 250px;
   label {
     color: var(--grey-800);
   }
