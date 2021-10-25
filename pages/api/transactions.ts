@@ -57,7 +57,6 @@ async function createManyTransactions(userId: number, { transactions, stack }: i
   });
 
   if (stack && stack !== 'Imported') {
-    // console.log(stack);
     await prisma.stack.update({
       where: { label_userId: { userId: userId, label: stack } },
       data: { amount: { increment: sum } },

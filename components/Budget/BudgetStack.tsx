@@ -48,7 +48,6 @@ const BudgetStack = ({ label, amount, id }) => {
         danger={parseFloat(inputAmount) < 0}
         onClick={e => e.stopPropagation()} // Prevent ListRow from being selected
         onBlur={e => {
-          console.log(prevAmount, e.target.value);
           let newAmt = e.target.value.replace(/\,/g, '');
           if (prevAmount !== newAmt) {
             newAmt = evaluate(newAmt);
