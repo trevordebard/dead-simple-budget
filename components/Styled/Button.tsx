@@ -1,4 +1,4 @@
-import { FC, HTMLProps, ReactNode } from 'react';
+import { forwardRef, HTMLProps, ReactNode } from 'react';
 import styled, { css } from 'styled-components';
 
 interface StyledButtonProps extends HTMLProps<HTMLButtonElement> {
@@ -9,7 +9,7 @@ interface StyledButtonProps extends HTMLProps<HTMLButtonElement> {
 const StyledButton = styled.button<StyledButtonProps>`
   background-color: var(--buttonBg);
   color: white;
-  border-radius: 45px;
+  border-radius: 5px;
   border: 0px;
   padding: 5px 20px;
   cursor: pointer;
@@ -38,6 +38,12 @@ const DangerButton = styled(StyledButton)`
   --buttonBg: var(--danger);
   --buttonHover: var(--dangerHover);
   --buttonSubtle: var(--dangerSubtle);
+`;
+
+const NeutralButton = styled(StyledButton)`
+  --buttonBg: var(--grey-800);
+  --buttonHover: var(--grey-800);
+  --buttonSubtle: var(--fontColorLight);
 `;
 
 interface iTransparentBtnProps {
@@ -79,6 +85,7 @@ interface iRadioBtnProps {
 }
 // This should be used with side by side buttons
 // where only one should be selected
+
 const RadioButton = styled(StyledButton)<iRadioBtnProps>`
   --buttonBg: ${props => (props.active ? 'var(--neutral)' : 'transparent')};
   --buttonHover: ${props => (props.active ? 'var(--neutral)' : 'var(--neutralHover)')};
@@ -105,21 +112,23 @@ const RadioGroup = styled.div`
 
 interface ButtonProps extends StyledButtonProps {
   loading?: boolean;
-  category: 'PRIMARY' | 'ACTION' | 'DANGER' | 'TRANSPARENT';
+  category: 'PRIMARY' | 'ACTION' | 'DANGER' | 'TRANSPARENT' | 'NEUTRAL';
   children: ReactNode;
 }
 
-const Button: FC<ButtonProps> = ({ category = 'PRIMARY', loading, children, ...props }: ButtonProps) => {
+const Button = forwardRef(({ category = 'PRIMARY', loading, children, ...props }: ButtonProps, ref) => {
   return (
     <>
-      <StyledButton as={getComponent(category)} {...props}>
+      <StyledButton as={getComponent(category)} {...props} ref={ref}>
         {loading && <p>Loading...</p>}
         {!loading && children}
       </StyledButton>
     </>
   );
-};
-function getComponent(category: 'PRIMARY' | 'ACTION' | 'DANGER' | 'TRANSPARENT') {
+});
+Button.displayName = 'Buton';
+
+function getComponent(category: 'PRIMARY' | 'ACTION' | 'DANGER' | 'TRANSPARENT' | 'NEUTRAL') {
   if (category === 'PRIMARY') {
     return StyledButton;
   }
@@ -131,6 +140,9 @@ function getComponent(category: 'PRIMARY' | 'ACTION' | 'DANGER' | 'TRANSPARENT')
   }
   if (category === 'TRANSPARENT') {
     return TransparentButton;
+  }
+  if (category === 'NEUTRAL') {
+    return NeutralButton;
   }
 }
 
