@@ -6,7 +6,6 @@ import prisma from 'lib/prismaClient';
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // TODO: redirect if user is not logged in
   const session = await getSession({ req });
-  console.log(req.body.publicToken);
   const data = await plaidClient.exchangePublicToken(req.query.publicToken as string);
 
   // add bank account and access token to db
