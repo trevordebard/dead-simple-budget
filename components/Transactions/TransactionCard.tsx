@@ -61,7 +61,7 @@ export function TransactionCard({ description, date, amount, stack = null, isAct
             //do nothing
           }}
         />
-        <div style={{ marginLeft: '15px' }}>
+        <div style={{ marginLeft: '15px', wordBreak: 'break-all' }}>
           <Description>{description}</Description>
           <SubtleContent>{stack ? <p>{stack}</p> : <StackDropdown inline defaultStack="Select Stack" />}</SubtleContent>
         </div>
