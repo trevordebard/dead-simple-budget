@@ -56,11 +56,12 @@ export function TransactionCard({ description, date, amount, stack = null, isAct
         <input
           type="checkbox"
           checked={isActive}
+          disabled={date.toLowerCase() === 'pending'}
           onChange={() => {
             //do nothing
           }}
         />
-        <div style={{ marginLeft: '15px' }}>
+        <div style={{ marginLeft: '15px', wordBreak: 'break-all' }}>
           <Description>{description}</Description>
           <SubtleContent>{stack ? <p>{stack}</p> : <StackDropdown inline defaultStack="Select Stack" />}</SubtleContent>
         </div>

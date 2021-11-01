@@ -22,15 +22,16 @@ model Stack {
 }
 
 model Transaction {
-  id          Int      @id @default(autoincrement())
-  description String
-  stack       String
-  amount      Int
-  type        String
-  userId      Int
-  date        DateTime
-  createdAt   DateTime @default(now()) @map("created_at")
-  user        user     @relation(fields: [userId], references: [id])
+  id                 Int      @id @default(autoincrement())
+  plaidTransactionId String?  @unique
+  description        String
+  stack              String
+  amount             Int
+  type               String
+  userId             Int
+  date               DateTime
+  createdAt          DateTime @default(now()) @map("created_at")
+  user               user     @relation(fields: [userId], references: [id])
 
 }
 

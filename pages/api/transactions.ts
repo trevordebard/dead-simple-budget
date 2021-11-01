@@ -5,8 +5,7 @@ import { convertPlaidTransactionToPrismaInput } from 'lib/importTransactions';
 import { dollarsToCents } from 'lib/money';
 import prisma from 'lib/prismaClient';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { Transaction as PlaidTransaction } from 'plaid';
-import { iCreateManyTransactionsInput, iDeleteTransactionsInput } from 'types/transactions';
+import { iDeleteTransactionsInput, iImportPlaidTransactionsInput } from 'types/transactions';
 
 export default async function transactionsHanler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
@@ -43,19 +42,27 @@ async function getTransactions(userId: number) {
   return await prisma.transaction.findMany({ where: { userId } });
 }
 
-async function createManyTransactions(userId: number, transactions: PlaidTransaction[]) {
+async function createManyTransactions(userId: number, { transactions, stack }: iImportPlaidTransactionsInput) {
   let sum = 0;
   const input = transactions.map(transaction => {
     // deposits are negative in plaid and withdrawals are positive, so this will reverse that while also summing in cents
     sum += dollarsToCents(transaction.amount * -1);
-    return convertPlaidTransactionToPrismaInput(transaction, userId);
+    return convertPlaidTransactionToPrismaInput(transaction, userId, stack);
   });
+  const response = await prisma.transaction.createMany({ data: input });
 
   const updatedUser = await prisma.user.update({
     where: { id: userId },
     data: { total: { increment: sum } },
   });
+
+  if (stack && stack !== 'Imported') {
+    await prisma.stack.update({
+      where: { label_userId: { userId: userId, label: stack } },
+      data: { amount: { increment: sum } },
+    });
+  }
+
   await recalcToBeBudgeted(updatedUser);
-  const response = await prisma.transaction.createMany({ data: input });
   return response;
 }

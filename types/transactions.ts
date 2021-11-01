@@ -1,3 +1,5 @@
+import { Transaction as PlaidTransaction } from 'plaid';
+
 export interface iEditTransactionInput {
   description?: string;
   stack?: string;
@@ -14,10 +16,11 @@ export interface iCreateTransactionInput {
   date: string;
 }
 
-export interface iCreateManyTransactionsInput {
-  transactions: iCreateTransactionInput[];
-}
-
 export interface iDeleteTransactionsInput {
   transactionIds: number[];
+}
+
+export interface iImportPlaidTransactionsInput {
+  transactions: PlaidTransaction[];
+  stack?: string; // preferred stack for all imported transactions
 }

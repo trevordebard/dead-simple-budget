@@ -7,30 +7,30 @@ import { getUniquePlaidTransactions } from 'lib/importTransactions';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const session = await getSession({ req });
+  const dateRange = parseInt(req.query.dateRange as string); // Time in days to look back
+
   const user = await prismaClient.user.findUnique({
     where: { email: session.user.email },
     include: { bankAccounts: true },
   });
 
-  const latestTransaction = await prismaClient.transaction.findMany({
-    where: { user: { email: user.email } },
-    orderBy: { date: 'desc' },
-    take: 1,
-  });
-
   const plaidAccessToken = user.bankAccounts[0].plaidAccessToken;
 
   // Only fetch transactions on or after the day of the most recent transaction already saved
-  let start = DateTime.fromJSDate(latestTransaction[0].date).toFormat('yyyy-MM-dd');
-  let end = DateTime.now().toFormat('yyyy-MM-dd');
+  let start = DateTime.now().startOf('day').minus({ days: dateRange });
+  let end = DateTime.now().startOf('day').toFormat('yyyy-MM-dd');
 
-  const plaidResponse = await plaidClient.getTransactions(plaidAccessToken, start, end, {
+  const plaidResponse = await plaidClient.getTransactions(plaidAccessToken, start.toFormat('yyyy-MM-dd'), end, {
     account_ids: user.bankAccounts[0].plaidAccountIds,
+    count: 500,
   });
   const plaidTransactions = plaidResponse.transactions;
 
+  // TODO: if the plaidTransactions length is > 500, the query needs to be broken up into smaller date chunks to be able to get all of the transactions
+  // plaid lemits the getTransactions request to have a max of 500.
+
   let existingTransactions = await prismaClient.transaction.findMany({
-    where: { date: { gte: latestTransaction[0].date }, userId: user.id },
+    where: { date: { gte: start.toJSDate() }, plaidTransactionId: { not: null }, userId: user.id },
   });
 
   const uniqueTransactions = getUniquePlaidTransactions(plaidTransactions, existingTransactions);

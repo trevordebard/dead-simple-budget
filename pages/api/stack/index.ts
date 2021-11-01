@@ -16,7 +16,6 @@ export default async function stackHandler(req: NextApiRequest, res: NextApiResp
       } catch (e) {
         stackInput = req.body;
       }
-      console.log(stackInput);
       const addResponse = await createStack(user.id, stackInput);
       res.status(200).json(addResponse);
       break;

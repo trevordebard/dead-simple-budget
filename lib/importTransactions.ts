@@ -9,20 +9,15 @@ export function getUniquePlaidTransactions(
 ): plaid.Transaction[] {
   const uniquePlaidTransactions = plaidTransactions.filter(
     newTrasaction =>
-      !existingTransactions.some(
-        existing =>
-          // TODO: we should probably just store the plaid item id and see if already exists! This will help if the user edits the description
-          // checking absolute value in case user edits transaction to be a deposit/withdrawal
-          Math.abs(dollarsToCents(newTrasaction.amount)) === Math.abs(existing.amount) &&
-          newTrasaction.name === existing.description
-      )
+      !existingTransactions.some(existing => existing.plaidTransactionId === newTrasaction.transaction_id)
   );
   return uniquePlaidTransactions;
 }
 
 export function convertPlaidTransactionToPrismaInput(
   transaction: plaid.Transaction,
-  userId: number
+  userId: number,
+  stack: string = 'Imported'
 ): Prisma.TransactionCreateManyInput {
   const [year, month, day] = transaction.date.split('-');
 
@@ -33,8 +28,9 @@ export function convertPlaidTransactionToPrismaInput(
     amount,
     description: transaction.name,
     date: DateTime.fromFormat(transaction.date, 'yyyy-MM-dd').toJSDate(),
-    stack: 'Imported',
+    stack,
     type: amount < 0 ? 'withdrawal' : 'deposit', // TODO:
+    plaidTransactionId: transaction.transaction_id,
     userId: userId,
   };
 }
