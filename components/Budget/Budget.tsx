@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import BudgetStack from './BudgetStack';
 import { Button, Input } from 'components/Styled';
@@ -7,6 +7,8 @@ import { useAlert } from 'components/Alert';
 import { useSession } from 'next-auth/client';
 import { useUpdateUserTotal, useStacks, useUser, useCreateStack } from 'lib/hooks';
 import { centsToDollars, dollarsToCents } from 'lib/money';
+import { Reorder } from 'framer-motion';
+import { BudgetContext } from 'pages/budget';
 
 const ToplineBudget = styled.div`
   text-align: center;
@@ -79,7 +81,7 @@ function Budget() {
           <SubText> to be budgeted</SubText>
         </h5>
       </ToplineBudget>
-      <Stacks stacks={stacks} budgetId={1} />
+      <Stacks data={stacks} />
       <NewStackWrapper>
         <NewStack />
       </NewStackWrapper>
@@ -88,21 +90,42 @@ function Budget() {
   );
 }
 
-const Stacks = ({ stacks, budgetId }) => {
-  if (stacks) {
-    return stacks.map(item => (
-      <div key={item.id}>
-        <BudgetStack id={item.id} label={item.label} amount={item.amount} />
-      </div>
-    ));
+const Stacks = ({ data }) => {
+  const budgetContext = useContext(BudgetContext);
+  const [stacks, setStacks] = useState(data);
+
+  useEffect(() => {
+    if (data) {
+      setStacks(data);
+    }
+  }, [data, setStacks]);
+
+  if (!stacks) {
+    return <p>loading</p>;
   }
-  return <></>;
+  return (
+    <Reorder.Group
+      axis="y"
+      values={stacks}
+      onReorder={newOrder => {
+        budgetContext.setStackInFocus(null);
+        setStacks(newOrder);
+      }}
+    >
+      {stacks.map(item => (
+        <Reorder.Item key={item.id} value={item}>
+          <BudgetStack id={item.id} label={item.label} amount={item.amount} />
+        </Reorder.Item>
+      ))}
+    </Reorder.Group>
+  );
 };
 
 const NewStack = () => {
   const { addAlert } = useAlert();
   const { mutate: createStack } = useCreateStack();
   const [newStack, setNewStack] = useState<string>('');
+
   const handleAddStack = (stackName: string) => {
     if (!newStack || newStack.trim() === '') {
       addAlert({ message: 'Stack name cannot be empty.', type: 'error' });
