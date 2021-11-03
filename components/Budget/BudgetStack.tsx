@@ -5,6 +5,7 @@ import { ListRow } from '../Styled';
 import { BudgetContext } from 'pages/budget';
 import { useUpdateStack } from 'lib/hooks';
 import { centsToDollars, dollarsToCents } from 'lib/money';
+import { ReorderIcon } from 'components/Shared/ReorderIcon';
 
 const StackInput = styled.input<{ danger: boolean }>`
   text-align: right;
@@ -19,7 +20,7 @@ const StackInput = styled.input<{ danger: boolean }>`
   }
 `;
 
-const BudgetStack = ({ label, amount, id }) => {
+const BudgetStack = ({ label, amount, id, dragControls = null }) => {
   const [prevAmount, setPrevAmount] = useState<string>(amount);
   const [inputAmount, setInputAmount] = useState(centsToDollars(amount));
   const { mutate: updateStack } = useUpdateStack();
@@ -37,7 +38,10 @@ const BudgetStack = ({ label, amount, id }) => {
 
   return (
     <ListRow selected={id === budgetContext.stackInFocus} onClick={handleRowClick}>
-      <p>{label} </p>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        {dragControls && <ReorderIcon dragControls={dragControls} />}
+        <p>{label} </p>
+      </div>
       <StackInput
         name={label}
         value={inputAmount}

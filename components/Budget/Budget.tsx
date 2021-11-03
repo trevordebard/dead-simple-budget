@@ -7,7 +7,7 @@ import { useAlert } from 'components/Alert';
 import { useSession } from 'next-auth/client';
 import { useUpdateUserTotal, useStacks, useUser, useCreateStack } from 'lib/hooks';
 import { centsToDollars, dollarsToCents } from 'lib/money';
-import { Reorder } from 'framer-motion';
+import { Reorder, useDragControls } from 'framer-motion';
 import { BudgetContext } from 'pages/budget';
 
 const ToplineBudget = styled.div`
@@ -113,11 +113,18 @@ const Stacks = ({ data }) => {
       }}
     >
       {stacks.map(item => (
-        <Reorder.Item key={item.id} value={item}>
-          <BudgetStack id={item.id} label={item.label} amount={item.amount} />
-        </Reorder.Item>
+        <DraggableBudgetStack key={item.id} item={item} />
       ))}
     </Reorder.Group>
+  );
+};
+
+const DraggableBudgetStack = ({ item }) => {
+  const controls = useDragControls();
+  return (
+    <Reorder.Item id={item} value={item} dragListener={false} dragControls={controls}>
+      <BudgetStack id={item.id} label={item.label} amount={item.amount} dragControls={controls} />
+    </Reorder.Item>
   );
 };
 
