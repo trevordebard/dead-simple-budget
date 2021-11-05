@@ -1,14 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import BudgetStack from './BudgetStack';
-import { Button, Input } from 'components/Styled';
 import EditableText from 'components/Shared/EditableText';
-import { useAlert } from 'components/Alert';
 import { useSession } from 'next-auth/client';
 import { useUpdateUserTotal, useStacks, useUser, useCreateStack } from 'lib/hooks';
 import { centsToDollars, dollarsToCents } from 'lib/money';
-import { Reorder, useDragControls } from 'framer-motion';
-import { BudgetContext } from 'pages/budget';
+import { DraggableStacks, NewStack } from 'components/Stack';
 
 const ToplineBudget = styled.div`
   text-align: center;
@@ -51,6 +47,7 @@ function Budget() {
   const { mutate: updateUserTotal } = useUpdateUserTotal();
   const [session] = useSession();
   const [editTotalVisible, setEditTotalVisible] = useState(false);
+
   if (isLoadingUser || isLoadingStacks) {
     return <span>loading...</span>;
   }
@@ -81,7 +78,7 @@ function Budget() {
           <SubText> to be budgeted</SubText>
         </h5>
       </ToplineBudget>
-      <Stacks data={stacks} />
+      <DraggableStacks stacks={stacks} />
       <NewStackWrapper>
         <NewStack />
       </NewStackWrapper>
@@ -90,70 +87,4 @@ function Budget() {
   );
 }
 
-const Stacks = ({ data }) => {
-  const budgetContext = useContext(BudgetContext);
-  const [stacks, setStacks] = useState(data);
-
-  useEffect(() => {
-    if (data) {
-      setStacks(data);
-    }
-  }, [data, setStacks]);
-
-  if (!stacks) {
-    return <p>loading</p>;
-  }
-  return (
-    <Reorder.Group
-      axis="y"
-      values={stacks}
-      onReorder={newOrder => {
-        budgetContext.setStackInFocus(null);
-        setStacks(newOrder);
-      }}
-    >
-      {stacks.map(item => (
-        <DraggableBudgetStack key={item.id} item={item} />
-      ))}
-    </Reorder.Group>
-  );
-};
-
-const DraggableBudgetStack = ({ item }) => {
-  const controls = useDragControls();
-  return (
-    <Reorder.Item id={item} value={item} dragListener={false} dragControls={controls}>
-      <BudgetStack id={item.id} label={item.label} amount={item.amount} dragControls={controls} />
-    </Reorder.Item>
-  );
-};
-
-const NewStack = () => {
-  const { addAlert } = useAlert();
-  const { mutate: createStack } = useCreateStack();
-  const [newStack, setNewStack] = useState<string>('');
-
-  const handleAddStack = (stackName: string) => {
-    if (!newStack || newStack.trim() === '') {
-      addAlert({ message: 'Stack name cannot be empty.', type: 'error' });
-    } else {
-      createStack({ label: newStack });
-      setNewStack('');
-    }
-  };
-  return (
-    <>
-      <Input
-        name="newStack"
-        placeholder="Stack Name"
-        autoComplete="off"
-        value={newStack}
-        onChange={e => setNewStack(e.target.value)}
-      />
-      <Button category="ACTION" name="addStack" onClick={() => handleAddStack(newStack)}>
-        Add Stack
-      </Button>
-    </>
-  );
-};
 export default Budget;
