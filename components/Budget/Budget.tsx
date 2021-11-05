@@ -87,4 +87,4 @@ function Budget() {
   );
 }
 
-export default Budget;
+export { Budget };

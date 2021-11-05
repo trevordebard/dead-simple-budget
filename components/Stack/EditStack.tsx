@@ -16,7 +16,7 @@ const EditStackWrapper = styled.div`
     margin-bottom: 1rem;
   }
 `;
-const EditBudgetStack = ({ id }: { id: number }) => {
+const EditStack = ({ id }: { id: number }) => {
   const budgetContext = useContext(BudgetContext);
   const { stack, isLoading } = useStack(id);
   const { mutate: deleteStack } = useDeleteStack();
@@ -43,4 +43,4 @@ const EditBudgetStack = ({ id }: { id: number }) => {
   );
 };
 
-export default EditBudgetStack;
+export { EditStack };

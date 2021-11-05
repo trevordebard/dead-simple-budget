@@ -1,5 +1,6 @@
 import { getSession } from 'next-auth/client';
-import { Budget, EditBudgetStack } from 'components/Budget';
+import { Budget } from 'components/Budget';
+import { EditStack } from 'components/Stack';
 import Layout, { Main, Left, Center, Right } from 'components/Shared/Layout';
 import { TabSidebar, ActionSidebar } from 'components/Sidebar';
 import { Nav } from 'components/Nav';
@@ -40,7 +41,7 @@ const BudgetPage = () => {
                   <StickyWrapper top="1rem">
                     {' '}
                     {/* Will only work for mobile */}
-                    <EditBudgetStack id={stackId} />
+                    <EditStack id={stackId} />
                   </StickyWrapper>
                 </ActionSidebar>
               )}
