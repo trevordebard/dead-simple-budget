@@ -1,3 +1,4 @@
+import { StackCategory } from '.prisma/client';
 import { getUser } from 'lib/api-helpers/getUser';
 import prisma from 'lib/prismaClient';
 import { NextApiRequest, NextApiResponse } from 'next';
@@ -30,16 +31,22 @@ async function getStacks(userId: number, options: iGetStacksOptions = null) {
 
 // TODO: optimizations
 async function getStacksByCategory(userId: number): Promise<iCategorizedStack[]> {
-  const categories = await prisma.stackCategory.findMany({ where: { userId } });
+  const miscellaneous: StackCategory = { category: 'Miscellaneous', stackOrder: [], id: null, userId };
+
+  let categories: StackCategory[] = await prisma.stackCategory.findMany({ where: { userId } });
+  categories = [...categories, miscellaneous];
+
   let categorizedStacks = await Promise.all(
     categories.map(async cat => {
       const stacks = await prisma.stack.findMany({ where: { userId, stackCategoryId: cat.id } });
+
       stacks.sort(function (a, b) {
         return cat.stackOrder.indexOf(a.id) - cat.stackOrder.indexOf(b.id);
       });
       return {
         category: cat.category,
         stacks: stacks,
+        id: cat.id,
       };
     })
   );

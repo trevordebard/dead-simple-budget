@@ -16,6 +16,7 @@ export interface iGetStacksOptions {
 }
 
 export interface iCategorizedStack {
+  id: number;
   category: string;
   stacks: Stack[];
 }

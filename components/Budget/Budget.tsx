@@ -4,7 +4,7 @@ import EditableText from 'components/Shared/EditableText';
 import { useSession } from 'next-auth/client';
 import { useUpdateUserTotal, useStacks, useUser, useCreateStack } from 'lib/hooks';
 import { centsToDollars, dollarsToCents } from 'lib/money';
-import { DraggableStacks, NewStack } from 'components/Stack';
+import { CategorizedStacks, NewStack } from 'components/Stack';
 
 const ToplineBudget = styled.div`
   text-align: center;
@@ -78,7 +78,7 @@ function Budget() {
           <SubText> to be budgeted</SubText>
         </h5>
       </ToplineBudget>
-      <DraggableStacks stacks={stacks} />
+      <CategorizedStacks stacks={stacks} />
       <NewStackWrapper>
         <NewStack />
       </NewStackWrapper>
