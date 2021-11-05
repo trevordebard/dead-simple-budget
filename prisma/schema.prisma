@@ -8,14 +8,24 @@ datasource db {
 
 }
 
-model Stack {
-  id         Int      @id @default(autoincrement())
-  label      String
-  category   String   @default("Not Categorized")
-  amount     Int      @default(0)
-  created_at DateTime @default(now())
+model StackCategory {
+  id         Int     @id @default(autoincrement())
+  category   String
+  stackOrder Int[]
+  Stack      Stack[]
   userId     Int
-  user       user?    @relation(fields: [userId], references: [id])
+  user       user?   @relation(fields: [userId], references: [id])
+}
+
+model Stack {
+  id              Int            @id @default(autoincrement())
+  label           String
+  stackCategoryId Int?           @map("stack_category_id")
+  amount          Int            @default(0)
+  created_at      DateTime       @default(now())
+  userId          Int
+  user            user?          @relation(fields: [userId], references: [id])
+  category        StackCategory? @relation(fields: [stackCategoryId], references: [id])
 
   @@unique([label, userId])
 }
@@ -31,7 +41,6 @@ model Transaction {
   date               DateTime
   createdAt          DateTime @default(now()) @map("created_at")
   user               user     @relation(fields: [userId], references: [id])
-
 }
 
 model account {
@@ -79,6 +88,7 @@ model user {
   transactions  Transaction[]
   bankAccounts  BankAccout[]
 
+  StackCategory StackCategory[]
   @@map("users")
 }
 
