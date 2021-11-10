@@ -8,6 +8,7 @@ export interface iCreateStackInput {
 export interface iUpdateStackInput {
   id: number;
   label: string;
+  stackCategoryId?: number;
   amount?: number;
 }
 
