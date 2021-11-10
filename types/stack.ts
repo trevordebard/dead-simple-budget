@@ -21,3 +21,8 @@ export interface iCategorizedStack {
   category: string;
   stacks: Stack[];
 }
+
+export interface iUpdateStackCategoryInput {
+  category?: string;
+  stackOrder?: number[];
+}

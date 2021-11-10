@@ -14,13 +14,13 @@ export default async function stackCategoriesHandler(req: NextApiRequest, res: N
       const stackCategories = await getStackCategories(user.id);
       res.status(200).json(stackCategories);
       break;
+
     default:
-      res.setHeader('Allow', ['GET']);
+      res.setHeader('Allow', ['GET', 'PUT']);
       res.status(405).end(`Method ${method} Not Allowed`);
   }
 }
 
-// TODO: optimizations
 async function getStackCategories(userId: number): Promise<StackCategory[]> {
   return await prisma.stackCategory.findMany({ where: { userId } });
 }
