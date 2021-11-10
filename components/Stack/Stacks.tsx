@@ -1,9 +1,9 @@
-import { useContext, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Reorder } from 'framer-motion';
-import { BudgetContext } from 'pages/budget';
 import { Stack } from '.prisma/client';
 import { DraggableStackItem } from './StackItem';
 import { useCategorizedStacks } from 'lib/hooks/stack/useCategorizedStacks';
+import { useUpdateStackCategory } from 'lib/hooks/stack/useUpdateStackCategory';
 
 const CategorizedStacks = ({ stacks: data }) => {
   const { data: categorized, isLoading } = useCategorizedStacks();
@@ -14,7 +14,14 @@ const CategorizedStacks = ({ stacks: data }) => {
   return (
     <div>
       {categorized.map(stackCategory => {
-        return <StackGroup key={stackCategory.id} label={stackCategory.category} stacks={stackCategory.stacks} />;
+        return (
+          <StackCategory
+            key={stackCategory.id}
+            id={stackCategory.id}
+            label={stackCategory.category}
+            stacks={stackCategory.stacks}
+          />
+        );
       })}
     </div>
   );
@@ -22,12 +29,13 @@ const CategorizedStacks = ({ stacks: data }) => {
 
 export { CategorizedStacks };
 
-interface iStackGroupProps {
+interface iStackCategoryProps {
+  id: number;
   label: string;
   stacks: Stack[];
 }
-function StackGroup({ label, stacks: defaultStacks }: iStackGroupProps) {
-  const budgetContext = useContext(BudgetContext);
+function StackCategory({ label, stacks: defaultStacks, id }: iStackCategoryProps) {
+  const { mutate: updateStackCategory } = useUpdateStackCategory();
   const [stacks, setStacks] = useState<Stack[]>(defaultStacks);
 
   useEffect(() => {
@@ -44,7 +52,7 @@ function StackGroup({ label, stacks: defaultStacks }: iStackGroupProps) {
         axis="y"
         values={stacks}
         onReorder={newOrder => {
-          budgetContext.setStackInFocus(null);
+          updateStackCategory({ id, stackOrder: newOrder.map(stack => stack.id) });
           setStacks(newOrder);
         }}
       >

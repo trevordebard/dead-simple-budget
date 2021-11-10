@@ -31,7 +31,10 @@ async function getStacks(userId: number, options: iGetStacksOptions = null) {
 
 // TODO: optimizations
 async function getStacksByCategory(userId: number): Promise<iCategorizedStack[]> {
-  const categories: StackCategory[] = await prisma.stackCategory.findMany({ where: { userId } });
+  const categories: StackCategory[] = await prisma.stackCategory.findMany({
+    where: { userId },
+    orderBy: { id: 'asc' },
+  });
 
   const categorizedStacks = await Promise.all(
     categories.map(async cat => {

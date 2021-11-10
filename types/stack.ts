@@ -23,6 +23,7 @@ export interface iCategorizedStack {
 }
 
 export interface iUpdateStackCategoryInput {
+  id: number;
   category?: string;
   stackOrder?: number[];
 }
