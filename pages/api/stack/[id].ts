@@ -44,6 +44,11 @@ export default async function stackHandler(req: NextApiRequest, res: NextApiResp
 }
 
 async function updateStack(stack: iUpdateStackInput, stackId: number) {
+  const existingStack = await prisma.stack.findUnique({ where: { id: stackId } });
+
+  if (stack.stackCategoryId && existingStack.stackCategoryId !== stack.stackCategoryId) {
+    await handleCategoryChanged(stack, existingStack.stackCategoryId);
+  }
   return await prisma.stack.update({
     data: { ...stack },
     where: { id: stackId },
@@ -51,8 +56,29 @@ async function updateStack(stack: iUpdateStackInput, stackId: number) {
 }
 
 async function deleteStack(stackId) {
-  return await prisma.stack.delete({ where: { id: stackId } });
+  const deletedStack = await prisma.stack.delete({ where: { id: stackId } });
+  await removeStackFromCategory(stackId, deletedStack.stackCategoryId);
+  return deletedStack;
 }
 async function getStackById(stackId) {
   return await prisma.stack.findUnique({ where: { id: stackId } });
+}
+
+async function handleCategoryChanged(stack: iUpdateStackInput, oldCategoryId: number) {
+  await removeStackFromCategory(stack.id, oldCategoryId);
+
+  // Append stack to the new category
+  return await prisma.stackCategory.update({
+    where: { id: stack.stackCategoryId },
+    data: { stackOrder: { push: stack.id } },
+  });
+}
+
+// Removes stack from stack category order
+async function removeStackFromCategory(stackId: number, categoryId: number) {
+  const oldStackCategory = await prisma.stackCategory.findUnique({ where: { id: categoryId } });
+
+  // Remove stack from previous stack category's ordering
+  const removedOrder = oldStackCategory.stackOrder.filter(cat => cat !== stackId);
+  return await prisma.stackCategory.update({ where: { id: categoryId }, data: { stackOrder: removedOrder } });
 }

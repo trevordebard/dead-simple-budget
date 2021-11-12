@@ -65,14 +65,17 @@ const EditStack = ({ id }: { id: number }) => {
           ))}
       </select>
 
-      <Button category="ACTION">Save</Button>
+      <Button type="submit" category="ACTION">
+        Save
+      </Button>
       <hr />
       <Button
         outline
         small
         category="DANGER"
-        onClick={() => {
-          deleteStack({ stackId: id });
+        onClick={e => {
+          e.preventDefault();
+          deleteStack({ stackId: id }, { onSuccess: () => queryClient.invalidateQueries('fetch-stacks-by-category') });
           budgetContext.setStackInFocus(null);
         }}
       >
