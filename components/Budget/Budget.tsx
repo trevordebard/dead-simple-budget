@@ -12,6 +12,7 @@ import { useQueryClient } from 'react-query';
 
 const ToplineBudget = styled.div`
   text-align: center;
+  margin: 10px 0;
 `;
 
 const BudgetWrapper = styled.div`
@@ -61,7 +62,6 @@ function Budget() {
   return (
     <BudgetWrapper>
       <ToplineBudget>
-        <h1>Budget</h1>
         <h5>
           <Amount editable danger={user?.total < 0} onClick={() => setEditTotalVisible(!editTotalVisible)}>
             <EditableText
@@ -97,7 +97,7 @@ const AddCategoryWrapper = styled.div`
   color: var(--grey-800);
   border-bottom: 1px dashed var(--grey-200);
   border-top: 1px dashed var(--grey-200);
-  padding: 10px;
+  padding: 10px 0;
   margin: 10px 0;
 `;
 function AddCategory() {

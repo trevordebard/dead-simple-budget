@@ -127,6 +127,7 @@ const ButtonWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
+  margin: 10px 0;
 
   @media only screen and (max-width: ${smBreakpoint}) {
     flex-direction: row;

@@ -39,8 +39,6 @@ const BudgetPage = () => {
                   exit="closed"
                 >
                   <StickyWrapper top="1rem">
-                    {' '}
-                    {/* Will only work for mobile */}
                     <EditStack id={stackId} />
                   </StickyWrapper>
                 </ActionSidebar>
