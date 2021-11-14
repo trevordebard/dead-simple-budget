@@ -1,11 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Reorder } from 'framer-motion';
 import { Stack } from '.prisma/client';
 import { DraggableStackItem } from './StackItem';
 import { useCategorizedStacks } from 'lib/hooks/stack/useCategorizedStacks';
 import { useUpdateStackCategory } from 'lib/hooks/stack/useUpdateStackCategory';
+import { BudgetContext } from 'pages/budget';
 
-const CategorizedStacks = ({ stacks: data }) => {
+const CategorizedStacks = () => {
   const { data: categorized, isLoading } = useCategorizedStacks();
 
   if (isLoading) {
@@ -37,6 +38,15 @@ interface iStackCategoryProps {
 function StackCategory({ label, stacks: defaultStacks, id }: iStackCategoryProps) {
   const { mutate: updateStackCategory } = useUpdateStackCategory();
   const [stacks, setStacks] = useState<Stack[]>(defaultStacks);
+  const budgetContext = useContext(BudgetContext);
+
+  const handleCategoryClick = () => {
+    if (budgetContext.categoryInFocus === id) {
+      budgetContext.setCategoryInFocus(null);
+    } else {
+      budgetContext.setCategoryInFocus(id);
+    }
+  };
 
   useEffect(() => {
     setStacks(defaultStacks);
@@ -47,7 +57,9 @@ function StackCategory({ label, stacks: defaultStacks, id }: iStackCategoryProps
   }
   return (
     <div>
-      <p>{label}</p>
+      <p onClick={handleCategoryClick} style={{ cursor: 'pointer' }}>
+        {label}
+      </p>
       <Reorder.Group
         axis="y"
         values={stacks}
