@@ -27,3 +27,7 @@ export interface iUpdateStackCategoryInput {
   category?: string;
   stackOrder?: number[];
 }
+
+export interface iCreateStackCategoryInput {
+  category: string;
+}

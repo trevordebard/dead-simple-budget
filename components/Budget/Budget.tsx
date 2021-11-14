@@ -5,10 +5,13 @@ import { useSession } from 'next-auth/client';
 import { useUpdateUserTotal, useStacks, useUser, useCreateStack } from 'lib/hooks';
 import { centsToDollars, dollarsToCents } from 'lib/money';
 import { CategorizedStacks, NewStack } from 'components/Stack';
+import { PlusCircleIcon } from '@heroicons/react/outline';
+import { Button, Input } from 'components/Styled';
+import { useCreateStackCategory } from 'lib/hooks/stack/useCreateStackCategory';
+import { useQueryClient } from 'react-query';
 
 const ToplineBudget = styled.div`
   text-align: center;
-  margin-bottom: 30px;
 `;
 
 const BudgetWrapper = styled.div`
@@ -78,12 +81,64 @@ function Budget() {
           <SubText> to be budgeted</SubText>
         </h5>
       </ToplineBudget>
+      <AddCategory />
       <CategorizedStacks stacks={stacks} />
       <NewStackWrapper>
         <NewStack />
       </NewStackWrapper>
       <br />
     </BudgetWrapper>
+  );
+}
+
+const AddCategoryWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  color: var(--grey-800);
+  border-bottom: 1px dashed var(--grey-200);
+  border-top: 1px dashed var(--grey-200);
+  padding: 10px;
+  margin: 10px 0;
+`;
+function AddCategory() {
+  const queryClient = useQueryClient();
+
+  const [isInputVisibile, setIsInputVisible] = useState<boolean>(false);
+  const [newCategory, setNewCategory] = useState<string>('');
+  const { mutate: createStackCategory } = useCreateStackCategory();
+  const handleCreate = () => {
+    createStackCategory(
+      { category: newCategory },
+      { onSuccess: () => queryClient.invalidateQueries('fetch-stacks-by-category') }
+    );
+    setNewCategory('');
+    setIsInputVisible(false);
+  };
+  return (
+    <AddCategoryWrapper>
+      <div
+        style={{ display: 'flex', gap: '5px', cursor: 'pointer' }}
+        onClick={() => setIsInputVisible(!isInputVisibile)}
+      >
+        <PlusCircleIcon width="20" />
+        <p>Category</p>
+      </div>
+      {isInputVisibile && (
+        <div style={{ display: 'flex', gap: '5px', padding: '10px 0' }}>
+          <Input
+            name="newStack"
+            placeholder="Category Name"
+            autoComplete="off"
+            style={{ width: '100%' }}
+            value={newCategory}
+            onChange={e => setNewCategory(e.target.value)}
+          />
+          <Button category="ACTION" name="addStack" onClick={handleCreate}>
+            Add
+          </Button>
+        </div>
+      )}
+    </AddCategoryWrapper>
   );
 }
 
