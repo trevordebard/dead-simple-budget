@@ -8,6 +8,7 @@ export function useCreateStack() {
   const queryClient = useQueryClient();
   const { addAlert } = useAlert();
   return useMutation('create-stack-category', createStack, {
+    onSuccess: () => queryClient.invalidateQueries('fetch-stacks-by-category'),
     onError: e => {
       addAlert({ message: 'There was a problem adding stack', type: 'error' });
     },

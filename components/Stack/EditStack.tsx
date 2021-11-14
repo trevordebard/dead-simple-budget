@@ -88,6 +88,4 @@ const EditStack = ({ id }: { id: number }) => {
   );
 };
 
-EditStack.whyDidYouRender = true;
-
 export { EditStack };

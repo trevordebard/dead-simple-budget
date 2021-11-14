@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import EditableText from 'components/Shared/EditableText';
 import { useSession } from 'next-auth/client';
-import { useUpdateUserTotal, useStacks, useUser, useCreateStack } from 'lib/hooks';
+import { useUpdateUserTotal, useStacks, useUser } from 'lib/hooks';
 import { centsToDollars, dollarsToCents } from 'lib/money';
 import { CategorizedStacks, NewStack } from 'components/Stack';
 import { PlusCircleIcon } from '@heroicons/react/outline';

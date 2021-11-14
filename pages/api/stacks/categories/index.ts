@@ -23,8 +23,14 @@ export default async function stackCategoriesHandler(req: NextApiRequest, res: N
       } catch (e) {
         categoryInput = req.body;
       }
-      const stackCategory = await createStackCategory(user.id, categoryInput);
-      res.status(500).json(stackCategory);
+      let stackCategory;
+      try {
+        stackCategory = await createStackCategory(user.id, categoryInput);
+      } catch (e) {
+        console.error(e);
+        return res.status(500).json({ error: true, message: 'An unknown error occurred' });
+      }
+      res.status(200).json(stackCategory);
       break;
     default:
       res.setHeader('Allow', ['GET', 'POST']);

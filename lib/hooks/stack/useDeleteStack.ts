@@ -6,9 +6,9 @@ import { useAlert } from 'components/Alert';
 export function useDeleteStack() {
   const queryClient = useQueryClient();
   const { addAlert } = useAlert();
-  return useMutation('update-stack', deleteStack, {
+  return useMutation('delete-stack', deleteStack, {
     onSuccess: () => {
-      queryClient.invalidateQueries('fetch-stacks');
+      queryClient.invalidateQueries('fetch-stacks-by-category');
     },
     onError: e => {
       addAlert({ message: 'There was a problem deleting stack', type: 'error' });
