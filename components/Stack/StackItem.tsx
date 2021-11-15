@@ -5,6 +5,8 @@ import { ListRow } from '../Styled';
 import { BudgetContext } from 'pages/budget';
 import { useUpdateStack } from 'lib/hooks';
 import { centsToDollars, dollarsToCents } from 'lib/money';
+import { ReorderIcon } from 'components/Shared/ReorderIcon';
+import { Reorder, useDragControls } from 'framer-motion';
 
 const StackInput = styled.input<{ danger: boolean }>`
   text-align: right;
@@ -19,7 +21,7 @@ const StackInput = styled.input<{ danger: boolean }>`
   }
 `;
 
-const BudgetStack = ({ label, amount, id }) => {
+const EditableStackItem = ({ label, amount, id, dragControls = null }) => {
   const [prevAmount, setPrevAmount] = useState<string>(amount);
   const [inputAmount, setInputAmount] = useState(centsToDollars(amount));
   const { mutate: updateStack } = useUpdateStack();
@@ -37,7 +39,10 @@ const BudgetStack = ({ label, amount, id }) => {
 
   return (
     <ListRow selected={id === budgetContext.stackInFocus} onClick={handleRowClick}>
-      <p>{label} </p>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        {dragControls && <ReorderIcon dragControls={dragControls} />}
+        <p>{label} </p>
+      </div>
       <StackInput
         name={label}
         value={inputAmount}
@@ -59,4 +64,15 @@ const BudgetStack = ({ label, amount, id }) => {
     </ListRow>
   );
 };
-export default memo(BudgetStack);
+
+// Must be used within a reorder group
+const DraggableStackItem = ({ item }) => {
+  const controls = useDragControls();
+  return (
+    <Reorder.Item id={item} value={item} dragListener={false} dragControls={controls}>
+      <EditableStackItem id={item.id} label={item.label} amount={item.amount} dragControls={controls} />
+    </Reorder.Item>
+  );
+};
+
+export { DraggableStackItem };

@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import BudgetStack from './BudgetStack';
-import { Button, Input } from 'components/Styled';
 import EditableText from 'components/Shared/EditableText';
-import { useAlert } from 'components/Alert';
 import { useSession } from 'next-auth/client';
-import { useUpdateUserTotal, useStacks, useUser, useCreateStack } from 'lib/hooks';
+import { useUpdateUserTotal, useStacks, useUser } from 'lib/hooks';
 import { centsToDollars, dollarsToCents } from 'lib/money';
+import { CategorizedStacks, NewStack } from 'components/Stack';
+import { PlusCircleIcon } from '@heroicons/react/outline';
+import { Button, Input } from 'components/Styled';
+import { useCreateStackCategory } from 'lib/hooks/stack/useCreateStackCategory';
+import { useQueryClient } from 'react-query';
 
 const ToplineBudget = styled.div`
   text-align: center;
-  margin-bottom: 30px;
+  margin: 10px 0;
 `;
 
 const BudgetWrapper = styled.div`
@@ -49,6 +51,7 @@ function Budget() {
   const { mutate: updateUserTotal } = useUpdateUserTotal();
   const [session] = useSession();
   const [editTotalVisible, setEditTotalVisible] = useState(false);
+
   if (isLoadingUser || isLoadingStacks) {
     return <span>loading...</span>;
   }
@@ -59,7 +62,6 @@ function Budget() {
   return (
     <BudgetWrapper>
       <ToplineBudget>
-        <h1>Budget</h1>
         <h5>
           <Amount editable danger={user?.total < 0} onClick={() => setEditTotalVisible(!editTotalVisible)}>
             <EditableText
@@ -79,7 +81,8 @@ function Budget() {
           <SubText> to be budgeted</SubText>
         </h5>
       </ToplineBudget>
-      <Stacks stacks={stacks} budgetId={1} />
+      <AddCategory />
+      <CategorizedStacks stacks={stacks} />
       <NewStackWrapper>
         <NewStack />
       </NewStackWrapper>
@@ -88,42 +91,55 @@ function Budget() {
   );
 }
 
-const Stacks = ({ stacks, budgetId }) => {
-  if (stacks) {
-    return stacks.map(item => (
-      <div key={item.id}>
-        <BudgetStack id={item.id} label={item.label} amount={item.amount} />
-      </div>
-    ));
-  }
-  return <></>;
-};
+const AddCategoryWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  color: var(--grey-800);
+  border-bottom: 1px dashed var(--grey-200);
+  border-top: 1px dashed var(--grey-200);
+  padding: 10px 0;
+  margin: 10px 0;
+`;
+function AddCategory() {
+  const queryClient = useQueryClient();
 
-const NewStack = () => {
-  const { addAlert } = useAlert();
-  const { mutate: createStack } = useCreateStack();
-  const [newStack, setNewStack] = useState<string>('');
-  const handleAddStack = (stackName: string) => {
-    if (!newStack || newStack.trim() === '') {
-      addAlert({ message: 'Stack name cannot be empty.', type: 'error' });
-    } else {
-      createStack({ label: newStack });
-      setNewStack('');
-    }
+  const [isInputVisibile, setIsInputVisible] = useState<boolean>(false);
+  const [newCategory, setNewCategory] = useState<string>('');
+  const { mutate: createStackCategory } = useCreateStackCategory();
+  const handleCreate = () => {
+    createStackCategory(
+      { category: newCategory },
+      { onSuccess: () => queryClient.invalidateQueries('fetch-stacks-by-category') }
+    );
+    setNewCategory('');
+    setIsInputVisible(false);
   };
   return (
-    <>
-      <Input
-        name="newStack"
-        placeholder="Stack Name"
-        autoComplete="off"
-        value={newStack}
-        onChange={e => setNewStack(e.target.value)}
-      />
-      <Button category="ACTION" name="addStack" onClick={() => handleAddStack(newStack)}>
-        Add Stack
-      </Button>
-    </>
+    <AddCategoryWrapper>
+      <div
+        style={{ display: 'flex', gap: '5px', cursor: 'pointer' }}
+        onClick={() => setIsInputVisible(!isInputVisibile)}
+      >
+        <PlusCircleIcon width="20" />
+        <p>Category</p>
+      </div>
+      {isInputVisibile && (
+        <div style={{ display: 'flex', gap: '5px', padding: '10px 0' }}>
+          <Input
+            name="newStack"
+            placeholder="Category Name"
+            autoComplete="off"
+            style={{ width: '100%' }}
+            value={newCategory}
+            onChange={e => setNewCategory(e.target.value)}
+          />
+          <Button category="ACTION" name="addStack" onClick={handleCreate}>
+            Add
+          </Button>
+        </div>
+      )}
+    </AddCategoryWrapper>
   );
-};
-export default Budget;
+}
+
+export { Budget };

@@ -11,7 +11,8 @@ export const SimpleFormWrapper = styled.form`
   }
   input,
   select,
-  button {
+  button,
+  hr {
     margin-bottom: 15px;
   }
   input::placeholder,

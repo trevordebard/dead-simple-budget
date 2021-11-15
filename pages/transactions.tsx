@@ -51,7 +51,7 @@ function TransactionPage() {
             <Transactions />
           </Center>
           <Right>
-            <TransactionActionWrapper>
+            <div>
               {selectedTransactionIds.length === 0 && !newTransactionVisible && (
                 <ButtonWrapper>
                   <Link passHref href="/import">
@@ -107,7 +107,7 @@ function TransactionPage() {
                   </Button>
                 </ButtonWrapper>
               )}
-            </TransactionActionWrapper>
+            </div>
           </Right>
         </Main>
       </Layout>
@@ -123,13 +123,11 @@ export async function getServerSideProps(ctx) {
   };
 }
 
-const TransactionActionWrapper = styled.div`
-  padding: 1rem;
-`;
 const ButtonWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
+  margin: 10px 0;
 
   @media only screen and (max-width: ${smBreakpoint}) {
     flex-direction: row;

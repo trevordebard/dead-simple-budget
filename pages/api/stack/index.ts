@@ -21,11 +21,23 @@ export default async function stackHandler(req: NextApiRequest, res: NextApiResp
       break;
 
     default:
-      res.setHeader('Allow', ['POST', 'PUT']);
+      res.setHeader('Allow', ['POST']);
       res.status(405).end(`Method ${method} Not Allowed`);
   }
 }
 
 async function createStack(userId: number, stack: iCreateStackInput) {
-  return await prisma.stack.create({ data: { ...stack, userId } });
+  // TODO: use connectOrCreate to create misc category if it does not exist
+  let misc = await prisma.stackCategory.findFirst({ where: { userId, category: 'Miscellaneous' } });
+  if (!misc) {
+    misc = await prisma.stackCategory.create({ data: { userId, category: 'Miscellaneous', stackOrder: [] } });
+  }
+  const newStack = await prisma.stack.create({
+    data: { ...stack, category: { connect: { id: misc.id } }, user: { connect: { id: userId } } },
+  });
+
+  // Add newly created stack to the bottom of the miscellaneous category
+  await prisma.stackCategory.update({ where: { id: misc.id }, data: { stackOrder: { push: newStack.id } } });
+
+  return newStack;
 }
