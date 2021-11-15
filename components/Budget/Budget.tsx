@@ -82,7 +82,7 @@ function Budget() {
         </h5>
       </ToplineBudget>
       <AddCategory />
-      <CategorizedStacks stacks={stacks} />
+      <CategorizedStacks />
       <NewStackWrapper>
         <NewStack />
       </NewStackWrapper>
