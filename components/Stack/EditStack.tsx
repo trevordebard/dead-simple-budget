@@ -33,7 +33,12 @@ const EditStack = ({ id }: { id: number }) => {
     const amount = dollarsToCents(payload.amount);
     updateStack(
       { id: stack.id, label: stack.label, stackCategoryId: parseInt(payload.category), amount },
-      { onSuccess: () => queryClient.invalidateQueries('fetch-stacks-by-category') }
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries('fetch-stacks-by-category');
+          budgetContext.setStackInFocus(null);
+        },
+      }
     );
   };
   return (
@@ -47,7 +52,7 @@ const EditStack = ({ id }: { id: number }) => {
         {...register('amount', { required: true })}
         category="underline"
         type="text"
-        value={centsToDollars(stack.amount)}
+        defaultValue={centsToDollars(stack.amount)}
         autoComplete="off"
       />
       <label htmlFor="category">Category {errors.category && <ErrorText> (Required)</ErrorText>}</label>
