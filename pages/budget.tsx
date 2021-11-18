@@ -8,6 +8,7 @@ import { createContext, useState } from 'react';
 import { AnimatePresence, Variants } from 'framer-motion';
 import { StickyWrapper } from 'components/Styled/StickyWrapper';
 import { EditStackCategory } from 'components/Stack/EditStackCategory';
+import { Session } from 'next-auth';
 const variants: Variants = {
   open: { x: 0, transition: { type: 'just' }, opacity: 1 },
   closed: { x: '+100%', opacity: 0 },
@@ -62,7 +63,13 @@ const BudgetPage = () => {
 export default BudgetPage;
 
 export async function getServerSideProps(context) {
-  const session = await getSession(context);
+  const session = {
+    user: {
+      name: 'Test Jones',
+      email: process.env.EMAIL,
+    },
+    expires: '2021-12-18T03:07:58.137Z',
+  };
   if (!session) {
     return {
       redirect: {
