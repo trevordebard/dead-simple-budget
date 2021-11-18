@@ -53,7 +53,7 @@ async function getStackCategory(stackCatId: number) {
   return await prisma.stackCategory.findUnique({ where: { id: stackCatId } });
 }
 
-async function deleteStackCategory(userId: number, stackCatId: number) {
+async function deleteStackCategory(userId: string, stackCatId: number) {
   let misc = await prisma.stackCategory.findFirst({ where: { userId, category: 'Miscellaneous' } });
   if (misc.id === stackCatId) {
     throw Error('Cannot delete miscellaneous stack category');

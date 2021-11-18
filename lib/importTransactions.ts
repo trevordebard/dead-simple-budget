@@ -16,7 +16,7 @@ export function getUniquePlaidTransactions(
 
 export function convertPlaidTransactionToPrismaInput(
   transaction: plaid.Transaction,
-  userId: number,
+  userId: string,
   stack: string = 'Imported'
 ): Prisma.TransactionCreateManyInput {
   const [year, month, day] = transaction.date.split('-');
@@ -35,6 +35,6 @@ export function convertPlaidTransactionToPrismaInput(
   };
 }
 
-function preparePlaidTransactionsForUpload(transactions: plaid.Transaction[], userId: number) {
+function preparePlaidTransactionsForUpload(transactions: plaid.Transaction[], userId: string) {
   return transactions.map(transaction => convertPlaidTransactionToPrismaInput(transaction, userId));
 }

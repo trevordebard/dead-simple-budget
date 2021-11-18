@@ -2,7 +2,7 @@ import { Nav } from 'components/Nav';
 import { ActionSidebar, TabSidebar } from 'components/Sidebar';
 import { EditTransaction, NewTransaction, TransactionPageContext, Transactions } from 'components/Transactions';
 import Layout, { Main, Left, Center, Right } from 'components/Shared/Layout';
-import { getSession } from 'next-auth/client';
+import { getSession } from 'next-auth/react';
 import styled from 'styled-components';
 import Link from 'next/link';
 

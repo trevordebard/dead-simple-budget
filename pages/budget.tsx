@@ -1,6 +1,6 @@
-import { getSession } from 'next-auth/client';
-import { Budget } from 'components/Budget';
 import { EditStack } from 'components/Stack';
+import { getSession } from 'next-auth/react';
+import { Budget } from 'components/Budget';
 import Layout, { Main, Left, Center, Right } from 'components/Shared/Layout';
 import { TabSidebar, ActionSidebar } from 'components/Sidebar';
 import { Nav } from 'components/Nav';

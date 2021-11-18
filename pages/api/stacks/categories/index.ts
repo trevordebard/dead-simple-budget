@@ -39,10 +39,10 @@ export default async function stackCategoriesHandler(req: NextApiRequest, res: N
   }
 }
 
-async function getStackCategories(userId: number): Promise<StackCategory[]> {
+async function getStackCategories(userId: string): Promise<StackCategory[]> {
   return await prisma.stackCategory.findMany({ where: { userId } });
 }
 
-async function createStackCategory(userId: number, category: iCreateStackCategoryInput) {
+async function createStackCategory(userId: string, category: iCreateStackCategoryInput) {
   return await prisma.stackCategory.create({ data: { ...category, userId } });
 }

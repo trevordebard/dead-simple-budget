@@ -13,8 +13,8 @@ model StackCategory {
   category   String
   stackOrder Int[]
   Stack      Stack[]
-  userId     Int
-  user       user?   @relation(fields: [userId], references: [id])
+  userId     String
+  user       User?   @relation(fields: [userId], references: [id])
 }
 
 model Stack {
@@ -23,9 +23,10 @@ model Stack {
   stackCategoryId Int?           @map("stack_category_id")
   amount          Int            @default(0)
   created_at      DateTime       @default(now())
-  userId          Int
-  user            user?          @relation(fields: [userId], references: [id])
+  userId          String
   category        StackCategory? @relation(fields: [stackCategoryId], references: [id])
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
 
   @@unique([label, userId])
 }
@@ -37,70 +38,68 @@ model Transaction {
   stack              String
   amount             Int
   type               String
-  userId             Int
+  userId             String
   date               DateTime
   createdAt          DateTime @default(now()) @map("created_at")
-  user               user     @relation(fields: [userId], references: [id])
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
 }
 
-model account {
-  id                 Int       @id @default(autoincrement())
-  compoundId         String    @unique @map("compound_id")
-  userId             Int       @map("user_id")
-  providerType       String    @map("provider_type")
-  providerId         String    @map("provider_id")
-  providerAccountId  String    @map("provider_account_id")
-  refreshToken       String?   @map("refresh_token")
-  accessToken        String?   @map("access_token")
-  accessTokenExpires DateTime? @map("access_token_expires")
-  createdAt          DateTime  @default(now()) @map("created_at")
-  updatedAt          DateTime  @default(now()) @map("updated_at")
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?
+  access_token       String?
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?
+  session_state      String?
+  oauth_token_secret String?
+  oauth_token        String?
 
-  @@index([providerAccountId], name: "providerAccountId")
-  @@index([providerId], name: "providerId")
-  @@index([userId], name: "userId")
-  @@map("accounts")
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
 }
 
 model Session {
-  id           Int      @id @default(autoincrement())
-  userId       Int      @map("user_id")
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
   expires      DateTime
-  sessionToken String   @unique @map("session_token")
-  accessToken  String   @unique @map("access_token")
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @default(now()) @map("updated_at")
-
-  @@map("sessions")
 }
 
-model user {
-  id            Int           @id @default(autoincrement())
-  name          String?
-  email         String        @unique
-  emailVerified DateTime?     @map("email_verified")
-  image         String?
-  createdAt     DateTime      @default(now()) @map("created_at")
-  updatedAt     DateTime      @default(now()) @map("updated_at")
-  total         Int           @default(0)
-  toBeBudgeted  Int           @default(0)
-  stacks        Stack[]
-  transactions  Transaction[]
-  bankAccounts  BankAccout[]
-
-  StackCategory StackCategory[]
-  @@map("users")
+model User {
+  id              String          @id @default(cuid())
+  name            String?
+  email           String?         @unique
+  emailVerified   DateTime?
+  image           String?
+  accounts        Account[]
+  sessions        Session[]
+  createdAt       DateTime        @default(now()) @map("created_at")
+  updatedAt       DateTime        @default(now()) @map("updated_at")
+  total           Int             @default(0)
+  toBeBudgeted    Int             @default(0)
+  stacks          Stack[]
+  transactions    Transaction[]
+  bankAccounts    BankAccout[]
+  stackCategories StackCategory[]
 }
 
-model VerificationRequest {
-  id         Int      @id @default(autoincrement())
+model VerificationToken {
   identifier String
   token      String   @unique
   expires    DateTime
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @default(now()) @map("updated_at")
 
-  @@map("verification_requests")
+  @@unique([identifier, token])
 }
 
 model BankAccout {
@@ -108,6 +107,6 @@ model BankAccout {
   plaidAccessToken String
   plaidItemId      String   @unique
   plaidAccountIds  String[]
-  userId           Int
-  user             user     @relation(fields: [userId], references: [id])
+  userId           String
+  User             User     @relation(fields: [userId], references: [id])
 }

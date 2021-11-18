@@ -1,6 +1,6 @@
 import prisma from 'lib/prismaClient';
 import { NextApiRequest } from 'next';
-import { getSession } from 'next-auth/client';
+import { getSession } from 'next-auth/react';
 
 export async function getUser(req: NextApiRequest) {
   const session = await getSession({ req });

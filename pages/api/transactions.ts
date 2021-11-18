@@ -38,11 +38,11 @@ export default async function transactionsHanler(req: NextApiRequest, res: NextA
   }
 }
 
-async function getTransactions(userId: number) {
+async function getTransactions(userId: string) {
   return await prisma.transaction.findMany({ where: { userId } });
 }
 
-async function createManyTransactions(userId: number, { transactions, stack }: iImportPlaidTransactionsInput) {
+async function createManyTransactions(userId: string, { transactions, stack }: iImportPlaidTransactionsInput) {
   let sum = 0;
   const input = transactions.map(transaction => {
     // deposits are negative in plaid and withdrawals are positive, so this will reverse that while also summing in cents
