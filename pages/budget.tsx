@@ -9,6 +9,11 @@ import { AnimatePresence, Variants } from 'framer-motion';
 import { StickyWrapper } from 'components/Styled/StickyWrapper';
 import { EditStackCategory } from 'components/Stack/EditStackCategory';
 import { Session } from 'next-auth';
+
+import { QueryClient } from 'react-query';
+import { dehydrate } from 'react-query/hydration';
+import { fetchStacksByCategory } from 'lib/hooks/stack/useCategorizedStacks';
+
 const variants: Variants = {
   open: { x: 0, transition: { type: 'just' }, opacity: 1 },
   closed: { x: '+100%', opacity: 0 },
@@ -63,6 +68,10 @@ const BudgetPage = () => {
 export default BudgetPage;
 
 export async function getServerSideProps(context) {
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery('fetch-stacks-by-category', async () => fetchStacksByCategory(context.req.headers));
+
   const session = {
     user: {
       name: 'Test Jones',
@@ -81,6 +90,7 @@ export async function getServerSideProps(context) {
   return {
     props: {
       session,
+      dehydratedState: dehydrate(queryClient),
     },
   };
 }
