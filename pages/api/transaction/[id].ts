@@ -2,7 +2,7 @@ import { getUser } from 'lib/api-helpers/getUser';
 import prisma from 'lib/prismaClient';
 import { iEditTransactionInput } from 'types/transactions';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { user } from '.prisma/client';
+import { User } from '.prisma/client';
 import { recalcToBeBudgeted } from 'lib/api-helpers/recalcToBeBudgeted';
 import { DateTime } from 'luxon';
 
@@ -28,7 +28,7 @@ export default async function transactionByIdHandler(req: NextApiRequest, res: N
   }
 }
 
-async function editTransaction(user: user, transactionId: number, transaction: iEditTransactionInput) {
+async function editTransaction(user: User, transactionId: number, transaction: iEditTransactionInput) {
   // TODO: this could be simplified into less db calls
 
   // Reset total to amounts prior to previous transaction

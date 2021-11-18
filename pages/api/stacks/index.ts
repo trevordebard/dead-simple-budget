@@ -22,7 +22,7 @@ export default async function stacksHandler(req: NextApiRequest, res: NextApiRes
   }
 }
 
-async function getStacks(userId: number, options: iGetStacksOptions = null) {
+async function getStacks(userId: string, options: iGetStacksOptions = null) {
   if (options?.organizeBy === 'category') {
     return getStacksByCategory(userId);
   }
@@ -30,7 +30,7 @@ async function getStacks(userId: number, options: iGetStacksOptions = null) {
 }
 
 // TODO: optimizations
-async function getStacksByCategory(userId: number): Promise<iCategorizedStack[]> {
+async function getStacksByCategory(userId: string): Promise<iCategorizedStack[]> {
   const categories: StackCategory[] = await prisma.stackCategory.findMany({
     where: { userId },
     orderBy: { id: 'asc' },

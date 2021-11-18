@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
-import { useSession, signOut } from 'next-auth/client';
+import { useSession, signOut } from 'next-auth/react';
 import { useState } from 'react';
 import { Popover } from 'react-tiny-popover';
 import { Button } from 'components/Styled';
@@ -53,7 +53,7 @@ const ProfileDropdown = styled.div`
 `;
 
 const Nav = () => {
-  const [session] = useSession();
+  const { data: session } = useSession();
 
   return (
     <NavContainer>
@@ -84,7 +84,7 @@ const ProfileMenu = () => {
   const queryClient = useQueryClient();
   const router = useRouter();
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
-  const [session] = useSession();
+  const { data: session } = useSession();
   return (
     <Popover
       isOpen={isPopoverOpen}

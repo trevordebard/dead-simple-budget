@@ -3,25 +3,24 @@ const prisma = new PrismaClient();
 
 async function main() {
   const d = await prisma.account.upsert({
-    where: { id: 1 },
+    where: { id: '1' },
     update: {},
     create: {
-      id: 1,
-      compoundId: process.env['SEED_ACCOUNT_compoundId'],
-      userId: 1,
-      providerType: 'oauth',
-      providerId: 'google',
+      type: 'oauth',
+      id: '1',
+      userId: '1',
+      provider: 'google',
       providerAccountId: process.env['SEED_ACCOUNT_providerAccountId'],
-      refreshToken: null,
-      accessToken: process.env['SEED_ACCOUNT_accessToken'],
-      accessTokenExpires: null,
+      refresh_token: null,
+      access_token: process.env['SEED_ACCOUNT_accessToken'],
+      expires_at: null,
     },
   });
   await prisma.user.upsert({
-    where: { id: 1 },
+    where: { id: '1' },
     update: {},
     create: {
-      id: 1,
+      id: '1',
       total: 100000,
       toBeBudgeted: 80000,
       name: process.env['SEED_USER_name'],
@@ -31,14 +30,13 @@ async function main() {
     },
   });
   await prisma.session.upsert({
-    where: { id: 1 },
+    where: { id: '1' },
     update: {},
     create: {
-      id: 1,
-      userId: 1,
+      id: ' 1',
+      userId: ' 1',
       expires: new Date('2021-07-23'),
       sessionToken: process.env['SEED_SESSION_sessionToken'],
-      accessToken: process.env['SEED_SESSION_accessToken'],
     },
   });
   await prisma.transaction.upsert({
@@ -51,7 +49,7 @@ async function main() {
       description: 'Yummy pizza',
       stack: 'food',
       type: 'deposit',
-      userId: 1,
+      userId: '1',
     },
   });
   await prisma.bankAccout.upsert({
@@ -62,13 +60,13 @@ async function main() {
       plaidAccessToken: process.env['SEED_BANKACCOUNT_plaidAccessToken'],
       plaidItemId: process.env['SEED_BANKACCOUNT_plaidItemId'],
       plaidAccountIds: [process.env['SEED_BANKACCOUNT_plaidAccountId']],
-      userId: 1,
+      userId: '1',
     },
   });
   await prisma.stack.createMany({
     data: [
-      { label: 'Eating Out', amount: 10000, userId: 1 },
-      { label: 'Rent', amount: 10000, userId: 1 },
+      { label: 'Eating Out', amount: 10000, userId: '1' },
+      { label: 'Rent', amount: 10000, userId: '1' },
     ],
   });
 }

@@ -26,7 +26,7 @@ export default async function stackHandler(req: NextApiRequest, res: NextApiResp
   }
 }
 
-async function createStack(userId: number, stack: iCreateStackInput) {
+async function createStack(userId: string, stack: iCreateStackInput) {
   // TODO: use connectOrCreate to create misc category if it does not exist
   let misc = await prisma.stackCategory.findFirst({ where: { userId, category: 'Miscellaneous' } });
   if (!misc) {
