@@ -3,7 +3,7 @@ import plaid from 'plaid';
 import { PlaidLinkOptions, usePlaidLink } from 'react-plaid-link';
 import axios from 'axios';
 import { GetServerSideProps } from 'next';
-import { getSession } from 'next-auth/client';
+import { getSession } from 'next-auth/react';
 import { plaidClient } from 'lib/plaidClient';
 import { useRouter } from 'next/router';
 

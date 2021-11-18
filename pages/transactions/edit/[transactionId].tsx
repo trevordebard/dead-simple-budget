@@ -1,5 +1,5 @@
 import { EditTransaction } from 'components/Transactions';
-import { getSession } from 'next-auth/client';
+import { getSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import Layout, { Main, Left, Center } from 'components/Shared/Layout';
 import { TabSidebar } from 'components/Sidebar';

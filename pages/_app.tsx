@@ -1,4 +1,5 @@
-import { Provider } from 'next-auth/client';
+import { SessionProvider } from 'next-auth/react';
+
 import { Alert } from 'components/Alert';
 import { AlertProvider } from '../components/Alert/AlertProvider';
 import Head from '../components/head';
@@ -24,7 +25,7 @@ function MyApp({ Component, pageProps }) {
     <>
       <GlobalStyle />
       <Head />
-      <Provider session={pageProps.session}>
+      <SessionProvider session={pageProps.session}>
         <QueryClientProvider client={queryClient}>
           <AlertProvider>
             <Alert />
@@ -34,7 +35,7 @@ function MyApp({ Component, pageProps }) {
             <ReactQueryDevtools initialIsOpen={true} />
           </AlertProvider>
         </QueryClientProvider>
-      </Provider>
+      </SessionProvider>
     </>
   );
 }

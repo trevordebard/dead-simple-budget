@@ -3,10 +3,10 @@ import { Stack } from '.prisma/client';
 import axios from 'axios';
 import { useAlert } from 'components/Alert';
 
-export function useDeleteStack() {
+export function useDeleteStackCategory() {
   const queryClient = useQueryClient();
   const { addAlert } = useAlert();
-  return useMutation('delete-stack', deleteStack, {
+  return useMutation('delete-stack-category', deleteStackCategory, {
     onSuccess: () => {
       queryClient.invalidateQueries('fetch-stacks-by-category');
     },
@@ -16,9 +16,7 @@ export function useDeleteStack() {
   });
 }
 
-async function deleteStack({ stackId }: { stackId: number }) {
-  const response = await axios.delete<Stack>(`/api/stack/${stackId}`);
+async function deleteStackCategory({ stackCategoryId }: { stackCategoryId: number }) {
+  const response = await axios.delete<Stack>(`/api/stacks/categories/${stackCategoryId}`);
   return response;
 }
-
-export { deleteStack };

@@ -3,7 +3,7 @@ import prisma from 'lib/prismaClient';
 import { iCreateTransactionInput } from 'types/transactions';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { recalcToBeBudgeted } from 'lib/api-helpers/recalcToBeBudgeted';
-import { user } from '.prisma/client';
+import { User } from '.prisma/client';
 import { DateTime } from 'luxon';
 
 export default async function transactionHandler(req: NextApiRequest, res: NextApiResponse) {
@@ -23,7 +23,7 @@ export default async function transactionHandler(req: NextApiRequest, res: NextA
   }
 }
 
-async function createTransaction(user: user, transaction: iCreateTransactionInput) {
+async function createTransaction(user: User, transaction: iCreateTransactionInput) {
   await prisma.stack.update({
     where: { label_userId: { userId: user.id, label: transaction.stack } },
     data: { amount: { increment: transaction.amount } },

@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { DateTime } from 'luxon';
 import { plaidClient } from 'lib/plaidClient';
-import { getSession } from 'next-auth/client';
+import { getSession } from 'next-auth/react';
 import prismaClient from 'lib/prismaClient';
 import { getUniquePlaidTransactions } from 'lib/importTransactions';
 

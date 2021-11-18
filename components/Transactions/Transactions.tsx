@@ -10,10 +10,6 @@ const TransactionWrapper = styled.div`
   max-width: 100%;
 `;
 
-const Title = styled.div`
-  text-align: center;
-`;
-
 const Transactions = () => {
   const { data: transactions, isLoading } = useTransactions();
   const { selectedTransactionIds, toggleSelectedTransaction } = useTransactionPageContext();
@@ -25,17 +21,12 @@ const Transactions = () => {
   if (isLoading)
     return (
       <TransactionWrapper>
-        <Title>
-          <h3>One moment. Retrieving your latest transactions.</h3>
-        </Title>
+        <h3>One moment. Retrieving your latest transactions.</h3>
       </TransactionWrapper>
     );
   if (!isLoading) {
     return (
       <TransactionWrapper>
-        <Title>
-          <h1>Transactions</h1>
-        </Title>
         <MultiSelectList onItemSelected={selected => handleTransactionSelected(Number(selected))}>
           {transactions &&
             transactions.map(transaction => (

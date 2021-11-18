@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getSession } from 'next-auth/client';
+import { getSession } from 'next-auth/react';
 import { plaidClient } from 'lib/plaidClient';
 import prisma from 'lib/prismaClient';
 
@@ -19,7 +19,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       plaidAccessToken: data.access_token,
       plaidItemId: data.item_id,
       plaidAccountIds: accountIds,
-      user: { connect: { email: session.user.email } },
+      User: { connect: { email: session.user.email } },
     },
   });
   res.status(200).json(data);
