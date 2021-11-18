@@ -9,7 +9,7 @@ function useCategorizedStacks() {
 export async function fetchStacksByCategory(headers = null) {
   const options: iGetStacksOptions = { organizeBy: 'category' };
   const response = await axios.get<iCategorizedStack[]>(
-    `${process.env.NEXTAUTH_URL}/api/stacks?organizeBy=${options.organizeBy}`,
+    `${process.env.NEXT_PUBLIC_SITE_URL}/api/stacks?organizeBy=${options.organizeBy}`,
     { headers }
   );
   return response.data;
