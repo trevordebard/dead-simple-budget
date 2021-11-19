@@ -46,21 +46,22 @@ const NewStackWrapper = styled.div`
 `;
 
 function Budget() {
-  // const { data: user, isLoading: isLoadingUser, error: userError } = useUser();
+  const { data: user, isLoading: isLoadingUser, error: userError } = useUser();
+  const { data: stacks, isLoading: isLoadingStacks, error: stacksError } = useStacks();
   const { mutate: updateUserTotal } = useUpdateUserTotal();
   const { data: session } = useSession();
   const [editTotalVisible, setEditTotalVisible] = useState(false);
 
-  // if (isLoadingUser) {
-  //   return <span>loading...</span>;
-  // }
-  // if (userError) {
-  //   return <span>There was a problem</span>;
-  // }
+  if (isLoadingUser || isLoadingStacks) {
+    return <span>loading...</span>;
+  }
+  if (userError || stacksError) {
+    return <span>There was a problem</span>;
+  }
 
   return (
     <BudgetWrapper>
-      {/* <ToplineBudget>
+      <ToplineBudget>
         <h5>
           <Amount editable danger={user?.total < 0} onClick={() => setEditTotalVisible(!editTotalVisible)}>
             <EditableText
@@ -79,7 +80,7 @@ function Budget() {
           <Amount danger={user.toBeBudgeted < 0}>{centsToDollars(user.toBeBudgeted)}</Amount>
           <SubText> to be budgeted</SubText>
         </h5>
-      </ToplineBudget> */}
+      </ToplineBudget>
       <AddCategory />
       <CategorizedStacks />
       <NewStackWrapper>
