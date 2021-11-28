@@ -1,5 +1,6 @@
 import { EditStack } from 'components/Stack';
 import { getSession } from 'next-auth/react';
+import { getServerSession } from 'next-auth/next';
 import { Budget } from 'components/Budget';
 import Layout, { Main, Left, Center, Right } from 'components/Shared/Layout';
 import { TabSidebar, ActionSidebar } from 'components/Sidebar';
@@ -8,6 +9,7 @@ import { createContext, useState } from 'react';
 import { AnimatePresence, Variants } from 'framer-motion';
 import { StickyWrapper } from 'components/Styled/StickyWrapper';
 import { EditStackCategory } from 'components/Stack/EditStackCategory';
+import { authOptions } from './api/auth/[...nextauth]';
 const variants: Variants = {
   open: { x: 0, transition: { type: 'just' }, opacity: 1 },
   closed: { x: '+100%', opacity: 0 },
@@ -62,7 +64,7 @@ const BudgetPage = () => {
 export default BudgetPage;
 
 export async function getServerSideProps(context) {
-  const session = await getSession(context);
+  const session = await getServerSession(context, authOptions);
   if (!session) {
     return {
       redirect: {
