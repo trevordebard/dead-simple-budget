@@ -9,6 +9,8 @@ import { AnimatePresence, Variants } from 'framer-motion';
 import { StickyWrapper } from 'components/Styled/StickyWrapper';
 import { EditStackCategory } from 'components/Stack/EditStackCategory';
 import { authOptions } from './api/auth/[...nextauth]';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 const variants: Variants = {
   open: { x: 0, transition: { type: 'just' }, opacity: 1 },
   closed: { x: '+100%', opacity: 0 },
@@ -23,8 +25,14 @@ const BudgetState = {
 };
 export const BudgetContext = createContext(BudgetState);
 const BudgetPage = () => {
+  const router = useRouter();
+  const { data, status } = useSession({ required: true, onUnauthenticated: () => router.push('/login') });
   const [stackId, setStackId] = useState<null | number>(null);
   const [categoryInFocus, setCategoryInFocus] = useState<null | number>(null);
+
+  if (status === 'loading') {
+    return null;
+  }
   return (
     <Layout>
       <Nav />
@@ -61,20 +69,3 @@ const BudgetPage = () => {
   );
 };
 export default BudgetPage;
-
-export async function getServerSideProps(context) {
-  const session = await getServerSession(context, authOptions);
-  if (!session) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: '/login',
-      },
-    };
-  }
-  return {
-    props: {
-      session,
-    },
-  };
-}
