@@ -2,7 +2,6 @@ import { Nav } from 'components/Nav';
 import { ActionSidebar, TabSidebar } from 'components/Sidebar';
 import { EditTransaction, NewTransaction, TransactionPageContext, Transactions } from 'components/Transactions';
 import Layout, { Main, Left, Center, Right } from 'components/Shared/Layout';
-import { getSession } from 'next-auth/react';
 import styled from 'styled-components';
 import Link from 'next/link';
 
@@ -12,6 +11,8 @@ import { useDeleteTransactions } from 'lib/hooks';
 import { useQueryClient } from 'react-query';
 import { smBreakpoint } from 'lib/constants';
 import { AnimatePresence, Variants } from 'framer-motion';
+import { getServerSession } from 'next-auth';
+import { authOptions } from './api/auth/[...nextauth]';
 
 function TransactionPage() {
   const { mutate: deleteTransactions } = useDeleteTransactions();
@@ -118,7 +119,7 @@ function TransactionPage() {
 export async function getServerSideProps(ctx) {
   return {
     props: {
-      session: await getSession(ctx),
+      session: await getServerSession(ctx, authOptions),
     },
   };
 }

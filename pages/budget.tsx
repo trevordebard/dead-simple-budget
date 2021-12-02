@@ -1,5 +1,4 @@
 import { EditStack } from 'components/Stack';
-import { getSession } from 'next-auth/react';
 import { getServerSession } from 'next-auth/next';
 import { Budget } from 'components/Budget';
 import Layout, { Main, Left, Center, Right } from 'components/Shared/Layout';

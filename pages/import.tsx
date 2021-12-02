@@ -1,10 +1,10 @@
-import { getSession } from 'next-auth/react';
 import { Import } from 'components/Transactions/Import';
 import Layout, { Main, Left, Center } from 'components/Shared/Layout';
 import { TabSidebar } from 'components/Sidebar';
 import { Nav } from 'components/Nav';
 import prisma from 'lib/prismaClient';
-
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from './api/auth/[...nextauth]';
 const ImportPage = () => (
   <Layout>
     <Nav />
@@ -21,7 +21,7 @@ const ImportPage = () => (
 export default ImportPage;
 
 export async function getServerSideProps(context) {
-  const session = await getSession(context);
+  const session = await getServerSession(context, authOptions);
   if (!session) {
     return {
       redirect: {

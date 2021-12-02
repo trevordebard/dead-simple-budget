@@ -1,11 +1,12 @@
 import { NewTransaction } from 'components/Transactions';
-import { getSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { FunctionComponent } from 'react';
 import { GetServerSidePropsContext } from 'next';
 import Layout, { Main, Left, Center } from 'components/Shared/Layout';
 import { TabSidebar } from 'components/Sidebar';
 import { Nav } from 'components/Nav';
+import { getServerSession } from 'next-auth';
+import { authOptions } from 'pages/api/auth/[...nextauth]';
 
 const NewTransactionPage: FunctionComponent = () => {
   const router = useRouter();
@@ -26,7 +27,7 @@ const NewTransactionPage: FunctionComponent = () => {
 };
 export default NewTransactionPage;
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await getSession(context);
+  const session = await getServerSession(context, authOptions);
   if (!session) {
     return {
       redirect: {
