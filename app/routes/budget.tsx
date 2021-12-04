@@ -1,7 +1,7 @@
 import { Stack, StackCategory } from ".prisma/client";
 import { MetaFunction, LoaderFunction, ActionFunction, Form, useSubmit } from "remix";
 import { useLoaderData, json, Outlet, Link } from "remix";
-import { authenticator } from "~/auth.server";
+import { authenticator } from "~/services/auth.server";
 import { db } from "~/utils/db.server";
 
 type IndexData = {
