@@ -1,6 +1,7 @@
 import { Stack, StackCategory } from ".prisma/client";
 import { MetaFunction, LoaderFunction, ActionFunction, Form, useSubmit } from "remix";
 import { useLoaderData, json, Outlet, Link } from "remix";
+import { authenticator } from "~/auth.server";
 import { db } from "~/utils/db.server";
 
 type IndexData = {
@@ -10,9 +11,11 @@ type IndexData = {
   })[]
 };
 
-export let loader: LoaderFunction = async () => {
+export let loader: LoaderFunction = async ({ request }) => {
   const stacks = await db.stack.findMany({ where: { user: { email: 'trevordebard@gmail.com' } }, include: { category: true }, orderBy: { category: { category: 'asc' } } })
   const categorized = await db.stackCategory.findMany({ where: { user: { email: 'trevordebard@gmail.com' } }, include: { Stack: true } })
+  let user = await authenticator.isAuthenticated(request);
+  console.log(user?.email)
 
   return json({ stacks, categorized });
 };
@@ -44,7 +47,6 @@ export let action: ActionFunction = async ({ request }) => {
 export default function Index() {
   let data = useLoaderData<IndexData>();
   let submit = useSubmit();
-  console.log(data.categorized)
   return (
     <div className="remix__page">
       <main>
@@ -81,6 +83,9 @@ export default function Index() {
       <aside>
         <Outlet />
       </aside>
+      <form action="/logout" method="post">
+        <button>Logout</button>
+      </form>
     </div>
   );
 }
