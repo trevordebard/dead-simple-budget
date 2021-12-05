@@ -1,6 +1,6 @@
 import { Stack, StackCategory } from ".prisma/client";
 import { Form, useLoaderData, LoaderFunction, ActionFunction, redirect } from "remix";
-import { authenticator } from "~/services/auth.server";
+import { authenticator } from "~/auth/auth.server";
 import { db } from "~/utils/db.server";
 
 

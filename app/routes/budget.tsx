@@ -1,7 +1,7 @@
 import { Stack, StackCategory } from ".prisma/client";
 import { MetaFunction, LoaderFunction, ActionFunction, Form, useSubmit } from "remix";
 import { useLoaderData, json, Outlet, Link, redirect } from "remix";
-import { authenticator } from "~/services/auth.server";
+import { authenticator } from "~/auth/auth.server";
 import { db } from "~/utils/db.server";
 
 type IndexData = {
@@ -17,9 +17,7 @@ export let loader: LoaderFunction = async ({ request }) => {
   if (!user) {
     return redirect('/login')
   }
-
   const categorized = await db.stackCategory.findMany({ where: { budget: { user: { id: user.id } } }, include: { Stack: true } })
-
   return json({ categorized });
 };
 

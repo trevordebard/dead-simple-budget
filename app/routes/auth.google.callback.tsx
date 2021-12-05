@@ -1,5 +1,5 @@
 import { LoaderFunction } from "remix";
-import { authenticator } from "~/services/auth.server";
+import { authenticator } from "~/auth/auth.server";
 
 export let loader: LoaderFunction = async ({ request }) => {
   await authenticator.authenticate("google", request, {

@@ -1,7 +1,7 @@
 import { Budget, User } from ".prisma/client";
 import { Authenticator, GoogleStrategy } from "remix-auth";
-import { login } from "~/models/user";
-import { sessionStorage } from "~/services/session.server";
+import { findOrCreateUser } from "~/auth/user.server";
+import { sessionStorage } from "~/auth/session.server";
 
 export let authenticator = new Authenticator<(User & {
   Budget: Budget | null;
@@ -14,15 +14,17 @@ if (!process.env.GOOGLE_CLIENT_SECRET) {
 if (!process.env.GOOGLE_CLIENT_ID) {
   throw new Error("Missing GOOGLE_CLIENT_ID env");
 }
+if (!process.env.AUTH_CALLBACK_URL) {
+  throw new Error("Missing AUTH_CALLBACK_URL env");
+}
 
 authenticator.use(
   new GoogleStrategy(
     {
-
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/auth/google/callback",
+      callbackURL: process.env.AUTH_CALLBACK_URL,
     },
-    async (_, __, ___, profile) => login(profile.emails[0].value)
+    async (_, __, ___, profile) => findOrCreateUser(profile.emails[0].value)
   )
 );
