@@ -1,6 +1,6 @@
 import { Budget, User } from ".prisma/client";
 import { Authenticator, GoogleStrategy } from "remix-auth";
-import { findOrCreateUser } from "~/auth/user.server";
+import { findOrCreateUser } from "~/utils/server";
 import { sessionStorage } from "~/auth/session.server";
 
 export let authenticator = new Authenticator<(User & {

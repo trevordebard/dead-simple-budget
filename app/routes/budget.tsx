@@ -1,8 +1,8 @@
 import { Stack, StackCategory } from ".prisma/client";
 import { MetaFunction, LoaderFunction, ActionFunction, Form, useSubmit } from "remix";
-import { useLoaderData, json, Outlet, Link, redirect } from "remix";
-import { authenticator } from "~/auth/auth.server";
+import { useLoaderData, json, Outlet, Link } from "remix";
 import { db } from "~/utils/db.server";
+import { createStack, getAuthenticatedUser } from "~/utils/server";
 
 type IndexData = {
   stacks: Stack[],
@@ -12,11 +12,7 @@ type IndexData = {
 };
 
 export let loader: LoaderFunction = async ({ request }) => {
-  let user = await authenticator.isAuthenticated(request);
-
-  if (!user) {
-    return redirect('/login')
-  }
+  const user = await getAuthenticatedUser(request);
   const categorized = await db.stackCategory.findMany({ where: { budget: { user: { id: user.id } } }, include: { Stack: true } })
   return json({ categorized });
 };
@@ -29,18 +25,15 @@ export let meta: MetaFunction = () => {
 };
 
 export let action: ActionFunction = async ({ request }) => {
-  const user = await authenticator.isAuthenticated(request);
-
-  if (!user || !user.Budget) {
-    return redirect('/login')
-  }
+  const user = await getAuthenticatedUser(request)
 
   let formData = await request.formData();
   const isAddStackForm = formData.has('new-stack-label')
 
   if (isAddStackForm) {
     const label = String(formData.get('new-stack-label'));
-    return await db.stack.create({ data: { label, category: { connectOrCreate: { where: { label_budgetId: { label: "Miscellaneous", budgetId: user.Budget.id } }, create: { label: "Miscellaneous", budgetId: user.Budget.id } } }, budget: { connect: { userId: user.id } } } })
+    const newStack = await createStack(user, { label })
+    return newStack
   }
   const input = formData.forEach(async (value, key) => {
     await db.stack.update({ where: { label_budgetId: { budgetId: user.Budget.id, label: key } }, data: { amount: Number(value) } })
