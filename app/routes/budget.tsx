@@ -1,31 +1,33 @@
 import { Stack, StackCategory } from ".prisma/client";
 import { MetaFunction, LoaderFunction, ActionFunction, Form, useSubmit } from "remix";
 import { useLoaderData, json, Outlet, Link } from "remix";
+import { Nav } from "~/components/nav";
+import { AuthenticatedUser } from "~/types/user";
 import { db } from "~/utils/db.server";
-import { createStack, getAuthenticatedUser } from "~/utils/server";
+import { createStack, requireAuthenticatedUser } from "~/utils/server";
 
 type IndexData = {
-  stacks: Stack[],
+  user: AuthenticatedUser
   categorized: (StackCategory & {
     Stack: Stack[];
   })[]
 };
 
 export let loader: LoaderFunction = async ({ request }) => {
-  const user = await getAuthenticatedUser(request);
+  const user = await requireAuthenticatedUser(request);
   const categorized = await db.stackCategory.findMany({ where: { budget: { user: { id: user.id } } }, include: { Stack: true } })
-  return json({ categorized });
+  return json({ categorized, user });
 };
 
 export let meta: MetaFunction = () => {
   return {
     title: "Dead Simple Budget",
-    description: "Budget home page"
+    description: "Budget homepage"
   };
 };
 
 export let action: ActionFunction = async ({ request }) => {
-  const user = await getAuthenticatedUser(request)
+  const user = await requireAuthenticatedUser(request)
 
   let formData = await request.formData();
   const isAddStackForm = formData.has('new-stack-label')
@@ -47,10 +49,10 @@ export default function Index() {
   let data = useLoaderData<IndexData>();
   let submit = useSubmit();
   return (
-    <div className="remix__page">
-      <main>
-        <h2 className="text-purple-600 text-xl">Dead Simple Budget</h2>
-        <div>
+    <div>
+      <Nav user={data.user} />
+      <div className="grid grid-cols-2 gap-14">
+        <main>
           <Form method="post" id="stack-form">
             <div>
               {data.categorized.map(category => (
@@ -68,7 +70,6 @@ export default function Index() {
                     </div>))}
                 </div>
               ))}
-
             </div>
           </Form>
           <Form method="post" id="add-stack-form">
@@ -77,14 +78,11 @@ export default function Index() {
               <input type="submit" defaultValue="Submit" className="rounded-md cursor-pointer px-4 py-2 bg-blue-500 text-blue-100 hover:bg-blue-600" />
             </div>
           </Form>
-        </div>
-      </main>
-      <aside>
-        <Outlet />
-      </aside>
-      <form action="/logout" method="post">
-        <button>Logout</button>
-      </form>
+        </main>
+        <aside>
+          <Outlet />
+        </aside>
+      </div>
     </div>
   );
 }

@@ -2,10 +2,9 @@ import { Budget, User } from ".prisma/client";
 import { Authenticator, GoogleStrategy } from "remix-auth";
 import { findOrCreateUser } from "~/utils/server";
 import { sessionStorage } from "~/auth/session.server";
+import { AuthenticatedUser } from "~/types/user";
 
-export let authenticator = new Authenticator<(User & {
-  Budget: Budget | null;
-}) | null>(sessionStorage);
+export let authenticator = new Authenticator<AuthenticatedUser>(sessionStorage);
 
 
 if (!process.env.GOOGLE_CLIENT_SECRET) {
