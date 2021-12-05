@@ -1,6 +1,6 @@
 import { Stack, StackCategory } from ".prisma/client";
 import { MetaFunction, LoaderFunction, ActionFunction, Form, useSubmit } from "remix";
-import { useLoaderData, json, Outlet, Link } from "remix";
+import { useLoaderData, json, Outlet, Link, redirect } from "remix";
 import { authenticator } from "~/services/auth.server";
 import { db } from "~/utils/db.server";
 
@@ -12,12 +12,15 @@ type IndexData = {
 };
 
 export let loader: LoaderFunction = async ({ request }) => {
-  const stacks = await db.stack.findMany({ where: { user: { email: 'trevordebard@gmail.com' } }, include: { category: true }, orderBy: { category: { category: 'asc' } } })
-  const categorized = await db.stackCategory.findMany({ where: { user: { email: 'trevordebard@gmail.com' } }, include: { Stack: true } })
   let user = await authenticator.isAuthenticated(request);
-  console.log(user?.email)
 
-  return json({ stacks, categorized });
+  if (!user) {
+    return redirect('/login')
+  }
+
+  const categorized = await db.stackCategory.findMany({ where: { budget: { user: { id: user.id } } }, include: { Stack: true } })
+
+  return json({ categorized });
 };
 
 export let meta: MetaFunction = () => {
@@ -28,16 +31,21 @@ export let meta: MetaFunction = () => {
 };
 
 export let action: ActionFunction = async ({ request }) => {
+  const user = await authenticator.isAuthenticated(request);
+
+  if (!user || !user.Budget) {
+    return redirect('/login')
+  }
+
   let formData = await request.formData();
   const isAddStackForm = formData.has('new-stack-label')
 
   if (isAddStackForm) {
     const label = String(formData.get('new-stack-label'));
-    return await db.stack.create({ data: { label, userId: 'ckw4acmxk00126mw2qp8polop' } })
+    return await db.stack.create({ data: { label, category: { connectOrCreate: { where: { label_budgetId: { label: "Miscellaneous", budgetId: user.Budget.id } }, create: { label: "Miscellaneous", budgetId: user.Budget.id } } }, budget: { connect: { userId: user.id } } } })
   }
   const input = formData.forEach(async (value, key) => {
-    await db.stack.update({ where: { label_userId: { label: key, userId: 'ckw4acmxk00126mw2qp8polop' } }, data: { amount: Number(value) } })
-    console.log('value: ' + value + "; key: " + key)
+    await db.stack.update({ where: { label_budgetId: { budgetId: user.Budget.id, label: key } }, data: { amount: Number(value) } })
   })
 
   return null;
@@ -56,7 +64,7 @@ export default function Index() {
             <div>
               {data.categorized.map(category => (
                 <div key={category.id}>
-                  <h3 className="text-lg">{category.category}</h3>
+                  <h3 className="text-lg">{category.label}</h3>
                   {category.Stack.map(stack => (
                     <div key={stack.id} className="flex justify-between items-center ml-3 border-b ">
                       <label htmlFor={stack.label}>

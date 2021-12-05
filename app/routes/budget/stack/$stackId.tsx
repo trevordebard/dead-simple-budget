@@ -1,5 +1,6 @@
 import { Stack, StackCategory } from ".prisma/client";
-import { Form, useLoaderData, LoaderFunction, ActionFunction } from "remix";
+import { Form, useLoaderData, LoaderFunction, ActionFunction, redirect } from "remix";
+import { authenticator } from "~/services/auth.server";
 import { db } from "~/utils/db.server";
 
 
@@ -9,9 +10,16 @@ interface LoaderData {
   };
   categories: StackCategory[]
 }
-export let loader: LoaderFunction = async ({ params }) => {
+
+
+export let loader: LoaderFunction = async ({ params, request }) => {
+  const user = await authenticator.isAuthenticated(request);
+
+  if (!user || !user.Budget) {
+    return redirect('/login')
+  }
   const stack = await db.stack.findUnique({ where: { id: Number(params.stackId) }, include: { category: true } })
-  const categories = await db.stackCategory.findMany({ where: { userId: 'ckw4acmxk00126mw2qp8polop' } })
+  const categories = await db.stackCategory.findMany({ where: { budgetId: user.Budget.id } })
   if (!stack) {
     throw Error('Stack not found!')
   }
@@ -45,7 +53,7 @@ export default function StackId() {
         <div>
           <label htmlFor="catgory">Category</label>
           <select name="category" defaultValue={stack.stackCategoryId || -1}>
-            {categories.map(cat => <option value={cat.id} key={cat.id}>{cat.category}</option>)}
+            {categories.map(cat => <option value={cat.id} key={cat.id}>{cat.label}</option>)}
           </select>
         </div>
         <input type="submit" value="Submit" className="rounded-md cursor-pointer px-4 py-2 bg-blue-500 text-blue-100 hover:bg-blue-600" />
