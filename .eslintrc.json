@@ -23,8 +23,15 @@
         "react",
         "@typescript-eslint"
     ],
+    "settings": {
+        "import/resolver": {
+            "typescript": {}
+        }
+    },
     "rules": {
-        "no-console": 2,
+        "no-console": 0,
+        "import/extensions": 0,
+        "import/prefer-default-export": 0,
         "semi": 1,
         "react/jsx-filename-extension": [
             1,
@@ -33,6 +40,12 @@
                     ".tsx",
                     ".ts"
                 ]
+            }
+        ],
+        "jsx-a11y/label-has-associated-control": [
+            "error",
+            {
+                "assert": "either"
             }
         ],
         "react/react-in-jsx-scope": 0,

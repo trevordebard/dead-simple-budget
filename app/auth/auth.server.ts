@@ -1,5 +1,4 @@
 import { Authenticator, GoogleStrategy } from 'remix-auth';
-import { Budget, User } from '.prisma/client';
 import { findOrCreateUser } from '~/utils/server';
 import { sessionStorage } from '~/auth/session.server';
 import { AuthenticatedUser } from '~/types/user';

@@ -1,9 +1,8 @@
-import { ActionFunction } from "@remix-run/server-runtime";
-import { Form } from "remix";
+import { ActionFunction, Form } from 'remix';
 
-export let action: ActionFunction = async ({ request }) => {
-  let form = await request.formData();
-  console.log(form.get("description"))
+export const action: ActionFunction = async ({ request }) => {
+  const form = await request.formData();
+  console.log(form.get('description'));
   return null;
 };
 
@@ -19,7 +18,6 @@ export default function NewTransaction() {
         <input type="text" name="stack" id="stack-input" />
         <button type="submit">Submit</button>
       </Form>
-    </div >
-  )
-
+    </div>
+  );
 }

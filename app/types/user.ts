@@ -1,5 +1,5 @@
-import { Budget, User } from ".prisma/client";
+import { Budget, User } from '.prisma/client';
 
-export type AuthenticatedUser = (User & {
+export type AuthenticatedUser = User & {
   Budget: Budget;
-})
+};
