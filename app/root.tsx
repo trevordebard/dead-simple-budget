@@ -1,29 +1,21 @@
-import {
-  Links,
-  LiveReload,
-  Meta,
-  Outlet,
-  Scripts,
-  ScrollRestoration,
-  useCatch,
-} from "remix";
-import type { LinksFunction } from "remix";
-import styles from "./tailwind.css";
+import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useCatch } from 'remix';
+import type { LinksFunction } from 'remix';
+import * as React from 'react';
+import styles from './tailwind.css';
 
-
-import globalStylesUrl from "~/styles/global.css";
-import darkStylesUrl from "~/styles/dark.css";
+import globalStylesUrl from '~/styles/global.css';
+import darkStylesUrl from '~/styles/dark.css';
 
 // https://remix.run/api/app#links
-export let links: LinksFunction = () => {
+export const links: LinksFunction = () => {
   return [
-    { rel: "stylesheet", href: globalStylesUrl },
-    { rel: "stylesheet", href: styles },
+    { rel: 'stylesheet', href: globalStylesUrl },
+    { rel: 'stylesheet', href: styles },
     {
-      rel: "stylesheet",
+      rel: 'stylesheet',
       href: darkStylesUrl,
-      media: "(prefers-color-scheme: dark)"
-    }
+      media: '(prefers-color-scheme: dark)',
+    },
   ];
 };
 
@@ -49,10 +41,7 @@ export function ErrorBoundary({ error }: { error: Error }) {
           <h1>There was an error</h1>
           <p>{error.message}</p>
           <hr />
-          <p>
-            Hey, developer, you should replace this with what you want your
-            users to see.
-          </p>
+          <p>Hey, developer, you should replace this with what you want your users to see.</p>
         </div>
       </Layout>
     </Document>
@@ -61,22 +50,15 @@ export function ErrorBoundary({ error }: { error: Error }) {
 
 // https://remix.run/docs/en/v1/api/conventions#catchboundary
 export function CatchBoundary() {
-  let caught = useCatch();
+  const caught = useCatch();
 
   let message;
   switch (caught.status) {
     case 401:
-      message = (
-        <p>
-          Oops! Looks like you tried to visit a page that you do not have access
-          to.
-        </p>
-      );
+      message = <p>Oops! Looks like you tried to visit a page that you do not have access to.</p>;
       break;
     case 404:
-      message = (
-        <p>Oops! Looks like you tried to visit a page that does not exist.</p>
-      );
+      message = <p>Oops! Looks like you tried to visit a page that does not exist.</p>;
       break;
 
     default:
@@ -95,13 +77,7 @@ export function CatchBoundary() {
   );
 }
 
-function Document({
-  children,
-  title
-}: {
-  children: React.ReactNode;
-  title?: string;
-}) {
+function Document({ children, title }: { children: React.ReactNode; title?: string }) {
   return (
     <html lang="en">
       <head>
@@ -115,7 +91,7 @@ function Document({
         {children}
         <ScrollRestoration />
         <Scripts />
-        {process.env.NODE_ENV === "development" && <LiveReload />}
+        {process.env.NODE_ENV === 'development' && <LiveReload />}
       </body>
     </html>
   );
