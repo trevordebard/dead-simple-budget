@@ -24,6 +24,7 @@ type IndexData = {
 
 export const loader: LoaderFunction = async ({ request }) => {
   const user = await requireAuthenticatedUser(request);
+  console.log(user.Budget);
   const categorized = await db.stackCategory.findMany({
     where: { budget: { user: { id: user.id } } },
     include: { Stack: true },
@@ -72,8 +73,16 @@ export default function Index() {
   return (
     <div>
       <Nav user={data.user} />
-      <div className="grid grid-cols-2 gap-14">
-        <main>
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+        <main className="col-span-8 md:col-start-2 max-w-2xl">
+          <div className="text-lg flex flex-col items-center">
+            <h2>
+              <span>{data.user.Budget.total} in Account</span>
+            </h2>
+            <h2>
+              <span>{data.user.Budget.toBeBudgeted} to be budgeted</span>
+            </h2>
+          </div>
           <Form method="post" id="stack-form">
             <div>
               {data.categorized.map((category) => (
@@ -124,7 +133,7 @@ export default function Index() {
             </div>
           </Form>
         </main>
-        <aside>
+        <aside className="col-span-3">
           <Outlet />
         </aside>
       </div>
