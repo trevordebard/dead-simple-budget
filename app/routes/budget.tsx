@@ -10,10 +10,10 @@ import {
   Link,
 } from 'remix';
 import { Stack, StackCategory } from '.prisma/client';
-import { Nav } from '~/components/nav';
-import { AuthenticatedUser } from '~/types/user';
 import { db } from '~/utils/db.server';
-import { createStack, requireAuthenticatedUser } from '~/utils/server';
+import { createStack, requireAuthenticatedUser } from '~/utils/server/index.server';
+import { AuthenticatedUser } from '~/types/user';
+import { Nav } from '~/components/nav';
 
 type IndexData = {
   user: AuthenticatedUser;
@@ -78,7 +78,9 @@ export default function Index() {
             <div>
               {data.categorized.map((category) => (
                 <div key={category.id}>
-                  <h3 className="text-lg">{category.label}</h3>
+                  <Link to={`/budget/stack-category/${category.id}`} className="text-lg">
+                    {category.label}
+                  </Link>
                   {category.Stack.map((stack) => (
                     <div key={stack.id} className="flex justify-between items-center ml-3 border-b ">
                       <label htmlFor={stack.label}>{stack.label}</label>

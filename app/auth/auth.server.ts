@@ -1,5 +1,5 @@
 import { Authenticator, GoogleStrategy } from 'remix-auth';
-import { findOrCreateUser } from '~/utils/server';
+import { findOrCreateUser } from '~/utils/server/index.server';
 import { sessionStorage } from '~/auth/session.server';
 import { AuthenticatedUser } from '~/types/user';
 
