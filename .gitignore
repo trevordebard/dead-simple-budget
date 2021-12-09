@@ -10,3 +10,4 @@ api/build
 /prisma/dev.db
 .env
 
+tailwind.css
