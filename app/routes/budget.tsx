@@ -9,6 +9,9 @@ import {
   Outlet,
   Link,
 } from 'remix';
+import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure';
+import { useState } from 'react';
+import { PlusCircleIcon } from '@heroicons/react/outline';
 import { Stack, StackCategory } from '.prisma/client';
 import { db } from '~/utils/db.server';
 import { createStack, requireAuthenticatedUser } from '~/utils/server/index.server';
@@ -69,6 +72,8 @@ export const action: ActionFunction = async ({ request }) => {
 export default function Index() {
   const data = useLoaderData<IndexData>();
   const submit = useSubmit();
+  const [isDisclosureOpen, setIsDisclosureOpen] = useState(false);
+
   return (
     <div>
       <Nav user={data.user} />
@@ -76,58 +81,78 @@ export default function Index() {
         <main className="col-span-8 col-start-2 max-w-2xl">
           <div className="text-xl flex flex-col items-center">
             <h2>
-              <span className="font-semibold">${data.user.Budget.total}</span>{' '}
+              <span className="font-medium">${data.user.Budget.total}</span>{' '}
               <span className="font-normal">in account</span>
             </h2>
             <h2>
-              <span className="font-semibold">${data.user.Budget.toBeBudgeted}</span> to be budgeted
+              <span className="font-medium">${data.user.Budget.toBeBudgeted}</span> to be budgeted
             </h2>
           </div>
-          <Form method="post" id="stack-form">
-            <div>
-              {data.categorized.map((category) => (
-                <div key={category.id}>
-                  <Link to={`/budget/stack-category/${category.id}`} className="text-lg">
-                    {category.label}
-                  </Link>
-                  {category.Stack.map((stack) => (
-                    <div key={stack.id} className="flex justify-between items-center ml-3 border-b ">
-                      <label htmlFor={stack.label}>{stack.label}</label>
-                      <div className="flex items-center space-x-3">
-                        <input
-                          type="text"
-                          name={stack.label}
-                          id={stack.id.toString()}
-                          defaultValue={stack.amount}
-                          className="text-right border-0 rounded-md max-w-xs hover:bg-gray-100 py-6 px-4"
-                          onBlur={(e) => submit(e.currentTarget.form)}
-                        />
-                        <Link to={`/budget/stack/${stack.id}`} className="text-gray-600">
-                          edit
-                        </Link>
-                      </div>
-                    </div>
-                  ))}
+          <div className="py-2 flex flex-col w-80 my-3 space-y-4">
+            <Disclosure open={isDisclosureOpen} onChange={() => setIsDisclosureOpen(!isDisclosureOpen)}>
+              <DisclosureButton className="outline-none text-left">
+                <div className="flex space-x-1 text-gray-900 hover:text-gray-600">
+                  <PlusCircleIcon className="w-5" />
+                  <p>Cateogry</p>
                 </div>
-              ))}
-            </div>
+              </DisclosureButton>
+              <DisclosurePanel>
+                <Form method="post" id="add-category-form">
+                  <div className="flex justify-between space-x-4 items-center">
+                    <input
+                      type="text"
+                      name="new-category"
+                      placeholder="New Category Name"
+                      className="rounded-md border-gray-400 py-3"
+                    />
+                    <input
+                      type="submit"
+                      defaultValue="Add Category"
+                      className="rounded-md cursor-pointer px-4 py-1 bg-blue-500 text-blue-100 hover:bg-blue-600"
+                    />
+                  </div>
+                </Form>
+              </DisclosurePanel>
+            </Disclosure>
+          </div>
+          <Form method="post" id="stack-form">
+            {data.categorized.map((category) => (
+              <div key={category.id}>
+                <Link to={`/budget/stack-category/${category.id}`} className="text-lg">
+                  {category.label}
+                </Link>
+                {category.Stack.map((stack) => (
+                  <div key={stack.id} className="flex justify-between items-center ml-3 border-b ">
+                    <label htmlFor={stack.label}>{stack.label}</label>
+                    <div className="flex items-center space-x-3">
+                      <input
+                        type="text"
+                        name={stack.label}
+                        id={stack.id.toString()}
+                        defaultValue={stack.amount}
+                        className="text-right border-0 rounded-md max-w-xs hover:bg-gray-100 py-6 px-4"
+                        onBlur={(e) => submit(e.currentTarget.form)}
+                      />
+                      <Link to={`/budget/stack/${stack.id}`} className="text-gray-600">
+                        edit
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ))}
           </Form>
-          <Form method="post" id="add-stack-form">
+          <Form method="post" id="add-stack-form" className="mt-5">
             <div className="flex justify-between space-x-4 items-center">
-              <input type="text" name="new-stack" placeholder="New Stack Name" />
               <input
-                type="submit"
-                defaultValue="Submit"
-                className="rounded-md cursor-pointer px-4 py-2 bg-blue-500 text-blue-100 hover:bg-blue-600"
+                type="text"
+                name="new-stack"
+                placeholder="New Stack Name"
+                className="rounded-md border-gray-400 py-5"
               />
-            </div>
-          </Form>
-          <Form method="post" id="add-category-form">
-            <div className="flex justify-between space-x-4 items-center">
-              <input type="text" name="new-category" placeholder="New Category Name" />
               <input
                 type="submit"
-                defaultValue="Submit"
+                defaultValue="Add Stack"
                 className="rounded-md cursor-pointer px-4 py-2 bg-blue-500 text-blue-100 hover:bg-blue-600"
               />
             </div>
