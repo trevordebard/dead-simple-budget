@@ -75,10 +75,10 @@ export default function Index() {
   const [isDisclosureOpen, setIsDisclosureOpen] = useState(false);
 
   return (
-    <div>
+    <div className="w-full">
       <Nav user={data.user} />
       <div className="grid grid-cols-1 md:grid-cols-12 mt-6">
-        <main className="col-span-6 col-start-2 max-w-2xl">
+        <main className="md:col-span-6 md:col-start-2 max-w-2xl">
           <div className="text-xl flex flex-col items-center">
             <h2>
               <span className="font-medium">${data.user.Budget.total}</span>{' '}
@@ -159,7 +159,6 @@ export default function Index() {
           </Form>
         </main>
         <aside className="col-span-3">
-          <div />
           <Outlet />
         </aside>
       </div>

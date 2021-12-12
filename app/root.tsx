@@ -87,7 +87,7 @@ function Document({ children, title }: { children: React.ReactNode; title?: stri
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className="bg-white">
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -98,9 +98,5 @@ function Document({ children, title }: { children: React.ReactNode; title?: stri
 }
 
 function Layout({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="mx-auto flex flex-wrap justify-center">
-      <div className="w-10/12">{children}</div>
-    </div>
-  );
+  return <div className="flex flex-wrap w-screen">{children}</div>;
 }

@@ -1,4 +1,4 @@
-import { Form, useLoaderData, LoaderFunction, ActionFunction, redirect } from 'remix';
+import { Form, useLoaderData, LoaderFunction, ActionFunction, redirect, Link } from 'remix';
 import { Stack, StackCategory } from '.prisma/client';
 import { authenticator } from '~/auth/auth.server';
 import { db } from '~/utils/db.server';
@@ -41,7 +41,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 export default function StackId() {
   const { stack, categories } = useLoaderData<LoaderData>();
   return (
-    <div>
+    <div className="fixed bg-white top-0 bottom-0 w-full md:relative">
       <h3 className="text-lg mb-4 font-medium divide-y-2">Edit Stack</h3>
       <Form method="post">
         <div className="space-y-4">
@@ -86,6 +86,7 @@ export default function StackId() {
           />
         </div>
       </Form>
+      <Link to="/budget">Cancel</Link>
     </div>
   );
 }
