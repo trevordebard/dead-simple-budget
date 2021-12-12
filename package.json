@@ -8,7 +8,7 @@
     "build:css": "tailwindcss -o ./app/tailwind.css",
     "dev": "concurrently \"npm run dev:css\" \"remix dev\"",
     "dev:css": "tailwindcss -o ./app/tailwind.css --watch",
-    "start": "PORT=3333 remix-serve api/build/",
+    "start": "PORT=3333 remix-serve api/_build/",
     "postinstall": "remix setup node"
   },
   "dependencies": {
