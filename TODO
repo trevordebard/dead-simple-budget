@@ -1,0 +1,59 @@
+- create constants file for react-query query names (keys)
+- move API routes to all plural
+    - maybe even consider all routes falling under /user/[id]
+        - user/[id]/totals, user/[id]/stacks, user/[id]/stacks/[id], user/[id]/transactions, etc
+- 401 all unauthenticated api requests (maybe use middleware for this!)
+- 400 all req.body inputs that do not match typescript input type 
+- add delete option to edit transaction component
+- Speed up page loads
+- Improve Action Bar with more features and maybe restructuring to a compound component? 
+- transaction pagination
+- enter key for add stack
+- tailwind
+- add alerts to all update hooks
+- look up react data fetching best practices
+- change name of stack
+- new manual transaction should refetch transactions
+- Figure out how to drag stacks from one category to another. Might need to use reac-dnd or something instead of framer motion
+- use state machines for page context
+
+
+
+
+
+Done:
+- make stacks draggable
+- invalidate fetch stacks by category after deleting stack
+- Change import logic to not just care about dates
+  - this might mean adding an "imported" flag for imported transactions and only fetching after the most recent transaction 
+  - this still probably doesn't account for pending transactions. Is there another date field we can look at from plaid?
+      - maybe I should store the "authorized_date" in the database
+- Import is grabbing all acount transactions, not just checking 
+- Edit stack selector not using correct state. Especially for imported
+- Make nav bar less ugly (new logo?)
+- Edit page withdraw/deposit button 
+- Use cents for money
+- Cancel edit transaction still makes an API call
+- Fix issue where stack doesn't change color from red when moving from negative
+- Remove all the extra dependencies 
+- Maybe delete table components
+- Unable to get plaid transactions if a transaction was added manually in the futures
+- Store plaid ID 
+- Make stack amount editable in slide out 
+- Edit transaction still requires you to select the already selected stack 
+    - maybe I should rewrite the Edit Transaction UI
+- It would be neat when editing or adding a transaction there was a pop up that shows you all of your stacks with their amounts and lets you select one or create a new stack
+- Stack Categories
+1. Refactor stacks into its own react component
+5. Add filterBy query param on api route and return categorized stacks
+3. Create iCategorizedStacks interface
+4. Create useCategorizedStacks hook 
+2. Create a stack category component  
+6. Bring all the above steps together to display stacks in order by category on page 
+7. Add api route to update StackCategory ordering 
+8. Call api route for updateing order when user drag and drops a stack within its category 
+9. commit changes
+10. add ability to change a stack's category via dropdown in EditBudgetStack
+    - need to remove the stack from the old stack category order and add it to the new one
+11. Update stack category order to include new stack when new stack is added
+12. Add ability to create new stack categories
