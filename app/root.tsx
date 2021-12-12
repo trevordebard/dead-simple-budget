@@ -4,18 +4,12 @@ import * as React from 'react';
 import styles from './tailwind.css';
 
 import globalStylesUrl from '~/styles/global.css';
-import darkStylesUrl from '~/styles/dark.css';
 
 // https://remix.run/api/app#links
 export const links: LinksFunction = () => {
   return [
     { rel: 'stylesheet', href: globalStylesUrl },
     { rel: 'stylesheet', href: styles },
-    {
-      rel: 'stylesheet',
-      href: darkStylesUrl,
-      media: '(prefers-color-scheme: dark)',
-    },
   ];
 };
 
@@ -87,7 +81,7 @@ function Document({ children, title }: { children: React.ReactNode; title?: stri
         <Meta />
         <Links />
       </head>
-      <body className="bg-white">
+      <body className="w-screen h-screen">
         {children}
         <ScrollRestoration />
         <Scripts />
