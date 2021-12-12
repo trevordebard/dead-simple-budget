@@ -41,32 +41,51 @@ export const action: ActionFunction = async ({ request, params }) => {
 export default function StackId() {
   const { stack, categories } = useLoaderData<LoaderData>();
   return (
-    <Form method="post">
-      <div className="space-y-4">
-        <div>
-          <label htmlFor="label">Stack</label>
-          <input type="text" name="label" defaultValue={stack.label} />
+    <div>
+      <h3 className="text-lg mb-4 font-medium divide-y-2">Edit Stack</h3>
+      <Form method="post">
+        <div className="space-y-4">
+          <div>
+            <label htmlFor="label" className="text-md mb-3">
+              Stack
+            </label>
+            <input
+              type="text"
+              name="label"
+              defaultValue={stack.label}
+              className="border border-gray-300 sm:text-sm rounded-md py-5"
+            />
+          </div>
+          <div>
+            <label htmlFor="amount">Amount</label>
+            <input
+              type="text"
+              name="amount"
+              defaultValue={stack.amount}
+              className="border border-gray-300 sm:text-sm rounded-md py-5"
+            />
+          </div>
+          <div>
+            <label htmlFor="catgory">Category</label>
+            <select
+              name="category"
+              defaultValue={stack.stackCategoryId || -1}
+              className="border border-gray-300 sm:text-sm rounded-md block"
+            >
+              {categories.map((cat) => (
+                <option value={cat.id} key={cat.id}>
+                  {cat.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <input
+            type="submit"
+            value="Submit"
+            className="rounded-md cursor-pointer px-4 py-2 bg-blue-500 text-blue-100 hover:bg-blue-600"
+          />
         </div>
-        <div>
-          <label htmlFor="amount">Amount</label>
-          <input type="text" name="amount" defaultValue={stack.amount} />
-        </div>
-        <div>
-          <label htmlFor="catgory">Category</label>
-          <select name="category" defaultValue={stack.stackCategoryId || -1}>
-            {categories.map((cat) => (
-              <option value={cat.id} key={cat.id}>
-                {cat.label}
-              </option>
-            ))}
-          </select>
-        </div>
-        <input
-          type="submit"
-          value="Submit"
-          className="rounded-md cursor-pointer px-4 py-2 bg-blue-500 text-blue-100 hover:bg-blue-600"
-        />
-      </div>
-    </Form>
+      </Form>
+    </div>
   );
 }

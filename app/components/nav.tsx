@@ -6,26 +6,37 @@ type NavProps = {
 };
 
 export function Nav({ user = null }: NavProps) {
-  const location = useLocation();
+  const { pathname } = useLocation();
   return (
-    <div className="col-span-full">
-      <header className="text-gray-600 body-font">
+    <div className="col-span-full text-gray-600">
+      <header className="body-font">
         <div className="container mx-auto flex flex-wrap py-5 flex-col md:flex-row items-center">
-          <Link to="/" className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
-            <span className="text-xl">Dead Simple Budget</span>
+          <Link to="/" className="flex text-lg font-medium text-gray-800 items-center mb-4 md:mb-0">
+            Dead Simple Budget
           </Link>
           {user ? (
             <>
               <nav className="md:ml-auto md:mr-auto flex flex-wrap items-center text-base justify-center space-x-5">
                 <Link
                   to="/budget"
-                  className={`${location.pathname.split('/')[1] === 'budget' &&
-                    'text-purple-800 border-b border-purple-800 hover:text-purple-500 hover:border-purple-500 hover:no-underline '
-                    }`}
+                  className={
+                    pathname.split('/')[1] === 'budget'
+                      ? 'text-purple-800 border-b border-purple-800 hover:text-purple-500 hover:border-purple-500 hover:no-underline'
+                      : 'hover:no-underline hover:border-b border-purple-500 hover:text-purple-500'
+                  }
                 >
                   Budget
                 </Link>
-                <Link to="/transactions">Transactions</Link>
+                <Link
+                  to="/transactions"
+                  className={
+                    pathname.split('/')[1] === 'transactions'
+                      ? 'text-purple-800 border-b border-purple-800 hover:text-purple-500 hover:border-purple-500 hover:no-underline'
+                      : 'hover:no-underline hover:border-b border-purple-500 hover:text-purple-500'
+                  }
+                >
+                  Transactions
+                </Link>
               </nav>
               <form action="/logout" method="post" className="text-right">
                 <button
