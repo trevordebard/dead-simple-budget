@@ -1,11 +1,5 @@
-import { Outlet } from 'remix';
+import { LoaderFunction, redirect } from 'remix';
 
-export default function ({ children }) {
-  return (
-    <div>
-      hialsdkfjlasjkdf
-      {/* {children} */}
-      <Outlet />
-    </div>
-  );
-}
+export const loader: LoaderFunction = () => {
+  return redirect('/login');
+};
