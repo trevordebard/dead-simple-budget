@@ -88,11 +88,11 @@ export default function Index() {
               <span className="font-medium">${data.user.Budget.toBeBudgeted}</span> to be budgeted
             </h2>
           </div>
-          <div className="py-2 flex flex-col w-80 my-3 space-y-4">
-            <Disclosure open={isDisclosureOpen} onChange={() => setIsDisclosureOpen(!isDisclosureOpen)}>
-              <DisclosureButton className="outline-none text-left">
-                <div className="flex space-x-1 text-gray-900 hover:text-gray-600">
-                  <PlusCircleIcon className="w-5" />
+          <Disclosure open={isDisclosureOpen} onChange={() => setIsDisclosureOpen(!isDisclosureOpen)}>
+            <div className="py-2">
+              <DisclosureButton className="outline-none text-left w-full">
+                <div className="flex space-x-1 text-gray-900 hover:text-gray-600 items-center">
+                  <PlusCircleIcon className="w-5 h-5" />
                   <p>Cateogry</p>
                 </div>
               </DisclosureButton>
@@ -113,8 +113,8 @@ export default function Index() {
                   </div>
                 </Form>
               </DisclosurePanel>
-            </Disclosure>
-          </div>
+            </div>
+          </Disclosure>
           <Form method="post" id="stack-form">
             {data.categorized.map((category) => (
               <div key={category.id}>
