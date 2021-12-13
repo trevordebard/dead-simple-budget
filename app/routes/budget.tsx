@@ -8,6 +8,7 @@ import {
   json,
   Outlet,
   Link,
+  useLocation,
 } from 'remix';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure';
 import { useState } from 'react';
@@ -69,16 +70,17 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 // https://remix.run/guides/routing#index-routes
-export default function Index() {
+export default function Budget() {
   const data = useLoaderData<IndexData>();
   const submit = useSubmit();
   const [isDisclosureOpen, setIsDisclosureOpen] = useState(false);
 
   return (
-    <div className="w-full">
+    <div className="px-10">
       <Nav user={data.user} />
-      <div className="grid grid-cols-1 md:grid-cols-12 mt-6">
-        <main className="md:col-span-6 md:col-start-2 max-w-2xl">
+      <div className="grid grid-cols-1 md:grid-cols-12 md:gap-10">
+        <Sidebar user={data.user} />
+        <main className="md:col-span-6 md:col-start-3 max-w-2xl mt-4 md:mt-0">
           <div className="text-xl flex flex-col items-center">
             <h2>
               <span className="font-medium">${data.user.Budget.total}</span>{' '}
@@ -158,10 +160,44 @@ export default function Index() {
             </div>
           </Form>
         </main>
-        <aside className="col-span-3">
+        <aside className="md:col-span-3">
           <Outlet />
         </aside>
       </div>
+    </div>
+  );
+}
+
+function Sidebar({ user }: { user: AuthenticatedUser }) {
+  const { pathname } = useLocation();
+  return (
+    <div className="col-span-full md:col-span-2 min-w-52">
+      {user ? (
+        <nav className="flex justify-center items-center text-base space-x-5 md:flex-col md:space-y-5 md:space-x-0">
+          <Link
+            to="/budget"
+            className={
+              pathname.split('/')[1] === 'budget'
+                ? 'px-4 py-2 md:py-3 text-sm font-semibold bg-purple-200 rounded-lg md:w-full text-purple-800 hover:no-underline hover:text-purple-800'
+                : 'px-4 py-2 md:py-3 text-sm font-semibold md:w-full rounded-lg text-gray-900 hover:bg-gray-100 hover:no-underline hover:text-gray-800'
+            }
+          >
+            Budget
+          </Link>
+          <Link
+            to="/transactions"
+            className={
+              pathname.split('/')[1] === 'transactions'
+                ? 'px-4 py-2 md:py-3 text-sm font-semibold bg-purple-200 rounded-lg md:w-full text-purple-800 hover:no-underline hover:text-purple-800'
+                : 'px-4 py-2 md:py-3 text-sm font-semibold md:w-full rounded-lg text-gray-900 hover:bg-gray-100 hover:no-underline hover:text-gray-800'
+            }
+          >
+            Transactions
+          </Link>
+        </nav>
+      ) : (
+        <Link to="/login">Login</Link>
+      )}
     </div>
   );
 }

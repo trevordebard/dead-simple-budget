@@ -18,9 +18,7 @@ export const links: LinksFunction = () => {
 export default function App() {
   return (
     <Document>
-      <Layout>
-        <Outlet />
-      </Layout>
+      <Outlet />
     </Document>
   );
 }
@@ -30,14 +28,12 @@ export function ErrorBoundary({ error }: { error: Error }) {
   console.error(error);
   return (
     <Document title="Error!">
-      <Layout>
-        <div>
-          <h1>There was an error</h1>
-          <p>{error.message}</p>
-          <hr />
-          <p>Hey, developer, you should replace this with what you want your users to see.</p>
-        </div>
-      </Layout>
+      <div>
+        <h1>There was an error</h1>
+        <p>{error.message}</p>
+        <hr />
+        <p>Hey, developer, you should replace this with what you want your users to see.</p>
+      </div>
     </Document>
   );
 }
@@ -61,12 +57,12 @@ export function CatchBoundary() {
 
   return (
     <Document title={`${caught.status} ${caught.statusText}`}>
-      <Layout>
+      <div>
         <h1>
           {caught.status}: {caught.statusText}
         </h1>
         {message}
-      </Layout>
+      </div>
     </Document>
   );
 }
@@ -89,8 +85,4 @@ function Document({ children, title }: { children: React.ReactNode; title?: stri
       </body>
     </html>
   );
-}
-
-function Layout({ children }: { children: React.ReactNode }) {
-  return <div className="flex flex-wrap w-screen">{children}</div>;
 }

@@ -41,7 +41,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 export default function StackId() {
   const { stack, categories } = useLoaderData<LoaderData>();
   return (
-    <div className="fixed bg-white top-0 bottom-0 w-full md:relative">
+    <div className="p-10 md:p-0 fixed bg-white top-0 bottom-0 left-0 right-0 w-full md:relative">
       <h3 className="text-lg mb-4 font-medium divide-y-2">Edit Stack</h3>
       <Form method="post">
         <div className="space-y-4">
