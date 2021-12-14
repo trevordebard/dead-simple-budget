@@ -75,89 +75,93 @@ export default function Budget() {
   const [isDisclosureOpen, setIsDisclosureOpen] = useState(false);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-12 md:gap-10">
-      <Sidebar user={data.user} />
-      <main className="md:col-span-6 md:col-start-3 max-w-2xl mt-4 md:mt-0">
-        <div className="text-xl flex flex-col items-center">
-          <h2>
-            <span className="font-medium">${data.user.Budget.total}</span>{' '}
-            <span className="font-normal">in account</span>
-          </h2>
-          <h2>
-            <span className="font-medium">${data.user.Budget.toBeBudgeted}</span> to be budgeted
-          </h2>
-        </div>
-        <Disclosure open={isDisclosureOpen} onChange={() => setIsDisclosureOpen(!isDisclosureOpen)}>
-          <div className="py-2">
-            <DisclosureButton className="outline-none text-left w-full">
-              <div className="flex space-x-1 text-gray-900 hover:text-gray-600 items-center">
-                <PlusCircleIcon className="w-5 h-5" />
-                <p>Cateogry</p>
-              </div>
-            </DisclosureButton>
-            <DisclosurePanel>
-              <Form method="post" id="add-category-form">
-                <div className="flex justify-between space-x-4 items-center">
-                  <input
-                    type="text"
-                    name="new-category"
-                    placeholder="New Category Name"
-                    className="rounded-md border-gray-400 py-3"
-                  />
-                  <input
-                    type="submit"
-                    defaultValue="Add Category"
-                    className="rounded-md cursor-pointer px-4 py-1 bg-blue-500 text-blue-100 hover:bg-blue-600"
-                  />
-                </div>
-              </Form>
-            </DisclosurePanel>
+    <div className="flex flex-grow w-full flex-col md:flex-row md:gap-4">
+      <div className="w-full md:w-1/6">
+        <Sidebar user={data.user} />
+      </div>
+      <main className="flex-grow mt-4 md:mt-0">
+        <div className="mx-auto max-w-3xl">
+          <div className="text-xl flex flex-col items-center">
+            <h2>
+              <span className="font-medium">${data.user.Budget.total}</span>{' '}
+              <span className="font-normal">in account</span>
+            </h2>
+            <h2>
+              <span className="font-medium">${data.user.Budget.toBeBudgeted}</span> to be budgeted
+            </h2>
           </div>
-        </Disclosure>
-        <Form method="post" id="stack-form">
-          {data.categorized.map((category) => (
-            <div key={category.id}>
-              <Link to={`/budget/stack-category/${category.id}`} className="text-lg">
-                {category.label}
-              </Link>
-              {category.Stack.map((stack) => (
-                <div key={stack.id} className="flex justify-between items-center ml-3 border-b ">
-                  <label htmlFor={stack.label}>{stack.label}</label>
-                  <div className="flex items-center space-x-3">
+          <Disclosure open={isDisclosureOpen} onChange={() => setIsDisclosureOpen(!isDisclosureOpen)}>
+            <div className="py-2">
+              <DisclosureButton className="outline-none text-left w-full">
+                <div className="flex space-x-1 text-gray-900 hover:text-gray-600 items-center">
+                  <PlusCircleIcon className="w-5 h-5" />
+                  <p>Cateogry</p>
+                </div>
+              </DisclosureButton>
+              <DisclosurePanel>
+                <Form method="post" id="add-category-form">
+                  <div className="flex justify-between space-x-4 items-center">
                     <input
                       type="text"
-                      name={stack.label}
-                      id={stack.id.toString()}
-                      defaultValue={stack.amount}
-                      className="text-right border-0 rounded-md max-w-xs hover:bg-gray-100 py-6 px-4"
-                      onBlur={(e) => submit(e.currentTarget.form)}
+                      name="new-category"
+                      placeholder="New Category Name"
+                      className="rounded-md border-gray-400 py-3"
                     />
-                    <Link to={`/budget/stack/${stack.id}`} className="text-gray-600">
-                      edit
-                    </Link>
+                    <input
+                      type="submit"
+                      defaultValue="Add Category"
+                      className="rounded-md cursor-pointer px-4 py-1 bg-blue-500 text-blue-100 hover:bg-blue-600"
+                    />
                   </div>
-                </div>
-              ))}
+                </Form>
+              </DisclosurePanel>
             </div>
-          ))}
-        </Form>
-        <Form method="post" id="add-stack-form" className="mt-5">
-          <div className="flex justify-between space-x-4 items-center">
-            <input
-              type="text"
-              name="new-stack"
-              placeholder="New Stack Name"
-              className="rounded-md border-gray-400 py-5"
-            />
-            <input
-              type="submit"
-              defaultValue="Add Stack"
-              className="rounded-md cursor-pointer px-4 py-2 bg-blue-500 text-blue-100 hover:bg-blue-600"
-            />
-          </div>
-        </Form>
+          </Disclosure>
+          <Form method="post" id="stack-form">
+            {data.categorized.map((category) => (
+              <div key={category.id}>
+                <Link to={`/budget/stack-category/${category.id}`} className="text-lg">
+                  {category.label}
+                </Link>
+                {category.Stack.map((stack) => (
+                  <div key={stack.id} className="flex justify-between items-center ml-3 border-b ">
+                    <label htmlFor={stack.label}>{stack.label}</label>
+                    <div className="flex items-center space-x-3">
+                      <input
+                        type="text"
+                        name={stack.label}
+                        id={stack.id.toString()}
+                        defaultValue={stack.amount}
+                        className="text-right border-0 rounded-md max-w-xs hover:bg-gray-100 py-6 px-4"
+                        onBlur={(e) => submit(e.currentTarget.form)}
+                      />
+                      <Link to={`/budget/stack/${stack.id}`} className="text-gray-600">
+                        edit
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </Form>
+          <Form method="post" id="add-stack-form" className="mt-5">
+            <div className="flex justify-between space-x-4 items-center">
+              <input
+                type="text"
+                name="new-stack"
+                placeholder="New Stack Name"
+                className="rounded-md border-gray-400 py-5"
+              />
+              <input
+                type="submit"
+                defaultValue="Add Stack"
+                className="rounded-md cursor-pointer px-4 py-2 bg-blue-500 text-blue-100 hover:bg-blue-600"
+              />
+            </div>
+          </Form>
+        </div>
       </main>
-      <aside className="md:col-span-3">
+      <aside className="p-10 md:p-0 w-1/4">
         <Outlet />
       </aside>
     </div>
@@ -167,7 +171,7 @@ export default function Budget() {
 function Sidebar({ user }: { user: AuthenticatedUser }) {
   const { pathname } = useLocation();
   return (
-    <div className="col-span-full md:col-span-2 min-w-52">
+    <div>
       {user ? (
         <nav className="flex justify-center items-center text-base space-x-5 md:flex-col md:space-y-5 md:space-x-0">
           <Link
