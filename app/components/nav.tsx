@@ -1,11 +1,9 @@
 import { Link } from 'remix';
-import { AuthenticatedUser } from '~/types/user';
+import { useRootData } from '~/utils/use-root-data';
 
-type NavProps = {
-  user: AuthenticatedUser | null;
-};
+export function Nav() {
+  const { user } = useRootData();
 
-export function Nav({ user = null }: NavProps) {
   return (
     <div className="col-span-full text-gray-600">
       <header className="body-font">
