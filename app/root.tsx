@@ -34,7 +34,7 @@ export const links: LinksFunction = () => {
 export default function App() {
   return (
     <Document>
-      <div className="px-10">
+      <div className="px-5 md:px-10">
         <Nav />
         <Outlet />
       </div>

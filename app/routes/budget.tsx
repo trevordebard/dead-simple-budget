@@ -75,7 +75,7 @@ export default function Budget() {
   const [isDisclosureOpen, setIsDisclosureOpen] = useState(false);
 
   return (
-    <div className="flex flex-grow w-full flex-col md:flex-row md:gap-4">
+    <div className="flex flex-grow w-full flex-col md:flex-row md:gap-10">
       <div className="w-full md:w-1/6">
         <Sidebar user={data.user} />
       </div>
