@@ -3,15 +3,17 @@ import { useRootData } from '~/utils/use-root-data';
 
 export function Nav() {
   const { user } = useRootData();
-
+  if (!user) {
+    return null;
+  }
   return (
-    <div className="col-span-full text-gray-600">
-      <header className="body-font">
-        <div className="flex py-5 flex-row justify-between">
-          <Link to="/" className="flex text-lg font-medium text-gray-800">
-            Dead Simple Budget
-          </Link>
-          {user ? (
+    <div>
+      <div className="col-span-full text-gray-600">
+        <header className="body-font">
+          <div className="flex py-5 flex-row justify-between">
+            <Link to="/" className="flex text-lg font-medium text-gray-800">
+              Dead Simple Budget
+            </Link>
             <form action="/logout" method="post" className="text-right">
               <button
                 type="submit"
@@ -20,11 +22,9 @@ export function Nav() {
                 Logout
               </button>
             </form>
-          ) : (
-            <Link to="/login">Login</Link>
-          )}
-        </div>
-      </header>
+          </div>
+        </header>
+      </div>
     </div>
   );
 }

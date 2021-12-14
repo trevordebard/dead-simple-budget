@@ -5,6 +5,7 @@ import styles from './tailwind.css';
 import globalStylesUrl from '~/styles/global.css';
 import { getAuthenticatedUser } from './utils/server/index.server';
 import { AuthenticatedUser } from './types/user';
+import { Nav } from './components/nav';
 
 export type RootLoaderData = {
   user: AuthenticatedUser | null;
@@ -33,7 +34,10 @@ export const links: LinksFunction = () => {
 export default function App() {
   return (
     <Document>
-      <Outlet />
+      <div className="px-10">
+        <Nav />
+        <Outlet />
+      </div>
     </Document>
   );
 }
