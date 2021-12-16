@@ -42,11 +42,11 @@ export default function StackId() {
   const { stack, categories } = useLoaderData<LoaderData>();
   return (
     <div className="fixed top-0 bottom-0 left-0 right-0 md:relative bg-white p-5 md:p-0">
-      <h3 className="text-lg mb-4 font-medium divide-y-2">Edit Stack</h3>
+      <h3 className="text-lg mb-3 divide-y-2 text-center">Edit Stack</h3>
       <Form method="post">
         <div className="space-y-4">
           <div>
-            <label htmlFor="label" className="text-md mb-3">
+            <label htmlFor="label" className="inline-block mb-1">
               Stack
             </label>
             <input
@@ -57,7 +57,9 @@ export default function StackId() {
             />
           </div>
           <div>
-            <label htmlFor="amount">Amount</label>
+            <label htmlFor="amount" className="inline-block mb-1">
+              Amount
+            </label>
             <input
               type="text"
               name="amount"
@@ -66,11 +68,13 @@ export default function StackId() {
             />
           </div>
           <div>
-            <label htmlFor="catgory">Category</label>
+            <label htmlFor="catgory" className="inline-block mb-1">
+              Category
+            </label>
             <select
               name="category"
               defaultValue={stack.stackCategoryId || -1}
-              className="border border-gray-300 sm:text-sm rounded-md block"
+              className="border border-gray-300 sm:text-sm rounded-md block w-full"
             >
               {categories.map((cat) => (
                 <option value={cat.id} key={cat.id}>
@@ -79,14 +83,18 @@ export default function StackId() {
               ))}
             </select>
           </div>
-          <input
-            type="submit"
-            value="Submit"
-            className="rounded-md cursor-pointer px-4 py-2 bg-blue-500 text-blue-100 hover:bg-blue-600"
-          />
+          <div className="flex flex-col items-center space-y-2">
+            <input
+              type="submit"
+              value="Submit"
+              className="rounded-md cursor-pointer px-4 py-2 border border-gray-700  hover:bg-gray-700 hover:text-gray-50 w-full"
+            />
+            <Link to="/budget" className="hover:text-purple-700">
+              Cancel
+            </Link>
+          </div>
         </div>
       </Form>
-      <Link to="/budget">Cancel</Link>
     </div>
   );
 }

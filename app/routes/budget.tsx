@@ -105,12 +105,12 @@ export default function Budget() {
                       type="text"
                       name="new-category"
                       placeholder="New Category Name"
-                      className="rounded-md border-gray-400 py-3"
+                      className="rounded-md border-gray-400 py-4"
                     />
                     <input
                       type="submit"
-                      defaultValue="Add Category"
-                      className="rounded-md cursor-pointer px-4 py-1 bg-blue-500 text-blue-100 hover:bg-blue-600"
+                      value="Add"
+                      className="rounded-md cursor-pointer px-4 py-1 border border-gray-700 text-gray-700 hover:bg-gray-600 hover:text-gray-100"
                     />
                   </div>
                 </Form>
@@ -126,13 +126,13 @@ export default function Budget() {
                 {category.Stack.map((stack) => (
                   <div key={stack.id} className="flex justify-between items-center ml-3 border-b ">
                     <label htmlFor={stack.label}>{stack.label}</label>
-                    <div className="flex items-center space-x-3">
+                    <div className="flex items-center space-x-3 py-2">
                       <input
                         type="text"
                         name={stack.label}
                         id={stack.id.toString()}
                         defaultValue={stack.amount}
-                        className="text-right border-0 rounded-md max-w-xs hover:bg-gray-100 py-6 px-4"
+                        className="text-right border-0 rounded-md max-w-xs w-32 hover:bg-gray-100 py-5 px-4"
                         onBlur={(e) => submit(e.currentTarget.form)}
                       />
                       <Link to={`/budget/stack/${stack.id}`} className="text-gray-600">
@@ -154,8 +154,8 @@ export default function Budget() {
               />
               <input
                 type="submit"
-                defaultValue="Add Stack"
-                className="rounded-md cursor-pointer px-4 py-2 bg-blue-500 text-blue-100 hover:bg-blue-600"
+                value="Add Stack"
+                className="rounded-md cursor-pointer px-4 py-2 bg-gray-700 text-gray-50 hover:bg-gray-600"
               />
             </div>
           </Form>

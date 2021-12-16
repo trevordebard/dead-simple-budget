@@ -17,7 +17,7 @@ export function Nav() {
             <form action="/logout" method="post" className="text-right">
               <button
                 type="submit"
-                className="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base"
+                className="inline-flex items-center border py-1 px-3 focus:outline-none hover:bg-gray-100 rounded-md text-base"
               >
                 Logout
               </button>
