@@ -87,7 +87,7 @@ export default function StackId() {
             <input
               type="submit"
               value="Submit"
-              className="rounded-md cursor-pointer px-4 py-2 border border-gray-700  hover:bg-gray-700 hover:text-gray-50 w-full"
+              className="rounded-md cursor-pointer px-4 py-2 border border-gray-700  hover:bg-gray-700 hover:text-gray-50 w-full font-medium"
             />
             <Link to="/budget" className="hover:text-purple-700">
               Cancel

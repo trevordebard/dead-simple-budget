@@ -8,7 +8,6 @@ import {
   json,
   Outlet,
   Link,
-  useLocation,
 } from 'remix';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure';
 import { useState } from 'react';
@@ -17,6 +16,7 @@ import { Stack, StackCategory } from '.prisma/client';
 import { db } from '~/utils/db.server';
 import { createStack, requireAuthenticatedUser } from '~/utils/server/index.server';
 import { AuthenticatedUser } from '~/types/user';
+import { ContentAction, ContentLayout, ContentMain } from '~/components/layout';
 
 type IndexData = {
   user: AuthenticatedUser;
@@ -75,129 +75,90 @@ export default function Budget() {
   const [isDisclosureOpen, setIsDisclosureOpen] = useState(false);
 
   return (
-    <div className="flex flex-grow w-full flex-col md:flex-row md:gap-10">
-      <div className="w-full md:w-1/6">
-        <Sidebar user={data.user} />
-      </div>
-      <main className="flex-grow mt-4 md:mt-0">
-        <div className="mx-auto max-w-3xl">
-          <div className="text-xl flex flex-col items-center">
-            <h2>
-              <span className="font-medium">${data.user.Budget.total}</span>{' '}
-              <span className="font-normal">in account</span>
-            </h2>
-            <h2>
-              <span className="font-medium">${data.user.Budget.toBeBudgeted}</span> to be budgeted
-            </h2>
-          </div>
-          <Disclosure open={isDisclosureOpen} onChange={() => setIsDisclosureOpen(!isDisclosureOpen)}>
-            <div className="py-2">
-              <DisclosureButton className="outline-none text-left w-full">
-                <div className="flex space-x-1 text-gray-900 hover:text-gray-600 items-center">
-                  <PlusCircleIcon className="w-5 h-5" />
-                  <p>Cateogry</p>
+    <ContentLayout>
+      <ContentMain>
+        <div className="text-xl flex flex-col items-center">
+          <h2>
+            <span className="font-medium">${data.user.Budget.total}</span>{' '}
+            <span className="font-normal">in account</span>
+          </h2>
+          <h2>
+            <span className="font-medium">${data.user.Budget.toBeBudgeted}</span> to be budgeted
+          </h2>
+        </div>
+        <Disclosure open={isDisclosureOpen} onChange={() => setIsDisclosureOpen(!isDisclosureOpen)}>
+          <div className="py-2">
+            <DisclosureButton className="outline-none text-left w-full">
+              <div className="flex space-x-1 text-gray-900 hover:text-gray-600 items-center">
+                <PlusCircleIcon className="w-5 h-5" />
+                <p>Cateogry</p>
+              </div>
+            </DisclosureButton>
+            <DisclosurePanel>
+              <Form method="post" id="add-category-form">
+                <div className="flex justify-between space-x-4 items-center">
+                  <input
+                    type="text"
+                    name="new-category"
+                    placeholder="New Category Name"
+                    className="rounded-md border-gray-400 py-4"
+                  />
+                  <input
+                    type="submit"
+                    value="Add"
+                    className="rounded-md cursor-pointer px-4 py-1 border border-gray-700 text-gray-700 hover:bg-gray-600 hover:text-gray-100"
+                  />
                 </div>
-              </DisclosureButton>
-              <DisclosurePanel>
-                <Form method="post" id="add-category-form">
-                  <div className="flex justify-between space-x-4 items-center">
+              </Form>
+            </DisclosurePanel>
+          </div>
+        </Disclosure>
+        <Form method="post" id="stack-form">
+          {data.categorized.map((category) => (
+            <div key={category.id}>
+              <Link to={`/budget/stack-category/${category.id}`} className="text-lg">
+                {category.label}
+              </Link>
+              {category.Stack.map((stack) => (
+                <div key={stack.id} className="flex justify-between items-center ml-3 border-b ">
+                  <label htmlFor={stack.label}>{stack.label}</label>
+                  <div className="flex items-center space-x-3 py-2">
                     <input
                       type="text"
-                      name="new-category"
-                      placeholder="New Category Name"
-                      className="rounded-md border-gray-400 py-4"
+                      name={stack.label}
+                      id={stack.id.toString()}
+                      defaultValue={stack.amount}
+                      className="text-right border-0 rounded-md max-w-xs w-32 hover:bg-gray-100 py-5 px-4"
+                      onBlur={(e) => submit(e.currentTarget.form)}
                     />
-                    <input
-                      type="submit"
-                      value="Add"
-                      className="rounded-md cursor-pointer px-4 py-1 border border-gray-700 text-gray-700 hover:bg-gray-600 hover:text-gray-100"
-                    />
+                    <Link to={`/budget/stack/${stack.id}`} className="text-gray-600">
+                      edit
+                    </Link>
                   </div>
-                </Form>
-              </DisclosurePanel>
+                </div>
+              ))}
             </div>
-          </Disclosure>
-          <Form method="post" id="stack-form">
-            {data.categorized.map((category) => (
-              <div key={category.id}>
-                <Link to={`/budget/stack-category/${category.id}`} className="text-lg">
-                  {category.label}
-                </Link>
-                {category.Stack.map((stack) => (
-                  <div key={stack.id} className="flex justify-between items-center ml-3 border-b ">
-                    <label htmlFor={stack.label}>{stack.label}</label>
-                    <div className="flex items-center space-x-3 py-2">
-                      <input
-                        type="text"
-                        name={stack.label}
-                        id={stack.id.toString()}
-                        defaultValue={stack.amount}
-                        className="text-right border-0 rounded-md max-w-xs w-32 hover:bg-gray-100 py-5 px-4"
-                        onBlur={(e) => submit(e.currentTarget.form)}
-                      />
-                      <Link to={`/budget/stack/${stack.id}`} className="text-gray-600">
-                        edit
-                      </Link>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ))}
-          </Form>
-          <Form method="post" id="add-stack-form" className="mt-5">
-            <div className="flex justify-between space-x-4 items-center">
-              <input
-                type="text"
-                name="new-stack"
-                placeholder="New Stack Name"
-                className="rounded-md border-gray-400 py-5"
-              />
-              <input
-                type="submit"
-                value="Add Stack"
-                className="rounded-md cursor-pointer px-4 py-2 bg-gray-700 text-gray-50 hover:bg-gray-600"
-              />
-            </div>
-          </Form>
-        </div>
-      </main>
-      <aside className="p-10 md:p-0 w-1/4">
+          ))}
+        </Form>
+        <Form method="post" id="add-stack-form" className="mt-5">
+          <div className="flex justify-between space-x-4 items-center">
+            <input
+              type="text"
+              name="new-stack"
+              placeholder="New Stack Name"
+              className="rounded-md border-gray-400 py-5"
+            />
+            <input
+              type="submit"
+              value="Add Stack"
+              className="rounded-md cursor-pointer px-4 py-2 bg-gray-700 text-gray-50 hover:bg-gray-600 font-normal"
+            />
+          </div>
+        </Form>
+      </ContentMain>
+      <ContentAction>
         <Outlet />
-      </aside>
-    </div>
-  );
-}
-
-function Sidebar({ user }: { user: AuthenticatedUser }) {
-  const { pathname } = useLocation();
-  return (
-    <div>
-      {user ? (
-        <nav className="flex justify-center items-center text-base space-x-5 md:flex-col md:space-y-5 md:space-x-0">
-          <Link
-            to="/budget"
-            className={
-              pathname.split('/')[1] === 'budget'
-                ? 'px-4 py-2 md:py-3 text-sm font-semibold bg-purple-200 rounded-lg md:w-full text-purple-800 hover:no-underline hover:text-purple-800'
-                : 'px-4 py-2 md:py-3 text-sm font-semibold md:w-full rounded-lg text-gray-900 hover:bg-gray-100 hover:no-underline hover:text-gray-800'
-            }
-          >
-            Budget
-          </Link>
-          <Link
-            to="/transactions"
-            className={
-              pathname.split('/')[1] === 'transactions'
-                ? 'px-4 py-2 md:py-3 text-sm font-semibold bg-purple-200 rounded-lg md:w-full text-purple-800 hover:no-underline hover:text-purple-800'
-                : 'px-4 py-2 md:py-3 text-sm font-semibold md:w-full rounded-lg text-gray-900 hover:bg-gray-100 hover:no-underline hover:text-gray-800'
-            }
-          >
-            Transactions
-          </Link>
-        </nav>
-      ) : (
-        <Link to="/login">Login</Link>
-      )}
-    </div>
+      </ContentAction>
+    </ContentLayout>
   );
 }

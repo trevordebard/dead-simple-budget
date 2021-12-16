@@ -1,7 +1,11 @@
+import { ContentLayout, ContentMain } from '~/components/layout';
+
 export default function Transctions() {
   return (
-    <div>
-      <p>transactions placeholder</p>
-    </div>
+    <ContentLayout>
+      <ContentMain>
+        <p>transactions placeholder</p>
+      </ContentMain>
+    </ContentLayout>
   );
 }
