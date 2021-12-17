@@ -1,6 +1,5 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["dataProxy"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -11,11 +10,13 @@ datasource db {
 
 model StackCategory {
   id         Int     @id @default(autoincrement())
-  category   String
+  label      String
   stackOrder Int[]
   Stack      Stack[]
-  userId     String
-  user       User?   @relation(fields: [userId], references: [id])
+  budgetId   String
+  budget     Budget? @relation(fields: [budgetId], references: [id])
+
+  @@unique([label, budgetId])
 }
 
 model Stack {
@@ -24,12 +25,11 @@ model Stack {
   stackCategoryId Int?           @map("stack_category_id")
   amount          Int            @default(0)
   created_at      DateTime       @default(now())
-  userId          String
+  budgetId        String
   category        StackCategory? @relation(fields: [stackCategoryId], references: [id])
-  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  budget          Budget         @relation(fields: [budgetId], references: [id], onDelete: Cascade)
 
-
-  @@unique([label, userId])
+  @@unique([label, budgetId])
 }
 
 model Transaction {
@@ -39,60 +39,32 @@ model Transaction {
   stack              String
   amount             Int
   type               String
-  userId             String
   date               DateTime
   createdAt          DateTime @default(now()) @map("created_at")
-  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  budgetId           String
+  budget             Budget   @relation(fields: [budgetId], references: [id], onDelete: Cascade)
 
-}
-
-model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?
-  access_token       String?
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?
-  session_state      String?
-  oauth_token_secret String?
-  oauth_token        String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
-}
-
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @default(now()) @map("updated_at")
 }
 
 model User {
+  id        String   @id @default(cuid())
+  name      String?
+  email     String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+  Budget    Budget?
+}
+
+model Budget {
   id              String          @id @default(cuid())
-  name            String?
-  email           String?         @unique
-  emailVerified   DateTime?
-  image           String?
-  accounts        Account[]
-  sessions        Session[]
-  createdAt       DateTime        @default(now()) @map("created_at")
-  updatedAt       DateTime        @default(now()) @map("updated_at")
   total           Int             @default(0)
   toBeBudgeted    Int             @default(0)
   stacks          Stack[]
   transactions    Transaction[]
   bankAccounts    BankAccout[]
   stackCategories StackCategory[]
+  userId          String          @unique
+  user            User            @relation(fields: [userId], references: [id])
 }
 
 model VerificationToken {
@@ -108,6 +80,6 @@ model BankAccout {
   plaidAccessToken String
   plaidItemId      String   @unique
   plaidAccountIds  String[]
-  userId           String
-  User             User     @relation(fields: [userId], references: [id])
+  budgetId         String
+  budget           Budget   @relation(fields: [budgetId], references: [id])
 }

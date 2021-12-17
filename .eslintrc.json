@@ -1,0 +1,70 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true
+    },
+    "extends": [
+        "plugin:react/recommended",
+        "airbnb",
+        "prettier",
+        "prettier/prettier",
+        "plugin:prettier/recommended"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        // "ecmaFeatures": {
+        //     "jsx": true
+        // },
+        // "sourceType": "module",
+        // "tsconfigRootDir": "__dirname",
+        "project": "./tsconfig.json"
+    },
+    "plugins": [
+        "react",
+        "@typescript-eslint"
+    ],
+    "settings": {
+        "import/resolver": {
+            "typescript": {}
+        }
+    },
+    "rules": {
+        "no-console": 0,
+        "import/extensions": 0,
+        "import/prefer-default-export": 0,
+        "semi": 1,
+        "react/jsx-filename-extension": [
+            1,
+            {
+                "extensions": [
+                    ".tsx",
+                    ".ts"
+                ]
+            }
+        ],
+        "jsx-a11y/label-has-associated-control": [
+            "error",
+            {
+                "assert": "either"
+            }
+        ],
+        "react/react-in-jsx-scope": 0,
+        "no-use-before-define": 0,
+        "react/function-component-definition": [
+            2,
+            {
+                "namedComponents": "function-declaration"
+            }
+        ],
+        "react/require-default-props": 0,
+        "prettier/prettier": [
+            "error",
+            {
+                "trailingComma": "es5",
+                "singleQuote": true,
+                "printWidth": 120
+                // "tabWidth": 8
+            }
+        ]
+    }
+}
