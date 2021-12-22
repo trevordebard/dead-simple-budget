@@ -30,7 +30,7 @@ export default function Transctions() {
   return (
     <ContentLayout>
       <ContentMain>
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col">
           {transactions.map((t) => (
             <TransactionCard transaction={t} key={t.id} />
           ))}
@@ -51,7 +51,7 @@ export function TransactionCard({ transaction }: iTransactionCardProps) {
   const { description, amount, stack } = transaction;
 
   return (
-    <Form method="post" className="flex justify-between w-full border-b p-1 hover:bg-slate-100">
+    <Form method="post" className="flex justify-between border-b hover:bg-slate-100 px-2 md:py-2">
       <input type="hidden" value={transaction.id} name="transaction-id" />
       {/* <div className="flex items-center"> */}
       {/* <input
@@ -61,13 +61,13 @@ export function TransactionCard({ transaction }: iTransactionCardProps) {
             // do nothing
           }}
         /> */}
-      <div className="mx-4">
-        <input name="description" defaultValue={description} className="bg-transparent hover:bg-slate-300 px-3 py-2" />
-        <input name="stack" defaultValue={stack} className="bg-transparent hover:bg-slate-300 px-3 py-2" />
+      <div className="flex flex-col">
+        <input name="description" defaultValue={description} className="bg-transparent hover:bg-slate-300 p-2" />
+        <input name="stack" defaultValue={stack} className="bg-transparent hover:bg-slate-300 p-2" />
       </div>
       {/* </div> */}
-      <div className="flex items-center space-x-4">
-        <div className="text-right w-52">
+      <div className="items-center flex space-x-4 whitespace-nowrap">
+        <div className="text-right">
           <p>{amount}</p>
           <p>2021-12-09</p>
         </div>
