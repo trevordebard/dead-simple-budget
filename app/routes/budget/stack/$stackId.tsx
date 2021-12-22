@@ -43,7 +43,7 @@ export default function StackId() {
   return (
     <div className="fixed top-0 bottom-0 left-0 right-0 md:relative bg-white p-5 md:p-0">
       <h3 className="text-lg mb-3 divide-y-2 text-center">Edit Stack</h3>
-      <Form method="post">
+      <Form method="post" key={stack.id}>
         <div className="space-y-4">
           <div>
             <label htmlFor="label" className="inline-block mb-1">

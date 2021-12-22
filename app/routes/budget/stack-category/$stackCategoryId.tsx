@@ -43,7 +43,7 @@ export default function StackId() {
   const { category } = useLoaderData<LoaderData>();
   return (
     <div className="space-y-4">
-      <Form method="post">
+      <Form method="post" key={category.id}>
         <div className="space-y-4">
           <input type="hidden" name="_method" value="update" />
           <div>
@@ -57,7 +57,7 @@ export default function StackId() {
           />
         </div>
       </Form>
-      <Form method="post">
+      <Form method="post" key={category.label}>
         <input type="hidden" name="_method" value="delete" />
         <button type="submit" className="rounded-md cursor-pointer px-4 py-2 bg-red-700 text-red-100 hover:bg-red-600 ">
           Delete
