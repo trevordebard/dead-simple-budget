@@ -1,5 +1,6 @@
 import { Outlet, LoaderFunction, useLoaderData, Form, ActionFunction } from 'remix';
-import CheckIcon from '@heroicons/react/solid/CheckIcon';
+import { useState } from 'react';
+import { DateTime } from 'luxon';
 import { Transaction } from '.prisma/client';
 import { ContentAction, ContentLayout, ContentMain } from '~/components/layout';
 import { db } from '~/utils/db.server';
@@ -48,34 +49,49 @@ type iTransactionCardProps = {
 };
 
 export function TransactionCard({ transaction }: iTransactionCardProps) {
-  const { description, amount, stack } = transaction;
-
+  const { description, amount, stack, date } = transaction;
   return (
-    <Form method="post" className="flex justify-between border-b hover:bg-slate-100 px-2 md:py-2">
+    <div className="flex justify-between p-2 border-b hover:bg-slate-100">
+      <div>
+        <p className="">{description}</p>
+        <p className="text-zinc-600">{stack}</p>
+      </div>
+      <div>
+        <p className="text-right">${amount}</p>
+        <p className="text-zinc-600">{DateTime.fromISO(String(date)).toFormat('yyyy-MM-dd')}</p>
+      </div>
+    </div>
+  );
+}
+
+export function EditableTransactionCard({ transaction }: iTransactionCardProps) {
+  const { description, amount, stack } = transaction;
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  return (
+    <Form method="post" className="border-b hover:bg-slate-100 md:py-2" onFocus={() => setIsEditing(true)}>
       <input type="hidden" value={transaction.id} name="transaction-id" />
-      {/* <div className="flex items-center"> */}
-      {/* <input
-          type="checkbox"
-          // disabled={date.toLowerCase() === 'pending'}
-          onChange={() => {
-            // do nothing
-          }}
-        /> */}
-      <div className="flex flex-col">
-        <input name="description" defaultValue={description} className="bg-transparent hover:bg-slate-300 p-2" />
-        <input name="stack" defaultValue={stack} className="bg-transparent hover:bg-slate-300 p-2" />
-      </div>
-      {/* </div> */}
-      <div className="items-center flex space-x-4 whitespace-nowrap">
-        <div className="text-right">
-          <p>{amount}</p>
-          <p>2021-12-09</p>
+      <div className="flex justify-between">
+        <div className="flex flex-col">
+          <input
+            name="description"
+            defaultValue={description}
+            className="bg-transparent hover:bg-slate-300 p-2 rounded-md"
+          />
+          <input name="stack" defaultValue={stack} className="bg-transparent hover:bg-slate-300 p-2 rounded-md" />
         </div>
-        <button type="submit" className="p-0 h-min">
-          <CheckIcon className="h-5 w-5 text-blue-500" />
-        </button>
-        {/* <input type="submit" value="Save" className="bg-slate-400 px-8" /> */}
+        <div className="text-right flex flex-col">
+          <input name="amount" defaultValue={amount} className="bg-transparent hover:bg-slate-300 p-2 rounded-md" />
+          <input name="amount" defaultValue="2021-12-13" className="bg-transparent hover:bg-slate-300 p-2 rounded-md" />
+        </div>
       </div>
+      {isEditing ? (
+        <button
+          type="submit"
+          className="flex items-center justify-center px-2 py-1 text-sm border border-gray-300 rounded-lg hover:border-green-600 hover:bg-green-100 focus:border-green-500"
+        >
+          Save
+        </button>
+      ) : null}
     </Form>
   );
 }
