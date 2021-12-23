@@ -23,7 +23,7 @@ export function ContentLayout({ children }: LayoutProps) {
 }
 
 export function ContentMain({ children }: MainProps) {
-  return <main className="flex-grow mt-4 md:mt-0 mx-auto max-w-3xl">{children}</main>;
+  return <main className="flex-grow mt-4 md:mt-0 md:mx-auto max-w-3xl">{children}</main>;
 }
 
 export function ContentAction({ children }: ActionProps) {
