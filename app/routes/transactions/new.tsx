@@ -1,4 +1,4 @@
-import { ActionFunction, Form } from 'remix';
+import { ActionFunction, Form, Link } from 'remix';
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
 import { useState } from 'react';
 import { db } from '~/utils/db.server';
@@ -83,11 +83,16 @@ export default function NewTransaction() {
             </ToggleGroup.Item>
           </ToggleGroup.Root>
         </div>
-        <input
-          type="submit"
-          className="rounded-md cursor-pointer px-4 py-2 border border-gray-700  hover:bg-gray-700 hover:text-gray-50 w-full"
-          value="Add Transaction"
-        />
+        <div className="flex flex-col items-center space-y-2">
+          <input
+            type="submit"
+            className="rounded-md cursor-pointer px-4 py-2 border border-gray-700  hover:bg-gray-700 hover:text-gray-50 w-full"
+            value="Add Transaction"
+          />
+          <Link to="/transactions" className="hover:text-purple-700">
+            Cancel
+          </Link>
+        </div>
       </Form>
     </div>
   );
