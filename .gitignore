@@ -17,3 +17,4 @@ api/_build
 .env
 
 /app/tailwind.css
+/app/styles/tailwind.css

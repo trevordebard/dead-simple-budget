@@ -36,30 +36,15 @@ export default function NewTransaction() {
       <Form method="post" className="space-y-4">
         <div>
           <label htmlFor="description">Description</label>
-          <input
-            type="text"
-            name="description"
-            id="description-input"
-            className="border border-gray-300 sm:text-sm rounded-md py-5"
-          />
+          <input type="text" name="description" id="description-input" />
         </div>
         <div>
           <label htmlFor="amount">Amount</label>
-          <input
-            type="text"
-            name="amount"
-            id="amount-input"
-            className="border border-gray-300 sm:text-sm rounded-md py-5"
-          />
+          <input type="text" name="amount" id="amount-input" />
         </div>
         <div>
           <label htmlFor="stack">Stack</label>
-          <input
-            type="text"
-            name="stack"
-            id="stack-input"
-            className="border border-gray-300 sm:text-sm rounded-md py-5"
-          />
+          <input type="text" name="stack" id="stack-input" />
         </div>
         <div>
           <input type="hidden" name="trans-type" id="trans-type" value={transactionType} />

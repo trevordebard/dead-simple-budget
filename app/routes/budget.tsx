@@ -97,12 +97,7 @@ export default function Budget() {
             <DisclosurePanel>
               <Form method="post" id="add-category-form">
                 <div className="flex justify-between space-x-4 items-center">
-                  <input
-                    type="text"
-                    name="new-category"
-                    placeholder="New Category Name"
-                    className="rounded-md border-gray-400 py-4"
-                  />
+                  <input type="text" name="new-category" placeholder="New Category Name" />
                   <input
                     type="submit"
                     value="Add"
@@ -128,7 +123,7 @@ export default function Budget() {
                       name={stack.label}
                       id={stack.id.toString()}
                       defaultValue={stack.amount}
-                      className="text-right border-0 rounded-md max-w-xs w-32 hover:bg-gray-100 py-5 px-4"
+                      className="text-right border-none max-w-xs w-32 hover:bg-gray-100 px-4"
                       onBlur={(e) => submit(e.currentTarget.form)}
                     />
                     <Link to={`/budget/stack/${stack.id}`} className="text-gray-600">
@@ -142,12 +137,7 @@ export default function Budget() {
         </Form>
         <Form method="post" id="add-stack-form" className="mt-5">
           <div className="flex justify-between space-x-4 items-center">
-            <input
-              type="text"
-              name="new-stack"
-              placeholder="New Stack Name"
-              className="rounded-md border-gray-400 py-5"
-            />
+            <input type="text" name="new-stack" placeholder="New Stack Name" />
             <input
               type="submit"
               value="Add Stack"

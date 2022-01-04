@@ -39,7 +39,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   return null;
 };
 
-export default function StackId() {
+export default function StackCategoryId() {
   const { category } = useLoaderData<LoaderData>();
   return (
     <div className="space-y-4">
