@@ -91,7 +91,7 @@ export default function Budget() {
             <DisclosureButton className="outline-none text-left w-full">
               <div className="flex space-x-1 text-gray-900 hover:text-gray-600 items-center">
                 <PlusCircleIcon className="w-5 h-5" />
-                <p>Cateogry</p>
+                <p>Category</p>
               </div>
             </DisclosureButton>
             <DisclosurePanel>
