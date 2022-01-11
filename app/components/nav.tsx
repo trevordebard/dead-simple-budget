@@ -16,7 +16,7 @@ export function Nav() {
               Dead Simple Budget
             </Link>
             <form action="/logout" method="post" className="text-right">
-              <Button type="button" size="xs" variant="transparent" className="text-base hover:bg-gray-100">
+              <Button type="submit" size="xs" variant="transparent" className="text-base hover:bg-gray-100">
                 Logout
               </Button>
             </form>
