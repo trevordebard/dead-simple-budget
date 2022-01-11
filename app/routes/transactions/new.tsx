@@ -3,6 +3,7 @@ import * as ToggleGroup from '@radix-ui/react-toggle-group';
 import { useState } from 'react';
 import { db } from '~/utils/db.server';
 import { requireAuthenticatedUser } from '~/utils/server/index.server';
+import { Button } from '~/components/button';
 
 // TODO: error handling
 // TODO: budget side effects
@@ -69,11 +70,9 @@ export default function NewTransaction() {
           </ToggleGroup.Root>
         </div>
         <div className="flex flex-col items-center space-y-2">
-          <input
-            type="submit"
-            className="rounded-md cursor-pointer px-4 py-2 border border-gray-700  hover:bg-gray-700 hover:text-gray-50 w-full"
-            value="Add Transaction"
-          />
+          <Button type="submit" variant="outline" className="w-full">
+            Add Transaction
+          </Button>
           <Link to="/transactions" className="hover:text-purple-700">
             Cancel
           </Link>

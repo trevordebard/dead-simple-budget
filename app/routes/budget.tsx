@@ -17,6 +17,7 @@ import { db } from '~/utils/db.server';
 import { createStack, requireAuthenticatedUser } from '~/utils/server/index.server';
 import { AuthenticatedUser } from '~/types/user';
 import { ContentAction, ContentLayout, ContentMain } from '~/components/layout';
+import { Button } from '~/components/button';
 
 type IndexData = {
   user: AuthenticatedUser;
@@ -98,11 +99,9 @@ export default function Budget() {
               <Form method="post" id="add-category-form">
                 <div className="flex justify-between space-x-4 items-center">
                   <input type="text" name="new-category" placeholder="New Category Name" />
-                  <input
-                    type="submit"
-                    value="Add"
-                    className="rounded-md cursor-pointer px-4 py-1 border border-gray-700 text-gray-700 hover:bg-gray-600 hover:text-gray-100"
-                  />
+                  <Button type="submit" variant="outline" className="border">
+                    Add
+                  </Button>
                 </div>
               </Form>
             </DisclosurePanel>
@@ -138,11 +137,9 @@ export default function Budget() {
         <Form method="post" id="add-stack-form" className="mt-5">
           <div className="flex justify-between space-x-4 items-center">
             <input type="text" name="new-stack" placeholder="New Stack Name" />
-            <input
-              type="submit"
-              value="Add Stack"
-              className="rounded-md cursor-pointer px-4 py-2 bg-gray-700 text-gray-50 hover:bg-gray-600 font-normal"
-            />
+            <Button type="submit" className="whitespace-nowrap">
+              Add Stack
+            </Button>
           </div>
         </Form>
       </ContentMain>

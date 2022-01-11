@@ -2,6 +2,7 @@ import { Form, useLoaderData, LoaderFunction, ActionFunction, redirect, Link } f
 import { Stack, StackCategory } from '.prisma/client';
 import { authenticator } from '~/auth/auth.server';
 import { db } from '~/utils/db.server';
+import { Button } from '~/components/button';
 
 interface LoaderData {
   stack: Stack & {
@@ -70,11 +71,9 @@ export default function StackId() {
             </select>
           </div>
           <div className="flex flex-col items-center space-y-2">
-            <input
-              type="submit"
-              value="Submit"
-              className="rounded-md cursor-pointer px-4 py-2 border border-gray-700  hover:bg-gray-700 hover:text-gray-50 w-full"
-            />
+            <Button type="submit" variant="outline" className="w-full">
+              Save Stack
+            </Button>
             <Link to="/budget" className="hover:text-purple-700">
               Cancel
             </Link>

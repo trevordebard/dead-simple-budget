@@ -1,5 +1,6 @@
 import { Link } from 'remix';
 import { useRootData } from '~/utils/use-root-data';
+import { Button } from './button';
 
 export function Nav() {
   const { user } = useRootData();
@@ -8,19 +9,16 @@ export function Nav() {
   }
   return (
     <div>
-      <div className="col-span-full text-gray-600">
+      <div className="col-span-full">
         <header className="body-font">
           <div className="flex py-5 flex-row justify-between">
             <Link to="/" className="flex text-lg font-medium text-gray-800">
               Dead Simple Budget
             </Link>
             <form action="/logout" method="post" className="text-right">
-              <button
-                type="submit"
-                className="inline-flex items-center border py-1 px-3 focus:outline-none hover:bg-gray-100 rounded-md text-base"
-              >
+              <Button type="button" size="xs" variant="transparent" className="text-base hover:bg-gray-100">
                 Logout
-              </button>
+              </Button>
             </form>
           </div>
         </header>

@@ -3,6 +3,7 @@ import { StackCategory } from '.prisma/client';
 import { authenticator } from '~/auth/auth.server';
 import { db } from '~/utils/db.server';
 import { deleteStackCateogry } from '~/utils/server/index.server';
+import { Button } from '~/components/button';
 
 interface LoaderData {
   category: StackCategory;
@@ -50,18 +51,16 @@ export default function StackCategoryId() {
             <label htmlFor="stack-category">Stack Category</label>
             <input type="text" name="stack-category" defaultValue={category.label} />
           </div>
-          <input
-            type="submit"
-            value="Submit"
-            className="rounded-md cursor-pointer px-4 py-2 bg-blue-500 text-blue-100 hover:bg-blue-600"
-          />
+          <Button type="submit" className="w-full">
+            Save
+          </Button>
         </div>
       </Form>
-      <Form method="post" key={category.label}>
+      <Form method="post" key={category.label} className="flex flex-col">
         <input type="hidden" name="_method" value="delete" />
-        <button type="submit" className="rounded-md cursor-pointer px-4 py-2 bg-red-700 text-red-100 hover:bg-red-600 ">
+        <Button type="submit" variant="danger">
           Delete
-        </button>
+        </Button>
       </Form>
     </div>
   );
