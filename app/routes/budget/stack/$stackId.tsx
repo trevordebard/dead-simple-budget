@@ -2,6 +2,7 @@ import { Form, useLoaderData, LoaderFunction, ActionFunction, redirect, Link } f
 import { Stack, StackCategory } from '.prisma/client';
 import { authenticator } from '~/auth/auth.server';
 import { db } from '~/utils/db.server';
+import { Button } from '~/components/button';
 
 interface LoaderData {
   stack: Stack & {
@@ -43,39 +44,25 @@ export default function StackId() {
   return (
     <div className="fixed top-0 bottom-0 left-0 right-0 md:relative bg-white p-5 md:p-0">
       <h3 className="text-lg mb-3 divide-y-2 text-center">Edit Stack</h3>
-      <Form method="post">
+      <Form method="post" key={stack.id}>
         <div className="space-y-4">
           <div>
             <label htmlFor="label" className="inline-block mb-1">
               Stack
             </label>
-            <input
-              type="text"
-              name="label"
-              defaultValue={stack.label}
-              className="border border-gray-300 sm:text-sm rounded-md py-5"
-            />
+            <input type="text" name="label" defaultValue={stack.label} />
           </div>
           <div>
             <label htmlFor="amount" className="inline-block mb-1">
               Amount
             </label>
-            <input
-              type="text"
-              name="amount"
-              defaultValue={stack.amount}
-              className="border border-gray-300 sm:text-sm rounded-md py-5"
-            />
+            <input type="text" name="amount" defaultValue={stack.amount} />
           </div>
           <div>
             <label htmlFor="catgory" className="inline-block mb-1">
               Category
             </label>
-            <select
-              name="category"
-              defaultValue={stack.stackCategoryId || -1}
-              className="border border-gray-300 sm:text-sm rounded-md block w-full"
-            >
+            <select name="category" defaultValue={stack.stackCategoryId || -1} className="block w-full">
               {categories.map((cat) => (
                 <option value={cat.id} key={cat.id}>
                   {cat.label}
@@ -84,11 +71,9 @@ export default function StackId() {
             </select>
           </div>
           <div className="flex flex-col items-center space-y-2">
-            <input
-              type="submit"
-              value="Submit"
-              className="rounded-md cursor-pointer px-4 py-2 border border-gray-700  hover:bg-gray-700 hover:text-gray-50 w-full font-medium"
-            />
+            <Button type="submit" variant="outline" className="w-full">
+              Save Stack
+            </Button>
             <Link to="/budget" className="hover:text-purple-700">
               Cancel
             </Link>
