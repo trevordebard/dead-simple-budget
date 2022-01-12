@@ -5,6 +5,7 @@ import { Stack, Transaction } from '.prisma/client';
 import { ContentAction, ContentLayout, ContentMain } from '~/components/layout';
 import { db } from '~/utils/db.server';
 import { requireAuthenticatedUser } from '~/utils/server/index.server';
+import { centsToDollars } from '~/utils/money-fns';
 
 type LoaderData = {
   transactions: (Transaction & {
@@ -61,7 +62,7 @@ export function TransactionCard({ transaction }: iTransactionCardProps) {
         <p className="text-zinc-600">{stack?.label}</p>
       </div>
       <div>
-        <p className="text-right">${amount}</p>
+        <p className="text-right">${centsToDollars(amount)}</p>
         <p className="text-zinc-600">{DateTime.fromISO(String(date)).toFormat('yyyy-MM-dd')}</p>
       </div>
     </div>

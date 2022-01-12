@@ -3,6 +3,7 @@ import { Stack, StackCategory } from '.prisma/client';
 import { authenticator } from '~/auth/auth.server';
 import { db } from '~/utils/db.server';
 import { Button } from '~/components/button';
+import { centsToDollars, dollarsToCents } from '~/utils/money-fns';
 
 interface LoaderData {
   stack: Stack & {
@@ -28,8 +29,10 @@ export const loader: LoaderFunction = async ({ params, request }) => {
 export const action: ActionFunction = async ({ request, params }) => {
   const form = await request.formData();
   const label = String(form.get('label'));
-  const amount = Number(form.get('amount'));
+  let amount = Number(form.get('amount'));
   const categoryId = Number(form.get('category'));
+
+  amount = dollarsToCents(amount);
 
   await db.stack.update({
     where: { id: Number(params.stackId) },
@@ -56,10 +59,10 @@ export default function StackId() {
             <label htmlFor="amount" className="inline-block mb-1">
               Amount
             </label>
-            <input type="text" name="amount" defaultValue={stack.amount} />
+            <input type="text" name="amount" defaultValue={centsToDollars(stack.amount)} />
           </div>
           <div>
-            <label htmlFor="catgory" className="inline-block mb-1">
+            <label htmlFor="category" className="inline-block mb-1">
               Category
             </label>
             <select name="category" defaultValue={stack.stackCategoryId || -1} className="block w-full">

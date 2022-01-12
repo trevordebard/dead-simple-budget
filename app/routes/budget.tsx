@@ -18,6 +18,7 @@ import { createStack, requireAuthenticatedUser } from '~/utils/server/index.serv
 import { AuthenticatedUser } from '~/types/user';
 import { ContentAction, ContentLayout, ContentMain } from '~/components/layout';
 import { Button } from '~/components/button';
+import { centsToDollars } from '~/utils/money-fns';
 
 type IndexData = {
   user: AuthenticatedUser;
@@ -59,10 +60,11 @@ export const action: ActionFunction = async ({ request }) => {
     const newCategory = await db.stackCategory.create({ data: { label, budgetId: user.Budget.id } });
     return newCategory;
   }
+  // Edit stack amount
   const input = formData.forEach(async (value, key) => {
     await db.stack.update({
       where: { label_budgetId: { budgetId: user.Budget.id, label: key } },
-      data: { amount: Number(value) },
+      data: { amount: Number(value) * 100 },
     });
   });
 
@@ -121,7 +123,7 @@ export default function Budget() {
                       type="text"
                       name={stack.label}
                       id={stack.id.toString()}
-                      defaultValue={stack.amount}
+                      defaultValue={centsToDollars(stack.amount)}
                       className="text-right border-none max-w-xs w-32 hover:bg-gray-100 px-4"
                       onBlur={(e) => submit(e.currentTarget.form)}
                     />

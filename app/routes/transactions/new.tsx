@@ -5,6 +5,7 @@ import { db } from '~/utils/db.server';
 import { requireAuthenticatedUser } from '~/utils/server/index.server';
 import { Button } from '~/components/button';
 import { Stack } from '.prisma/client';
+import { dollarsToCents } from '~/utils/money-fns';
 
 // TODO: error handling
 // TODO: budget side effects
@@ -23,6 +24,8 @@ export const action: ActionFunction = async ({ request }) => {
   if (type === 'withdrawal') {
     amount *= -1;
   }
+
+  amount = dollarsToCents(amount);
 
   const create = await db.transaction.create({
     data: { description, amount, stackId, budgetId: user.Budget.id, date: new Date(), type },
