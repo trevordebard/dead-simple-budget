@@ -29,6 +29,7 @@ model Stack {
   category        StackCategory? @relation(fields: [stackCategoryId], references: [id])
   budget          Budget         @relation(fields: [budgetId], references: [id], onDelete: Cascade)
 
+  Transaction Transaction[]
   @@unique([label, budgetId])
 }
 
@@ -36,14 +37,14 @@ model Transaction {
   id                 Int      @id @default(autoincrement())
   plaidTransactionId String?  @unique
   description        String
-  stack              String
+  stackId            Int?
   amount             Int
   type               String
   date               DateTime
   createdAt          DateTime @default(now()) @map("created_at")
   budgetId           String
   budget             Budget   @relation(fields: [budgetId], references: [id], onDelete: Cascade)
-
+  stack              Stack?   @relation(fields: [stackId], references: [id])
 }
 
 model User {
