@@ -1,17 +1,19 @@
 import { Outlet, LoaderFunction, useLoaderData, Form, ActionFunction } from 'remix';
 import { useState } from 'react';
 import { DateTime } from 'luxon';
-import { Transaction } from '.prisma/client';
+import { Stack, Transaction } from '.prisma/client';
 import { ContentAction, ContentLayout, ContentMain } from '~/components/layout';
 import { db } from '~/utils/db.server';
 import { requireAuthenticatedUser } from '~/utils/server/index.server';
 
 type LoaderData = {
-  transactions: Transaction[];
+  transactions: (Transaction & {
+    stack: Stack | null;
+  })[];
 };
 export const loader: LoaderFunction = async ({ request }): Promise<LoaderData> => {
   const user = await requireAuthenticatedUser(request);
-  const transactions = await db.transaction.findMany({ where: { budgetId: user.Budget.id } });
+  const transactions = await db.transaction.findMany({ where: { budgetId: user.Budget.id }, include: { stack: true } });
   return { transactions };
 };
 
@@ -45,7 +47,9 @@ export default function Transctions() {
 }
 
 type iTransactionCardProps = {
-  transaction: Transaction;
+  transaction: Transaction & {
+    stack: Stack | null;
+  };
 };
 
 export function TransactionCard({ transaction }: iTransactionCardProps) {
@@ -54,7 +58,7 @@ export function TransactionCard({ transaction }: iTransactionCardProps) {
     <div className="flex justify-between p-2 border-b hover:bg-slate-100">
       <div>
         <p className="">{description}</p>
-        <p className="text-zinc-600">{stack}</p>
+        <p className="text-zinc-600">{stack?.label}</p>
       </div>
       <div>
         <p className="text-right">${amount}</p>

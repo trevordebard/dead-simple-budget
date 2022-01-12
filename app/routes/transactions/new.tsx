@@ -1,9 +1,10 @@
-import { ActionFunction, Form, Link } from 'remix';
+import { ActionFunction, Form, Link, LoaderFunction, useLoaderData } from 'remix';
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
 import { useState } from 'react';
 import { db } from '~/utils/db.server';
 import { requireAuthenticatedUser } from '~/utils/server/index.server';
 import { Button } from '~/components/button';
+import { Stack } from '.prisma/client';
 
 // TODO: error handling
 // TODO: budget side effects
@@ -13,10 +14,10 @@ export const action: ActionFunction = async ({ request }) => {
 
   const description = String(formData.get('description'));
   let amount = Number(formData.get('amount'));
-  const stack = String(formData.get('stack'));
+  const stackId = Number(formData.get('stack'));
   const type = String(formData.get('trans-type'));
 
-  if (!amount || !stack || !description || !type) {
+  if (!amount || !stackId || !description || !type) {
     throw Error('TODO');
   }
   if (type === 'withdrawal') {
@@ -24,28 +25,44 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   const create = await db.transaction.create({
-    data: { description, amount, stack, budgetId: user.Budget.id, date: new Date(), type },
+    data: { description, amount, stackId, budgetId: user.Budget.id, date: new Date(), type },
   });
   return create;
 };
 
+export const loader: LoaderFunction = async ({ request }) => {
+  const user = await requireAuthenticatedUser(request);
+  const budget = await db.budget.findFirst({ where: { userId: user.id }, include: { stacks: true } });
+  const stacks = budget?.stacks;
+  return stacks;
+};
+
 export default function NewTransaction() {
   const [transactionType, setTransactionType] = useState<string>('deposit');
+  const stacks = useLoaderData<Stack[] | null>();
+
   return (
     <div className="fixed top-0 bottom-0 left-0 right-0 md:relative bg-white p-5 md:p-0">
       <h3 className="text-lg mb-3 divide-y-2 text-center">New Transaction</h3>
       <Form method="post" className="space-y-4">
         <div>
           <label htmlFor="description">Description</label>
-          <input type="text" name="description" id="description-input" />
+          <input type="text" name="description" id="description-input" required />
         </div>
         <div>
           <label htmlFor="amount">Amount</label>
-          <input type="text" name="amount" id="amount-input" />
+          <input type="text" name="amount" id="amount-input" required />
         </div>
         <div>
           <label htmlFor="stack">Stack</label>
-          <input type="text" name="stack" id="stack-input" />
+          <select name="stack" id="stack-input" required className="w-full">
+            <option value="" disabled selected>
+              Choose a Stack
+            </option>
+            {stacks?.map((stack) => (
+              <option value={stack.id}>{stack.label}</option>
+            ))}
+          </select>
         </div>
         <div>
           <input type="hidden" name="trans-type" id="trans-type" value={transactionType} />
