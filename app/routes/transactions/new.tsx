@@ -2,7 +2,7 @@ import { ActionFunction, Form, Link, LoaderFunction, useLoaderData } from 'remix
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
 import { useState } from 'react';
 import { db } from '~/utils/db.server';
-import { requireAuthenticatedUser } from '~/utils/server/index.server';
+import { createTransactionAndUpdBudget, requireAuthenticatedUser } from '~/utils/server/index.server';
 import { Button } from '~/components/button';
 import { Stack } from '.prisma/client';
 import { dollarsToCents } from '~/utils/money-fns';
@@ -25,11 +25,18 @@ export const action: ActionFunction = async ({ request }) => {
     amount *= -1;
   }
 
-  amount = dollarsToCents(amount);
+  const amountInCents = dollarsToCents(amount);
+  const newTransactionInput = {
+    description,
+    amount: amountInCents,
+    stackId,
+    budgetId: user.Budget.id,
+    date: new Date(),
+    type,
+  };
 
-  const create = await db.transaction.create({
-    data: { description, amount, stackId, budgetId: user.Budget.id, date: new Date(), type },
-  });
+  const create = await createTransactionAndUpdBudget(newTransactionInput, user.Budget.id);
+
   return create;
 };
 
@@ -77,13 +84,13 @@ export default function NewTransaction() {
           >
             <ToggleGroup.Item
               value="deposit"
-              className="flex items-center justify-center w-full h-9 border-gray-300 border hover:bg-gray-100 first:rounded-l-md last:rounded-r-md radix-state-on:border-transparent radix-state-on:bg-purple-900 radix-state-on:text-purple-50 focus:outline-none "
+              className="flex items-center justify-center w-full h-9 border-gray-300 border hover:bg-gray-100 first:rounded-l-md last:rounded-r-md radix-state-on:border-transparent radix-state-on:bg-purple-900 radix-state-on:text-purple-50"
             >
               Deposit
             </ToggleGroup.Item>
             <ToggleGroup.Item
               value="withdrawal"
-              className="flex items-center justify-center w-full h-9 border-gray-300 border hover:bg-gray-100 first:rounded-l-md last:rounded-r-md radix-state-on:border-transparent radix-state-on:bg-purple-900 radix-state-on:text-purple-50 focus:outline-none "
+              className="flex items-center justify-center w-full h-9 border-gray-300 border hover:bg-gray-100 first:rounded-l-md last:rounded-r-md radix-state-on:border-transparent radix-state-on:bg-purple-900 radix-state-on:text-purple-50"
             >
               Withdrawal
             </ToggleGroup.Item>

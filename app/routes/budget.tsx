@@ -1,14 +1,4 @@
-import {
-  MetaFunction,
-  LoaderFunction,
-  ActionFunction,
-  Form,
-  useSubmit,
-  useLoaderData,
-  json,
-  Outlet,
-  Link,
-} from 'remix';
+import { LoaderFunction, ActionFunction, Form, useSubmit, useLoaderData, json, Outlet, Link } from 'remix';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure';
 import { useState } from 'react';
 import { PlusCircleIcon } from '@heroicons/react/outline';
@@ -34,13 +24,6 @@ export const loader: LoaderFunction = async ({ request }) => {
     include: { Stack: true },
   });
   return json({ categorized, user });
-};
-
-export const meta: MetaFunction = () => {
-  return {
-    title: 'Dead Simple Budget',
-    description: 'Budget homepage',
-  };
 };
 
 export const action: ActionFunction = async ({ request }) => {
@@ -76,17 +59,16 @@ export default function Budget() {
   const data = useLoaderData<IndexData>();
   const submit = useSubmit();
   const [isDisclosureOpen, setIsDisclosureOpen] = useState(false);
-
   return (
     <ContentLayout>
       <ContentMain>
         <div className="text-xl flex flex-col items-center">
           <h2>
-            <span className="font-medium">${data.user.Budget.total}</span>{' '}
+            <span className="font-medium">${centsToDollars(data.user.Budget.total)}</span>{' '}
             <span className="font-normal">in account</span>
           </h2>
           <h2>
-            <span className="font-medium">${data.user.Budget.toBeBudgeted}</span> to be budgeted
+            <span className="font-medium">${centsToDollars(data.user.Budget.toBeBudgeted)}</span> to be budgeted
           </h2>
         </div>
         <Disclosure open={isDisclosureOpen} onChange={() => setIsDisclosureOpen(!isDisclosureOpen)}>

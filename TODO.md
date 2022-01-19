@@ -19,7 +19,8 @@
 - [ ] Move commonly used snippets in loader functions into reusable functions
 
 ## Transactions
-- [ ] Create transaction side effects
+- [x] Create transaction side effects
+  - [ ] Only include budget id in authenticated session
 - [x] Create transaction stack input should be dropdown
 - [ ] Edit transaction form
 - [ ] Inline edit transaction?

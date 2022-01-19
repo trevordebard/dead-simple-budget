@@ -1,5 +1,5 @@
 import { redirect } from 'remix';
-import { Transaction } from '.prisma/client';
+import { Budget, Prisma } from '.prisma/client';
 import { authenticator } from '~/auth/auth.server';
 import { db } from '../db.server';
 import { AuthenticatedUser } from '~/types/user';
@@ -43,11 +43,6 @@ export async function createStack(user: AuthenticatedUser, stack: { label: strin
   return newStack;
 }
 
-export async function createTransaction(data: Transaction) {
-  const newTrans = await db.transaction.createMany({ data });
-  return newTrans;
-}
-
 interface DeleteStackCategoryInput {
   categoryId: number;
   budgetId: string;
@@ -66,4 +61,55 @@ export async function deleteStackCateogry({ categoryId, budgetId }: DeleteStackC
   // Change stacks within stack category to be in miscellaneous category
   await db.stack.updateMany({ where: { stackCategoryId: categoryId }, data: { stackCategoryId: misc.id } });
   await db.stackCategory.delete({ where: { id: categoryId } });
+}
+
+export async function recalcToBeBudgeted(budget: Budget) {
+  const stackAggregation = await db.stack.aggregate({ _sum: { amount: true }, where: { budgetId: budget.id } });
+  const sumOfStacks = stackAggregation._sum.amount || 0;
+  const toBeBudgeted = budget.total - sumOfStacks;
+
+  const updateResponse = await db.budget.update({
+    where: { id: budget.id },
+    data: { toBeBudgeted },
+  });
+  return updateResponse;
+}
+
+export async function createTransactionAndUpdBudget(
+  transactionData: Prisma.TransactionUncheckedCreateInput,
+  budgetId: string
+) {
+  const { amount, stackId } = transactionData;
+
+  // Create transaction
+  const createTransactionPromise = db.transaction.create({
+    data: transactionData,
+  });
+
+  // Update stack amount
+  const updateStackPromise = db.stack.update({
+    where: { id: stackId },
+    data: { amount: { increment: amount } },
+  });
+
+  // Update budget total
+  const updatedBudget = await db.budget.update({
+    where: {
+      id: budgetId,
+    },
+    data: {
+      total: { increment: amount },
+    },
+  });
+
+  // Recalc to be budgeted
+  const recalcToBeBudgetedPromise = recalcToBeBudgeted(updatedBudget);
+
+  const [transaction, stack, recalcedBudget] = await Promise.all([
+    createTransactionPromise,
+    updateStackPromise,
+    recalcToBeBudgetedPromise,
+  ]);
+
+  return transaction;
 }
