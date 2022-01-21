@@ -1,9 +1,9 @@
 import { Form, useLoaderData, LoaderFunction, ActionFunction, redirect, Link } from 'remix';
 import { Stack, StackCategory } from '.prisma/client';
-import { authenticator } from '~/auth/auth.server';
 import { db } from '~/utils/db.server';
 import { Button } from '~/components/button';
 import { centsToDollars, dollarsToCents } from '~/utils/money-fns';
+import { requireAuthenticatedUser } from '~/utils/server/index.server';
 
 interface LoaderData {
   stack: Stack & {
@@ -13,13 +13,14 @@ interface LoaderData {
 }
 
 export const loader: LoaderFunction = async ({ params, request }) => {
-  const user = await authenticator.isAuthenticated(request);
+  const user = await requireAuthenticatedUser(request);
+  const budget = await db.budget.findFirst({ where: { userId: user.id } });
 
-  if (!user || !user.Budget) {
+  if (!user || !budget) {
     return redirect('/login');
   }
   const stack = await db.stack.findUnique({ where: { id: Number(params.stackId) }, include: { category: true } });
-  const categories = await db.stackCategory.findMany({ where: { budgetId: user.Budget.id } });
+  const categories = await db.stackCategory.findMany({ where: { budgetId: budget.id } });
   if (!stack) {
     throw Error('Stack not found!');
   }

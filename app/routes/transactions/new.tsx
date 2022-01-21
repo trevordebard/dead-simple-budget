@@ -11,6 +11,8 @@ import { dollarsToCents } from '~/utils/money-fns';
 // TODO: budget side effects
 export const action: ActionFunction = async ({ request }) => {
   const user = await requireAuthenticatedUser(request);
+  const budget = await db.budget.findFirst({ where: { userId: user.id } });
+
   const formData = await request.formData();
 
   const description = String(formData.get('description'));
@@ -18,7 +20,7 @@ export const action: ActionFunction = async ({ request }) => {
   const stackId = Number(formData.get('stack'));
   const type = String(formData.get('trans-type'));
 
-  if (!amount || !stackId || !description || !type) {
+  if (!amount || !stackId || !description || !type || !budget) {
     throw Error('TODO');
   }
   if (type === 'withdrawal') {
@@ -30,12 +32,11 @@ export const action: ActionFunction = async ({ request }) => {
     description,
     amount: amountInCents,
     stackId,
-    budgetId: user.Budget.id,
+    budgetId: budget.id,
     date: new Date(),
     type,
   };
-
-  const create = await createTransactionAndUpdBudget(newTransactionInput, user.Budget.id);
+  const create = await createTransactionAndUpdBudget(newTransactionInput, budget.id);
 
   return create;
 };

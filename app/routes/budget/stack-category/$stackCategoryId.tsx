@@ -1,8 +1,7 @@
 import { Form, useLoaderData, LoaderFunction, ActionFunction, redirect } from 'remix';
 import { StackCategory } from '.prisma/client';
-import { authenticator } from '~/auth/auth.server';
 import { db } from '~/utils/db.server';
-import { deleteStackCateogry } from '~/utils/server/index.server';
+import { deleteStackCateogry, requireAuthenticatedUser } from '~/utils/server/index.server';
 import { Button } from '~/components/button';
 
 interface LoaderData {
@@ -10,9 +9,10 @@ interface LoaderData {
 }
 
 export const loader: LoaderFunction = async ({ params, request }) => {
-  const user = await authenticator.isAuthenticated(request);
+  const user = await requireAuthenticatedUser(request);
+  const budget = await db.budget.findFirst({ where: { userId: user.id } });
 
-  if (!user || !user.Budget) {
+  if (!user || !budget) {
     return redirect('/login');
   }
   const category = await db.stackCategory.findUnique({ where: { id: Number(params.stackCategoryId) } });
@@ -23,14 +23,16 @@ export const loader: LoaderFunction = async ({ params, request }) => {
 };
 
 export const action: ActionFunction = async ({ request, params }) => {
-  const user = await authenticator.isAuthenticated(request);
-  if (!user || !user.Budget) {
+  const user = await requireAuthenticatedUser(request);
+  const budget = await db.budget.findFirst({ where: { userId: user.id } });
+
+  if (!user || !budget) {
     return redirect('/login');
   }
   const stackCatId = Number(params.stackCategoryId);
   const form = await request.formData();
   if (form.get('_method') === 'delete') {
-    await deleteStackCateogry({ budgetId: user.Budget.id, categoryId: stackCatId });
+    await deleteStackCateogry({ budgetId: budget.id, categoryId: stackCatId });
     return redirect('/budget');
   }
   const label = String(form.get('stack-category'));

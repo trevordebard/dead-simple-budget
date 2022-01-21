@@ -14,7 +14,13 @@ type LoaderData = {
 };
 export const loader: LoaderFunction = async ({ request }): Promise<LoaderData> => {
   const user = await requireAuthenticatedUser(request);
-  const transactions = await db.transaction.findMany({ where: { budgetId: user.Budget.id }, include: { stack: true } });
+  const budget = await db.budget.findFirst({ where: { userId: user.id } });
+
+  if (!budget) {
+    throw Error('TODO');
+  }
+
+  const transactions = await db.transaction.findMany({ where: { budgetId: budget.id }, include: { stack: true } });
   return { transactions };
 };
 

@@ -2,7 +2,7 @@ import { LoaderFunction, ActionFunction, Form, useSubmit, useLoaderData, json, O
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure';
 import { useState } from 'react';
 import { PlusCircleIcon } from '@heroicons/react/outline';
-import { Stack, StackCategory } from '.prisma/client';
+import { Stack, StackCategory, Budget } from '.prisma/client';
 import { db } from '~/utils/db.server';
 import { createStack, requireAuthenticatedUser } from '~/utils/server/index.server';
 import { AuthenticatedUser } from '~/types/user';
@@ -15,6 +15,7 @@ type IndexData = {
   categorized: (StackCategory & {
     Stack: Stack[];
   })[];
+  budget: Budget;
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -23,11 +24,17 @@ export const loader: LoaderFunction = async ({ request }) => {
     where: { budget: { user: { id: user.id } } },
     include: { Stack: true },
   });
-  return json({ categorized, user });
+  const budget = await db.budget.findFirst({ where: { userId: user.id } });
+  return json({ categorized, user, budget });
 };
 
 export const action: ActionFunction = async ({ request }) => {
   const user = await requireAuthenticatedUser(request);
+  const budget = await db.budget.findFirst({ where: { userId: user.id } });
+
+  if (!budget) {
+    throw Error('TODO');
+  }
 
   const formData = await request.formData();
   const isAddStackForm = formData.has('new-stack');
@@ -40,13 +47,13 @@ export const action: ActionFunction = async ({ request }) => {
   }
   if (isAddCategoryForm) {
     const label = String(formData.get('new-category'));
-    const newCategory = await db.stackCategory.create({ data: { label, budgetId: user.Budget.id } });
+    const newCategory = await db.stackCategory.create({ data: { label, budgetId: budget.id } });
     return newCategory;
   }
   // Edit stack amount
   const input = formData.forEach(async (value, key) => {
     await db.stack.update({
-      where: { label_budgetId: { budgetId: user.Budget.id, label: key } },
+      where: { label_budgetId: { budgetId: budget.id, label: key } },
       data: { amount: Number(value) * 100 },
     });
   });
@@ -55,7 +62,7 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 // https://remix.run/guides/routing#index-routes
-export default function Budget() {
+export default function BudgetPage() {
   const data = useLoaderData<IndexData>();
   const submit = useSubmit();
   const [isDisclosureOpen, setIsDisclosureOpen] = useState(false);
@@ -64,11 +71,11 @@ export default function Budget() {
       <ContentMain>
         <div className="text-xl flex flex-col items-center">
           <h2>
-            <span className="font-medium">${centsToDollars(data.user.Budget.total)}</span>{' '}
+            <span className="font-medium">${centsToDollars(data.budget.total)}</span>{' '}
             <span className="font-normal">in account</span>
           </h2>
           <h2>
-            <span className="font-medium">${centsToDollars(data.user.Budget.toBeBudgeted)}</span> to be budgeted
+            <span className="font-medium">${centsToDollars(data.budget.toBeBudgeted)}</span> to be budgeted
           </h2>
         </div>
         <Disclosure open={isDisclosureOpen} onChange={() => setIsDisclosureOpen(!isDisclosureOpen)}>

@@ -27,17 +27,23 @@ export async function requireAuthenticatedUser(request: Request): Promise<Authen
 }
 
 export async function createStack(user: AuthenticatedUser, stack: { label: string }) {
+  const budget = await db.budget.findFirst({ where: { userId: user.id } });
+
+  if (!budget) {
+    throw Error('TODO');
+  }
+
   const { label } = stack;
   const newStack = await db.stack.create({
     data: {
       label,
       category: {
         connectOrCreate: {
-          where: { label_budgetId: { label: 'Miscellaneous', budgetId: user.Budget.id } },
-          create: { label: 'Miscellaneous', budgetId: user.Budget.id },
+          where: { label_budgetId: { label: 'Miscellaneous', budgetId: budget.id } },
+          create: { label: 'Miscellaneous', budgetId: budget.id },
         },
       },
-      budget: { connect: { id: user.Budget.id } },
+      budget: { connect: { id: budget.id } },
     },
   });
   return newStack;
