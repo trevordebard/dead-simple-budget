@@ -40,7 +40,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     data: { amount, label, stackCategoryId: categoryId },
   });
 
-  return null;
+  return redirect('/budget');
 };
 
 export default function StackId() {

@@ -39,7 +39,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   await db.stackCategory.update({ where: { id: Number(params.stackCategoryId) }, data: { label } });
 
-  return null;
+  return redirect('/budget');
 };
 
 export default function StackCategoryId() {
