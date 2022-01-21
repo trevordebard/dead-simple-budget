@@ -12,14 +12,14 @@ import {
 } from 'remix';
 import type { LinksFunction } from 'remix';
 import * as React from 'react';
+import { User } from '@prisma/client';
 import styles from './tailwind.css';
 import globalStylesUrl from '~/styles/global.css';
 import { getAuthenticatedUser } from './utils/server/index.server';
-import { AuthenticatedUser } from './types/user';
 import { Nav } from './components/nav';
 
 export type RootLoaderData = {
-  user: AuthenticatedUser | null;
+  user: User | null;
 };
 
 export const handle = {

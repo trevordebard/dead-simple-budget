@@ -20,7 +20,7 @@
 
 ## Transactions
 - [x] Create transaction side effects
-  - [ ] Only include budget id in authenticated session
+  - [x] Remove full budget from AuthenticatedUser
 - [x] Create transaction stack input should be dropdown
 - [ ] Edit transaction form
 - [ ] Inline edit transaction?

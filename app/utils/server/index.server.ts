@@ -1,10 +1,10 @@
 import { redirect } from 'remix';
+import { User } from '@prisma/client';
 import { Budget, Prisma } from '.prisma/client';
 import { authenticator } from '~/auth/auth.server';
 import { db } from '../db.server';
-import { AuthenticatedUser } from '~/types/user';
 
-export async function findOrCreateUser(email: string): Promise<AuthenticatedUser> {
+export async function findOrCreateUser(email: string): Promise<User> {
   const user = await db.user.upsert({
     where: { email },
     create: { email, Budget: { create: { total: 0, toBeBudgeted: 0 } } },
@@ -15,18 +15,18 @@ export async function findOrCreateUser(email: string): Promise<AuthenticatedUser
   return user;
 }
 
-export async function getAuthenticatedUser(request: Request): Promise<AuthenticatedUser | null> {
+export async function getAuthenticatedUser(request: Request): Promise<User | null> {
   const user = await authenticator.isAuthenticated(request);
   return user;
 }
 
-export async function requireAuthenticatedUser(request: Request): Promise<AuthenticatedUser> {
+export async function requireAuthenticatedUser(request: Request): Promise<User> {
   const user = await getAuthenticatedUser(request);
   if (!user) throw redirect('/login');
   return user;
 }
 
-export async function createStack(user: AuthenticatedUser, stack: { label: string }) {
+export async function createStack(user: User, stack: { label: string }) {
   const budget = await db.budget.findFirst({ where: { userId: user.id } });
 
   if (!budget) {

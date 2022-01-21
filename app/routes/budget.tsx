@@ -2,16 +2,16 @@ import { LoaderFunction, ActionFunction, Form, useSubmit, useLoaderData, json, O
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure';
 import { useState } from 'react';
 import { PlusCircleIcon } from '@heroicons/react/outline';
+import { User } from '@prisma/client';
 import { Stack, StackCategory, Budget } from '.prisma/client';
 import { db } from '~/utils/db.server';
 import { createStack, requireAuthenticatedUser } from '~/utils/server/index.server';
-import { AuthenticatedUser } from '~/types/user';
 import { ContentAction, ContentLayout, ContentMain } from '~/components/layout';
 import { Button } from '~/components/button';
 import { centsToDollars } from '~/utils/money-fns';
 
 type IndexData = {
-  user: AuthenticatedUser;
+  user: User;
   categorized: (StackCategory & {
     Stack: Stack[];
   })[];
