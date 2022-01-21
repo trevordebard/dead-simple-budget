@@ -1,4 +1,4 @@
-import { Outlet, LoaderFunction, useLoaderData, Form, ActionFunction } from 'remix';
+import { Outlet, LoaderFunction, useLoaderData, Form, ActionFunction, Link } from 'remix';
 import { useState } from 'react';
 import { DateTime } from 'luxon';
 import { Stack, Transaction } from '.prisma/client';
@@ -24,25 +24,20 @@ export const loader: LoaderFunction = async ({ request }): Promise<LoaderData> =
   return { transactions };
 };
 
-export const action: ActionFunction = async ({ request }) => {
-  const formData = await request.formData();
-
-  const description = String(formData.get('description'));
-  const stack = String(formData.get('stack'));
-  const transactionId = Number(formData.get('transaction-id'));
-
-  const trnsactionRes = await db.transaction.update({ where: { id: transactionId }, data: { stack, description } });
-  return null;
-};
-
-export default function Transctions() {
+export default function TransactionsPage() {
   const { transactions } = useLoaderData<LoaderData>();
   return (
     <ContentLayout>
       <ContentMain>
         <div className="flex flex-col">
           {transactions.map((t) => (
-            <TransactionCard transaction={t} key={t.id} />
+            <Link
+              to={`${t.id}`}
+              key={t.id}
+              className="hover:no-underline hover:text-inherit focus:outline-none focus:bg-gray-200"
+            >
+              <TransactionCard transaction={t} />
+            </Link>
           ))}
         </div>
       </ContentMain>

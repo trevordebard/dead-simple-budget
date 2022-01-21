@@ -8,7 +8,6 @@ import { Stack } from '.prisma/client';
 import { dollarsToCents } from '~/utils/money-fns';
 
 // TODO: error handling
-// TODO: budget side effects
 export const action: ActionFunction = async ({ request }) => {
   const user = await requireAuthenticatedUser(request);
   const budget = await db.budget.findFirst({ where: { userId: user.id } });

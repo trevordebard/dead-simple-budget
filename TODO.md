@@ -23,7 +23,7 @@
 - [x] Create transaction side effects
   - [x] Remove full budget from AuthenticatedUser
 - [x] Create transaction stack input should be dropdown
-- [ ] Edit transaction form
+- [x] Edit transaction form
 - [ ] Edit transaction side effects
 - [ ] Sort transactions by date on /transactions
 - [ ] Inline edit transaction?
