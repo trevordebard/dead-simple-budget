@@ -6,7 +6,8 @@
 - [ ] Form validation for server errors
 - [ ] There should be a default uncategorized stack for new transactions without a stack category
 - [ ] Cleanup UI for first time users
-- [ ] Find elegant way to clear form data after successful submit
+- [ ] Figure out how to secure edit stack/transaction actions to ensure the authenticated user can only edit their own transactions
+  - or determine if a POSt request to the page would be blocked from an outside source
 
 ## User
 - [ ] Give users example stacks and transaction when their account is first created
@@ -23,10 +24,10 @@
   - [x] Remove full budget from AuthenticatedUser
 - [x] Create transaction stack input should be dropdown
 - [ ] Edit transaction form
-- [ ] Inline edit transaction?
 - [ ] Edit transaction side effects
-- [ ] Import transactions from bank
 - [ ] Sort transactions by date on /transactions
+- [ ] Inline edit transaction?
+- [ ] Import transactions from bank
 
 ## Stacks
 - [ ] Edit stack side effects
