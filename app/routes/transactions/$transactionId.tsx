@@ -3,7 +3,7 @@ import { Transaction, Stack } from '.prisma/client';
 import { db } from '~/utils/db.server';
 import { Button } from '~/components/button';
 import { centsToDollars, dollarsToCents } from '~/utils/money-fns';
-import { requireAuthenticatedUser } from '~/utils/server/index.server';
+import { recalcToBeBudgeted, requireAuthenticatedUser } from '~/utils/server/index.server';
 
 interface LoaderData {
   transaction?: Transaction;
@@ -24,16 +24,67 @@ export const loader: LoaderFunction = async ({ params, request }) => {
 
 export const action: ActionFunction = async ({ request, params }) => {
   const form = await request.formData();
+  const user = await requireAuthenticatedUser(request);
   const description = String(form.get('description'));
   let amount = Number(form.get('amount'));
   const stackId = Number(form.get('stack'));
 
   amount = dollarsToCents(amount);
 
-  await db.transaction.update({
+  // TODO:z Refactor side effects below into separate function
+
+  // Get the previous transaction
+  const prevTransactionPromise = db.transaction.findFirst({
+    where: { id: Number(params.transactionId), budget: { userId: user.id } },
+  });
+  const budgetPromise = db.budget.findFirst({ where: { userId: user.id } });
+
+  const [prevTransaction, budget] = await Promise.all([prevTransactionPromise, budgetPromise]);
+
+  if (!prevTransaction || !budget) {
+    throw Error('TODO');
+  }
+
+  // Reset previous stack amount by previous transaction amount
+  const resetStackPromise = db.stack.update({
+    where: { id: prevTransaction.stackId },
+    data: { amount: { decrement: prevTransaction.amount } },
+  });
+
+  // Reset budget total by previous transaction amount
+  const resetBudgetPromise = db.budget.update({
+    where: { id: budget.id },
+    data: { total: { decrement: prevTransaction.amount } },
+  });
+
+  // Update transaction
+  const updateTransactionPromise = db.transaction.update({
     where: { id: Number(params.transactionId) },
     data: { amount, description, stackId },
   });
+
+  // Increment/decrement stack by new amount
+  const updateStackPromise = db.stack.update({
+    where: { id: stackId },
+    data: { amount: { increment: amount } },
+  });
+
+  // Increment/decrement budget total by new amount
+  const updateBudgetPromise = db.budget.update({
+    where: { id: budget.id },
+    data: { total: { increment: amount } },
+  });
+
+  const [_a, _b, _c, _d, updatedBudget] = await db.$transaction([
+    resetStackPromise,
+    resetBudgetPromise,
+    updateTransactionPromise,
+    updateStackPromise,
+    updateBudgetPromise,
+  ]);
+
+  // Recalc to be budgeteds
+  await recalcToBeBudgeted(updatedBudget);
 
   return redirect('/transactions');
 };

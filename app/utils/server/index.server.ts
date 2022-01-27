@@ -108,14 +108,10 @@ export async function createTransactionAndUpdBudget(
     },
   });
 
-  // Recalc to be budgeted
-  const recalcToBeBudgetedPromise = recalcToBeBudgeted(updatedBudget);
+  const [transaction, stack] = await Promise.all([createTransactionPromise, updateStackPromise]);
 
-  const [transaction, stack, recalcedBudget] = await Promise.all([
-    createTransactionPromise,
-    updateStackPromise,
-    recalcToBeBudgetedPromise,
-  ]);
+  // Recalc to be budgeted
+  await recalcToBeBudgeted(updatedBudget);
 
   return transaction;
 }

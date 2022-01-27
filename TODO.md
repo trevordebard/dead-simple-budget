@@ -2,7 +2,9 @@
 
 ## Miscellaneous
 - [x] Store money in cents
+- [ ] Remove commas from inputs that contain numbers 
 - [ ] Create README
+- [ ] Refactor index.server functions into separate files
 - [ ] Form validation for server errors
 - [ ] There should be a default uncategorized stack for new transactions without a stack category
 - [ ] Cleanup UI for first time users
@@ -24,7 +26,8 @@
   - [x] Remove full budget from AuthenticatedUser
 - [x] Create transaction stack input should be dropdown
 - [x] Edit transaction form
-- [ ] Edit transaction side effects
+- [x] Edit transaction side effects
+- [ ] Refactor edit transaction logic into separate function
 - [ ] Sort transactions by date on /transactions
 - [ ] Inline edit transaction?
 - [ ] Import transactions from bank
