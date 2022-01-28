@@ -27,7 +27,10 @@
 - [x] Create transaction stack input should be dropdown
 - [x] Edit transaction form
 - [x] Edit transaction side effects
-- [ ] Refactor edit transaction logic into separate function
+- [x] Refactor edit transaction logic into separate function
+- [ ] Should side effects be a state machine??
+- [ ] Edit transaction should have ability to modify deposit/withdrawal
+- [ ] There should be an option to remove stack/select no stack when editing a transaction
 - [ ] Sort transactions by date on /transactions
 - [ ] Inline edit transaction?
 - [ ] Import transactions from bank

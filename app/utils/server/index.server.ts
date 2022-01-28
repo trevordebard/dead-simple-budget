@@ -92,26 +92,112 @@ export async function createTransactionAndUpdBudget(
     data: transactionData,
   });
 
+  // TODO: the below database calls should probably be done in a $transaction
+
   // Update stack amount
-  const updateStackPromise = db.stack.update({
-    where: { id: stackId },
-    data: { amount: { increment: amount } },
-  });
+  let updateStackPromise;
+  let updatedBudgetPromise;
+  if (stackId && stackId !== 0) {
+    updateStackPromise = db.stack.update({
+      where: { id: stackId },
+      data: { amount: { increment: amount }, budget: { update: { total: { increment: amount } } } },
+      include: { budget: true },
+    });
+  } else {
+    // Only update budget total
+    updatedBudgetPromise = db.budget.update({
+      where: {
+        id: budgetId,
+      },
+      data: {
+        total: { increment: amount },
+      },
+    });
+  }
 
-  // Update budget total
-  const updatedBudget = await db.budget.update({
-    where: {
-      id: budgetId,
-    },
-    data: {
-      total: { increment: amount },
-    },
-  });
-
-  const [transaction, stack] = await Promise.all([createTransactionPromise, updateStackPromise]);
+  const [transaction, stack, updatedBudget] = await Promise.all([
+    createTransactionPromise,
+    updateStackPromise,
+    updatedBudgetPromise,
+  ]);
 
   // Recalc to be budgeted
-  await recalcToBeBudgeted(updatedBudget);
+  if (updatedBudget) {
+    await recalcToBeBudgeted(updatedBudget);
+  } else if (stack?.budget) {
+    await recalcToBeBudgeted(stack.budget);
+  }
 
   return transaction;
+}
+
+const EditTransInput = Prisma.validator<Prisma.TransactionArgs>()({
+  select: { id: true, amount: true, description: true, stackId: true, budget: true },
+});
+
+type EditTransactionInput = Prisma.TransactionGetPayload<typeof EditTransInput>;
+
+export async function editTransactionAndUpdBudget(transaction: EditTransactionInput) {
+  const { amount, description, id: transactionId, stackId, budget } = transaction;
+  // Get the previous transaction
+  const prevTransaction = await db.transaction.findFirst({
+    where: { id: Number(transactionId), budget: { id: budget.id } },
+  });
+
+  if (!prevTransaction || !budget) {
+    throw Error('TODO');
+  }
+
+  // Reset previous stack amount by previous transaction amount
+  let resetStackPromise;
+  if (prevTransaction.stackId) {
+    resetStackPromise = db.stack.update({
+      where: { id: prevTransaction.stackId },
+      data: { amount: { decrement: prevTransaction.amount } },
+    });
+  } else {
+    // this is a useless call just to satisfy the $transaction type requirements below
+    resetStackPromise = db.stack.findFirst({});
+  }
+
+  // Reset budget total by previous transaction amount
+  const resetBudgetPromise = db.budget.update({
+    where: { id: budget.id },
+    data: { total: { decrement: prevTransaction.amount } },
+  });
+
+  // Update transaction
+  const updateTransactionPromise = db.transaction.update({
+    where: { id: Number(transactionId) },
+    data: { amount, description, stackId },
+  });
+
+  // Increment/decrement stack by new amount
+  let updateStackPromise;
+  if (stackId) {
+    updateStackPromise = db.stack.update({
+      where: { id: stackId },
+      data: { amount: { increment: amount } },
+    });
+  } else {
+    // this is a useless call just to satisfy the $transaction type requirements below
+    updateStackPromise = db.stack.findFirst({});
+  }
+
+  // Increment/decrement budget total by new amount
+  const updateBudgetPromise = db.budget.update({
+    where: { id: budget.id },
+    data: { total: { increment: amount } },
+  });
+
+  const [_a, _b, _c, _d, updatedBudget] = await db.$transaction([
+    resetStackPromise,
+    resetBudgetPromise,
+    updateTransactionPromise,
+    updateStackPromise,
+    updateBudgetPromise,
+  ]);
+
+  // Recalc to be budgeteds
+  await recalcToBeBudgeted(updatedBudget);
 }

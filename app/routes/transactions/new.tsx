@@ -16,10 +16,12 @@ export const action: ActionFunction = async ({ request }) => {
 
   const description = String(formData.get('description'));
   let amount = Number(formData.get('amount'));
-  const stackId = Number(formData.get('stack'));
+
+  // StackId is allowed to be null when creating a transaction. Automatically casting to a number would set the value to 0
+  const stackId = formData.get('stack') ? Number(formData.get('stack')) : null;
   const type = String(formData.get('trans-type'));
 
-  if (!amount || !stackId || !description || !type || !budget) {
+  if (!amount || !description || !type || !budget) {
     throw Error('TODO');
   }
   if (type === 'withdrawal') {
@@ -65,7 +67,7 @@ export default function NewTransaction() {
         </div>
         <div>
           <label htmlFor="stack">Stack</label>
-          <select name="stack" id="stack-input" required className="w-full">
+          <select name="stack" id="stack-input" className="w-full">
             <option value="" disabled selected>
               Choose a Stack
             </option>
