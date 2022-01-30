@@ -132,13 +132,14 @@ export async function createTransactionAndUpdBudget(
 }
 
 const EditTransInput = Prisma.validator<Prisma.TransactionArgs>()({
-  select: { id: true, amount: true, description: true, stackId: true, budget: true },
+  select: { id: true, amount: true, description: true, stackId: true, budget: true, type: true },
 });
 
 type EditTransactionInput = Prisma.TransactionGetPayload<typeof EditTransInput>;
 
 export async function editTransactionAndUpdBudget(transaction: EditTransactionInput) {
-  const { amount, description, id: transactionId, stackId, budget } = transaction;
+  const { description, id: transactionId, stackId, budget, type } = transaction;
+  let { amount } = transaction;
   // Get the previous transaction
   const prevTransaction = await db.transaction.findFirst({
     where: { id: Number(transactionId), budget: { id: budget.id } },
@@ -146,6 +147,10 @@ export async function editTransactionAndUpdBudget(transaction: EditTransactionIn
 
   if (!prevTransaction || !budget) {
     throw Error('TODO');
+  }
+
+  if (type === 'withdrawal') {
+    amount *= -1;
   }
 
   // Reset previous stack amount by previous transaction amount
@@ -169,7 +174,7 @@ export async function editTransactionAndUpdBudget(transaction: EditTransactionIn
   // Update transaction
   const updateTransactionPromise = db.transaction.update({
     where: { id: Number(transactionId) },
-    data: { amount, description, stackId },
+    data: { amount, description, stackId, type },
   });
 
   // Increment/decrement stack by new amount

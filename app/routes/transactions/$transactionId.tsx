@@ -1,4 +1,6 @@
 import { Form, useLoaderData, LoaderFunction, ActionFunction, redirect, Link, json } from 'remix';
+import * as ToggleGroup from '@radix-ui/react-toggle-group';
+import { useEffect, useState } from 'react';
 import { Transaction, Stack } from '.prisma/client';
 import { db } from '~/utils/db.server';
 import { Button } from '~/components/button';
@@ -28,6 +30,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   const description = String(form.get('description'));
   let amount = Number(form.get('amount'));
   const stackId = Number(form.get('stack'));
+  const transType = String(form.get('trans-type'));
 
   amount = dollarsToCents(amount);
 
@@ -38,13 +41,28 @@ export const action: ActionFunction = async ({ request, params }) => {
     throw Error('TODO');
   }
 
-  editTransactionAndUpdBudget({ description, amount, id: Number(params.transactionId), stackId, budget });
+  editTransactionAndUpdBudget({
+    description,
+    amount,
+    id: Number(params.transactionId),
+    stackId,
+    budget,
+    type: transType,
+  });
 
   return redirect('/transactions');
 };
 
 export default function TransactionIdPage() {
   const { transaction, stacks } = useLoaderData<LoaderData>();
+  const [transactionType, setTransactionType] = useState<string>(transaction?.type || 'deposit');
+
+  useEffect(() => {
+    if (transaction?.type) {
+      setTransactionType(transaction?.type);
+    }
+  }, [transaction, setTransactionType]);
+
   if (!transaction) {
     return <div>Transaction not found</div>;
   }
@@ -63,7 +81,7 @@ export default function TransactionIdPage() {
             <label htmlFor="amount" className="inline-block mb-1">
               Amount
             </label>
-            <input type="text" name="amount" defaultValue={centsToDollars(transaction.amount)} />
+            <input type="text" name="amount" defaultValue={Math.abs(parseFloat(centsToDollars(transaction.amount)))} />
           </div>
           <div>
             <label htmlFor="stack" className="inline-block mb-1">
@@ -76,6 +94,28 @@ export default function TransactionIdPage() {
                 </option>
               ))}
             </select>
+          </div>
+          <div>
+            <input type="hidden" name="trans-type" id="trans-type" value={transactionType} />
+            <ToggleGroup.Root
+              type="single"
+              value={transactionType}
+              className="inline-flex rounded-md w-full"
+              onValueChange={(val) => setTransactionType(val)}
+            >
+              <ToggleGroup.Item
+                value="deposit"
+                className="flex items-center justify-center w-full h-9 border-gray-300 border hover:bg-gray-100 first:rounded-l-md last:rounded-r-md radix-state-on:border-transparent radix-state-on:bg-purple-900 radix-state-on:text-purple-50"
+              >
+                Deposit
+              </ToggleGroup.Item>
+              <ToggleGroup.Item
+                value="withdrawal"
+                className="flex items-center justify-center w-full h-9 border-gray-300 border hover:bg-gray-100 first:rounded-l-md last:rounded-r-md radix-state-on:border-transparent radix-state-on:bg-purple-900 radix-state-on:text-purple-50"
+              >
+                Withdrawal
+              </ToggleGroup.Item>
+            </ToggleGroup.Root>
           </div>
           <div className="flex flex-col items-center space-y-2">
             <Button type="submit" variant="outline" className="w-full">
