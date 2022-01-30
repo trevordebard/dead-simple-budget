@@ -1,8 +1,9 @@
 import { redirect } from 'remix';
 import { User } from '@prisma/client';
-import { Budget, Prisma } from '.prisma/client';
+import { Prisma } from '.prisma/client';
 import { authenticator } from '~/auth/auth.server';
 import { db } from '../db.server';
+import { recalcToBeBudgeted } from './budget.server';
 
 export async function findOrCreateUser(email: string): Promise<User> {
   const user = await db.user.upsert({
@@ -69,18 +70,6 @@ export async function deleteStackCateogry({ categoryId, budgetId }: DeleteStackC
   await db.stackCategory.delete({ where: { id: categoryId } });
 }
 
-export async function recalcToBeBudgeted(budget: Budget) {
-  const stackAggregation = await db.stack.aggregate({ _sum: { amount: true }, where: { budgetId: budget.id } });
-  const sumOfStacks = stackAggregation._sum.amount || 0;
-  const toBeBudgeted = budget.total - sumOfStacks;
-
-  const updateResponse = await db.budget.update({
-    where: { id: budget.id },
-    data: { toBeBudgeted },
-  });
-  return updateResponse;
-}
-
 export async function createTransactionAndUpdBudget(
   transactionData: Prisma.TransactionUncheckedCreateInput,
   budgetId: string
@@ -123,9 +112,9 @@ export async function createTransactionAndUpdBudget(
 
   // Recalc to be budgeted
   if (updatedBudget) {
-    await recalcToBeBudgeted(updatedBudget);
+    await recalcToBeBudgeted({ budget: updatedBudget });
   } else if (stack?.budget) {
-    await recalcToBeBudgeted(stack.budget);
+    await recalcToBeBudgeted({ budget: stack.budget });
   }
 
   return transaction;
@@ -204,5 +193,5 @@ export async function editTransactionAndUpdBudget(transaction: EditTransactionIn
   ]);
 
   // Recalc to be budgeteds
-  await recalcToBeBudgeted(updatedBudget);
+  await recalcToBeBudgeted({ budget: updatedBudget });
 }
