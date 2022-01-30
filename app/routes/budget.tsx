@@ -8,7 +8,7 @@ import { db } from '~/utils/db.server';
 import { createStack, requireAuthenticatedUser } from '~/utils/server/index.server';
 import { ContentAction, ContentLayout, ContentMain } from '~/components/layout';
 import { Button } from '~/components/button';
-import { centsToDollars } from '~/utils/money-fns';
+import { centsToDollars, dollarsToCents } from '~/utils/money-fns';
 import { recalcToBeBudgeted } from '~/utils/server/budget.server';
 
 type IndexData = {
@@ -63,7 +63,7 @@ export const action: ActionFunction = async ({ request }) => {
       promises.push(
         db.stack.update({
           where: { label_budgetId: { budgetId: budget.id, label: key } },
-          data: { amount: Number(value) * 100 },
+          data: { amount: dollarsToCents(value) },
         })
       );
     });

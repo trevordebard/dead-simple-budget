@@ -2,7 +2,7 @@
 
 ## Miscellaneous
 - [x] Store money in cents
-- [ ] Remove commas from inputs that contain numbers 
+- [x] Remove commas from inputs that contain numbers 
 - [ ] Create README
 - [ ] Refactor index.server functions into separate files
 - [ ] Form validation for server errors

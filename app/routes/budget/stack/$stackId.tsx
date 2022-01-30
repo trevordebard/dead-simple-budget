@@ -31,10 +31,10 @@ export const loader: LoaderFunction = async ({ params, request }) => {
 export const action: ActionFunction = async ({ request, params }) => {
   const form = await request.formData();
   const label = String(form.get('label'));
-  let amount = Number(form.get('amount'));
+  const amountInput = String(form.get('amount'));
   const categoryId = Number(form.get('category'));
 
-  amount = dollarsToCents(amount);
+  const amount = dollarsToCents(amountInput);
 
   const updatedStack = await db.stack.update({
     where: { id: Number(params.stackId) },

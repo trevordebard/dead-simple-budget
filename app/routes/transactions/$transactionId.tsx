@@ -28,11 +28,11 @@ export const action: ActionFunction = async ({ request, params }) => {
   const form = await request.formData();
   const user = await requireAuthenticatedUser(request);
   const description = String(form.get('description'));
-  let amount = Number(form.get('amount'));
+  const amountInput = String(form.get('amount'));
   const stackId = Number(form.get('stack'));
   const transType = String(form.get('trans-type'));
 
-  amount = dollarsToCents(amount);
+  const amount = dollarsToCents(amountInput);
 
   // TODO:z Refactor side effects below into separate function
   const budget = await db.budget.findFirst({ where: { userId: user.id } });

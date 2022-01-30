@@ -1,10 +1,9 @@
 export function dollarsToCents(value: string | number) {
-  let res = `${value}`.replace(/[^\d.-]/g, '');
-  if (res && res.includes('.')) {
-    res = res.substring(0, res.indexOf('.') + 3);
+  if (typeof value !== 'string' && typeof value !== 'number') {
+    throw new Error('Amount passed must be of type String or Number.');
   }
 
-  return value ? Math.round(parseFloat(res) * 100) : 0;
+  return Math.round(100 * parseFloat(typeof value === 'string' ? value.replace(/[$,]/g, '') : value.toString()));
 }
 
 export function centsToDollars(amount = 0) {
