@@ -15,6 +15,8 @@
 - [ ] Give users example stacks and transaction when their account is first created
 ## Budget
 - [ ] Update user's total balance
+- [ ] Should budgets/stacks reset monthly? 
+
 ## Cleanup
 - [x] Base button styles
 - [ ] Relocate tailwind files to same folder
@@ -36,7 +38,7 @@
 - [ ] Import transactions from bank
 
 ## Stacks
-- [ ] Edit stack side effects
+- [x] Edit stack side effects
 - [ ] Stack ordering within categories
 - [ ] Make stack dropdowns across app custom and display stack amounts
 - [ ] Drag and drop stacks to new categories.

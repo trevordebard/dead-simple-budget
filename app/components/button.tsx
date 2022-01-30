@@ -9,6 +9,8 @@ type ButtonProps = {
   size?: ButtonSizes;
   className?: string;
   type?: DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>['type'];
+  name?: string;
+  value?: string;
   children: ReactNode;
 };
 
