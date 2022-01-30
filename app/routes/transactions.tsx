@@ -1,39 +1,43 @@
-import { Outlet, LoaderFunction, useLoaderData, Form, ActionFunction } from 'remix';
+import { Outlet, LoaderFunction, useLoaderData, Form, ActionFunction, Link } from 'remix';
 import { useState } from 'react';
 import { DateTime } from 'luxon';
-import { Transaction } from '.prisma/client';
+import { Stack, Transaction } from '.prisma/client';
 import { ContentAction, ContentLayout, ContentMain } from '~/components/layout';
 import { db } from '~/utils/db.server';
 import { requireAuthenticatedUser } from '~/utils/server/index.server';
+import { centsToDollars } from '~/utils/money-fns';
 
 type LoaderData = {
-  transactions: Transaction[];
+  transactions: (Transaction & {
+    stack: Stack | null;
+  })[];
 };
 export const loader: LoaderFunction = async ({ request }): Promise<LoaderData> => {
   const user = await requireAuthenticatedUser(request);
-  const transactions = await db.transaction.findMany({ where: { budgetId: user.Budget.id } });
+  const budget = await db.budget.findFirst({ where: { userId: user.id } });
+
+  if (!budget) {
+    throw Error('TODO');
+  }
+
+  const transactions = await db.transaction.findMany({ where: { budgetId: budget.id }, include: { stack: true } });
   return { transactions };
 };
 
-export const action: ActionFunction = async ({ request }) => {
-  const formData = await request.formData();
-
-  const description = String(formData.get('description'));
-  const stack = String(formData.get('stack'));
-  const transactionId = Number(formData.get('transaction-id'));
-
-  const trnsactionRes = await db.transaction.update({ where: { id: transactionId }, data: { stack, description } });
-  return null;
-};
-
-export default function Transctions() {
+export default function TransactionsPage() {
   const { transactions } = useLoaderData<LoaderData>();
   return (
     <ContentLayout>
       <ContentMain>
         <div className="flex flex-col">
           {transactions.map((t) => (
-            <TransactionCard transaction={t} key={t.id} />
+            <Link
+              to={`${t.id}`}
+              key={t.id}
+              className="hover:no-underline hover:text-inherit focus:outline-none focus:bg-gray-200"
+            >
+              <TransactionCard transaction={t} />
+            </Link>
           ))}
         </div>
       </ContentMain>
@@ -45,7 +49,9 @@ export default function Transctions() {
 }
 
 type iTransactionCardProps = {
-  transaction: Transaction;
+  transaction: Transaction & {
+    stack: Stack | null;
+  };
 };
 
 export function TransactionCard({ transaction }: iTransactionCardProps) {
@@ -54,10 +60,10 @@ export function TransactionCard({ transaction }: iTransactionCardProps) {
     <div className="flex justify-between p-2 border-b hover:bg-slate-100">
       <div>
         <p className="">{description}</p>
-        <p className="text-zinc-600">{stack}</p>
+        <p className="text-zinc-600">{stack?.label}</p>
       </div>
       <div>
-        <p className="text-right">${amount}</p>
+        <p className="text-right">${centsToDollars(amount)}</p>
         <p className="text-zinc-600">{DateTime.fromISO(String(date)).toFormat('yyyy-MM-dd')}</p>
       </div>
     </div>

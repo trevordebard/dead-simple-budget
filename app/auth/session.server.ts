@@ -1,5 +1,6 @@
 import { createCookieSessionStorage, Session } from 'remix';
 
+// TODO: update secret
 export const sessionStorage = createCookieSessionStorage({
   cookie: {
     name: '__session',

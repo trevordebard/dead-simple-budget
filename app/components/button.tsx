@@ -22,7 +22,7 @@ const ButtonSize: Record<ButtonSizes, string> = {
 
 const ButtonVariants = {
   primary: 'bg-gray-700 text-gray-50 hover:bg-gray-600',
-  transparent: 'rhover:bg-gray-100',
+  transparent: 'hover:bg-gray-100',
   outline: 'border border-gray-700 text-gray-700 hover:bg-gray-700 hover:text-gray-100',
   danger: 'bg-red-700 text-red-100 hover:bg-red-600',
 };
@@ -42,7 +42,7 @@ export function Button({
     <button
       type="button"
       className={clsx(
-        'cursor-pointer rounded-md font-normal inline-flex justify-center items-center focus:outline-none',
+        'cursor-pointer rounded-md font-normal inline-flex justify-center items-center',
         variantStyles,
         sizeStyles,
         className

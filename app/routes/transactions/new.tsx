@@ -1,51 +1,80 @@
-import { ActionFunction, Form, Link } from 'remix';
+import { ActionFunction, Form, Link, LoaderFunction, useLoaderData } from 'remix';
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
 import { useState } from 'react';
 import { db } from '~/utils/db.server';
-import { requireAuthenticatedUser } from '~/utils/server/index.server';
+import { createTransactionAndUpdBudget, requireAuthenticatedUser } from '~/utils/server/index.server';
 import { Button } from '~/components/button';
+import { Stack } from '.prisma/client';
+import { dollarsToCents } from '~/utils/money-fns';
 
 // TODO: error handling
-// TODO: budget side effects
 export const action: ActionFunction = async ({ request }) => {
   const user = await requireAuthenticatedUser(request);
+  const budget = await db.budget.findFirst({ where: { userId: user.id } });
+
   const formData = await request.formData();
 
   const description = String(formData.get('description'));
   let amount = Number(formData.get('amount'));
-  const stack = String(formData.get('stack'));
+
+  // StackId is allowed to be null when creating a transaction. Automatically casting to a number would set the value to 0
+  const stackId = formData.get('stack') ? Number(formData.get('stack')) : null;
   const type = String(formData.get('trans-type'));
 
-  if (!amount || !stack || !description || !type) {
+  if (!amount || !description || !type || !budget) {
     throw Error('TODO');
   }
   if (type === 'withdrawal') {
     amount *= -1;
   }
 
-  const create = await db.transaction.create({
-    data: { description, amount, stack, budgetId: user.Budget.id, date: new Date(), type },
-  });
+  const amountInCents = dollarsToCents(amount);
+  const newTransactionInput = {
+    description,
+    amount: amountInCents,
+    stackId,
+    budgetId: budget.id,
+    date: new Date(),
+    type,
+  };
+  const create = await createTransactionAndUpdBudget(newTransactionInput, budget.id);
+
   return create;
+};
+
+export const loader: LoaderFunction = async ({ request }) => {
+  const user = await requireAuthenticatedUser(request);
+  const budget = await db.budget.findFirst({ where: { userId: user.id }, include: { stacks: true } });
+  const stacks = budget?.stacks;
+  return stacks;
 };
 
 export default function NewTransaction() {
   const [transactionType, setTransactionType] = useState<string>('deposit');
+  const stacks = useLoaderData<Stack[] | null>();
+
   return (
     <div className="fixed top-0 bottom-0 left-0 right-0 md:relative bg-white p-5 md:p-0">
       <h3 className="text-lg mb-3 divide-y-2 text-center">New Transaction</h3>
       <Form method="post" className="space-y-4">
         <div>
           <label htmlFor="description">Description</label>
-          <input type="text" name="description" id="description-input" />
+          <input type="text" name="description" id="description-input" required />
         </div>
         <div>
           <label htmlFor="amount">Amount</label>
-          <input type="text" name="amount" id="amount-input" />
+          <input type="text" name="amount" id="amount-input" required />
         </div>
         <div>
           <label htmlFor="stack">Stack</label>
-          <input type="text" name="stack" id="stack-input" />
+          <select name="stack" id="stack-input" className="w-full">
+            <option value="" disabled selected>
+              Choose a Stack
+            </option>
+            {stacks?.map((stack) => (
+              <option value={stack.id}>{stack.label}</option>
+            ))}
+          </select>
         </div>
         <div>
           <input type="hidden" name="trans-type" id="trans-type" value={transactionType} />
@@ -57,13 +86,13 @@ export default function NewTransaction() {
           >
             <ToggleGroup.Item
               value="deposit"
-              className="flex items-center justify-center w-full h-9 border-gray-300 border hover:bg-gray-100 first:rounded-l-md last:rounded-r-md radix-state-on:border-transparent radix-state-on:bg-purple-900 radix-state-on:text-purple-50 focus:outline-none "
+              className="flex items-center justify-center w-full h-9 border-gray-300 border hover:bg-gray-100 first:rounded-l-md last:rounded-r-md radix-state-on:border-transparent radix-state-on:bg-purple-900 radix-state-on:text-purple-50"
             >
               Deposit
             </ToggleGroup.Item>
             <ToggleGroup.Item
               value="withdrawal"
-              className="flex items-center justify-center w-full h-9 border-gray-300 border hover:bg-gray-100 first:rounded-l-md last:rounded-r-md radix-state-on:border-transparent radix-state-on:bg-purple-900 radix-state-on:text-purple-50 focus:outline-none "
+              className="flex items-center justify-center w-full h-9 border-gray-300 border hover:bg-gray-100 first:rounded-l-md last:rounded-r-md radix-state-on:border-transparent radix-state-on:bg-purple-900 radix-state-on:text-purple-50"
             >
               Withdrawal
             </ToggleGroup.Item>

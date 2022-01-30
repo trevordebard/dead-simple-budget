@@ -1,9 +1,9 @@
 import { Authenticator, GoogleStrategy } from 'remix-auth';
+import { User } from '@prisma/client';
 import { findOrCreateUser } from '~/utils/server/index.server';
 import { sessionStorage } from '~/auth/session.server';
-import { AuthenticatedUser } from '~/types/user';
 
-export const authenticator = new Authenticator<AuthenticatedUser>(sessionStorage);
+export const authenticator = new Authenticator<User>(sessionStorage);
 
 if (!process.env.GOOGLE_CLIENT_SECRET) {
   throw new Error('Missing GOOGLE_CLIENT_SECRET env');

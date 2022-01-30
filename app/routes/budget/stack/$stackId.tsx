@@ -1,8 +1,9 @@
 import { Form, useLoaderData, LoaderFunction, ActionFunction, redirect, Link } from 'remix';
 import { Stack, StackCategory } from '.prisma/client';
-import { authenticator } from '~/auth/auth.server';
 import { db } from '~/utils/db.server';
 import { Button } from '~/components/button';
+import { centsToDollars, dollarsToCents } from '~/utils/money-fns';
+import { requireAuthenticatedUser } from '~/utils/server/index.server';
 
 interface LoaderData {
   stack: Stack & {
@@ -12,13 +13,14 @@ interface LoaderData {
 }
 
 export const loader: LoaderFunction = async ({ params, request }) => {
-  const user = await authenticator.isAuthenticated(request);
+  const user = await requireAuthenticatedUser(request);
+  const budget = await db.budget.findFirst({ where: { userId: user.id } });
 
-  if (!user || !user.Budget) {
+  if (!user || !budget) {
     return redirect('/login');
   }
   const stack = await db.stack.findUnique({ where: { id: Number(params.stackId) }, include: { category: true } });
-  const categories = await db.stackCategory.findMany({ where: { budgetId: user.Budget.id } });
+  const categories = await db.stackCategory.findMany({ where: { budgetId: budget.id } });
   if (!stack) {
     throw Error('Stack not found!');
   }
@@ -28,15 +30,17 @@ export const loader: LoaderFunction = async ({ params, request }) => {
 export const action: ActionFunction = async ({ request, params }) => {
   const form = await request.formData();
   const label = String(form.get('label'));
-  const amount = Number(form.get('amount'));
+  let amount = Number(form.get('amount'));
   const categoryId = Number(form.get('category'));
+
+  amount = dollarsToCents(amount);
 
   await db.stack.update({
     where: { id: Number(params.stackId) },
     data: { amount, label, stackCategoryId: categoryId },
   });
 
-  return null;
+  return redirect('/budget');
 };
 
 export default function StackId() {
@@ -56,10 +60,10 @@ export default function StackId() {
             <label htmlFor="amount" className="inline-block mb-1">
               Amount
             </label>
-            <input type="text" name="amount" defaultValue={stack.amount} />
+            <input type="text" name="amount" defaultValue={centsToDollars(stack.amount)} />
           </div>
           <div>
-            <label htmlFor="catgory" className="inline-block mb-1">
+            <label htmlFor="category" className="inline-block mb-1">
               Category
             </label>
             <select name="category" defaultValue={stack.stackCategoryId || -1} className="block w-full">
