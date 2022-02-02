@@ -20,7 +20,7 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   if (!user || !budget) {
     return redirect('/login');
   }
-  const stack = await db.stack.findUnique({ where: { id: Number(params.stackId) }, include: { category: true } });
+  const stack = await db.stack.findUnique({ where: { id: params.stackId }, include: { category: true } });
   const categories = await db.stackCategory.findMany({ where: { budgetId: budget.id } });
   if (!stack) {
     throw Error('Stack not found!');
@@ -32,12 +32,12 @@ export const action: ActionFunction = async ({ request, params }) => {
   const form = await request.formData();
   const label = String(form.get('label'));
   const amountInput = String(form.get('amount'));
-  const categoryId = Number(form.get('category'));
+  const categoryId = String(form.get('category'));
 
   const amount = dollarsToCents(amountInput);
 
   const updatedStack = await db.stack.update({
-    where: { id: Number(params.stackId) },
+    where: { id: params.stackId },
     data: { amount, label, stackCategoryId: categoryId },
     include: { budget: true },
   });

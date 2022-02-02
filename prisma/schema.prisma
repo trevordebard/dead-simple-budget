@@ -9,7 +9,7 @@ datasource db {
 }
 
 model StackCategory {
-  id         Int     @id @default(autoincrement())
+  id         String  @id @default(cuid())
   label      String
   stackOrder Int[]
   Stack      Stack[]
@@ -20,9 +20,9 @@ model StackCategory {
 }
 
 model Stack {
-  id              Int            @id @default(autoincrement())
+  id              String         @id @default(cuid())
   label           String
-  stackCategoryId Int?           @map("stack_category_id")
+  stackCategoryId String?        @map("stack_category_id")
   amount          Int            @default(0)
   created_at      DateTime       @default(now())
   budgetId        String
@@ -34,10 +34,10 @@ model Stack {
 }
 
 model Transaction {
-  id                 Int      @id @default(autoincrement())
+  id                 String   @id @default(cuid())
   plaidTransactionId String?  @unique
   description        String
-  stackId            Int?
+  stackId            String?
   amount             Int
   type               String
   date               DateTime
@@ -77,7 +77,7 @@ model VerificationToken {
 }
 
 model BankAccout {
-  id               Int      @id @default(autoincrement())
+  id               String   @id @default(cuid())
   plaidAccessToken String
   plaidItemId      String   @unique
   plaidAccountIds  String[]

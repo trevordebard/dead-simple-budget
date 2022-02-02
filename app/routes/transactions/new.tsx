@@ -18,7 +18,7 @@ export const action: ActionFunction = async ({ request }) => {
   const amountInput = String(formData.get('amount'));
 
   // StackId is allowed to be null when creating a transaction. Automatically casting to a number would set the value to 0
-  const stackId = formData.get('stack') ? Number(formData.get('stack')) : null;
+  const stackId = formData.get('stack') ? String(formData.get('stack')) : null;
   const type = String(formData.get('trans-type'));
 
   if (!amountInput || !description || !type || !budget) {

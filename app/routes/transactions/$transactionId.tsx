@@ -15,7 +15,7 @@ interface LoaderData {
 export const loader: LoaderFunction = async ({ params, request }) => {
   const user = await requireAuthenticatedUser(request);
   const transactionPromise = db.transaction.findFirst({
-    where: { id: Number(params.transactionId), budget: { userId: user.id } },
+    where: { id: String(params.transactionId), budget: { userId: user.id } },
   });
   const stacksPromise = db.stack.findMany({ where: { budget: { userId: user.id } } });
 
@@ -29,7 +29,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   const user = await requireAuthenticatedUser(request);
   const description = String(form.get('description'));
   const amountInput = String(form.get('amount'));
-  const stackId = Number(form.get('stack'));
+  const stackId = String(form.get('stack'));
   const transType = String(form.get('trans-type'));
 
   const amount = dollarsToCents(amountInput);
@@ -37,14 +37,14 @@ export const action: ActionFunction = async ({ request, params }) => {
   // TODO:z Refactor side effects below into separate function
   const budget = await db.budget.findFirst({ where: { userId: user.id } });
 
-  if (!budget) {
+  if (!budget || !params.transactionId) {
     throw Error('TODO');
   }
 
   editTransactionAndUpdBudget({
     description,
     amount,
-    id: Number(params.transactionId),
+    id: String(params.transactionId),
     stackId,
     budget,
     type: transType,

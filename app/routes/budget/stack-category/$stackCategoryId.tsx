@@ -12,10 +12,10 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   const user = await requireAuthenticatedUser(request);
   const budget = await db.budget.findFirst({ where: { userId: user.id } });
 
-  if (!user || !budget) {
+  if (!user || !budget || !params.stackCategoryId) {
     return redirect('/login');
   }
-  const category = await db.stackCategory.findUnique({ where: { id: Number(params.stackCategoryId) } });
+  const category = await db.stackCategory.findUnique({ where: { id: params.stackCategoryId } });
   if (!category) {
     throw Error('Stack category not found!');
   }
@@ -26,18 +26,18 @@ export const action: ActionFunction = async ({ request, params }) => {
   const user = await requireAuthenticatedUser(request);
   const budget = await db.budget.findFirst({ where: { userId: user.id } });
 
-  if (!user || !budget) {
+  if (!user || !budget || !params.stackCategoryId) {
     return redirect('/login');
   }
-  const stackCatId = Number(params.stackCategoryId);
   const form = await request.formData();
+
   if (form.get('_method') === 'delete') {
-    await deleteStackCateogry({ budgetId: budget.id, categoryId: stackCatId });
+    await deleteStackCateogry({ budgetId: budget.id, categoryId: params.stackCategoryId });
     return redirect('/budget');
   }
   const label = String(form.get('stack-category'));
 
-  await db.stackCategory.update({ where: { id: Number(params.stackCategoryId) }, data: { label } });
+  await db.stackCategory.update({ where: { id: params.stackCategoryId }, data: { label } });
 
   return redirect('/budget');
 };
