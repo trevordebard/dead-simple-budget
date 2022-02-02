@@ -5,6 +5,7 @@
 - [x] Remove commas from inputs that contain numbers 
 - [ ] Create README
 - [ ] Refactor index.server functions into separate files
+- [x] Change root index / to redirect to /budget instead of /login
 - [ ] Form validation for server errors
 - [ ] There should be a default uncategorized stack for new transactions without a stack category
 - [ ] Cleanup UI for first time users

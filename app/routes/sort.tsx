@@ -1,175 +1,76 @@
-import React, { useEffect, useState } from 'react';
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
-import { v4 as uuid } from 'uuid';
+import { Prisma, Stack } from '@prisma/client';
+import { useEffect, useState } from 'react';
+import { DragDropContext, Draggable, Droppable, resetServerContext, DropResult } from 'react-beautiful-dnd';
+import { json, Link, LoaderFunction, useFetcher, useLoaderData } from 'remix';
+import { db } from '~/utils/db.server';
+import { centsToDollars } from '~/utils/money-fns';
+import { requireAuthenticatedUser } from '~/utils/server/index.server';
 
-const temp = [
-  {
-    id: '1',
-    label: 'Miscellaneous',
-    stackOrder: [],
-    budgetId: 'ckyweyi6v0043m2w2rs3s839w',
-    items: [
-      {
-        id: '3',
-        label: 'abc',
-        stackCategoryId: '1',
-        amount: 100000,
-        created_at: '2022-01-30T01:54:01.419Z',
-        budgetId: 'ckyweyi6v0043m2w2rs3s839w',
-      },
-      {
-        id: '2',
-        label: 'Travel',
-        stackCategoryId: '1',
-        amount: 296700,
-        created_at: '2022-01-27T03:25:44.583Z',
-        budgetId: 'ckyweyi6v0043m2w2rs3s839w',
-      },
-      {
-        id: '4',
-        label: 'blah',
-        stackCategoryId: '1',
-        amount: 110000,
-        created_at: '2022-01-30T02:07:29.096Z',
-        budgetId: 'ckyweyi6v0043m2w2rs3s839w',
-      },
-      {
-        id: 'ckz21lpnj0021zow27ex5me1z',
-        label: 'test',
-        stackCategoryId: '1',
-        amount: 0,
-        created_at: '2022-01-31T01:58:08.671Z',
-        budgetId: 'ckyweyi6v0043m2w2rs3s839w',
-      },
-    ],
-  },
-  {
-    id: '2',
-    label: 'Necessities',
-    stackOrder: [],
-    budgetId: 'ckyweyi6v0043m2w2rs3s839w',
-    items: [
-      {
-        id: '1',
-        label: 'Rent',
-        stackCategoryId: '2',
-        amount: 0,
-        created_at: '2022-01-27T03:25:33.391Z',
-        budgetId: 'ckyweyi6v0043m2w2rs3s839w',
-      },
-    ],
-  },
-];
+type CategoryWithStack = Prisma.StackCategoryGetPayload<{ include: { Stack: true } }>;
 
-const itemsFromBackend = [
-  { id: uuid(), content: 'First task' },
-  { id: uuid(), content: 'Second task' },
-  { id: uuid(), content: 'Third task' },
-  { id: uuid(), content: 'Fourth task' },
-  { id: uuid(), content: 'Fifth task' },
-];
-
-const columnsFromBackend = {
-  a: {
-    id: '1',
-    label: 'Miscellaneous',
-    stackOrder: [],
-    budgetId: 'ckyweyi6v0043m2w2rs3s839w',
-    items: [
-      {
-        id: '3',
-        label: 'abc',
-        stackCategoryId: 1,
-        amount: 100000,
-        created_at: '2022-01-30T01:54:01.419Z',
-        budgetId: 'ckyweyi6v0043m2w2rs3s839w',
-      },
-      {
-        id: '2',
-        label: 'Travel',
-        stackCategoryId: 1,
-        amount: 296700,
-        created_at: '2022-01-27T03:25:44.583Z',
-        budgetId: 'ckyweyi6v0043m2w2rs3s839w',
-      },
-      {
-        id: '4',
-        label: 'blah',
-        stackCategoryId: 1,
-        amount: 110000,
-        created_at: '2022-01-30T02:07:29.096Z',
-        budgetId: 'ckyweyi6v0043m2w2rs3s839w',
-      },
-    ],
-  },
-  b: {
-    id: '2',
-    label: 'Necessities',
-    stackOrder: [],
-    budgetId: 'ckyweyi6v0043m2w2rs3s839w',
-    items: [
-      {
-        id: '1',
-        label: 'Rent',
-        stackCategoryId: 2,
-        amount: 0,
-        created_at: '2022-01-27T03:25:33.391Z',
-        budgetId: 'ckyweyi6v0043m2w2rs3s839w',
-      },
-    ],
-  },
-};
-
-const onDragEnd = (result, columns, setColumns) => {
+const onDragEnd = (result: DropResult, columns: CategoryWithStack[], setColumns) => {
   if (!result.destination) return;
   const { source, destination } = result;
-
   if (source.droppableId !== destination.droppableId) {
-    const sourceColumn = columns[source.droppableId];
-    const destColumn = columns[destination.droppableId];
-    const sourceItems = [...sourceColumn.items];
-    const destItems = [...destColumn.items];
-    const [removed] = sourceItems.splice(source.index, 1);
-    destItems.splice(destination.index, 0, removed);
+    const sourceColumn = columns[parseInt(source.droppableId)];
+    const destColumn = columns[parseInt(destination.droppableId)];
+    const sourceStacks = [...sourceColumn.Stack];
+    const destStacks = [...destColumn.Stack];
+    const [removed] = sourceStacks.splice(source.index, 1);
+    console.log(removed);
+    destStacks.splice(destination.index, 0, removed);
     setColumns({
       ...columns,
       [source.droppableId]: {
         ...sourceColumn,
-        items: sourceItems,
+        Stack: sourceStacks,
       },
       [destination.droppableId]: {
         ...destColumn,
-        items: destItems,
+        Stack: destStacks,
       },
     });
   } else {
-    const column = columns[source.droppableId];
-    const copiedItems = [...column.items];
-    const [removed] = copiedItems.splice(source.index, 1);
-    copiedItems.splice(destination.index, 0, removed);
+    const column = columns[parseInt(source.droppableId)];
+    const copiedStacks = [...column.Stack];
+    console.log(copiedStacks);
+    const [removed] = copiedStacks.splice(source.index, 1);
+    copiedStacks.splice(destination.index, 0, removed);
     setColumns({
       ...columns,
       [source.droppableId]: {
         ...column,
-        items: copiedItems,
+        Stack: copiedStacks,
       },
     });
   }
 };
 
+export const loader: LoaderFunction = async ({ request }) => {
+  // Allow server rendering of drag and drop components
+  resetServerContext();
+  const user = await requireAuthenticatedUser(request);
+
+  const categorized = await db.stackCategory.findMany({
+    where: { budget: { user: { id: user.id } } },
+    include: { Stack: true },
+  });
+  console.log('loadercalled');
+  return json(categorized);
+  // return null;
+};
+
 function App() {
-  const [columns, setColumns] = useState({ ...temp });
-  const [winReady, setwinReady] = useState(false);
+  const categorized = useLoaderData();
+  const [columns, setColumns] = useState<CategoryWithStack[]>({ ...categorized });
+
   useEffect(() => {
-    setwinReady(true);
-  }, []);
-  if (!winReady) {
-    return <div>loading..</div>;
-  }
+    setColumns({ ...categorized });
+  }, [categorized]);
   return (
     <div style={{ display: 'flex', justifyContent: 'center', height: '100%' }}>
       <DragDropContext onDragEnd={(result) => onDragEnd(result, columns, setColumns)}>
-        {Object.entries(columns).map(([columnId, column], index) => {
+        {Object.entries(columns).map(([columnId, column]) => {
           return (
             <div
               style={{
@@ -181,50 +82,15 @@ function App() {
             >
               <h2>{column.label}</h2>
               <div style={{ margin: 8 }}>
-                <Droppable droppableId={columnId} key={columnId}>
-                  {(provided, snapshot) => {
+                <DroppableList droppableId={columnId} key={columnId}>
+                  {column.Stack.map((item, index) => {
                     return (
-                      <div
-                        {...provided.droppableProps}
-                        ref={provided.innerRef}
-                        style={{
-                          background: snapshot.isDraggingOver ? 'lightblue' : 'lightgrey',
-                          padding: 4,
-                          width: 250,
-                          minHeight: 500,
-                        }}
-                      >
-                        {column.items.map((item, index) => {
-                          return (
-                            <Draggable key={item.id} draggableId={item.id} index={index}>
-                              {(provided, snapshot) => {
-                                return (
-                                  <div
-                                    ref={provided.innerRef}
-                                    {...provided.draggableProps}
-                                    {...provided.dragHandleProps}
-                                    style={{
-                                      userSelect: 'none',
-                                      padding: 16,
-                                      margin: '0 0 8px 0',
-                                      minHeight: '50px',
-                                      backgroundColor: snapshot.isDragging ? '#263B4A' : '#456C86',
-                                      color: 'white',
-                                      ...provided.draggableProps.style,
-                                    }}
-                                  >
-                                    {item.label}
-                                  </div>
-                                );
-                              }}
-                            </Draggable>
-                          );
-                        })}
-                        {provided.placeholder}
-                      </div>
+                      <DraggableItem id={item.id} index={index} key={item.id}>
+                        <EditableStack stack={item} />
+                      </DraggableItem>
                     );
-                  }}
-                </Droppable>
+                  })}
+                </DroppableList>
               </div>
             </div>
           );
@@ -235,3 +101,66 @@ function App() {
 }
 
 export default App;
+
+function DraggableItem({ id, index, children }) {
+  return (
+    <Draggable key={id} draggableId={id} index={index}>
+      {(provided, snapshot) => {
+        return (
+          <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+            {children}
+          </div>
+        );
+      }}
+    </Draggable>
+  );
+}
+
+function DroppableList({ children, droppableId }) {
+  return (
+    <Droppable droppableId={droppableId} key={droppableId}>
+      {(provided, snapshot) => {
+        return (
+          <div
+            {...provided.droppableProps}
+            ref={provided.innerRef}
+            style={{
+              // background: snapshot.isDraggingOver ? 'lightblue' : 'lightgrey',
+              padding: 4,
+              width: 250,
+              minHeight: 500,
+            }}
+          >
+            {provided.placeholder}
+            {children}
+          </div>
+        );
+      }}
+    </Droppable>
+  );
+}
+
+function EditableStack({ stack }: { stack: Stack }) {
+  const stackFetcher = useFetcher();
+  return (
+    <div key={stack.id} className="flex justify-between items-center ml-3 border-b ">
+      <label htmlFor={stack.label}>{stack.label}</label>
+      <div className="flex items-center space-x-3 py-2">
+        <stackFetcher.Form method="post" action="/budget">
+          <input type="hidden" name="_action" value="edit-stack" />
+          <input
+            type="text"
+            name={stack.label}
+            id={stack.id.toString()}
+            defaultValue={centsToDollars(stack.amount)}
+            className="text-right border-none max-w-xs w-32 hover:bg-gray-100 px-4"
+            onBlur={(e) => stackFetcher.submit(e.currentTarget.form)}
+          />
+        </stackFetcher.Form>
+        <Link to={`/budget/stack/${stack.id}`} className="text-gray-600">
+          edit
+        </Link>
+      </div>
+    </div>
+  );
+}

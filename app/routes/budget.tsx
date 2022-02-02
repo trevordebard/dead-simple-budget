@@ -68,14 +68,16 @@ export const action: ActionFunction = async ({ request }) => {
       );
     });
 
-    await Promise.all(promises);
+    try {
+      await Promise.all(promises);
+    } catch (e) {
+      console.log('error??');
+    }
 
-    // const input = formData.forEach(async (value, key) => {
-    // });
     await recalcToBeBudgeted({ budgetId: budget.id });
   }
 
-  return null;
+  return json({ success: true }, { status: 200 });
 };
 
 // https://remix.run/guides/routing#index-routes
@@ -83,10 +85,12 @@ export default function BudgetPage() {
   const data = useLoaderData<IndexData>();
   const submit = useSubmit();
   const [isDisclosureOpen, setIsDisclosureOpen] = useState(false);
+
   return (
     <ContentLayout>
       <ContentMain>
         <div className="text-xl flex flex-col items-center">
+          <Link to="/sort">sort</Link>
           <h2>
             <span className="font-medium">${centsToDollars(data.budget.total)}</span>{' '}
             <span className="font-normal">in account</span>
