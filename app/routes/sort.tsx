@@ -131,8 +131,8 @@ function DroppableList({ children, droppableId }) {
               minHeight: 500,
             }}
           >
-            {provided.placeholder}
             {children}
+            {provided.placeholder}
           </div>
         );
       }}
