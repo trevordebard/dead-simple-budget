@@ -8,42 +8,46 @@ import { requireAuthenticatedUser } from '~/utils/server/index.server';
 
 type CategoryWithStack = Prisma.StackCategoryGetPayload<{ include: { Stack: true } }>;
 
-const onDragEnd = (result: DropResult, columns: CategoryWithStack[], setColumns) => {
-  if (!result.destination) return;
+const getUpdatedColumns = (result: DropResult, columns: CategoryWithStack[]): CategoryWithStack[] => {
+  if (!result.destination) return columns;
   const { source, destination } = result;
+  const destColIndex = columns.findIndex((e) => e.id === destination.droppableId);
+  const sourceColIndex = columns.findIndex((e) => e.id === source.droppableId);
+  const columnsResult = [...columns];
+
+  // If item is being dragged to new category
   if (source.droppableId !== destination.droppableId) {
-    const sourceColumn = columns[parseInt(source.droppableId)];
-    const destColumn = columns[parseInt(destination.droppableId)];
+    const sourceColumn = columns[sourceColIndex];
+    const destColumn = columns[destColIndex];
     const sourceStacks = [...sourceColumn.Stack];
     const destStacks = [...destColumn.Stack];
+
+    // remove item from source column
     const [removed] = sourceStacks.splice(source.index, 1);
-    console.log(removed);
+
+    // insert item in destination column
     destStacks.splice(destination.index, 0, removed);
-    setColumns({
-      ...columns,
-      [source.droppableId]: {
-        ...sourceColumn,
-        Stack: sourceStacks,
-      },
-      [destination.droppableId]: {
-        ...destColumn,
-        Stack: destStacks,
-      },
-    });
-  } else {
-    const column = columns[parseInt(source.droppableId)];
-    const copiedStacks = [...column.Stack];
-    console.log(copiedStacks);
-    const [removed] = copiedStacks.splice(source.index, 1);
-    copiedStacks.splice(destination.index, 0, removed);
-    setColumns({
-      ...columns,
-      [source.droppableId]: {
-        ...column,
-        Stack: copiedStacks,
-      },
-    });
+
+    // Replace stacks in columns with new ordering
+    columnsResult[sourceColIndex].Stack = sourceStacks;
+    columnsResult[destColIndex].Stack = destStacks;
+
+    return columnsResult;
   }
+  // If item being dragged will remain in the same category
+
+  const column = columns[sourceColIndex];
+  // Get stacks from the column in their original stack order (before dragging)
+  const copiedStacks = [...column.Stack];
+  // Remove the item that was dragged from the array
+  const [removed] = copiedStacks.splice(source.index, 1);
+  // Re-add the removed stack back into the array in its new location
+  copiedStacks.splice(destination.index, 0, removed);
+
+  // Replace stacks in column with new stack ordering
+  columnsResult[destColIndex].Stack = copiedStacks;
+
+  return columnsResult;
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -55,47 +59,44 @@ export const loader: LoaderFunction = async ({ request }) => {
     where: { budget: { user: { id: user.id } } },
     include: { Stack: true },
   });
-  console.log('loadercalled');
+
   return json(categorized);
-  // return null;
 };
 
 function App() {
-  const categorized = useLoaderData();
-  const [columns, setColumns] = useState<CategoryWithStack[]>({ ...categorized });
-
+  const categorized = useLoaderData<CategoryWithStack[]>();
+  const [columns, setColumns] = useState<CategoryWithStack[]>(categorized);
   useEffect(() => {
-    setColumns({ ...categorized });
+    setColumns(categorized);
   }, [categorized]);
+
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', height: '100%' }}>
-      <DragDropContext onDragEnd={(result) => onDragEnd(result, columns, setColumns)}>
-        {Object.entries(columns).map(([columnId, column]) => {
-          return (
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-              }}
-              key={columnId}
-            >
-              <h2>{column.label}</h2>
-              <div style={{ margin: 8 }}>
-                <DroppableList droppableId={columnId} key={columnId}>
-                  {column.Stack.map((item, index) => {
-                    return (
-                      <DraggableItem id={item.id} index={index} key={item.id}>
-                        <EditableStack stack={item} />
+    <div>
+      <div>
+        <DragDropContext
+          onDragEnd={(result) => {
+            const updatedCols = getUpdatedColumns(result, columns);
+            setColumns(updatedCols);
+          }}
+        >
+          {columns.map((c) => {
+            return (
+              <div key={c.id}>
+                <h2>{c.label}</h2>
+                <div>
+                  <DroppableList droppableId={c.id} key={c.id}>
+                    {c.Stack.map((stack, index) => (
+                      <DraggableItem id={stack.id} index={index} key={stack.id}>
+                        <EditableStack stack={stack} />
                       </DraggableItem>
-                    );
-                  })}
-                </DroppableList>
+                    ))}
+                  </DroppableList>
+                </div>
               </div>
-            </div>
-          );
-        })}
-      </DragDropContext>
+            );
+          })}
+        </DragDropContext>
+      </div>
     </div>
   );
 }
@@ -121,16 +122,7 @@ function DroppableList({ children, droppableId }) {
     <Droppable droppableId={droppableId} key={droppableId}>
       {(provided, snapshot) => {
         return (
-          <div
-            {...provided.droppableProps}
-            ref={provided.innerRef}
-            style={{
-              // background: snapshot.isDraggingOver ? 'lightblue' : 'lightgrey',
-              padding: 4,
-              width: 250,
-              minHeight: 500,
-            }}
-          >
+          <div {...provided.droppableProps} ref={provided.innerRef}>
             {children}
             {provided.placeholder}
           </div>
