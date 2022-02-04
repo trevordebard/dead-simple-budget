@@ -6,10 +6,19 @@ import { db } from '~/utils/db.server';
 import { centsToDollars } from '~/utils/money-fns';
 import { requireAuthenticatedUser } from '~/utils/server/index.server';
 
-type CategoryWithStack = Prisma.StackCategoryGetPayload<{ include: { Stack: true } }>;
+export type CategoryWithStack = Prisma.StackCategoryGetPayload<{ include: { Stack: true } }>;
 
-const getUpdatedColumns = (result: DropResult, columns: CategoryWithStack[]): CategoryWithStack[] => {
-  if (!result.destination) return columns;
+export type CategoryReorderPayload = {
+  categories?: CategoryWithStack[];
+  modifiedCategoryIds?: string[];
+  updatedStack: Stack;
+};
+
+const updateColumns = (
+  result: DropResult,
+  columns: CategoryWithStack[]
+): { updatedStack?: Stack; newColumns: CategoryWithStack[] } => {
+  if (!result.destination) return { newColumns: columns };
   const { source, destination } = result;
   const destColIndex = columns.findIndex((e) => e.id === destination.droppableId);
   const sourceColIndex = columns.findIndex((e) => e.id === source.droppableId);
@@ -25,6 +34,8 @@ const getUpdatedColumns = (result: DropResult, columns: CategoryWithStack[]): Ca
     // remove item from source column
     const [removed] = sourceStacks.splice(source.index, 1);
 
+    removed.stackCategoryId = destColumn.id;
+
     // insert item in destination column
     destStacks.splice(destination.index, 0, removed);
 
@@ -32,7 +43,7 @@ const getUpdatedColumns = (result: DropResult, columns: CategoryWithStack[]): Ca
     columnsResult[sourceColIndex].Stack = sourceStacks;
     columnsResult[destColIndex].Stack = destStacks;
 
-    return columnsResult;
+    return { newColumns: columnsResult, updatedStack: removed };
   }
   // If item being dragged will remain in the same category
 
@@ -47,7 +58,7 @@ const getUpdatedColumns = (result: DropResult, columns: CategoryWithStack[]): Ca
   // Replace stacks in column with new stack ordering
   columnsResult[destColIndex].Stack = copiedStacks;
 
-  return columnsResult;
+  return { newColumns: columnsResult, updatedStack: removed };
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -66,17 +77,28 @@ export const loader: LoaderFunction = async ({ request }) => {
 function App() {
   const categorized = useLoaderData<CategoryWithStack[]>();
   const [columns, setColumns] = useState<CategoryWithStack[]>(categorized);
-  useEffect(() => {
-    setColumns(categorized);
-  }, [categorized]);
+  const fetcher = useFetcher();
+
+  // useEffect(() => {
+  //   setColumns(categorized);
+  // }, [categorized]);
 
   return (
     <div>
       <div>
         <DragDropContext
           onDragEnd={(result) => {
-            const updatedCols = getUpdatedColumns(result, columns);
-            setColumns(updatedCols);
+            const { newColumns, updatedStack } = updateColumns(result, columns);
+            if (!updatedStack) {
+              throw Error('todo');
+            }
+            const modifiedCategoryIds = [result.source.droppableId];
+            if (result.destination && result.destination.droppableId !== result.source.droppableId) {
+              modifiedCategoryIds.push(result.destination.droppableId);
+            }
+            const payload: CategoryReorderPayload = { updatedStack };
+            fetcher.submit({ payload: JSON.stringify(payload) }, { action: '/actions/reorder-stacks', method: 'post' });
+            setColumns(newColumns);
           }}
         >
           {columns.map((c) => {
