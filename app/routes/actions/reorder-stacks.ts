@@ -1,7 +1,7 @@
 import { Stack } from '@prisma/client';
 import { ActionFunction, json } from 'remix';
 import { db } from '~/utils/db.server';
-import { CategoryReorderPayload } from '../sort';
+import { CategoryReorderPayload } from '../../components/categorized-stacks';
 
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();

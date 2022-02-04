@@ -1,0 +1,28 @@
+import { Stack } from '@prisma/client';
+import { Link, useFetcher } from 'remix';
+import { centsToDollars } from '~/utils/money-fns';
+
+export function EditableStack({ stack }: { stack: Stack }) {
+  const stackFetcher = useFetcher();
+  return (
+    <div key={stack.id} className="flex justify-between items-center ml-3 border-b ">
+      <label htmlFor={stack.label}>{stack.label}</label>
+      <div className="flex items-center space-x-3 py-2">
+        <stackFetcher.Form method="post" action="/budget">
+          <input type="hidden" name="_action" value="edit-stack" />
+          <input
+            type="text"
+            name={stack.label}
+            id={stack.id.toString()}
+            defaultValue={centsToDollars(stack.amount)}
+            className="text-right border-none max-w-xs w-32 hover:bg-gray-100 px-4"
+            onBlur={(e) => stackFetcher.submit(e.currentTarget.form)}
+          />
+        </stackFetcher.Form>
+        <Link to={`/budget/stack/${stack.id}`} className="text-gray-600">
+          edit
+        </Link>
+      </div>
+    </div>
+  );
+}

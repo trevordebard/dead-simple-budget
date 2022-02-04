@@ -1,10 +1,11 @@
 import { Prisma, Stack } from '@prisma/client';
 import { useState } from 'react';
-import { DragDropContext, Draggable, Droppable, resetServerContext, DropResult } from 'react-beautiful-dnd';
-import { json, Link, LoaderFunction, useFetcher, useLoaderData } from 'remix';
-import { db } from '~/utils/db.server';
-import { centsToDollars } from '~/utils/money-fns';
-import { requireAuthenticatedUser } from '~/utils/server/index.server';
+import { DragDropContext, DropResult } from 'react-beautiful-dnd';
+import { useFetcher } from 'remix';
+import { DraggableItem } from '~/components/beautiful-dnd-wrappers/draggable-item';
+import { DroppableList } from '~/components/beautiful-dnd-wrappers/droppable-list';
+import { EditableStack } from '~/components/editable-stack';
+import { recalcStackPositions } from '~/utils/shared/stack-utils';
 
 export type CategoryWithStack = Prisma.StackCategoryGetPayload<{ include: { Stack: true } }>;
 
@@ -13,14 +14,6 @@ export type CategoryReorderPayload = {
   modifiedCategoryIds: string[];
 };
 
-function recalcStackPositions(stacks: Stack[]): Stack[] {
-  return stacks.map((stack, index) => {
-    return {
-      ...stack,
-      position: index * 10,
-    };
-  });
-}
 type HandleDragResult = {
   updatedCategories: CategoryWithStack[];
 };
@@ -77,21 +70,7 @@ const handleStackDrag = (result: DropResult, categories: CategoryWithStack[]): H
   return { updatedCategories: categoriesResult };
 };
 
-export const loader: LoaderFunction = async ({ request }) => {
-  // Allow server rendering of drag and drop components
-  resetServerContext();
-  const user = await requireAuthenticatedUser(request);
-
-  const categorized = await db.stackCategory.findMany({
-    where: { budget: { user: { id: user.id } } },
-    include: { Stack: true },
-  });
-
-  return json(categorized);
-};
-
-function App() {
-  const categorized = useLoaderData<CategoryWithStack[]>();
+function CategorizedStacks({ categorized }: { categorized: CategoryWithStack[] }) {
   const [categorizedStacks, setCategorizedStacks] = useState<CategoryWithStack[]>(categorized);
   const fetcher = useFetcher();
 
@@ -132,58 +111,4 @@ function App() {
   );
 }
 
-export default App;
-
-function DraggableItem({ id, index, children }) {
-  return (
-    <Draggable key={id} draggableId={id} index={index}>
-      {(provided, snapshot) => {
-        return (
-          <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
-            {children}
-          </div>
-        );
-      }}
-    </Draggable>
-  );
-}
-
-function DroppableList({ children, droppableId }) {
-  return (
-    <Droppable droppableId={droppableId} key={droppableId}>
-      {(provided, snapshot) => {
-        return (
-          <div {...provided.droppableProps} ref={provided.innerRef}>
-            {children}
-            {provided.placeholder}
-          </div>
-        );
-      }}
-    </Droppable>
-  );
-}
-
-function EditableStack({ stack }: { stack: Stack }) {
-  const stackFetcher = useFetcher();
-  return (
-    <div key={stack.id} className="flex justify-between items-center ml-3 border-b ">
-      <label htmlFor={stack.label}>{stack.label}</label>
-      <div className="flex items-center space-x-3 py-2">
-        <stackFetcher.Form method="post" action="/budget">
-          <input type="hidden" name="_action" value="edit-stack" />
-          <input
-            type="text"
-            name={stack.label}
-            id={stack.id.toString()}
-            defaultValue={centsToDollars(stack.amount)}
-            className="text-right border-none max-w-xs w-32 hover:bg-gray-100 px-4"
-            onBlur={(e) => stackFetcher.submit(e.currentTarget.form)}
-          />
-        </stackFetcher.Form>
-        <Link to={`/budget/stack/${stack.id}`} className="text-gray-600">
-          edit
-        </Link>
-      </div>
-    </div>
-  );
-}
+export default CategorizedStacks;

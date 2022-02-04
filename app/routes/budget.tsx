@@ -1,8 +1,9 @@
-import { LoaderFunction, ActionFunction, Form, useSubmit, useLoaderData, json, Outlet, Link } from 'remix';
+import { LoaderFunction, ActionFunction, Form, useLoaderData, json, Outlet } from 'remix';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure';
 import { useState } from 'react';
 import { PlusCircleIcon } from '@heroicons/react/outline';
 import { User } from '@prisma/client';
+import { resetServerContext } from 'react-beautiful-dnd';
 import { Stack, StackCategory, Budget } from '.prisma/client';
 import { db } from '~/utils/db.server';
 import { createStack, requireAuthenticatedUser } from '~/utils/server/index.server';
@@ -10,6 +11,7 @@ import { ContentAction, ContentLayout, ContentMain } from '~/components/layout';
 import { Button } from '~/components/button';
 import { centsToDollars, dollarsToCents } from '~/utils/money-fns';
 import { recalcToBeBudgeted } from '~/utils/server/budget.server';
+import CategorizedStacks from '../components/categorized-stacks';
 
 type IndexData = {
   user: User;
@@ -25,7 +27,14 @@ export const loader: LoaderFunction = async ({ request }) => {
     where: { budget: { user: { id: user.id } } },
     include: { Stack: true },
   });
-  const budget = await db.budget.findFirst({ where: { userId: user.id } });
+  const budget = await db.budget.findFirst({
+    where: { userId: user.id },
+    include: { stackCategories: { include: { Stack: true } } },
+  });
+
+  // Required for server rendering the drag and drop stack categories
+  resetServerContext();
+
   return json({ categorized, user, budget });
 };
 
@@ -83,14 +92,12 @@ export const action: ActionFunction = async ({ request }) => {
 // https://remix.run/guides/routing#index-routes
 export default function BudgetPage() {
   const data = useLoaderData<IndexData>();
-  const submit = useSubmit();
   const [isDisclosureOpen, setIsDisclosureOpen] = useState(false);
 
   return (
     <ContentLayout>
       <ContentMain>
         <div className="text-xl flex flex-col items-center">
-          <Link to="/sort">sort</Link>
           <h2>
             <span className="font-medium">${centsToDollars(data.budget.total)}</span>{' '}
             <span className="font-normal">in account</span>
@@ -119,34 +126,7 @@ export default function BudgetPage() {
             </DisclosurePanel>
           </div>
         </Disclosure>
-        {data.categorized.map((category) => (
-          <div key={category.id}>
-            <Link to={`/budget/stack-category/${category.id}`} className="text-lg">
-              {category.label}
-            </Link>
-            {category.Stack.map((stack) => (
-              <div key={stack.id} className="flex justify-between items-center ml-3 border-b ">
-                <label htmlFor={stack.label}>{stack.label}</label>
-                <div className="flex items-center space-x-3 py-2">
-                  <Form method="post" id="stack-form">
-                    <input type="hidden" name="_action" value="edit-stack" />
-                    <input
-                      type="text"
-                      name={stack.label}
-                      id={stack.id.toString()}
-                      defaultValue={centsToDollars(stack.amount)}
-                      className="text-right border-none max-w-xs w-32 hover:bg-gray-100 px-4"
-                      onBlur={(e) => submit(e.currentTarget.form)}
-                    />
-                  </Form>
-                  <Link to={`/budget/stack/${stack.id}`} className="text-gray-600">
-                    edit
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-        ))}
+        <CategorizedStacks categorized={data.categorized} />
         <Form method="post" id="add-stack-form" className="mt-5">
           <div className="flex justify-between space-x-4 items-center">
             <input type="text" name="new-stack" placeholder="New Stack Name" />
