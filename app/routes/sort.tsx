@@ -9,10 +9,19 @@ import { requireAuthenticatedUser } from '~/utils/server/index.server';
 export type CategoryWithStack = Prisma.StackCategoryGetPayload<{ include: { Stack: true } }>;
 
 export type CategoryReorderPayload = {
-  categories?: CategoryWithStack[];
-  modifiedCategoryIds?: string[];
+  categories: CategoryWithStack[];
+  modifiedCategoryIds: string[];
   updatedStack: Stack;
 };
+
+function recalcStackPositions(stacks: Stack[]): Stack[] {
+  return stacks.map((stack, index) => {
+    return {
+      ...stack,
+      position: index * 10,
+    };
+  });
+}
 
 const updateColumns = (
   result: DropResult,
@@ -43,6 +52,10 @@ const updateColumns = (
     columnsResult[sourceColIndex].Stack = sourceStacks;
     columnsResult[destColIndex].Stack = destStacks;
 
+    // Reset positions for each stack in the category
+    columnsResult[sourceColIndex].Stack = recalcStackPositions(columnsResult[sourceColIndex].Stack);
+    columnsResult[destColIndex].Stack = recalcStackPositions(columnsResult[destColIndex].Stack);
+
     return { newColumns: columnsResult, updatedStack: removed };
   }
   // If item being dragged will remain in the same category
@@ -57,6 +70,9 @@ const updateColumns = (
 
   // Replace stacks in column with new stack ordering
   columnsResult[destColIndex].Stack = copiedStacks;
+
+  // Reset positions for each stack in the category
+  columnsResult[destColIndex].Stack = recalcStackPositions(columnsResult[destColIndex].Stack);
 
   return { newColumns: columnsResult, updatedStack: removed };
 };
@@ -96,7 +112,7 @@ function App() {
             if (result.destination && result.destination.droppableId !== result.source.droppableId) {
               modifiedCategoryIds.push(result.destination.droppableId);
             }
-            const payload: CategoryReorderPayload = { updatedStack };
+            const payload: CategoryReorderPayload = { updatedStack, modifiedCategoryIds, categories: newColumns };
             fetcher.submit({ payload: JSON.stringify(payload) }, { action: '/actions/reorder-stacks', method: 'post' });
             setColumns(newColumns);
           }}
@@ -107,7 +123,7 @@ function App() {
                 <h2>{c.label}</h2>
                 <div>
                   <DroppableList droppableId={c.id} key={c.id}>
-                    {c.Stack.map((stack, index) => (
+                    {c.Stack.sort((a, b) => a.position - b.position).map((stack, index) => (
                       <DraggableItem id={stack.id} index={index} key={stack.id}>
                         <EditableStack stack={stack} />
                       </DraggableItem>
