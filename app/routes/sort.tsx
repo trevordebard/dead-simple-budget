@@ -1,5 +1,5 @@
 import { Prisma, Stack } from '@prisma/client';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { DragDropContext, Draggable, Droppable, resetServerContext, DropResult } from 'react-beautiful-dnd';
 import { json, Link, LoaderFunction, useFetcher, useLoaderData } from 'remix';
 import { db } from '~/utils/db.server';
@@ -11,7 +11,6 @@ export type CategoryWithStack = Prisma.StackCategoryGetPayload<{ include: { Stac
 export type CategoryReorderPayload = {
   categories: CategoryWithStack[];
   modifiedCategoryIds: string[];
-  updatedStack: Stack;
 };
 
 function recalcStackPositions(stacks: Stack[]): Stack[] {
@@ -22,59 +21,60 @@ function recalcStackPositions(stacks: Stack[]): Stack[] {
     };
   });
 }
+type HandleDragResult = {
+  updatedCategories: CategoryWithStack[];
+};
 
-const updateColumns = (
-  result: DropResult,
-  columns: CategoryWithStack[]
-): { updatedStack?: Stack; newColumns: CategoryWithStack[] } => {
-  if (!result.destination) return { newColumns: columns };
+const handleStackDrag = (result: DropResult, categories: CategoryWithStack[]): HandleDragResult => {
+  if (!result.destination) return { updatedCategories: categories };
   const { source, destination } = result;
-  const destColIndex = columns.findIndex((e) => e.id === destination.droppableId);
-  const sourceColIndex = columns.findIndex((e) => e.id === source.droppableId);
-  const columnsResult = [...columns];
+  const destCatIndex = categories.findIndex((e) => e.id === destination.droppableId);
+  const sourceCatIndex = categories.findIndex((e) => e.id === source.droppableId);
+  const categoriesResult = [...categories];
 
   // If item is being dragged to new category
   if (source.droppableId !== destination.droppableId) {
-    const sourceColumn = columns[sourceColIndex];
-    const destColumn = columns[destColIndex];
-    const sourceStacks = [...sourceColumn.Stack];
-    const destStacks = [...destColumn.Stack];
+    const sourceCategory = categories[sourceCatIndex];
+    const destCategory = categories[destCatIndex];
+    const sourceStacks = [...sourceCategory.Stack];
+    const destStacks = [...destCategory.Stack];
 
-    // remove item from source column
+    // remove item from source category
     const [removed] = sourceStacks.splice(source.index, 1);
 
-    removed.stackCategoryId = destColumn.id;
+    removed.stackCategoryId = destCategory.id;
 
-    // insert item in destination column
+    // insert item in destination category
     destStacks.splice(destination.index, 0, removed);
 
-    // Replace stacks in columns with new ordering
-    columnsResult[sourceColIndex].Stack = sourceStacks;
-    columnsResult[destColIndex].Stack = destStacks;
+    // Replace stacks in category with new ordering
+    categoriesResult[sourceCatIndex].Stack = sourceStacks;
+    categoriesResult[destCatIndex].Stack = destStacks;
 
     // Reset positions for each stack in the category
-    columnsResult[sourceColIndex].Stack = recalcStackPositions(columnsResult[sourceColIndex].Stack);
-    columnsResult[destColIndex].Stack = recalcStackPositions(columnsResult[destColIndex].Stack);
+    categoriesResult[sourceCatIndex].Stack = recalcStackPositions(categoriesResult[sourceCatIndex].Stack);
+    categoriesResult[destCatIndex].Stack = recalcStackPositions(categoriesResult[destCatIndex].Stack);
 
-    return { newColumns: columnsResult, updatedStack: removed };
+    return { updatedCategories: categoriesResult };
   }
+
   // If item being dragged will remain in the same category
 
-  const column = columns[sourceColIndex];
-  // Get stacks from the column in their original stack order (before dragging)
-  const copiedStacks = [...column.Stack];
-  // Remove the item that was dragged from the array
+  const category = categories[sourceCatIndex];
+  // Get stacks from the category in their original stack order (before dragging)
+  const copiedStacks = [...category.Stack];
+  // Remove the stack that was dragged from the array
   const [removed] = copiedStacks.splice(source.index, 1);
   // Re-add the removed stack back into the array in its new location
   copiedStacks.splice(destination.index, 0, removed);
 
-  // Replace stacks in column with new stack ordering
-  columnsResult[destColIndex].Stack = copiedStacks;
+  // Replace stacks in category with new stack ordering
+  categoriesResult[destCatIndex].Stack = copiedStacks;
 
   // Reset positions for each stack in the category
-  columnsResult[destColIndex].Stack = recalcStackPositions(columnsResult[destColIndex].Stack);
+  categoriesResult[destCatIndex].Stack = recalcStackPositions(categoriesResult[destCatIndex].Stack);
 
-  return { newColumns: columnsResult, updatedStack: removed };
+  return { updatedCategories: categoriesResult };
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -92,32 +92,25 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 function App() {
   const categorized = useLoaderData<CategoryWithStack[]>();
-  const [columns, setColumns] = useState<CategoryWithStack[]>(categorized);
+  const [categorizedStacks, setCategorizedStacks] = useState<CategoryWithStack[]>(categorized);
   const fetcher = useFetcher();
-
-  // useEffect(() => {
-  //   setColumns(categorized);
-  // }, [categorized]);
 
   return (
     <div>
       <div>
         <DragDropContext
           onDragEnd={(result) => {
-            const { newColumns, updatedStack } = updateColumns(result, columns);
-            if (!updatedStack) {
-              throw Error('todo');
-            }
+            const { updatedCategories } = handleStackDrag(result, categorizedStacks);
             const modifiedCategoryIds = [result.source.droppableId];
             if (result.destination && result.destination.droppableId !== result.source.droppableId) {
               modifiedCategoryIds.push(result.destination.droppableId);
             }
-            const payload: CategoryReorderPayload = { updatedStack, modifiedCategoryIds, categories: newColumns };
+            const payload: CategoryReorderPayload = { modifiedCategoryIds, categories: updatedCategories };
             fetcher.submit({ payload: JSON.stringify(payload) }, { action: '/actions/reorder-stacks', method: 'post' });
-            setColumns(newColumns);
+            setCategorizedStacks(updatedCategories);
           }}
         >
-          {columns.map((c) => {
+          {categorizedStacks.map((c) => {
             return (
               <div key={c.id}>
                 <h2>{c.label}</h2>

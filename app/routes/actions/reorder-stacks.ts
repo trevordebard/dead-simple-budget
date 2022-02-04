@@ -8,11 +8,6 @@ export const action: ActionFunction = async ({ request }) => {
   const payload: CategoryReorderPayload = JSON.parse(String(formData.get('payload')));
   const promises: Promise<Stack>[] = [];
 
-  await db.stack.update({
-    where: { id: payload.updatedStack.id },
-    data: { stackCategoryId: payload.updatedStack.stackCategoryId },
-  });
-
   // Update the position and category of each stack in the categories that have been modified
   payload.modifiedCategoryIds.forEach((catId) => {
     const incomingCategory = payload.categories.find((c) => c.id === catId);
@@ -30,8 +25,6 @@ export const action: ActionFunction = async ({ request }) => {
   } catch (e) {
     return json({ success: false }, 500);
   }
-
-  // await db.stackCategory.updateMany({ data: columns, where: {}});
 
   return json({ success: true });
 };
