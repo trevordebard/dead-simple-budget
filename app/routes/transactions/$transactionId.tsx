@@ -5,7 +5,8 @@ import { Transaction, Stack } from '.prisma/client';
 import { db } from '~/utils/db.server';
 import { Button } from '~/components/button';
 import { centsToDollars, dollarsToCents } from '~/utils/money-fns';
-import { editTransactionAndUpdBudget, requireAuthenticatedUser } from '~/utils/server/index.server';
+import { editTransactionAndUpdBudget } from '~/utils/server/index.server';
+import { requireAuthenticatedUser } from '~/utils/server/user-utils.server';
 
 interface LoaderData {
   transaction?: Transaction;

@@ -1,11 +1,13 @@
-import { Outlet, LoaderFunction, useLoaderData, Form, ActionFunction, Link } from 'remix';
+import { Outlet, LoaderFunction, useLoaderData, Form, Link } from 'remix';
 import { useState } from 'react';
 import { DateTime } from 'luxon';
+import { CurrencyDollarIcon } from '@heroicons/react/outline';
 import { Stack, Transaction } from '.prisma/client';
 import { ContentAction, ContentLayout, ContentMain } from '~/components/layout';
 import { db } from '~/utils/db.server';
-import { requireAuthenticatedUser } from '~/utils/server/index.server';
 import { centsToDollars } from '~/utils/money-fns';
+
+import { requireAuthenticatedUser } from '~/utils/server/user-utils.server';
 
 type LoaderData = {
   transactions: (Transaction & {
@@ -26,19 +28,33 @@ export const loader: LoaderFunction = async ({ request }): Promise<LoaderData> =
 
 export default function TransactionsPage() {
   const { transactions } = useLoaderData<LoaderData>();
+
   return (
     <ContentLayout>
       <ContentMain>
         <div className="flex flex-col">
-          {transactions.map((t) => (
-            <Link
-              to={`${t.id}`}
-              key={t.id}
-              className="hover:no-underline hover:text-inherit focus:outline-none focus:bg-gray-200"
-            >
-              <TransactionCard transaction={t} />
-            </Link>
-          ))}
+          {transactions.length === 0 ? (
+            <div className="flex flex-col justify-center items-center text-lg self-center">
+              <CurrencyDollarIcon className="h-48 text-black text-opacity-20" />
+              <p>Your transactions will appear here </p>
+              <Link
+                to="new"
+                className="border border-green-800 px-4 py-1 mt-4 hover:bg-green-50 rounded-lg text-green-800 hover:no-underline hover:text-green-800"
+              >
+                Add Transaction
+              </Link>
+            </div>
+          ) : (
+            transactions.map((t) => (
+              <Link
+                to={`${t.id}`}
+                key={t.id}
+                className="hover:no-underline hover:text-inherit focus:outline-none focus:bg-gray-200"
+              >
+                <TransactionCard transaction={t} />
+              </Link>
+            ))
+          )}
         </div>
       </ContentMain>
       <ContentAction>

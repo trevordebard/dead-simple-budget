@@ -6,12 +6,13 @@ import { User } from '@prisma/client';
 import { resetServerContext } from 'react-beautiful-dnd';
 import { Stack, StackCategory, Budget } from '.prisma/client';
 import { db } from '~/utils/db.server';
-import { createStack, requireAuthenticatedUser } from '~/utils/server/index.server';
+import { createStack } from '~/utils/server/index.server';
 import { ContentAction, ContentLayout, ContentMain } from '~/components/layout';
 import { Button } from '~/components/button';
 import { centsToDollars, dollarsToCents } from '~/utils/money-fns';
 import { recalcToBeBudgeted } from '~/utils/server/budget.server';
 import CategorizedStacks from '../components/categorized-stacks';
+import { requireAuthenticatedUser } from '~/utils/server/user-utils.server';
 
 type IndexData = {
   user: User;

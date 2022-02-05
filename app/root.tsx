@@ -15,7 +15,7 @@ import * as React from 'react';
 import { User } from '@prisma/client';
 import styles from './tailwind.css';
 import globalStylesUrl from '~/styles/global.css';
-import { getAuthenticatedUser } from './utils/server/index.server';
+import { getAuthenticatedUser } from './utils/server/user-utils.server';
 import { Nav } from './components/nav';
 
 export type RootLoaderData = {
