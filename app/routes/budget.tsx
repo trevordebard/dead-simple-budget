@@ -1,7 +1,8 @@
 import { LoaderFunction, ActionFunction, Form, useLoaderData, json, Outlet } from 'remix';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure';
 import { useState } from 'react';
-import { PlusCircleIcon } from '@heroicons/react/outline';
+import { PlusCircleIcon, PencilAltIcon } from '@heroicons/react/outline';
+import { XIcon, CheckIcon } from '@heroicons/react/solid';
 import { User } from '@prisma/client';
 import { resetServerContext } from 'react-beautiful-dnd';
 import { Stack, StackCategory, Budget } from '.prisma/client';
@@ -98,15 +99,7 @@ export default function BudgetPage() {
   return (
     <ContentLayout>
       <ContentMain>
-        <div className="text-xl flex flex-col items-center">
-          <h2>
-            <span className="font-medium">${centsToDollars(data.budget.total)}</span>{' '}
-            <span className="font-normal">in account</span>
-          </h2>
-          <h2>
-            <span className="font-medium">${centsToDollars(data.budget.toBeBudgeted)}</span> to be budgeted
-          </h2>
-        </div>
+        <BudgetTotals budget={data.budget} />
         <Disclosure open={isDisclosureOpen} onChange={() => setIsDisclosureOpen(!isDisclosureOpen)}>
           <div className="py-2">
             <DisclosureButton className="outline-none text-left w-full">
@@ -141,5 +134,45 @@ export default function BudgetPage() {
         <Outlet />
       </ContentAction>
     </ContentLayout>
+  );
+}
+
+function BudgetTotals({ budget }: { budget: Budget }) {
+  const [isEditing, setIsEditing] = useState<boolean>(true);
+
+  if (!isEditing) {
+    return (
+      <div className="text-xl flex flex-col items-center">
+        <h2>
+          <span className="font-medium">${centsToDollars(budget.total)}</span>{' '}
+          <span className="font-normal">
+            in account{' '}
+            <PencilAltIcon
+              onClick={() => setIsEditing(!isEditing)}
+              className="w-5 h-5 inline mb-1 cursor-pointer text-zinc-400 hover:text-purple-600"
+            />
+          </span>
+        </h2>
+        <h2>
+          <span className="font-medium">${centsToDollars(budget.toBeBudgeted)}</span> to be budgeted
+        </h2>
+      </div>
+    );
+  }
+  return (
+    <div className="text-xl flex justify-center space-x-1">
+      <input type="text" className="w-20 inline !py-0 !rounded-sm" defaultValue={centsToDollars(budget.total)} />
+      <div className="font-normal">in account</div>
+      <span>
+        <XIcon
+          onClick={() => setIsEditing(!isEditing)}
+          className="stroke- w-5 h-5 inline mb-1 cursor-pointer text-zinc-400 hover:text-red-600"
+        />
+        <CheckIcon
+          onClick={() => setIsEditing(!isEditing)}
+          className="stroke- w-5 h-5 inline mb-1 cursor-pointer text-zinc-400 hover:text-purple-600"
+        />
+      </span>
+    </div>
   );
 }
