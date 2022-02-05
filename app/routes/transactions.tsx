@@ -4,8 +4,8 @@ import { DateTime } from 'luxon';
 import { Stack, Transaction } from '.prisma/client';
 import { ContentAction, ContentLayout, ContentMain } from '~/components/layout';
 import { db } from '~/utils/db.server';
-import { requireAuthenticatedUser } from '~/utils/server/index.server';
 import { centsToDollars } from '~/utils/money-fns';
+import { requireAuthenticatedUser } from '~/utils/server/user-utils.server';
 
 type LoaderData = {
   transactions: (Transaction & {

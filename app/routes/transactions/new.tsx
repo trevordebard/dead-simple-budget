@@ -2,10 +2,11 @@ import { ActionFunction, Form, Link, LoaderFunction, redirect, useLoaderData } f
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
 import { useState } from 'react';
 import { db } from '~/utils/db.server';
-import { createTransactionAndUpdBudget, requireAuthenticatedUser } from '~/utils/server/index.server';
+import { createTransactionAndUpdBudget } from '~/utils/server/index.server';
 import { Button } from '~/components/button';
 import { Stack } from '.prisma/client';
 import { dollarsToCents } from '~/utils/money-fns';
+import { requireAuthenticatedUser } from '~/utils/server/user-utils.server';
 
 // TODO: error handling
 export const action: ActionFunction = async ({ request }) => {
