@@ -1,45 +1,31 @@
 {
-  "compilerOptions": {
-    // ...
-    "noEmit": true,
-    "baseUrl": ".",
-    "rootDir": ".",
-    "typeRoots": [
-      "node_modules/@types",
-      "types"
-    ],
-    "plugins": [
-      {
-        "name": "nexus/typescript-language-service"
-      }
-    ],
-    "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": false,
-    "forceConsistentCasingInFileNames": true,
-    "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "downlevelIteration": true, // needed for getStacksByCategory
-    "jsx": "preserve",
-    "incremental": true
-  },
-  // ...
   "include": [
+    "remix.env.d.ts",
     "**/*.ts",
-    "**/*.tsx",
-    ".",
-    "types.d.ts"
+    "**/*.tsx"
   ],
   "exclude": [
     "node_modules"
-  ]
+  ],
+  "compilerOptions": {
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ES2019"
+    ],
+    "esModuleInterop": true,
+    "jsx": "react-jsx",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "target": "ES2019",
+    "strict": true,
+    "paths": {
+      "~/*": [
+        "./app/*"
+      ]
+    },
+    "baseUrl": ".",
+    // Remix takes care of building everything in `remix build`.
+    "noEmit": true
+  }
 }
