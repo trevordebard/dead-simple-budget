@@ -35,14 +35,17 @@ export default function TransactionsPage() {
         <div className="flex flex-col">
           {transactions.length === 0 ? (
             <div className="flex flex-col justify-center items-center text-lg self-center">
-              <CurrencyDollarIcon className="h-48 text-black text-opacity-20" />
-              <p>Your transactions will appear here </p>
-              <Link
-                to="new"
-                className="border border-green-800 px-4 py-1 mt-4 hover:bg-green-50 rounded-lg text-green-800 hover:no-underline hover:text-green-800"
-              >
-                Add Transaction
-              </Link>
+              <CurrencyDollarIcon className="mt-3 md:mt-0 h-48 text-black text-opacity-20" />
+              <p className="font-bold text-xl">You do not have any transactions</p>
+              <p className="text-md mt-1">
+                <span className="text-gray-500">You can begin adding transactions </span>
+                <Link
+                  to="new"
+                  className="text-purple-600 border-b-2 border-purple-100 hover:bg-purple-100 transition-colors duration-150 hover:no-underline hover:text-purple-600"
+                >
+                  here
+                </Link>
+              </p>
             </div>
           ) : (
             transactions.map((t) => (

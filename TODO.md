@@ -8,7 +8,8 @@
 - [x] Change root index / to redirect to /budget instead of /login
 - [ ] Form validation for server errors
 - [ ] There should be a default uncategorized stack for new transactions without a stack category
-- [ ] Cleanup UI for first time users
+- [x] Cleanup UI for first time users
+- [ ] Animate Outlets coming in and out
 - [ ] Figure out how to secure edit stack/transaction actions to ensure the authenticated user can only edit their own transactions
   - or determine if a POSt request to the page would be blocked from an outside source
 
