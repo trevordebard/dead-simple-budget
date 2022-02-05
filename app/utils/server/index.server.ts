@@ -1,8 +1,9 @@
 import { redirect } from 'remix';
 import { User } from '@prisma/client';
-import { Budget, Prisma } from '.prisma/client';
+import { Prisma } from '.prisma/client';
 import { authenticator } from '~/auth/auth.server';
 import { db } from '../db.server';
+import { recalcToBeBudgeted } from './budget.server';
 
 export async function findOrCreateUser(email: string): Promise<User> {
   const user = await db.user.upsert({
@@ -49,8 +50,9 @@ export async function createStack(user: User, stack: { label: string }) {
   return newStack;
 }
 
+// TODO: derive these types from the prsimamodel
 interface DeleteStackCategoryInput {
-  categoryId: number;
+  categoryId: string;
   budgetId: string;
 }
 export async function deleteStackCateogry({ categoryId, budgetId }: DeleteStackCategoryInput) {
@@ -69,18 +71,6 @@ export async function deleteStackCateogry({ categoryId, budgetId }: DeleteStackC
   await db.stackCategory.delete({ where: { id: categoryId } });
 }
 
-export async function recalcToBeBudgeted(budget: Budget) {
-  const stackAggregation = await db.stack.aggregate({ _sum: { amount: true }, where: { budgetId: budget.id } });
-  const sumOfStacks = stackAggregation._sum.amount || 0;
-  const toBeBudgeted = budget.total - sumOfStacks;
-
-  const updateResponse = await db.budget.update({
-    where: { id: budget.id },
-    data: { toBeBudgeted },
-  });
-  return updateResponse;
-}
-
 export async function createTransactionAndUpdBudget(
   transactionData: Prisma.TransactionUncheckedCreateInput,
   budgetId: string
@@ -97,7 +87,7 @@ export async function createTransactionAndUpdBudget(
   // Update stack amount
   let updateStackPromise;
   let updatedBudgetPromise;
-  if (stackId && stackId !== 0) {
+  if (stackId) {
     updateStackPromise = db.stack.update({
       where: { id: stackId },
       data: { amount: { increment: amount }, budget: { update: { total: { increment: amount } } } },
@@ -123,9 +113,9 @@ export async function createTransactionAndUpdBudget(
 
   // Recalc to be budgeted
   if (updatedBudget) {
-    await recalcToBeBudgeted(updatedBudget);
+    await recalcToBeBudgeted({ budget: updatedBudget });
   } else if (stack?.budget) {
-    await recalcToBeBudgeted(stack.budget);
+    await recalcToBeBudgeted({ budget: stack.budget });
   }
 
   return transaction;
@@ -142,7 +132,7 @@ export async function editTransactionAndUpdBudget(transaction: EditTransactionIn
   let { amount } = transaction;
   // Get the previous transaction
   const prevTransaction = await db.transaction.findFirst({
-    where: { id: Number(transactionId), budget: { id: budget.id } },
+    where: { id: transactionId, budget: { id: budget.id } },
   });
 
   if (!prevTransaction || !budget) {
@@ -173,7 +163,7 @@ export async function editTransactionAndUpdBudget(transaction: EditTransactionIn
 
   // Update transaction
   const updateTransactionPromise = db.transaction.update({
-    where: { id: Number(transactionId) },
+    where: { id: transactionId },
     data: { amount, description, stackId, type },
   });
 
@@ -204,5 +194,5 @@ export async function editTransactionAndUpdBudget(transaction: EditTransactionIn
   ]);
 
   // Recalc to be budgeteds
-  await recalcToBeBudgeted(updatedBudget);
+  await recalcToBeBudgeted({ budget: updatedBudget });
 }

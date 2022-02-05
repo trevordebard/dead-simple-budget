@@ -1,4 +1,4 @@
-import { ActionFunction, Form, Link, LoaderFunction, useLoaderData } from 'remix';
+import { ActionFunction, Form, Link, LoaderFunction, redirect, useLoaderData } from 'remix';
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
 import { useState } from 'react';
 import { db } from '~/utils/db.server';
@@ -15,20 +15,22 @@ export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
 
   const description = String(formData.get('description'));
-  let amount = Number(formData.get('amount'));
+  const amountInput = String(formData.get('amount'));
 
   // StackId is allowed to be null when creating a transaction. Automatically casting to a number would set the value to 0
-  const stackId = formData.get('stack') ? Number(formData.get('stack')) : null;
+  const stackId = formData.get('stack') ? String(formData.get('stack')) : null;
   const type = String(formData.get('trans-type'));
 
-  if (!amount || !description || !type || !budget) {
+  if (!amountInput || !description || !type || !budget) {
     throw Error('TODO');
   }
+
+  let amountInCents = dollarsToCents(amountInput);
+
   if (type === 'withdrawal') {
-    amount *= -1;
+    amountInCents *= -1;
   }
 
-  const amountInCents = dollarsToCents(amount);
   const newTransactionInput = {
     description,
     amount: amountInCents,
@@ -37,9 +39,10 @@ export const action: ActionFunction = async ({ request }) => {
     date: new Date(),
     type,
   };
-  const create = await createTransactionAndUpdBudget(newTransactionInput, budget.id);
 
-  return create;
+  await createTransactionAndUpdBudget(newTransactionInput, budget.id);
+
+  return redirect('/transactions');
 };
 
 export const loader: LoaderFunction = async ({ request }) => {

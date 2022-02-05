@@ -12,7 +12,7 @@ export function Nav() {
       <div className="col-span-full">
         <header className="body-font">
           <div className="flex py-5 flex-row justify-between">
-            <Link to="/" className="flex text-lg font-medium text-gray-800">
+            <Link to="/budget" className="flex text-lg font-medium text-gray-800">
               Dead Simple Budget
             </Link>
             <form action="/logout" method="post" className="text-right">

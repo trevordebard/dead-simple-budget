@@ -4,6 +4,7 @@ import { db } from '~/utils/db.server';
 import { Button } from '~/components/button';
 import { centsToDollars, dollarsToCents } from '~/utils/money-fns';
 import { requireAuthenticatedUser } from '~/utils/server/index.server';
+import { recalcToBeBudgeted } from '~/utils/server/budget.server';
 
 interface LoaderData {
   stack: Stack & {
@@ -19,7 +20,7 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   if (!user || !budget) {
     return redirect('/login');
   }
-  const stack = await db.stack.findUnique({ where: { id: Number(params.stackId) }, include: { category: true } });
+  const stack = await db.stack.findUnique({ where: { id: params.stackId }, include: { category: true } });
   const categories = await db.stackCategory.findMany({ where: { budgetId: budget.id } });
   if (!stack) {
     throw Error('Stack not found!');
@@ -30,15 +31,18 @@ export const loader: LoaderFunction = async ({ params, request }) => {
 export const action: ActionFunction = async ({ request, params }) => {
   const form = await request.formData();
   const label = String(form.get('label'));
-  let amount = Number(form.get('amount'));
-  const categoryId = Number(form.get('category'));
+  const amountInput = String(form.get('amount'));
+  const categoryId = String(form.get('category'));
 
-  amount = dollarsToCents(amount);
+  const amount = dollarsToCents(amountInput);
 
-  await db.stack.update({
-    where: { id: Number(params.stackId) },
+  const updatedStack = await db.stack.update({
+    where: { id: params.stackId },
     data: { amount, label, stackCategoryId: categoryId },
+    include: { budget: true },
   });
+
+  await recalcToBeBudgeted({ budget: updatedStack.budget });
 
   return redirect('/budget');
 };
