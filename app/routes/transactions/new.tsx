@@ -76,7 +76,9 @@ export default function NewTransaction() {
               Choose a Stack
             </option>
             {stacks?.map((stack) => (
-              <option value={stack.id}>{stack.label}</option>
+              <option value={stack.id} key={stack.id}>
+                {stack.label}
+              </option>
             ))}
           </select>
         </div>

@@ -13,7 +13,7 @@
   - or determine if a POSt request to the page would be blocked from an outside source
 
 ## User
-- [ ] Give users example stacks and transaction when their account is first created
+- [x] Give users example stacks and transaction when their account is first created
 ## Budget
 - [ ] Update user's total balance
 - [ ] Should budgets/stacks reset monthly? 
@@ -35,6 +35,7 @@
 - [ ] Should side effects be a state machine??
 - [x] Edit transaction should have ability to modify deposit/withdrawal
 - [ ] There should be an option to remove stack/select no stack when editing a transaction
+- [ ] Edit transaction should have delete button
 - [ ] Sort transactions by date on /transactions
 - [ ] Inline edit transaction?
 - [ ] Import transactions from bank
