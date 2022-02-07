@@ -1,18 +1,19 @@
 import { LoaderFunction, ActionFunction, Form, useLoaderData, json, Outlet } from 'remix';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure';
 import { useState } from 'react';
-import { PlusCircleIcon } from '@heroicons/react/outline';
 import { User } from '@prisma/client';
 import { resetServerContext } from 'react-beautiful-dnd';
+import { PlusCircleIcon } from '@heroicons/react/outline';
 import { Stack, StackCategory, Budget } from '.prisma/client';
 import { db } from '~/utils/db.server';
 import { createStack } from '~/utils/server/index.server';
 import { ContentAction, ContentLayout, ContentMain } from '~/components/layout';
 import { Button } from '~/components/button';
-import { centsToDollars, dollarsToCents } from '~/utils/money-fns';
 import { recalcToBeBudgeted } from '~/utils/server/budget.server';
 import CategorizedStacks from '../components/categorized-stacks';
 import { requireAuthenticatedUser } from '~/utils/server/user-utils.server';
+import { BudgetTotal } from '~/components/budget-total';
+import { dollarsToCents } from '~/utils/money-fns';
 
 type IndexData = {
   user: User;
@@ -86,6 +87,13 @@ export const action: ActionFunction = async ({ request }) => {
 
     await recalcToBeBudgeted({ budgetId: budget.id });
   }
+  if (formData.get('_action') === 'update-total') {
+    const total = Number(formData.get('total'));
+
+    const newBudget = await db.budget.update({ where: { id: budget.id }, data: { total: dollarsToCents(total) } });
+    const recalcedBudget = await recalcToBeBudgeted({ budget: newBudget });
+    return recalcedBudget;
+  }
 
   return json({ success: true }, { status: 200 });
 };
@@ -98,15 +106,7 @@ export default function BudgetPage() {
   return (
     <ContentLayout>
       <ContentMain>
-        <div className="text-xl flex flex-col items-center">
-          <h2>
-            <span className="font-medium">${centsToDollars(data.budget.total)}</span>{' '}
-            <span className="font-normal">in account</span>
-          </h2>
-          <h2>
-            <span className="font-medium">${centsToDollars(data.budget.toBeBudgeted)}</span> to be budgeted
-          </h2>
-        </div>
+        <BudgetTotal budget={data.budget} />
         <Disclosure open={isDisclosureOpen} onChange={() => setIsDisclosureOpen(!isDisclosureOpen)}>
           <div className="py-2">
             <DisclosureButton className="outline-none text-left w-full">
