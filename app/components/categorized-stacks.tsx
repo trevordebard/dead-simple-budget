@@ -89,22 +89,24 @@ function CategorizedStacks({ categorized }: { categorized: CategoryWithStack[] }
             setCategorizedStacks(updatedCategories);
           }}
         >
-          {categorizedStacks.map((c) => {
-            return (
-              <div key={c.id}>
-                <h2>{c.label}</h2>
-                <div>
-                  <DroppableList droppableId={c.id} key={c.id}>
-                    {c.Stack.sort((a, b) => a.position - b.position).map((stack, index) => (
-                      <DraggableItem id={stack.id} index={index} key={stack.id}>
-                        <EditableStack stack={stack} />
-                      </DraggableItem>
-                    ))}
-                  </DroppableList>
+          <div className="flex flex-col space-y-4">
+            {categorizedStacks.map((c) => {
+              return (
+                <div key={c.id}>
+                  <h2 className="font-bold">{c.label}</h2>
+                  <div>
+                    <DroppableList droppableId={c.id} key={c.id}>
+                      {c.Stack.sort((a, b) => a.position - b.position).map((stack, index) => (
+                        <DraggableItem id={stack.id} index={index} key={stack.id}>
+                          <EditableStack stack={stack} />
+                        </DraggableItem>
+                      ))}
+                    </DroppableList>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </DragDropContext>
       </div>
     </div>

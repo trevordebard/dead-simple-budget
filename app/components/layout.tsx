@@ -14,7 +14,7 @@ type ActionProps = {
 export function ContentLayout({ children }: LayoutProps) {
   return (
     <div className="flex flex-grow w-full flex-col md:flex-row md:gap-10">
-      <div className="w-full md:w-1/6 mb-4">
+      <div className="w-full md:w-1/6 md:mb-4">
         <Sidebar />
       </div>
       {children}
@@ -23,7 +23,7 @@ export function ContentLayout({ children }: LayoutProps) {
 }
 
 export function ContentMain({ children }: MainProps) {
-  return <main className="flex-grow mt-4 md:mt-0 md:mx-auto max-w-3xl order-last md:order-none">{children}</main>;
+  return <main className="flex-grow mt-2 md:mt-0 md:mx-auto max-w-3xl order-last md:order-none">{children}</main>;
 }
 
 export function ContentAction({ children }: ActionProps) {

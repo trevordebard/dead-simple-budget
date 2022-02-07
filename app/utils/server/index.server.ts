@@ -1,31 +1,8 @@
 import { redirect } from 'remix';
-import { User } from '@prisma/client';
+import { User, Stack } from '@prisma/client';
 import { Prisma } from '.prisma/client';
-import { authenticator } from '~/auth/auth.server';
 import { db } from '../db.server';
 import { recalcToBeBudgeted } from './budget.server';
-
-export async function findOrCreateUser(email: string): Promise<User> {
-  const user = await db.user.upsert({
-    where: { email },
-    create: { email, Budget: { create: { total: 0, toBeBudgeted: 0 } } },
-    update: { email },
-    include: { Budget: true },
-  });
-  // TODO: figure out type issue
-  return user;
-}
-
-export async function getAuthenticatedUser(request: Request): Promise<User | null> {
-  const user = await authenticator.isAuthenticated(request);
-  return user;
-}
-
-export async function requireAuthenticatedUser(request: Request): Promise<User> {
-  const user = await getAuthenticatedUser(request);
-  if (!user) throw redirect('/login');
-  return user;
-}
 
 export async function createStack(user: User, stack: { label: string }) {
   const budget = await db.budget.findFirst({ where: { userId: user.id } });

@@ -3,8 +3,8 @@ import { Stack, StackCategory } from '.prisma/client';
 import { db } from '~/utils/db.server';
 import { Button } from '~/components/button';
 import { centsToDollars, dollarsToCents } from '~/utils/money-fns';
-import { requireAuthenticatedUser } from '~/utils/server/index.server';
 import { recalcToBeBudgeted } from '~/utils/server/budget.server';
+import { requireAuthenticatedUser } from '~/utils/server/user-utils.server';
 
 interface LoaderData {
   stack: Stack & {
