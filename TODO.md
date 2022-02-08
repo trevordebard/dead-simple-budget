@@ -48,5 +48,5 @@
 - [x] Drag and drop stacks to new categories.
 - [ ] Allow math in the edit stack amount input in /budget
 - [ ] Validate input in the edit stack amount input in /budget
-- [ ] Go back a route to /budget after successfully updating a stack
-- [ ] Add ability to delete stacks
+- [x] Go back a route to /budget after successfully updating a stack
+- [x] Add ability to delete stacks
