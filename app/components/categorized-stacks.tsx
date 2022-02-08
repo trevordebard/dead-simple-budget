@@ -1,5 +1,5 @@
-import { Prisma, Stack } from '@prisma/client';
-import { useState } from 'react';
+import { Prisma } from '@prisma/client';
+import { useEffect, useState } from 'react';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import { useFetcher } from 'remix';
 import { DraggableItem } from '~/components/beautiful-dnd-wrappers/draggable-item';
@@ -73,6 +73,10 @@ const handleStackDrag = (result: DropResult, categories: CategoryWithStack[]): H
 function CategorizedStacks({ categorized }: { categorized: CategoryWithStack[] }) {
   const [categorizedStacks, setCategorizedStacks] = useState<CategoryWithStack[]>(categorized);
   const fetcher = useFetcher();
+
+  useEffect(() => {
+    setCategorizedStacks(categorized);
+  }, [categorized]);
 
   return (
     <div>

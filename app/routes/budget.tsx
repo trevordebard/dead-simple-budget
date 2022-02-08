@@ -1,25 +1,24 @@
-import { LoaderFunction, ActionFunction, Form, useLoaderData, json, Outlet } from 'remix';
+import { LoaderFunction, ActionFunction, Form, useLoaderData, json, Outlet, useTransition } from 'remix';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { User } from '@prisma/client';
 import { resetServerContext } from 'react-beautiful-dnd';
 import { PlusCircleIcon } from '@heroicons/react/outline';
-import { Stack, StackCategory, Budget } from '.prisma/client';
+import { Stack, Budget } from '.prisma/client';
 import { db } from '~/utils/db.server';
 import { createStack } from '~/utils/server/index.server';
 import { ContentAction, ContentLayout, ContentMain } from '~/components/layout';
 import { Button } from '~/components/button';
 import { recalcToBeBudgeted } from '~/utils/server/budget.server';
-import CategorizedStacks from '../components/categorized-stacks';
+import CategorizedStacks, { CategoryWithStack } from '../components/categorized-stacks';
 import { requireAuthenticatedUser } from '~/utils/server/user-utils.server';
 import { BudgetTotal } from '~/components/budget-total';
 import { dollarsToCents } from '~/utils/money-fns';
+import { createCategoriesOptimistically } from '~/utils/ui/stack-categories';
 
 type IndexData = {
   user: User;
-  categorized: (StackCategory & {
-    Stack: Stack[];
-  })[];
+  categorized: CategoryWithStack[];
   budget: Budget;
 };
 
@@ -102,6 +101,15 @@ export const action: ActionFunction = async ({ request }) => {
 export default function BudgetPage() {
   const data = useLoaderData<IndexData>();
   const [isDisclosureOpen, setIsDisclosureOpen] = useState(false);
+  const transition = useTransition();
+  const isAddingStack = transition.submission && transition.submission.formData.get('_action') === 'add-stack';
+  const addStackFormRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    if (!isAddingStack) {
+      addStackFormRef?.current?.reset();
+    }
+  }, [isAddingStack]);
 
   return (
     <ContentLayout>
@@ -127,14 +135,20 @@ export default function BudgetPage() {
             </DisclosurePanel>
           </div>
         </Disclosure>
-        <CategorizedStacks categorized={data.categorized} />
-        <Form method="post" id="add-stack-form" className="mt-5">
-          <div className="flex justify-between space-x-4 items-center">
-            <input type="text" name="new-stack" placeholder="New Stack Name" />
+        {isAddingStack ? (
+          <CategorizedStacks
+            categorized={createCategoriesOptimistically(data.categorized, transition.submission.formData)}
+          />
+        ) : (
+          <CategorizedStacks categorized={data.categorized} />
+        )}
+        <Form method="post" id="add-stack-form" className="mt-5" ref={addStackFormRef}>
+          <fieldset disabled={transition.state !== 'idle'} className="flex justify-between space-x-4 items-center">
+            <input type="text" name="new-stack" required placeholder="New Stack Name" />
             <Button type="submit" className="whitespace-nowrap" name="_action" value="add-stack">
               Add Stack
             </Button>
-          </div>
+          </fieldset>
         </Form>
       </ContentMain>
       <ContentAction>
