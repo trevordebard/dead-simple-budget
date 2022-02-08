@@ -1,6 +1,6 @@
 import { LoaderFunction, ActionFunction, Form, useLoaderData, json, Outlet, useTransition } from 'remix';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { User } from '@prisma/client';
 import { resetServerContext } from 'react-beautiful-dnd';
 import { PlusCircleIcon } from '@heroicons/react/outline';
@@ -102,6 +102,14 @@ export default function BudgetPage() {
   const data = useLoaderData<IndexData>();
   const [isDisclosureOpen, setIsDisclosureOpen] = useState(false);
   const transition = useTransition();
+  const isAddingStack = transition.submission && transition.submission.formData.get('_action') === 'add-stack';
+  const addStackFormRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    if (!isAddingStack) {
+      addStackFormRef?.current?.reset();
+    }
+  }, [isAddingStack]);
 
   return (
     <ContentLayout>
@@ -127,20 +135,20 @@ export default function BudgetPage() {
             </DisclosurePanel>
           </div>
         </Disclosure>
-        {transition.submission ? (
+        {isAddingStack ? (
           <CategorizedStacks
             categorized={createCategoriesOptimistically(data.categorized, transition.submission.formData)}
           />
         ) : (
           <CategorizedStacks categorized={data.categorized} />
         )}
-        <Form method="post" id="add-stack-form" className="mt-5">
-          <div className="flex justify-between space-x-4 items-center">
-            <input type="text" name="new-stack" placeholder="New Stack Name" />
+        <Form method="post" id="add-stack-form" className="mt-5" ref={addStackFormRef}>
+          <fieldset disabled={transition.state !== 'idle'} className="flex justify-between space-x-4 items-center">
+            <input type="text" name="new-stack" required placeholder="New Stack Name" />
             <Button type="submit" className="whitespace-nowrap" name="_action" value="add-stack">
               Add Stack
             </Button>
-          </div>
+          </fieldset>
         </Form>
       </ContentMain>
       <ContentAction>

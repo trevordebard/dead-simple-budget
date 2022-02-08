@@ -3,12 +3,13 @@ import { Link, useFetcher } from 'remix';
 import { centsToDollars } from '~/utils/money-fns';
 
 export function EditableStack({ stack }: { stack: Stack }) {
+  // using fetcher to avoid redirect
   const stackFetcher = useFetcher();
   return (
-    <div key={stack.id} className="flex justify-between items-center hover:bg-gray-100 px-3 rounded-md">
+    <div className="flex justify-between items-center hover:bg-gray-100 px-3 rounded-md">
       <label htmlFor={stack.label}>{stack.label}</label>
       <div className="flex items-center space-x-3">
-        <stackFetcher.Form method="post" action="/budget">
+        <stackFetcher.Form method="post" action="/budget" key={stack.id}>
           <input type="hidden" name="_action" value="edit-stack" />
           <input
             type="text"
