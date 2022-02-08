@@ -16,7 +16,7 @@
 ## User
 - [x] Give users example stacks and transaction when their account is first created
 ## Budget
-- [ ] Update user's total balance
+- [x] Update user's total balance
 - [ ] Should budgets/stacks reset monthly? 
 - [ ] Optimistic UI when adding and removing Stacks and Stack Categories from budget
 
@@ -43,10 +43,10 @@
 
 ## Stacks
 - [x] Edit stack side effects
-- [ ] Stack ordering within categories
+- [x] Stack ordering within categories
 - [ ] Make stack dropdowns across app custom and display stack amounts
-- [ ] Drag and drop stacks to new categories.
-  - [ ] Or maybe change the add stack UI to encourage adding a stack from a category label. This could look like a more subtle plus button that opens an input within each category group
+- [x] Drag and drop stacks to new categories.
 - [ ] Allow math in the edit stack amount input in /budget
 - [ ] Validate input in the edit stack amount input in /budget
 - [ ] Go back a route to /budget after successfully updating a stack
+- [ ] Add ability to delete stacks
