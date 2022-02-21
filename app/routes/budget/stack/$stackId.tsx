@@ -66,6 +66,9 @@ const DeleteStackValidator = zfd.formData({
 export const action: ActionFunction = async ({ request, params }) => {
   const form = await request.formData();
 
+  // Strip commas from incoming amount
+  form.set('amount', String(form.get('amount')).replace(',', ''));
+
   const PossibleActionsEnum = z.enum(['save-stack', 'delete-stack']);
   type StackIdAction = z.infer<typeof PossibleActionsEnum>;
 

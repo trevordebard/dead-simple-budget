@@ -11,7 +11,6 @@ export function centsToDollars(amount = 0, formatOptions?: Intl.NumberFormatOpti
     style: 'decimal',
     currency: 'USD',
     minimumFractionDigits: 2,
-    useGrouping: false,
     ...formatOptions,
   };
 
