@@ -6,11 +6,13 @@ export function dollarsToCents(value: string | number) {
   return Math.round(100 * parseFloat(typeof value === 'string' ? value.replace(/[$,]/g, '') : value.toString()));
 }
 
-export function centsToDollars(amount = 0) {
-  const options = {
+export function centsToDollars(amount = 0, formatOptions?: Intl.NumberFormatOptions) {
+  const options: Intl.NumberFormatOptions = {
     style: 'decimal',
     currency: 'USD',
     minimumFractionDigits: 2,
+    useGrouping: false,
+    ...formatOptions,
   };
 
   // check if its a clean dollar amount

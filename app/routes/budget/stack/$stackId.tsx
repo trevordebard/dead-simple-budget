@@ -1,11 +1,24 @@
-import { Form, useLoaderData, LoaderFunction, ActionFunction, redirect, Link, useTransition } from 'remix';
+import {
+  Form,
+  useLoaderData,
+  LoaderFunction,
+  ActionFunction,
+  redirect,
+  Link,
+  useTransition,
+  json,
+  useActionData,
+} from 'remix';
 import { TrashIcon, XIcon } from '@heroicons/react/solid';
+import { zfd } from 'zod-form-data';
+import { z, ZodError } from 'zod';
 import { Stack, StackCategory } from '.prisma/client';
 import { db } from '~/utils/db.server';
 import { Button } from '~/components/button';
 import { centsToDollars, dollarsToCents } from '~/utils/money-fns';
-import { recalcToBeBudgeted } from '~/utils/server/budget.server';
 import { requireAuthenticatedUser } from '~/utils/server/user-utils.server';
+import { updateStack } from '~/utils/server/stack.server';
+import { ErrorText } from '~/components/error-text';
 
 interface LoaderData {
   stack: Stack & {
@@ -24,65 +37,97 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   const stack = await db.stack.findUnique({ where: { id: params.stackId }, include: { category: true } });
   const categories = await db.stackCategory.findMany({ where: { budgetId: budget.id } });
   if (!stack) {
-    throw Error('Stack not found!');
+    throw Error(`Stack with id ${params.stackId} was not found.`);
   }
   return { stack, categories };
 };
 
+type ActionData = {
+  success: boolean;
+  formErrors?: string[];
+  fieldErrors?: {
+    [k: string]: string[];
+  };
+};
+
+const badRequest = (data: ActionData) => json(data, { status: 400 });
+
+const SaveStackValidator = zfd.formData({
+  stackId: zfd.text(),
+  label: zfd.text(),
+  amount: zfd.numeric(),
+  categoryId: zfd.text(),
+});
+const DeleteStackValidator = zfd.formData({
+  stackId: zfd.text(),
+});
+
 // TODO: verify the stacks being modified belong to the logged in user
 export const action: ActionFunction = async ({ request, params }) => {
   const form = await request.formData();
-  await requireAuthenticatedUser(request);
-  const formAction = form.get('_action');
+
+  const PossibleActionsEnum = z.enum(['save-stack', 'delete-stack']);
+  type StackIdAction = z.infer<typeof PossibleActionsEnum>;
+
+  const formAction: StackIdAction = PossibleActionsEnum.parse(form.get('_action'));
 
   if (formAction === 'save-stack') {
-    const label = String(form.get('label'));
-    const amountInput = String(form.get('amount'));
-    const categoryId = String(form.get('category'));
+    try {
+      const { stackId, amount: amountInput, categoryId, label } = SaveStackValidator.parse(form);
+      const amount = dollarsToCents(amountInput);
+      await updateStack({ amount, stackId, categoryId, label });
+    } catch (e) {
+      if (e instanceof ZodError) {
+        return badRequest({ ...e.flatten(), success: false });
+      }
+      throw e;
+    }
 
-    const amount = dollarsToCents(amountInput);
-
-    const updatedStack = await db.stack.update({
-      where: { id: params.stackId },
-      data: { amount, label, stackCategoryId: categoryId },
-      include: { budget: true },
-    });
-
-    await recalcToBeBudgeted({ budget: updatedStack.budget });
     return redirect('/budget');
   }
+
   if (formAction === 'delete-stack') {
-    await db.stack.delete({ where: { id: params.stackId } });
+    const { stackId } = DeleteStackValidator.parse(form);
+    if (stackId !== params.stackId) {
+      return badRequest({ formErrors: ['Stack IDs do not match.'], success: false });
+    }
+    await db.stack.delete({ where: { id: stackId } });
     return redirect('/budget');
   }
   return null;
 };
 
 export default function StackId() {
+  const actionData = useActionData<ActionData>();
   const { stack, categories } = useLoaderData<LoaderData>();
   const transition = useTransition();
   return (
     <div className="fixed top-0 bottom-0 left-0 right-0 md:relative bg-white p-5 md:p-0">
       <h3 className="text-lg mb-3 divide-y-2 text-center">Edit Stack</h3>
       <Form method="post" key={stack.id}>
+        {actionData?.formErrors?.map((message) => (
+          <ErrorText>{message}</ErrorText>
+        ))}
+        <input type="hidden" name="stackId" value={stack.id} />
         <div className="space-y-4">
           <div>
-            <label htmlFor="label" className="inline-block mb-1">
-              Stack
+            <label htmlFor="label" className="mb-1">
+              Stack {actionData?.fieldErrors?.label && <ErrorText>{actionData.fieldErrors.label[0]}</ErrorText>}
             </label>
             <input type="text" name="label" defaultValue={stack.label} />
           </div>
           <div>
-            <label htmlFor="amount" className="inline-block mb-1">
-              Amount
+            <label htmlFor="amount" className=" mb-1">
+              Amount {actionData?.fieldErrors?.amount && <ErrorText>{actionData.fieldErrors.amount[0]}</ErrorText>}
             </label>
             <input type="text" name="amount" defaultValue={centsToDollars(stack.amount)} />
           </div>
           <div>
-            <label htmlFor="category" className="inline-block mb-1">
+            <label htmlFor="categoryId" className="inline-block mb-1">
               Category
+              {actionData?.fieldErrors?.categoryId && <ErrorText>{actionData.fieldErrors.categoryId[0]}</ErrorText>}
             </label>
-            <select name="category" defaultValue={stack.stackCategoryId || -1} className="block w-full">
+            <select name="categoryId" defaultValue={stack.stackCategoryId || -1} className="block w-full">
               {categories.map((cat) => (
                 <option value={cat.id} key={cat.id}>
                   {cat.label}
@@ -119,5 +164,16 @@ export default function StackId() {
         </div>
       </Form>
     </div>
+  );
+}
+
+export function ErrorBoundary({ error }: { error: Error }) {
+  return (
+    <html lang="en">
+      <head />
+      <body>
+        <ErrorText>{error.message || 'There was a problem loading stack.'}</ErrorText>
+      </body>
+    </html>
   );
 }
