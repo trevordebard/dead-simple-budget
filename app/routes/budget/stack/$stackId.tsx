@@ -10,7 +10,6 @@ import {
   useActionData,
 } from 'remix';
 import { TrashIcon, XIcon } from '@heroicons/react/solid';
-import { zfd } from 'zod-form-data';
 import { z, ZodError } from 'zod';
 import { Stack, StackCategory } from '.prisma/client';
 import { db } from '~/utils/db.server';
@@ -52,22 +51,20 @@ type ActionData = {
 
 const badRequest = (data: ActionData) => json(data, { status: 400 });
 
-const SaveStackValidator = zfd.formData({
-  stackId: zfd.text(),
-  label: zfd.text(),
-  amount: zfd.numeric(),
-  categoryId: zfd.text(),
+const deleteStackSchema = z.object({
+  stackId: z.string(),
 });
-const DeleteStackValidator = zfd.formData({
-  stackId: zfd.text(),
+
+const saveStackSchema = z.object({
+  stackId: z.string().nonempty(),
+  label: z.string().nonempty(),
+  amount: z.preprocess((num) => parseFloat(z.string().nonempty().parse(num).replace(',', '')), z.number()), // strip commas and convert to number
+  categoryId: z.string().nonempty(),
 });
 
 // TODO: verify the stacks being modified belong to the logged in user
 export const action: ActionFunction = async ({ request, params }) => {
   const form = await request.formData();
-
-  // Strip commas from incoming amount
-  form.set('amount', String(form.get('amount')).replace(',', ''));
 
   const PossibleActionsEnum = z.enum(['save-stack', 'delete-stack']);
   type StackIdAction = z.infer<typeof PossibleActionsEnum>;
@@ -76,7 +73,17 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   if (formAction === 'save-stack') {
     try {
-      const { stackId, amount: amountInput, categoryId, label } = SaveStackValidator.parse(form);
+      const {
+        amount: amountInput,
+        stackId,
+        categoryId,
+        label,
+      } = saveStackSchema.parse({
+        label: form.get('label'),
+        stackId: form.get('stackId'),
+        amount: form.get('amount'),
+        categoryId: form.get('categoryId'),
+      });
       const amount = dollarsToCents(amountInput);
       await updateStack({ amount, stackId, categoryId, label });
     } catch (e) {
@@ -90,12 +97,23 @@ export const action: ActionFunction = async ({ request, params }) => {
   }
 
   if (formAction === 'delete-stack') {
-    const { stackId } = DeleteStackValidator.parse(form);
-    if (stackId !== params.stackId) {
-      return badRequest({ formErrors: ['Stack IDs do not match.'], success: false });
+    try {
+      const { stackId } = deleteStackSchema.parse(form);
+      if (stackId !== params.stackId) {
+        return badRequest({ formErrors: ['Stack IDs do not match.'], success: false });
+      }
+      await db.stack.delete({ where: { id: stackId } });
+      return redirect('/budget');
+    } catch (e) {
+      if (e instanceof ZodError) {
+        return badRequest({
+          formErrors: ['Unable to delete stack.', ...e.flatten().formErrors],
+          fieldErrors: e.flatten().fieldErrors,
+          success: false,
+        });
+      }
+      throw e;
     }
-    await db.stack.delete({ where: { id: stackId } });
-    return redirect('/budget');
   }
   return null;
 };

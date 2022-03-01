@@ -12,6 +12,7 @@
 - [ ] Animate Outlets coming in and out
 - [ ] Figure out how to secure edit stack/transaction actions to ensure the authenticated user can only edit their own transactions
   - or determine if a POSt request to the page would be blocked from an outside source
+- [ ] Explore PlanetScale & fly.io db free tiers and cleanup unused DigitalOcean assets
 
 ## User
 - [x] Give users example stacks and transaction when their account is first created
