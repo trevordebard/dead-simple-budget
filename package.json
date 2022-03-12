@@ -29,7 +29,7 @@
     "remix": "^1.0.6",
     "remix-auth": "^2.5.0-0",
     "tailwindcss-radix": "^1.5.2",
-    "zod": "^3.11.6"
+    "zod": "^3.13.4"
   },
   "devDependencies": {
     "@remix-run/dev": "^1.0.6",

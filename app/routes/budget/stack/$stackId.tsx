@@ -56,9 +56,12 @@ const deleteStackSchema = z.object({
 });
 
 const saveStackSchema = z.object({
-  stackId: z.string().nonempty(),
-  label: z.string().nonempty(),
-  amount: z.preprocess((num) => parseFloat(z.string().nonempty().parse(num).replace(',', '')), z.number()), // strip commas and convert to number
+  stackId: z.string().nonempty('Required'),
+  label: z.string().nonempty('Required'),
+  amount: z.preprocess(
+    (num) => parseFloat(z.string().nonempty('Required!').parse(num).replace(',', '')), // strip commas and convert to number
+    z.number({ invalid_type_error: 'Must be a number' })
+  ),
   categoryId: z.string().nonempty(),
 });
 
