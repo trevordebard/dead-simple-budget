@@ -1,6 +1,6 @@
 import { ActionFunction, Form, json, Link, LoaderFunction, useActionData, useLoaderData } from 'remix';
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { z, ZodError } from 'zod';
 import { db } from '~/utils/db.server';
 import { createTransactionAndUpdBudget } from '~/utils/server/index.server';
@@ -86,15 +86,21 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 export default function NewTransaction() {
+  const formRef = useRef<HTMLFormElement>(null);
   const [transactionType, setTransactionType] = useState<string>('deposit');
   const stacks = useLoaderData<Stack[] | null>();
   const actionData = useActionData<ActionData>();
 
-  // TODO: on success action data, reset the form
+  useEffect(() => {
+    if (actionData?.success) {
+      formRef.current?.reset();
+    }
+  }, [actionData]);
+
   return (
     <div className="fixed top-0 bottom-0 left-0 right-0 md:relative bg-white p-5 md:p-0">
       <h3 className="text-lg mb-3 divide-y-2 text-center">New Transaction</h3>
-      <Form method="post" className="space-y-4">
+      <Form method="post" id="new-transaction" ref={formRef} className="space-y-4">
         {actionData?.formErrors?.map((message) => (
           <ErrorText>{message}</ErrorText>
         ))}
