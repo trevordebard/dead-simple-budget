@@ -25,6 +25,7 @@
 - [x] Base button styles
 - [ ] Relocate tailwind files to same folder
 - [ ] Determine error handling strategy
+  - Add catch boundaries in nested routes
 - [ ] Move commonly used snippets in loader functions into reusable functions
 
 ## Transactions

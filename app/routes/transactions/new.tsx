@@ -1,7 +1,7 @@
 import { ActionFunction, Form, json, Link, LoaderFunction, useActionData, useLoaderData } from 'remix';
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
 import { useEffect, useRef, useState } from 'react';
-import { z, ZodError } from 'zod';
+import { ZodError } from 'zod';
 import { db } from '~/utils/db.server';
 import { createTransactionAndUpdBudget } from '~/utils/server/index.server';
 import { Button } from '~/components/button';
@@ -9,6 +9,14 @@ import { Stack, Budget, Transaction } from '.prisma/client';
 import { dollarsToCents } from '~/utils/money-fns';
 import { requireAuthenticatedUser } from '~/utils/server/user-utils.server';
 import { ErrorText } from '~/components/error-text';
+import { TransactionSchema } from '~/utils/shared/validation';
+
+export const loader: LoaderFunction = async ({ request }) => {
+  const user = await requireAuthenticatedUser(request);
+  const budget = await db.budget.findFirst({ where: { userId: user.id }, include: { stacks: true } });
+  const stacks = budget?.stacks;
+  return stacks;
+};
 
 type ActionData = {
   success: boolean;
@@ -20,16 +28,6 @@ type ActionData = {
 };
 
 const badRequest = (data: ActionData) => json(data, { status: 400 });
-
-const CreateTransactionSchema = z.object({
-  stackId: z.nullable(z.string().optional()), // TODO: make not nullable once default select value is figured out
-  description: z.string().nonempty('Required!!'),
-  amount: z.preprocess(
-    (num) => parseFloat(z.string().nonempty('Required!').parse(num).replace(',', '')), // strip commas and convert to number
-    z.number({ invalid_type_error: 'Must be a number' })
-  ),
-  type: z.enum(['withdrawal', 'deposit']),
-});
 
 export const action: ActionFunction = async ({ request }) => {
   const user = await requireAuthenticatedUser(request);
@@ -46,7 +44,7 @@ export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
 
   try {
-    const { description, amount, stackId, type } = CreateTransactionSchema.parse({
+    const { description, amount, stackId, type } = TransactionSchema.parse({
       stackId: formData.get('stackId'),
       description: formData.get('description'),
       amount: formData.get('amount'),
@@ -76,13 +74,6 @@ export const action: ActionFunction = async ({ request }) => {
     }
     return badRequest({ success: false, formErrors: ['An unknown error occurred'] });
   }
-};
-
-export const loader: LoaderFunction = async ({ request }) => {
-  const user = await requireAuthenticatedUser(request);
-  const budget = await db.budget.findFirst({ where: { userId: user.id }, include: { stacks: true } });
-  const stacks = budget?.stacks;
-  return stacks;
 };
 
 export default function NewTransaction() {

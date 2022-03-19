@@ -122,7 +122,7 @@ export default function TransactionIdPage() {
             <Button type="submit" variant="outline" className="w-full">
               Save
             </Button>
-            <Link to="/budget" className="hover:text-purple-700">
+            <Link to="/transactions" className="hover:text-purple-700">
               Cancel
             </Link>
           </div>

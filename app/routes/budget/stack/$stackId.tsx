@@ -18,6 +18,7 @@ import { centsToDollars, dollarsToCents } from '~/utils/money-fns';
 import { requireAuthenticatedUser } from '~/utils/server/user-utils.server';
 import { updateStack } from '~/utils/server/stack.server';
 import { ErrorText } from '~/components/error-text';
+import { DeleteStackSchema, SaveStackSchema } from '~/utils/shared/validation';
 
 interface LoaderData {
   stack: Stack & {
@@ -51,20 +52,6 @@ type ActionData = {
 
 const badRequest = (data: ActionData) => json(data, { status: 400 });
 
-const deleteStackSchema = z.object({
-  stackId: z.string(),
-});
-
-const saveStackSchema = z.object({
-  stackId: z.string().nonempty('Required'),
-  label: z.string().nonempty('Required'),
-  amount: z.preprocess(
-    (num) => parseFloat(z.string().nonempty('Required!').parse(num).replace(',', '')), // strip commas and convert to number
-    z.number({ invalid_type_error: 'Must be a number' })
-  ),
-  categoryId: z.string().nonempty(),
-});
-
 // TODO: verify the stacks being modified belong to the logged in user
 export const action: ActionFunction = async ({ request, params }) => {
   const form = await request.formData();
@@ -81,7 +68,7 @@ export const action: ActionFunction = async ({ request, params }) => {
         stackId,
         categoryId,
         label,
-      } = saveStackSchema.parse({
+      } = SaveStackSchema.parse({
         label: form.get('label'),
         stackId: form.get('stackId'),
         amount: form.get('amount'),
@@ -101,7 +88,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   if (formAction === 'delete-stack') {
     try {
-      const { stackId } = deleteStackSchema.parse(form);
+      const { stackId } = DeleteStackSchema.parse(form);
       if (stackId !== params.stackId) {
         return badRequest({ formErrors: ['Stack IDs do not match.'], success: false });
       }
