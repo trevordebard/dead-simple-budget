@@ -1,6 +1,6 @@
 import { Budget } from '@prisma/client';
 import { useState } from 'react';
-import { Form, useSubmit, useTransition } from 'remix';
+import { Form, useSubmit, useTransition } from "@remix-run/react";
 import { PencilAltIcon } from '@heroicons/react/outline';
 import { XIcon, CheckIcon } from '@heroicons/react/solid';
 import { centsToDollars } from '~/utils/money-fns';
