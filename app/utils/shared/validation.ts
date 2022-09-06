@@ -10,6 +10,11 @@ export const TransactionSchema = z.object({
   type: z.enum(['withdrawal', 'deposit']),
 });
 
+export const EditTransactionSchema = TransactionSchema.extend({
+  stackId: z.nullable(z.string()),
+  id: z.string(),
+});
+
 export const DeleteStackSchema = z.object({
   stackId: z.string(),
 });

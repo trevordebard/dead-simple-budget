@@ -125,20 +125,20 @@ export default function StackId() {
             <label htmlFor="label" className="mb-1">
               Stack {actionData?.fieldErrors?.label && <ErrorText>{actionData.fieldErrors.label[0]}</ErrorText>}
             </label>
-            <input type="text" name="label" defaultValue={stack.label} />
+            <input type="text" required name="label" defaultValue={stack.label} />
           </div>
           <div>
             <label htmlFor="amount" className=" mb-1">
               Amount {actionData?.fieldErrors?.amount && <ErrorText>{actionData.fieldErrors.amount[0]}</ErrorText>}
             </label>
-            <input type="text" name="amount" defaultValue={centsToDollars(stack.amount)} />
+            <input type="text" required name="amount" defaultValue={centsToDollars(stack.amount)} />
           </div>
           <div>
             <label htmlFor="categoryId" className="inline-block mb-1">
               Category
               {actionData?.fieldErrors?.categoryId && <ErrorText>{actionData.fieldErrors.categoryId[0]}</ErrorText>}
             </label>
-            <select name="categoryId" defaultValue={stack.stackCategoryId || -1} className="block w-full">
+            <select name="categoryId" defaultValue={stack.stackCategoryId || -1} className="block w-full" required>
               {categories.map((cat) => (
                 <option value={cat.id} key={cat.id}>
                   {cat.label}
