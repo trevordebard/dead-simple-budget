@@ -1,5 +1,5 @@
 import { Stack } from '@prisma/client';
-import { ActionFunction, json } from 'remix';
+import { ActionFunction, json } from '@remix-run/node';
 import { db } from '~/utils/db.server';
 import { CategoryReorderPayload } from '../../components/categorized-stacks';
 

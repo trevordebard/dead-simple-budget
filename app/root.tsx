@@ -1,16 +1,6 @@
-import {
-  Links,
-  LiveReload,
-  Meta,
-  Outlet,
-  Scripts,
-  ScrollRestoration,
-  useCatch,
-  json,
-  LoaderFunction,
-  MetaFunction,
-} from 'remix';
-import type { LinksFunction } from 'remix';
+import type { LinksFunction } from '@remix-run/node';
+import { json, LoaderFunction, MetaFunction } from '@remix-run/node';
+import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useCatch } from '@remix-run/react';
 import * as React from 'react';
 import { User } from '@prisma/client';
 import styles from './tailwind.css';

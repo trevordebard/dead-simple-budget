@@ -1,4 +1,5 @@
-import { Outlet, LoaderFunction, useLoaderData, Form, Link } from 'remix';
+import { LoaderFunction } from '@remix-run/node';
+import { Form, Link, Outlet, useLoaderData } from '@remix-run/react';
 import { useState } from 'react';
 import { DateTime } from 'luxon';
 import { CurrencyDollarIcon } from '@heroicons/react/outline';

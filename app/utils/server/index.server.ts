@@ -1,4 +1,4 @@
-import { redirect } from 'remix';
+import { redirect } from '@remix-run/node';
 import { User, Stack } from '@prisma/client';
 import { Prisma } from '.prisma/client';
 import { db } from '../db.server';

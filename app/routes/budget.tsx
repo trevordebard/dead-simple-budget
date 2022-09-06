@@ -1,4 +1,5 @@
-import { LoaderFunction, ActionFunction, Form, useLoaderData, json, Outlet, useTransition } from 'remix';
+import { ActionFunction, json, LoaderFunction } from '@remix-run/node';
+import { Form, Outlet, useLoaderData, useTransition } from '@remix-run/react';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure';
 import { useEffect, useRef, useState } from 'react';
 import { User } from '@prisma/client';

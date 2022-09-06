@@ -1,5 +1,5 @@
 import { Stack } from '@prisma/client';
-import { Link, useFetcher } from 'remix';
+import { Link, useFetcher } from '@remix-run/react';
 import { centsToDollars } from '~/utils/money-fns';
 
 export function EditableStack({ stack }: { stack: Stack }) {

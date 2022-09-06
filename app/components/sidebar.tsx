@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { useLocation, Link } from 'remix';
+import { Link, useLocation } from '@remix-run/react';
 
 export function Sidebar() {
   const { pathname } = useLocation();

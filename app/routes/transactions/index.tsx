@@ -1,5 +1,5 @@
 import { PlusCircleIcon } from '@heroicons/react/outline';
-import { Link, useMatches } from 'remix';
+import { Link, useMatches } from '@remix-run/react';
 
 export default function Transactions() {
   const matches = useMatches();

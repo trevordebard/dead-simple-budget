@@ -1,14 +1,5 @@
-import {
-  Form,
-  useLoaderData,
-  LoaderFunction,
-  ActionFunction,
-  redirect,
-  Link,
-  useTransition,
-  json,
-  useActionData,
-} from 'remix';
+import { ActionFunction, json, LoaderFunction, redirect } from '@remix-run/node';
+import { Form, Link, useActionData, useLoaderData, useTransition } from '@remix-run/react';
 import { TrashIcon, XIcon } from '@heroicons/react/solid';
 import { z, ZodError } from 'zod';
 import { Stack, StackCategory } from '.prisma/client';

@@ -1,4 +1,5 @@
-import { Form, useLoaderData, LoaderFunction, ActionFunction, redirect } from 'remix';
+import { ActionFunction, LoaderFunction, redirect } from '@remix-run/node';
+import { Form, useLoaderData } from '@remix-run/react';
 import { StackCategory } from '.prisma/client';
 import { db } from '~/utils/db.server';
 import { deleteStackCateogry } from '~/utils/server/index.server';

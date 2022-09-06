@@ -1,4 +1,4 @@
-import { createCookieSessionStorage, Session } from 'remix';
+import { createCookieSessionStorage, Session } from '@remix-run/node';
 
 // TODO: update secret
 export const sessionStorage = createCookieSessionStorage({
