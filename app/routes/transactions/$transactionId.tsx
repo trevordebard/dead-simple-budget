@@ -1,41 +1,20 @@
 import { ActionFunction, json, LoaderFunction, redirect } from '@remix-run/node';
-import { Form, Link, useLoaderData, useParams } from '@remix-run/react';
+import { Form, Link, useActionData, useLoaderData, useParams, useTransition } from '@remix-run/react';
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
 import { useEffect, useState } from 'react';
-import z, { Schema, ZodError } from 'zod';
+import z from 'zod';
 import type { Transaction, Stack } from '@prisma/client';
 import { db } from '~/utils/db.server';
 import { Button } from '~/components/button';
 import { centsToDollars, dollarsToCents } from '~/utils/money-fns';
 import { editTransactionAndUpdBudget } from '~/utils/server/index.server';
 import { requireAuthenticatedUser } from '~/utils/server/user-utils.server';
-import { EditTransactionSchema } from '~/utils/shared/validation';
+import { ActionResponse, EditTransactionSchema, validateAction } from '~/utils/shared/validation';
+import { ErrorText } from '~/components/error-text';
 
 interface LoaderData {
   transaction?: Transaction;
   stacks: Stack[];
-}
-
-type ValidationInput = {
-  request: Request;
-  schema: Schema;
-};
-
-async function validationAction<ActionInput>({ request, schema }: ValidationInput) {
-  const formData = await request.formData();
-  const body = Object.fromEntries(formData);
-  console.log('--------');
-  console.log(body);
-  try {
-    const input = schema.parse(body) as ActionInput;
-    return { formData: input, errors: null };
-  } catch (e) {
-    const errors = e as ZodError<ActionInput>;
-    return {
-      formData: body,
-      errors: errors.flatten(),
-    };
-  }
 }
 
 export const loader: LoaderFunction = async ({ params, request }) => {
@@ -50,6 +29,9 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   return json({ transaction, stacks });
 };
 
+type ActionData = z.infer<typeof EditTransactionSchema>;
+const badRequest = (data: ActionResponse<ActionData>) => json(data, { status: 400 });
+
 export const action: ActionFunction = async ({ request, params }) => {
   const user = await requireAuthenticatedUser(request);
 
@@ -59,14 +41,14 @@ export const action: ActionFunction = async ({ request, params }) => {
   if (!budget || !params.transactionId) {
     throw Error('TODO');
   }
-
-  const { formData, errors } = await validationAction<z.infer<typeof EditTransactionSchema>>({
-    request,
+  const rawFormData = await request.formData();
+  const { formData, errors } = await validateAction<ActionData>({
+    formData: rawFormData,
     schema: EditTransactionSchema,
   });
 
   if (errors) {
-    return json({ errors, formData }, 400);
+    return badRequest({ errors });
   }
 
   const { description, amount, stackId, type, id } = formData;
@@ -89,6 +71,8 @@ export default function TransactionIdPage() {
   const { transaction, stacks } = useLoaderData<LoaderData>();
   const [transactionType, setTransactionType] = useState<string>(transaction?.type || 'deposit');
   const { transactionId } = useParams();
+  const actionData = useActionData<ActionResponse<ActionData>>();
+  const transition = useTransition();
 
   useEffect(() => {
     if (transaction?.type) {
@@ -100,19 +84,30 @@ export default function TransactionIdPage() {
     return <div>Transaction not found</div>;
   }
   return (
-    <div className="fixed top-0 bottom-0 left-0 right-0 md:relative bg-white p-5 md:p-0">
+    <div className="fixed top-0 bottom-0 left-0 right-0 md:relative p-5 md:p-0">
       <h3 className="text-lg mb-3 divide-y-2 text-center">Edit Transaction</h3>
+      {actionData?.errors?.formErrors
+        ? actionData.errors.formErrors.map((message: string) => {
+          return <ErrorText>{message}</ErrorText>;
+        })
+        : null}
       <Form method="post" key={transaction.id}>
         <div className="space-y-4">
           <div>
             <label htmlFor="description" className="inline-block mb-1">
-              Description
+              Description{' '}
+              {actionData?.errors?.fieldErrors?.description && (
+                <ErrorText>{actionData.errors.fieldErrors.description[0]}</ErrorText>
+              )}
             </label>
             <input type="text" name="description" required defaultValue={transaction.description} />
           </div>
           <div>
             <label htmlFor="amount" className="inline-block mb-1">
-              Amount
+              Amount{' '}
+              {actionData?.errors?.fieldErrors?.amount && (
+                <ErrorText>{actionData.errors.fieldErrors.amount[0]}</ErrorText>
+              )}
             </label>
             <input
               type="text"
@@ -123,7 +118,10 @@ export default function TransactionIdPage() {
           </div>
           <div>
             <label htmlFor="stackId" className="inline-block mb-1">
-              Stack
+              Stack{' '}
+              {actionData?.errors?.fieldErrors?.stackId && (
+                <ErrorText>{actionData.errors.fieldErrors.stackId[0]}</ErrorText>
+              )}
             </label>
             <select
               id="stackId"
@@ -142,6 +140,8 @@ export default function TransactionIdPage() {
           <div>
             <input type="hidden" name="type" id="trans-type" value={transactionType} />
             <input type="hidden" name="id" id="transactionId" value={transactionId} />
+
+            {actionData?.errors?.fieldErrors?.type && <ErrorText>{actionData.errors.fieldErrors.type[0]}</ErrorText>}
             <ToggleGroup.Root
               type="single"
               value={transactionType}
@@ -162,14 +162,14 @@ export default function TransactionIdPage() {
               </ToggleGroup.Item>
             </ToggleGroup.Root>
           </div>
-          <div className="flex flex-col items-center space-y-2">
+          <fieldset disabled={transition.state !== 'idle'} className="flex flex-col items-center space-y-2">
             <Button type="submit" variant="outline" className="w-full">
-              Save
+              {transition.state === 'submitting' ? 'Saving' : 'Save'}
             </Button>
             <Link to="/transactions" className="hover:text-purple-700">
               Cancel
             </Link>
-          </div>
+          </fieldset>
         </div>
       </Form>
     </div>
