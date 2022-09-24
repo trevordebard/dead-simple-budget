@@ -1,6 +1,6 @@
 import { Budget } from '@prisma/client';
 import { useState } from 'react';
-import { Form, useSubmit, useTransition } from 'remix';
+import { Form, useSubmit, useTransition } from '@remix-run/react';
 import { PencilAltIcon } from '@heroicons/react/outline';
 import { XIcon, CheckIcon } from '@heroicons/react/solid';
 import { centsToDollars } from '~/utils/money-fns';
@@ -38,6 +38,7 @@ export function BudgetTotal({ budget }: { budget: Budget }) {
     return (
       <Form method="post" action="/budget" className="text-xl flex justify-center  space-x-1">
         <input type="hidden" name="_action" value="update-total" />
+        <input type="hidden" name="budgetId" value={budget.id} />
         <input
           type="text"
           name="total"

@@ -1,27 +1,20 @@
-import { redirect } from 'remix';
-import { User, Stack } from '@prisma/client';
+import { Budget } from '@prisma/client';
 import { Prisma } from '.prisma/client';
 import { db } from '../db.server';
 import { recalcToBeBudgeted } from './budget.server';
 
-export async function createStack(user: User, stack: { label: string }) {
-  const budget = await db.budget.findFirst({ where: { userId: user.id } });
-
-  if (!budget) {
-    throw Error('TODO');
-  }
-
+export async function createStack(budgetId: Budget['id'], stack: { label: string }) {
   const { label } = stack;
   const newStack = await db.stack.create({
     data: {
       label,
       category: {
         connectOrCreate: {
-          where: { label_budgetId: { label: 'Miscellaneous', budgetId: budget.id } },
-          create: { label: 'Miscellaneous', budgetId: budget.id },
+          where: { label_budgetId: { label: 'Miscellaneous', budgetId } },
+          create: { label: 'Miscellaneous', budgetId },
         },
       },
-      budget: { connect: { id: budget.id } },
+      budget: { connect: { id: budgetId } },
     },
   });
   return newStack;

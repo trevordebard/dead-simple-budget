@@ -33,6 +33,7 @@
         "radix": 0,
         "no-underscore-dangle": 0,
         "import/extensions": 0,
+        "default-param-last": 0,
         "import/prefer-default-export": 0,
         "semi": 1,
         "react/jsx-filename-extension": [

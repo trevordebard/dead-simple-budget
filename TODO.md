@@ -12,6 +12,7 @@
 - [ ] Animate Outlets coming in and out
 - [ ] Figure out how to secure edit stack/transaction actions to ensure the authenticated user can only edit their own transactions
   - or determine if a POSt request to the page would be blocked from an outside source
+- [ ] Explore PlanetScale & fly.io db free tiers and cleanup unused DigitalOcean assets
 
 ## User
 - [x] Give users example stacks and transaction when their account is first created
@@ -19,11 +20,13 @@
 - [x] Update user's total balance
 - [ ] Should budgets/stacks reset monthly? 
 - [ ] Optimistic UI when adding and removing Stacks and Stack Categories from budget
+- [ ] why does adding a stack cause total to be blank briefly
 
 ## Cleanup
 - [x] Base button styles
 - [ ] Relocate tailwind files to same folder
 - [ ] Determine error handling strategy
+  - Add catch boundaries in nested routes
 - [ ] Move commonly used snippets in loader functions into reusable functions
 
 ## Transactions
@@ -33,6 +36,8 @@
 - [x] Edit transaction form
 - [x] Edit transaction side effects
 - [x] Refactor edit transaction logic into separate function
+- [ ] Add ability to select date when adding a transaction
+- [ ] Add ability to select category when adding a transaction
 - [ ] Should side effects be a state machine??
 - [x] Edit transaction should have ability to modify deposit/withdrawal
 - [ ] There should be an option to remove stack/select no stack when editing a transaction

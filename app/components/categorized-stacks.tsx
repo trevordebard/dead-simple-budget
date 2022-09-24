@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client';
 import { useEffect, useState } from 'react';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
-import { useFetcher } from 'remix';
+import { useFetcher } from '@remix-run/react';
 import { DraggableItem } from '~/components/beautiful-dnd-wrappers/draggable-item';
 import { DroppableList } from '~/components/beautiful-dnd-wrappers/droppable-list';
 import { EditableStack } from '~/components/editable-stack';

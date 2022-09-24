@@ -1,50 +1,16 @@
-import { ActionFunction, Form, Link, LoaderFunction, redirect, useLoaderData } from 'remix';
+import { ActionFunction, json, LoaderFunction } from '@remix-run/node';
+import { Form, Link, useActionData, useLoaderData } from '@remix-run/react';
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { ZodError } from 'zod';
 import { db } from '~/utils/db.server';
 import { createTransactionAndUpdBudget } from '~/utils/server/index.server';
 import { Button } from '~/components/button';
-import { Stack } from '.prisma/client';
+import { Stack, Budget, Transaction } from '.prisma/client';
 import { dollarsToCents } from '~/utils/money-fns';
 import { requireAuthenticatedUser } from '~/utils/server/user-utils.server';
-
-// TODO: error handling
-export const action: ActionFunction = async ({ request }) => {
-  const user = await requireAuthenticatedUser(request);
-  const budget = await db.budget.findFirst({ where: { userId: user.id } });
-
-  const formData = await request.formData();
-
-  const description = String(formData.get('description'));
-  const amountInput = String(formData.get('amount'));
-
-  // StackId is allowed to be null when creating a transaction. Automatically casting to a number would set the value to 0
-  const stackId = formData.get('stack') ? String(formData.get('stack')) : null;
-  const type = String(formData.get('trans-type'));
-
-  if (!amountInput || !description || !type || !budget) {
-    throw Error('TODO');
-  }
-
-  let amountInCents = dollarsToCents(amountInput);
-
-  if (type === 'withdrawal') {
-    amountInCents *= -1;
-  }
-
-  const newTransactionInput = {
-    description,
-    amount: amountInCents,
-    stackId,
-    budgetId: budget.id,
-    date: new Date(),
-    type,
-  };
-
-  await createTransactionAndUpdBudget(newTransactionInput, budget.id);
-
-  return redirect('/transactions');
-};
+import { ErrorText } from '~/components/error-text';
+import { TransactionSchema } from '~/utils/shared/validation';
 
 export const loader: LoaderFunction = async ({ request }) => {
   const user = await requireAuthenticatedUser(request);
@@ -53,26 +19,102 @@ export const loader: LoaderFunction = async ({ request }) => {
   return stacks;
 };
 
+type ActionData = {
+  success: boolean;
+  formErrors?: string[];
+  fieldErrors?: {
+    [k: string]: string[];
+  };
+  data?: Transaction;
+};
+
+const badRequest = (data: ActionData) => json(data, { status: 400 });
+
+export const action: ActionFunction = async ({ request }) => {
+  const user = await requireAuthenticatedUser(request);
+  let budget: Budget | null;
+  try {
+    budget = await db.budget.findFirst({ where: { userId: user.id } });
+  } catch (e) {
+    return badRequest({ success: false, formErrors: ['Unable to find budget for user'] });
+  }
+  if (!budget) {
+    return badRequest({ success: false, formErrors: ['Unable to find budget for user'] });
+  }
+
+  const formData = await request.formData();
+
+  try {
+    const { description, amount, stackId, type } = TransactionSchema.parse({
+      stackId: formData.get('stackId'),
+      description: formData.get('description'),
+      amount: formData.get('amount'),
+      type: formData.get('trans-type'),
+    });
+
+    let amountInCents = dollarsToCents(amount);
+
+    if (type === 'withdrawal') {
+      amountInCents *= -1;
+    }
+
+    const newTransactionInput = {
+      description,
+      amount: amountInCents,
+      stackId,
+      budgetId: budget.id,
+      date: new Date(),
+      type,
+    };
+    const transaction = await createTransactionAndUpdBudget(newTransactionInput, budget.id);
+    return { success: true, data: transaction };
+  } catch (e) {
+    console.error(e);
+    if (e instanceof ZodError) {
+      return badRequest({ success: false, ...e.flatten() });
+    }
+    return badRequest({ success: false, formErrors: ['An unknown error occurred'] });
+  }
+};
+
 export default function NewTransaction() {
+  const formRef = useRef<HTMLFormElement>(null);
   const [transactionType, setTransactionType] = useState<string>('deposit');
   const stacks = useLoaderData<Stack[] | null>();
+  const actionData = useActionData<ActionData>();
+
+  useEffect(() => {
+    if (actionData?.success) {
+      formRef.current?.reset();
+    }
+  }, [actionData]);
 
   return (
     <div className="fixed top-0 bottom-0 left-0 right-0 md:relative bg-white p-5 md:p-0">
       <h3 className="text-lg mb-3 divide-y-2 text-center">New Transaction</h3>
-      <Form method="post" className="space-y-4">
+      <Form method="post" id="new-transaction" ref={formRef} className="space-y-4">
+        {actionData?.formErrors?.map((message) => (
+          <ErrorText>{message}</ErrorText>
+        ))}
         <div>
-          <label htmlFor="description">Description</label>
-          <input type="text" name="description" id="description-input" required />
+          <label htmlFor="description">
+            Description{' '}
+            {actionData?.fieldErrors?.description && <ErrorText>{actionData.fieldErrors.description[0]}</ErrorText>}
+          </label>
+          <input required type="text" name="description" id="description-input" />
         </div>
         <div>
-          <label htmlFor="amount">Amount</label>
-          <input type="text" name="amount" id="amount-input" required />
+          <label htmlFor="amount">
+            Amount {actionData?.fieldErrors?.amount && <ErrorText>{actionData.fieldErrors.amount[0]}</ErrorText>}
+          </label>
+          <input required type="text" name="amount" id="amount-input" />
         </div>
         <div>
-          <label htmlFor="stack">Stack</label>
-          <select name="stack" id="stack-input" className="w-full">
-            <option value="" disabled selected>
+          <label htmlFor="stackId">
+            Stack {actionData?.fieldErrors?.stackId && <ErrorText>{actionData.fieldErrors.stackId[0]}</ErrorText>}
+          </label>
+          <select name="stackId" id="stackId" className="w-full">
+            <option selected disabled>
               Choose a Stack
             </option>
             {stacks?.map((stack) => (
@@ -83,6 +125,7 @@ export default function NewTransaction() {
           </select>
         </div>
         <div>
+          {actionData?.fieldErrors?.type && <ErrorText>{actionData.fieldErrors?.type[0]}</ErrorText>}
           <input type="hidden" name="trans-type" id="trans-type" value={transactionType} />
           <ToggleGroup.Root
             type="single"

@@ -5,7 +5,6 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-
 }
 
 model StackCategory {
@@ -32,6 +31,7 @@ model Stack {
   budget          Budget         @relation(fields: [budgetId], references: [id], onDelete: Cascade)
 
   Transaction Transaction[]
+
   @@unique([label, budgetId])
 }
 

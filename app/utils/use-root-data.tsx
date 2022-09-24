@@ -1,4 +1,4 @@
-import { useMatches } from 'remix';
+import { useMatches } from '@remix-run/react';
 import { RootLoaderData } from '~/root';
 
 export function useRootData(): RootLoaderData {
