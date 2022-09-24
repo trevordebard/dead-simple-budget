@@ -20,6 +20,7 @@
 - [x] Update user's total balance
 - [ ] Should budgets/stacks reset monthly? 
 - [ ] Optimistic UI when adding and removing Stacks and Stack Categories from budget
+- [ ] why does adding a stack cause total to be blank briefly
 
 ## Cleanup
 - [x] Base button styles
