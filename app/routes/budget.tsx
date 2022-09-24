@@ -1,30 +1,23 @@
-import { ActionFunction, json, LoaderFunction } from '@remix-run/node';
+import { ActionFunction, json, LoaderArgs } from '@remix-run/node';
 import { Form, Outlet, useLoaderData, useTransition } from '@remix-run/react';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure';
 import { useEffect, useRef, useState } from 'react';
-import { User } from '@prisma/client';
 import { resetServerContext } from 'react-beautiful-dnd';
 import { PlusCircleIcon } from '@heroicons/react/outline';
-import { Stack, Budget } from '.prisma/client';
+import z from 'zod';
 import { db } from '~/utils/db.server';
 import { createStack } from '~/utils/server/index.server';
 import { ContentAction, ContentLayout, ContentMain } from '~/components/layout';
 import { Button } from '~/components/button';
 import { recalcToBeBudgeted } from '~/utils/server/budget.server';
-import CategorizedStacks, { CategoryWithStack } from '../components/categorized-stacks';
+import CategorizedStacks from '../components/categorized-stacks';
 import { requireAuthenticatedUser } from '~/utils/server/user-utils.server';
 import { BudgetTotal } from '~/components/budget-total';
 import { dollarsToCents } from '~/utils/money-fns';
 import { createCategoriesOptimistically } from '~/utils/ui/stack-categories';
 
-type IndexData = {
-  user: User;
-  categorized: CategoryWithStack[];
-  budget: Budget;
-};
-
-export const loader: LoaderFunction = async ({ request }) => {
-  const user = await requireAuthenticatedUser(request);
+export async function loader(args: LoaderArgs) {
+  const user = await requireAuthenticatedUser(args.request);
   const categorized = await db.stackCategory.findMany({
     where: { budget: { user: { id: user.id } } },
     include: { Stack: true },
@@ -34,11 +27,17 @@ export const loader: LoaderFunction = async ({ request }) => {
     include: { stackCategories: { include: { Stack: true } } },
   });
 
+  if (!categorized || categorized.length < 1) {
+    throw Error('hmm');
+  }
+
   // Required for server rendering the drag and drop stack categories
   resetServerContext();
 
   return json({ categorized, user, budget });
-};
+}
+
+const zPossibleActions = z.enum(['add-stack', 'add-category', 'edit-stack', 'update-total']);
 
 export const action: ActionFunction = async ({ request }) => {
   const user = await requireAuthenticatedUser(request);
@@ -49,50 +48,28 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   const formData = await request.formData();
+  const rawAction = formData.get('_action');
+  const parsedAction = zPossibleActions.safeParse(rawAction);
 
-  if (formData.get('_action') === 'add-stack') {
-    const label = String(formData.get('new-stack'));
-    const newStack = await createStack(user, { label });
-    return newStack;
+  if (!parsedAction.success) {
+    throw Error('TODO');
   }
 
-  if (formData.get('_action') === 'add-category') {
-    const label = String(formData.get('new-category'));
-    const newCategory = await db.stackCategory.create({ data: { label, budgetId: budget.id } });
-    return newCategory;
-  }
-
-  // Edit stack amount
-  if (formData.get('_action') === 'edit-stack') {
-    // Action input is no longer needed
-    formData.delete('_action');
-
-    // Use array of promises to increase efficiency and avoid using await in a forEach loop,
-    // which would cause recalcToBeBudgeted to be run prior to stack update completion
-    const promises: Promise<Stack>[] = [];
-    formData.forEach((value, key) => {
-      promises.push(
-        db.stack.update({
-          where: { label_budgetId: { budgetId: budget.id, label: key } },
-          data: { amount: dollarsToCents(value) },
-        })
-      );
-    });
-
-    try {
-      await Promise.all(promises);
-    } catch (e) {
-      console.log('error??');
-    }
-
-    await recalcToBeBudgeted({ budgetId: budget.id });
-  }
-  if (formData.get('_action') === 'update-total') {
-    const total = Number(formData.get('total'));
-
-    const newBudget = await db.budget.update({ where: { id: budget.id }, data: { total: dollarsToCents(total) } });
-    const recalcedBudget = await recalcToBeBudgeted({ budget: newBudget });
-    return recalcedBudget;
+  switch (parsedAction.data) {
+    case 'add-category':
+      addCategoryAction(formData);
+      break;
+    case 'add-stack':
+      addStackAction(formData);
+      break;
+    case 'edit-stack':
+      editStackAction(formData);
+      break;
+    case 'update-total':
+      updateTotalAction(formData);
+      break;
+    default:
+      console.error('this should not happen');
   }
 
   return json({ success: true }, { status: 200 });
@@ -100,7 +77,7 @@ export const action: ActionFunction = async ({ request }) => {
 
 // https://remix.run/guides/routing#index-routes
 export default function BudgetPage() {
-  const data = useLoaderData<IndexData>();
+  const data = useLoaderData<typeof loader>();
   const [isDisclosureOpen, setIsDisclosureOpen] = useState(false);
   const transition = useTransition();
   const isAddingStack = transition.submission && transition.submission.formData.get('_action') === 'add-stack';
@@ -111,6 +88,10 @@ export default function BudgetPage() {
       addStackFormRef?.current?.reset();
     }
   }, [isAddingStack]);
+
+  if (!data.budget || !data.categorized) {
+    return null;
+  }
 
   return (
     <ContentLayout>
@@ -128,6 +109,7 @@ export default function BudgetPage() {
               <Form method="post" id="add-category-form">
                 <div className="flex justify-between space-x-4 items-center">
                   <input type="text" name="new-category" placeholder="New Category Name" />
+                  <input type="hidden" name="budgetId" value={data.budget.id} />
                   <Button type="submit" variant="outline" className="border" name="_action" value="add-category">
                     Add
                   </Button>
@@ -145,6 +127,7 @@ export default function BudgetPage() {
         )}
         <Form method="post" id="add-stack-form" className="mt-5" ref={addStackFormRef}>
           <fieldset disabled={transition.state !== 'idle'} className="flex justify-between space-x-4 items-center">
+            <input type="hidden" name="budgetId" value={data.budget.id} />
             <input type="text" name="new-stack" required placeholder="New Stack Name" />
             <Button type="submit" className="whitespace-nowrap" name="_action" value="add-stack">
               Add Stack
@@ -157,4 +140,45 @@ export default function BudgetPage() {
       </ContentAction>
     </ContentLayout>
   );
+}
+
+async function addStackAction(formData: FormData) {
+  // TODO: verify stack id and budget id belong to authenticated user
+  const budgetId = formData.get('budgetId') as string;
+  const label = String(formData.get('new-stack'));
+  const newStack = await createStack(budgetId, { label });
+  return newStack;
+}
+
+async function updateTotalAction(formData: FormData) {
+  // TODO: verify stack id and budget id belong to authenticated user
+  const total = Number(formData.get('total'));
+  const budgetId = formData.get('budgetId') as string;
+
+  const newBudget = await db.budget.update({ where: { id: budgetId }, data: { total: dollarsToCents(total) } });
+  const recalcedBudget = await recalcToBeBudgeted({ budget: newBudget });
+  return recalcedBudget;
+}
+
+async function editStackAction(formData: FormData) {
+  // TODO: verify stack id and budget id belong to authenticated user
+  const amount = formData.get('amount') as string;
+  const stackId = formData.get('stackId') as string;
+  const budgetId = formData.get('budgetId') as string;
+  // Loop through form data because input elements will have different keys
+
+  await db.stack.update({
+    where: { id: stackId },
+    data: { amount: dollarsToCents(amount) },
+  });
+
+  await recalcToBeBudgeted({ budgetId });
+}
+
+async function addCategoryAction(formData: FormData) {
+  const label = String(formData.get('new-category'));
+  const budgetId = formData.get('budgetId') as string;
+
+  const newCategory = await db.stackCategory.create({ data: { label, budgetId } });
+  return newCategory;
 }

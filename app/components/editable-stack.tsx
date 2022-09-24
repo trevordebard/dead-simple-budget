@@ -11,9 +11,11 @@ export function EditableStack({ stack }: { stack: Stack }) {
       <div className="flex items-center space-x-3">
         <stackFetcher.Form method="post" action="/budget" key={stack.id}>
           <input type="hidden" name="_action" value="edit-stack" />
+          <input type="hidden" name="stackId" value={stack.id} />
+          <input type="hidden" name="budgetId" value={stack.budgetId} />
           <input
             type="text"
-            name={stack.label}
+            name="amount"
             id={stack.id.toString()}
             defaultValue={centsToDollars(stack.amount)}
             className="bg-inherit text-right border-none max-w-xs w-32 hover:bg-gray-200 px-4"

@@ -38,6 +38,7 @@ export function BudgetTotal({ budget }: { budget: Budget }) {
     return (
       <Form method="post" action="/budget" className="text-xl flex justify-center  space-x-1">
         <input type="hidden" name="_action" value="update-total" />
+        <input type="hidden" name="budgetId" value={budget.id} />
         <input
           type="text"
           name="total"
