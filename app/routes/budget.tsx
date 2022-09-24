@@ -126,9 +126,9 @@ export default function BudgetPage() {
           <CategorizedStacks categorized={data.categorized} />
         )}
         <Form method="post" id="add-stack-form" className="mt-5" ref={addStackFormRef}>
-          <fieldset disabled={transition.state !== 'idle'} className="flex justify-between space-x-4 items-center">
+          <fieldset disabled={transition.state !== 'idle'} className="flex">
             <input type="hidden" name="budgetId" value={data.budget.id} />
-            <input type="text" name="new-stack" required placeholder="New Stack Name" />
+            <input type="text" name="new-stack" required placeholder="New Stack Name" className="mr-2" />
             <Button type="submit" className="whitespace-nowrap" name="_action" value="add-stack">
               Add Stack
             </Button>
