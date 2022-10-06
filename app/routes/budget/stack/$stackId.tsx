@@ -46,7 +46,7 @@ export const action: ActionFunction = async ({ request }) => {
   const formAction: StackIdAction = PossibleActionsEnum.parse(form.get('_action'));
 
   if (formAction === 'save-stack') {
-    const { formData, errors } = await validateAction<ActionData>({
+    const { formData, errors } = await validateAction({
       schema: SaveStackSchema,
       formData: form,
     });

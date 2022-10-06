@@ -1,4 +1,5 @@
-import { z, ZodError, Schema } from 'zod';
+import { z, ZodError, ZodSchema } from 'zod';
+import { DateTime } from 'luxon';
 
 // TODO: find a new file for this
 export type ActionResponse<FormSchema> = {
@@ -8,18 +9,18 @@ export type ActionResponse<FormSchema> = {
   };
 };
 
-type ValidationInput = {
-  schema: Schema;
+type ValidationInput<T> = {
+  schema: ZodSchema<T>;
   formData: FormData;
 };
 
-export async function validateAction<ActionInput>({ schema, formData }: ValidationInput) {
+export async function validateAction<Schema>({ schema, formData }: ValidationInput<Schema>) {
   const body = Object.fromEntries(formData);
   try {
-    const input = schema.parse(body) as ActionInput;
+    const input = schema.parse(body) as Schema;
     return { formData: input, errors: null };
   } catch (e) {
-    const errors = e as ZodError<ActionInput>;
+    const errors = e as ZodError<Schema>;
     console.log('--------');
     console.log(e);
     console.log('--------');
@@ -31,11 +32,12 @@ export async function validateAction<ActionInput>({ schema, formData }: Validati
 
 export const TransactionSchema = z.object({
   stackId: z.nullable(z.string().optional()), // TODO: make not nullable once default select value is figured out
-  description: z.string().nonempty('Required'),
+  description: z.string().min(1, 'Required'),
   amount: z.preprocess(
     (num) => parseFloat(z.string().parse(num).replace(',', '')), // strip commas and convert to number
     z.number({ invalid_type_error: 'Expected a number' }).min(1, 'Required')
   ),
+  date: z.preprocess((d) => DateTime.fromISO(d as string).toJSDate(), z.date()),
   type: z.enum(['withdrawal', 'deposit']),
 });
 
