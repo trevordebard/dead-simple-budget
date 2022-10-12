@@ -2,8 +2,9 @@ import { ActionArgs, LoaderArgs } from '@remix-run/node';
 import { Form, Link, useParams, useTransition } from '@remix-run/react';
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
 import { useEffect, useState } from 'react';
-import z from 'zod';
+import { z } from 'zod';
 import { typedjson, useTypedActionData, useTypedLoaderData, redirect } from 'remix-typedjson';
+import { DateTime } from 'luxon';
 import { db } from '~/utils/db.server';
 import { Button } from '~/components/button';
 import { centsToDollars, dollarsToCents } from '~/utils/money-fns';
@@ -46,7 +47,7 @@ export async function action({ request, params }: ActionArgs) {
     return badRequest({ errors });
   }
 
-  const { description, amount, stackId, type, id } = formData;
+  const { description, amount, stackId, type, id, date } = formData;
 
   const amountInCents = dollarsToCents(amount);
 
@@ -57,6 +58,7 @@ export async function action({ request, params }: ActionArgs) {
     stackId,
     budget,
     type,
+    date,
   });
 
   return redirect('/transactions');
@@ -81,9 +83,7 @@ export default function TransactionIdPage() {
     <div className="fixed top-0 bottom-0 left-0 right-0 md:relative p-5 md:p-0">
       <h3 className="text-lg mb-3 divide-y-2 text-center">Edit Transaction</h3>
       {actionData?.errors?.formErrors
-        ? actionData.errors.formErrors.map((message: string) => {
-          return <ErrorText>{message}</ErrorText>;
-        })
+        ? actionData.errors.formErrors.map((message: string) => <ErrorText>{message}</ErrorText>)
         : null}
       <Form method="post" key={transaction.id}>
         <div className="space-y-4">
@@ -132,9 +132,24 @@ export default function TransactionIdPage() {
             </select>
           </div>
           <div>
+            <label htmlFor="date">
+              Date{' '}
+              {actionData?.errors?.fieldErrors?.date && (
+                <ErrorText>{actionData?.errors?.fieldErrors.date[0]}</ErrorText>
+              )}
+            </label>
+            <input
+              required
+              type="date"
+              name="date"
+              id="date-input"
+              className="block w-full"
+              defaultValue={DateTime.fromJSDate(transaction.date, { zone: 'UTC' }).toFormat('yyyy-MM-dd')}
+            />
+          </div>
+          <div>
             <input type="hidden" name="type" id="trans-type" value={transactionType} />
             <input type="hidden" name="id" id="transactionId" value={transactionId} />
-
             {actionData?.errors?.fieldErrors?.type && <ErrorText>{actionData.errors.fieldErrors.type[0]}</ErrorText>}
             <ToggleGroup.Root
               type="single"

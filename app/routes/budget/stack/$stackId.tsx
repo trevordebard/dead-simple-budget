@@ -91,9 +91,7 @@ export default function StackId() {
     <div className="fixed top-0 bottom-0 left-0 right-0 md:relative p-5 md:p-0">
       <h3 className="text-lg mb-3 divide-y-2 text-center">Edit Stack</h3>
       {actionData?.errors?.formErrors
-        ? actionData.errors.formErrors.map((message: string) => {
-          return <ErrorText>{message}</ErrorText>;
-        })
+        ? actionData.errors.formErrors.map((message: string) => <ErrorText>{message}</ErrorText>)
         : null}
       <Form method="post" key={stack.id}>
         <input type="hidden" name="stackId" value={stack.id} />
