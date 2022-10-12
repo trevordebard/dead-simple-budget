@@ -1,5 +1,5 @@
-import { LoaderFunction } from '@remix-run/node';
-import { Form, Link, Outlet, useLoaderData } from '@remix-run/react';
+import { json, LoaderArgs, LoaderFunction } from '@remix-run/node';
+import { Form, Link, Outlet, useFetchers, useLoaderData, useTransition } from '@remix-run/react';
 import { useState } from 'react';
 import { DateTime } from 'luxon';
 import { CurrencyDollarIcon } from '@heroicons/react/outline';
@@ -15,7 +15,8 @@ type LoaderData = {
     stack: Stack | null;
   })[];
 };
-export const loader: LoaderFunction = async ({ request }): Promise<LoaderData> => {
+
+export async function loader({ request }: LoaderArgs) {
   const user = await requireAuthenticatedUser(request);
   const budget = await db.budget.findFirst({ where: { userId: user.id } });
 
@@ -24,11 +25,27 @@ export const loader: LoaderFunction = async ({ request }): Promise<LoaderData> =
   }
 
   const transactions = await db.transaction.findMany({ where: { budgetId: budget.id }, include: { stack: true } });
-  return { transactions };
-};
+  return json({ transactions });
+}
 
 export default function TransactionsPage() {
-  const { transactions } = useLoaderData<LoaderData>();
+  const { transactions } = useLoaderData<typeof loader>();
+  const transition = useTransition();
+  const fetchers = useFetchers();
+
+  if (!transactions) {
+    return null;
+  }
+
+  // fetchers.map((f) => {
+  //   if (f.submission?.action === '/transactions/new') {
+  //     transactions.push({
+  //       amount: f.submission.formData.get('amount'),
+  //       description: f.submission.formData.get('description'),
+  //     });
+  //   }
+  //   return null;
+  // });
 
   return (
     <ContentLayout>
@@ -84,7 +101,7 @@ export function TransactionCard({ transaction }: iTransactionCardProps) {
       </div>
       <div>
         <p className="text-right">${centsToDollars(amount)}</p>
-        <p className="text-zinc-600">{DateTime.fromISO(String(date)).toFormat('yyyy-MM-dd')}</p>
+        <p className="text-zinc-600">{DateTime.fromISO(String(date), { zone: 'UTC' }).toFormat('yyyy-MM-dd')}</p>
       </div>
     </div>
   );

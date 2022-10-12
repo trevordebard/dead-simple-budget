@@ -37,7 +37,7 @@ export const TransactionSchema = z.object({
     (num) => parseFloat(z.string().parse(num).replace(',', '')), // strip commas and convert to number
     z.number({ invalid_type_error: 'Expected a number' }).min(1, 'Required')
   ),
-  date: z.preprocess((d) => DateTime.fromISO(d as string).toJSDate(), z.date()),
+  date: z.preprocess((d) => DateTime.fromISO(d as string, { zone: 'UTC' }).toJSDate(), z.date()),
   type: z.enum(['withdrawal', 'deposit']),
 });
 
