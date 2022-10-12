@@ -30,7 +30,7 @@ export async function validateAction<Schema>({ schema, formData }: ValidationInp
   }
 }
 
-export const TransactionSchema = z.object({
+export const NewTransactionSchema = z.object({
   stackId: z.nullable(z.string().optional()), // TODO: make not nullable once default select value is figured out
   description: z.string().min(1, 'Required'),
   amount: z.preprocess(
@@ -41,7 +41,7 @@ export const TransactionSchema = z.object({
   type: z.enum(['withdrawal', 'deposit']),
 });
 
-export const EditTransactionSchema = TransactionSchema.extend({
+export const EditTransactionSchema = NewTransactionSchema.extend({
   stackId: z.nullable(z.string()),
   id: z.string(),
 });

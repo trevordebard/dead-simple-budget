@@ -1,30 +1,29 @@
-import { ActionArgs, json, LoaderFunction, redirect } from '@remix-run/node';
-import { Link, useActionData, useFetcher, useLoaderData } from '@remix-run/react';
+import { ActionArgs, json, LoaderArgs, redirect, SerializeFrom } from '@remix-run/node';
+import { Link, useFetcher, useLoaderData } from '@remix-run/react';
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
 import { z } from 'zod';
 import { useRef, useState } from 'react';
 import { db } from '~/utils/db.server';
 import { createTransactionAndUpdBudget } from '~/utils/server/index.server';
 import { Button } from '~/components/button';
-import { Stack, Budget } from '.prisma/client';
+import { Budget } from '.prisma/client';
 import { dollarsToCents } from '~/utils/money-fns';
 import { requireAuthenticatedUser } from '~/utils/server/user-utils.server';
 import { ErrorText } from '~/components/error-text';
-import { ActionResponse, TransactionSchema, validateAction } from '~/utils/shared/validation';
+import { ActionResponse, NewTransactionSchema, validateAction } from '~/utils/shared/validation';
 
-export const loader: LoaderFunction = async ({ request }) => {
+export const loader = async ({ request }: LoaderArgs) => {
   const user = await requireAuthenticatedUser(request);
   const budget = await db.budget.findFirst({ where: { userId: user.id }, include: { stacks: true } });
   const stacks = budget?.stacks;
-  return stacks;
+  return json(stacks);
 };
 
-type ActionData = z.infer<typeof TransactionSchema>;
+type ActionData = z.infer<typeof NewTransactionSchema>;
 const badRequest = (data: ActionResponse<ActionData>) => json(data, { status: 400 });
 
 export async function action({ request }: ActionArgs) {
   const user = await requireAuthenticatedUser(request);
-
   let budget: Budget | null;
   try {
     budget = await db.budget.findFirst({ where: { userId: user.id } });
@@ -38,7 +37,7 @@ export async function action({ request }: ActionArgs) {
   const rawFormData = await request.formData();
   try {
     const { formData, errors } = await validateAction({
-      schema: TransactionSchema,
+      schema: NewTransactionSchema,
       formData: rawFormData,
     });
     if (errors) {
@@ -73,9 +72,9 @@ export async function action({ request }: ActionArgs) {
 export default function NewTransaction() {
   const formRef = useRef<HTMLFormElement>(null);
   const [transactionType, setTransactionType] = useState<string>('deposit');
-  const stacks = useLoaderData<Stack[] | null>();
-  const actionData = useActionData();
-  const fetcher = useFetcher<typeof action>();
+  const stacks = useLoaderData<typeof loader>();
+  const fetcher = useFetcher<SerializeFrom<typeof action>>();
+  const actionData = fetcher.data;
 
   return (
     <div className="fixed top-0 bottom-0 left-0 right-0 md:relative p-5 md:p-0">
