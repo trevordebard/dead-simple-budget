@@ -1,9 +1,9 @@
-import { ActionFunction, json, LoaderFunction, redirect } from '@remix-run/node';
-import { Form, Link, useActionData, useLoaderData, useParams, useTransition } from '@remix-run/react';
+import { ActionArgs, LoaderArgs } from '@remix-run/node';
+import { Form, Link, useParams, useTransition } from '@remix-run/react';
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
 import { useEffect, useState } from 'react';
 import z from 'zod';
-import type { Transaction, Stack } from '@prisma/client';
+import { typedjson, useTypedActionData, useTypedLoaderData, redirect } from 'remix-typedjson';
 import { db } from '~/utils/db.server';
 import { Button } from '~/components/button';
 import { centsToDollars, dollarsToCents } from '~/utils/money-fns';
@@ -12,12 +12,7 @@ import { requireAuthenticatedUser } from '~/utils/server/user-utils.server';
 import { ActionResponse, EditTransactionSchema, validateAction } from '~/utils/shared/validation';
 import { ErrorText } from '~/components/error-text';
 
-interface LoaderData {
-  transaction?: Transaction;
-  stacks: Stack[];
-}
-
-export const loader: LoaderFunction = async ({ params, request }) => {
+export async function loader({ request, params }: LoaderArgs) {
   const user = await requireAuthenticatedUser(request);
   const transactionPromise = db.transaction.findFirst({
     where: { id: String(params.transactionId), budget: { userId: user.id } },
@@ -26,13 +21,13 @@ export const loader: LoaderFunction = async ({ params, request }) => {
 
   const [transaction, stacks] = await Promise.all([transactionPromise, stacksPromise]);
 
-  return json({ transaction, stacks });
-};
+  return typedjson({ transaction, stacks });
+}
 
 type ActionData = z.infer<typeof EditTransactionSchema>;
-const badRequest = (data: ActionResponse<ActionData>) => json(data, { status: 400 });
+const badRequest = (data: ActionResponse<ActionData>) => typedjson(data, { status: 400 });
 
-export const action: ActionFunction = async ({ request, params }) => {
+export async function action({ request, params }: ActionArgs) {
   const user = await requireAuthenticatedUser(request);
 
   // TODO:z Refactor side effects below into separate function
@@ -42,7 +37,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     throw Error('TODO');
   }
   const rawFormData = await request.formData();
-  const { formData, errors } = await validateAction<ActionData>({
+  const { formData, errors } = await validateAction({
     formData: rawFormData,
     schema: EditTransactionSchema,
   });
@@ -65,15 +60,14 @@ export const action: ActionFunction = async ({ request, params }) => {
   });
 
   return redirect('/transactions');
-};
+}
 
 export default function TransactionIdPage() {
-  const { transaction, stacks } = useLoaderData<LoaderData>();
+  const { transaction, stacks } = useTypedLoaderData<typeof loader>();
   const [transactionType, setTransactionType] = useState<string>(transaction?.type || 'deposit');
   const { transactionId } = useParams();
-  const actionData = useActionData<ActionResponse<ActionData>>();
+  const actionData = useTypedActionData<typeof action>();
   const transition = useTransition();
-
   useEffect(() => {
     if (transaction?.type) {
       setTransactionType(transaction?.type);
