@@ -21,6 +21,7 @@
 - [ ] Should budgets/stacks reset monthly? 
 - [ ] Optimistic UI when adding and removing Stacks and Stack Categories from budget
 - [ ] why does adding a stack cause total to be blank briefly
+- [ ] Rename/delete stack categories
 
 ## Cleanup
 - [x] Base button styles
@@ -36,8 +37,9 @@
 - [x] Edit transaction form
 - [x] Edit transaction side effects
 - [x] Refactor edit transaction logic into separate function
-- [ ] Add ability to select date when adding a transaction
-- [ ] Add ability to select category when adding a transaction
+- [x] Add ability to select date when adding a transaction
+- [ ] Optimistic UI when adding a transaction
+  - useFetchers can be used for this
 - [ ] Should side effects be a state machine??
 - [x] Edit transaction should have ability to modify deposit/withdrawal
 - [ ] There should be an option to remove stack/select no stack when editing a transaction
