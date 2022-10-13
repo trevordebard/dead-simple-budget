@@ -20,8 +20,9 @@
 - [x] Update user's total balance
 - [ ] Should budgets/stacks reset monthly? 
 - [ ] Optimistic UI when adding and removing Stacks and Stack Categories from budget
-- [ ] why does adding a stack cause total to be blank briefly
 - [ ] Rename/delete stack categories
+- [ ] Consider showing budgeted / spent / available on budget page instead of just available
+- [ ] Add plus signs next to each stack category that allow user to add stack directly into the category
 
 ## Cleanup
 - [x] Base button styles
@@ -57,3 +58,4 @@
 - [ ] Validate input in the edit stack amount input in /budget
 - [x] Go back a route to /budget after successfully updating a stack
 - [x] Add ability to delete stacks
+- [ ] Color code stacks that go negative

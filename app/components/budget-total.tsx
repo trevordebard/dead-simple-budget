@@ -10,8 +10,12 @@ export function BudgetTotal({ budget }: { budget: Budget }) {
   const transition = useTransition();
   const submit = useSubmit();
 
-  // Optimistic UI response
-  if (transition.submission) {
+  // // Optimistic UI response
+  if (
+    transition.location?.pathname === '/budget' &&
+    transition.submission &&
+    !!transition.submission.formData.get('total')
+  ) {
     const newTotal = transition.submission.formData.get('total');
     const change = Number(newTotal) - budget.total / 100;
     const newToBeBudgeted = budget.toBeBudgeted / 100 + change;
