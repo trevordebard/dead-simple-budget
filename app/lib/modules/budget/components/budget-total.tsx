@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Form, useSubmit, useTransition } from '@remix-run/react';
 import { PencilAltIcon } from '@heroicons/react/outline';
 import { XIcon, CheckIcon } from '@heroicons/react/solid';
-import { centsToDollars } from '~/utils/money-fns';
+import { centsToDollars } from '~/lib/modules/money/money-utils';
 
 export function BudgetTotal({ budget }: { budget: Budget }) {
   const [isEditing, setIsEditing] = useState<boolean>(false);

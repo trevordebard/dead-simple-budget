@@ -1,7 +1,7 @@
 import { Authenticator, GoogleStrategy } from 'remix-auth';
 import { User } from '@prisma/client';
-import { sessionStorage } from '~/auth/session.server';
-import { findOrCreateUser } from '~/utils/server/user-utils.server';
+import { sessionStorage } from '~/lib/modules/auth/session.server';
+import { findOrCreateUser } from '~/lib/modules/user/utils/user.server';
 
 export const authenticator = new Authenticator<User>(sessionStorage);
 

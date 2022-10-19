@@ -1,10 +1,10 @@
 import { ActionFunction, LoaderFunction, redirect } from '@remix-run/node';
 import { Form, useLoaderData } from '@remix-run/react';
 import { StackCategory } from '.prisma/client';
-import { db } from '~/utils/db.server';
-import { deleteStackCateogry } from '~/utils/server/index.server';
+import { db } from '~/lib/db.server';
 import { Button } from '~/components/button';
-import { requireAuthenticatedUser } from '~/utils/server/user-utils.server';
+import { requireAuthenticatedUser } from '~/lib/modules/user/utils/user.server';
+import { deleteStackCateogry } from '~/lib/modules/stack-categories/utils/stack-category.server';
 
 interface LoaderData {
   category: StackCategory;

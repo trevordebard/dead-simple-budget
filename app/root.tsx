@@ -3,9 +3,9 @@ import { json, LoaderFunction, MetaFunction } from '@remix-run/node';
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useCatch } from '@remix-run/react';
 import * as React from 'react';
 import { User } from '@prisma/client';
-import styles from './tailwind.css';
+import styles from './styles/tailwind.css';
 import globalStylesUrl from '~/styles/global.css';
-import { getAuthenticatedUser } from './utils/server/user-utils.server';
+import { getAuthenticatedUser } from './lib/modules/user/utils/user.server';
 import { Nav } from './components/nav';
 
 export type RootLoaderData = {
@@ -103,7 +103,7 @@ function Document({ children, title }: { children: React.ReactNode; title?: stri
         <Meta />
         <Links />
       </head>
-      <body className="w-screen h-screen">
+      <body className="w-screen h-screen  ">
         {children}
         <ScrollRestoration />
         <Scripts />

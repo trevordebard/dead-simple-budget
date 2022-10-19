@@ -17,12 +17,12 @@
 ## User
 - [x] Give users example stacks and transaction when their account is first created
 ## Budget
-- [x] Update user's total balance
+- [ ] Rename/delete stack categories
+- [ ] Add plus signs next to each stack category that allow user to add stack directly into the category
+- [ ] Consider showing budgeted / spent / available on budget page instead of just available
 - [ ] Should budgets/stacks reset monthly? 
 - [ ] Optimistic UI when adding and removing Stacks and Stack Categories from budget
-- [ ] Rename/delete stack categories
-- [ ] Consider showing budgeted / spent / available on budget page instead of just available
-- [ ] Add plus signs next to each stack category that allow user to add stack directly into the category
+- [x] Update user's total balance
 
 ## Cleanup
 - [x] Base button styles
@@ -32,6 +32,8 @@
 - [ ] Move commonly used snippets in loader functions into reusable functions
 
 ## Transactions
+- [ ] Edit transaction should have delete button
+- [ ] Sort transactions by date on /transactions
 - [x] Create transaction side effects
   - [x] Remove full budget from AuthenticatedUser
 - [x] Create transaction stack input should be dropdown
@@ -43,11 +45,9 @@
   - useFetchers can be used for this
 - [ ] Should side effects be a state machine??
 - [x] Edit transaction should have ability to modify deposit/withdrawal
-- [ ] There should be an option to remove stack/select no stack when editing a transaction
-- [ ] Edit transaction should have delete button
-- [ ] Sort transactions by date on /transactions
-- [ ] Inline edit transaction?
 - [ ] Import transactions from bank
+- [ ] There should be an option to remove stack/select no stack when editing a transaction
+- [ ] Inline edit transaction?
 
 ## Stacks
 - [x] Edit stack side effects

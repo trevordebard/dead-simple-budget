@@ -3,13 +3,18 @@ import { Form, Link, useActionData, useLoaderData, useTransition } from '@remix-
 import { TrashIcon, XIcon } from '@heroicons/react/solid';
 import { z } from 'zod';
 import { Stack, StackCategory } from '.prisma/client';
-import { db } from '~/utils/db.server';
+import { db } from '~/lib/db.server';
 import { Button } from '~/components/button';
-import { centsToDollars, dollarsToCents } from '~/utils/money-fns';
-import { requireAuthenticatedUser } from '~/utils/server/user-utils.server';
-import { updateStack } from '~/utils/server/stack.server';
+import { centsToDollars, dollarsToCents } from '~/lib/modules/money/money-utils';
+import { requireAuthenticatedUser } from '~/lib/modules/user/utils/user.server';
+import { updateStack } from '~/lib/server/stack.server';
 import { ErrorText } from '~/components/error-text';
-import { ActionResponse, DeleteStackSchema, SaveStackSchema, validateAction } from '~/utils/shared/validation';
+import {
+  ActionResponse,
+  DeleteStackSchema,
+  SaveStackSchema,
+  validateAction,
+} from '~/lib/modules/validation/validation';
 
 const badRequest = (data: ActionResponse<ActionData>) => json(data, { status: 400 });
 
@@ -88,7 +93,7 @@ export default function StackId() {
   const transition = useTransition();
 
   return (
-    <div className="fixed top-0 bottom-0 left-0 right-0 md:relative p-5 md:p-0">
+    <div className="fixed top-0 bottom-0 left-0 right-0 md:relative p-5 md:p-0 bg-white">
       <h3 className="text-lg mb-3 divide-y-2 text-center">Edit Stack</h3>
       {actionData?.errors?.formErrors
         ? actionData.errors.formErrors.map((message: string) => <ErrorText>{message}</ErrorText>)

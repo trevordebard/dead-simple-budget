@@ -1,5 +1,5 @@
 import { db } from '../db.server';
-import { recalcToBeBudgeted } from './budget.server';
+import { recalcToBeBudgeted } from '../modules/budget/utils/budget.server';
 
 type UpdateFields = {
   stackId: string;

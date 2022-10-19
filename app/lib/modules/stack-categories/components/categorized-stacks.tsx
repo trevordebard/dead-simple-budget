@@ -4,8 +4,8 @@ import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import { useFetcher } from '@remix-run/react';
 import { DraggableItem } from '~/components/beautiful-dnd-wrappers/draggable-item';
 import { DroppableList } from '~/components/beautiful-dnd-wrappers/droppable-list';
-import { EditableStack } from '~/components/editable-stack';
-import { recalcStackPositions } from '~/utils/shared/stack-utils';
+import { EditableStack } from '~/lib/modules/stacks/components/editable-stack';
+import { recalcStackPositions } from '~/lib/modules/stacks/utils/stack';
 
 export type CategoryWithStack = Prisma.StackCategoryGetPayload<{ include: { Stack: true } }>;
 

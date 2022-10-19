@@ -3,14 +3,14 @@ import { Link, useFetcher, useLoaderData } from '@remix-run/react';
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
 import { z } from 'zod';
 import { useRef, useState } from 'react';
-import { db } from '~/utils/db.server';
-import { createTransactionAndUpdBudget } from '~/utils/server/index.server';
+import { db } from '~/lib/db.server';
 import { Button } from '~/components/button';
 import { Budget } from '.prisma/client';
-import { dollarsToCents } from '~/utils/money-fns';
-import { requireAuthenticatedUser } from '~/utils/server/user-utils.server';
+import { dollarsToCents } from '~/lib/modules/money/money-utils';
+import { requireAuthenticatedUser } from '~/lib/modules/user/utils/user.server';
 import { ErrorText } from '~/components/error-text';
-import { ActionResponse, NewTransactionSchema, validateAction } from '~/utils/shared/validation';
+import { ActionResponse, NewTransactionSchema, validateAction } from '~/lib/modules/validation/validation';
+import { createTransactionAndUpdBudget } from '~/lib/modules/transactions/utils/transaction.server';
 
 export const loader = async ({ request }: LoaderArgs) => {
   const user = await requireAuthenticatedUser(request);

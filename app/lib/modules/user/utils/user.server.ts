@@ -1,7 +1,7 @@
 import { Prisma, User } from '@prisma/client';
 import { redirect } from '@remix-run/node';
-import { authenticator } from '~/auth/auth.server';
-import { db } from '../db.server';
+import { authenticator } from '~/lib/modules/auth/auth.server';
+import { db } from '../../../db.server';
 
 export async function getAuthenticatedUser(request: Request): Promise<User | null> {
   const user = await authenticator.isAuthenticated(request);

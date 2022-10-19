@@ -5,16 +5,16 @@ import { useEffect, useRef, useState } from 'react';
 import { resetServerContext } from 'react-beautiful-dnd';
 import { PlusCircleIcon } from '@heroicons/react/outline';
 import z from 'zod';
-import { db } from '~/utils/db.server';
-import { createStack } from '~/utils/server/index.server';
+import { db } from '~/lib/db.server';
 import { ContentAction, ContentLayout, ContentMain } from '~/components/layout';
+import { recalcToBeBudgeted } from '~/lib/modules/budget/utils/budget.server';
+import CategorizedStacks from '../lib/modules/stack-categories/components/categorized-stacks';
+import { requireAuthenticatedUser } from '~/lib/modules/user/utils/user.server';
+import { BudgetTotal } from '~/lib/modules/budget/components/budget-total';
+import { dollarsToCents } from '~/lib/modules/money/money-utils';
+import { createCategoriesOptimistically } from '~/lib/modules/stack-categories/utils/stack-category';
+import { createStack } from '~/lib/modules/stacks/utils/stack.server';
 import { Button } from '~/components/button';
-import { recalcToBeBudgeted } from '~/utils/server/budget.server';
-import CategorizedStacks from '../components/categorized-stacks';
-import { requireAuthenticatedUser } from '~/utils/server/user-utils.server';
-import { BudgetTotal } from '~/components/budget-total';
-import { dollarsToCents } from '~/utils/money-fns';
-import { createCategoriesOptimistically } from '~/utils/ui/stack-categories';
 
 export async function loader(args: LoaderArgs) {
   const user = await requireAuthenticatedUser(args.request);

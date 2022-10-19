@@ -1,5 +1,5 @@
-import { LoaderFunction, redirect } from "@remix-run/node";
-import { authenticator } from '~/auth/auth.server';
+import { LoaderFunction, redirect } from '@remix-run/node';
+import { authenticator } from '~/lib/modules/auth/auth.server';
 
 export const loader: LoaderFunction = async ({ request }) => {
   const user = await authenticator.isAuthenticated(request);

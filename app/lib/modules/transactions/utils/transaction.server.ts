@@ -1,45 +1,6 @@
-import { Budget } from '@prisma/client';
 import { Prisma } from '.prisma/client';
-import { db } from '../db.server';
-import { recalcToBeBudgeted } from './budget.server';
-
-export async function createStack(budgetId: Budget['id'], stack: { label: string }) {
-  const { label } = stack;
-  const newStack = await db.stack.create({
-    data: {
-      label,
-      category: {
-        connectOrCreate: {
-          where: { label_budgetId: { label: 'Miscellaneous', budgetId } },
-          create: { label: 'Miscellaneous', budgetId },
-        },
-      },
-      budget: { connect: { id: budgetId } },
-    },
-  });
-  return newStack;
-}
-
-// TODO: derive these types from the prsimamodel
-interface DeleteStackCategoryInput {
-  categoryId: string;
-  budgetId: string;
-}
-export async function deleteStackCateogry({ categoryId, budgetId }: DeleteStackCategoryInput) {
-  const misc = await db.stackCategory.findFirst({
-    where: { label: 'Miscellaneous', budgetId },
-  });
-  if (!misc) {
-    throw Error('Cannot delete stack category if Miscellaneous category does not exist');
-  }
-  if (misc.id === categoryId) {
-    throw Error('Cannot delete miscellaneous stack category');
-  }
-
-  // Change stacks within stack category to be in miscellaneous category
-  await db.stack.updateMany({ where: { stackCategoryId: categoryId }, data: { stackCategoryId: misc.id } });
-  await db.stackCategory.delete({ where: { id: categoryId } });
-}
+import { db } from '~/lib/db.server';
+import { recalcToBeBudgeted } from '../../budget/utils/budget.server';
 
 export async function createTransactionAndUpdBudget(
   transactionData: Prisma.TransactionUncheckedCreateInput,
