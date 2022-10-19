@@ -1,8 +1,9 @@
 import { ActionArgs, json, LoaderArgs, redirect, SerializeFrom } from '@remix-run/node';
-import { Link, useFetcher, useLoaderData } from '@remix-run/react';
+import { Form, Link, useFetcher, useLoaderData } from '@remix-run/react';
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
 import { z } from 'zod';
 import { useRef, useState } from 'react';
+import { ErrorMessages, Field, FormContextProvider, FormValidations, useValidatedInput } from 'remix-validity-state';
 import { db } from '~/utils/db.server';
 import { createTransactionAndUpdBudget } from '~/utils/server/index.server';
 import { Button } from '~/components/button';
@@ -21,6 +22,27 @@ export const loader = async ({ request }: LoaderArgs) => {
 
 type ActionData = z.infer<typeof NewTransactionSchema>;
 const badRequest = (data: ActionResponse<ActionData>) => json(data, { status: 400 });
+
+const formValidations: FormValidations = {
+  description: {
+    required: true,
+  },
+  amount: { required: true },
+  stackId: { required: true },
+  budgetId: { required: true },
+  date: { type: 'date', required: true },
+  type: {
+    required: true,
+    isExpected(val) {
+      return val === 'deposit' || val === 'withdrawal';
+    },
+  },
+};
+
+const errorMessages: ErrorMessages = {
+  valueMissing: 'This field is required',
+  required: 'required',
+};
 
 export async function action({ request }: ActionArgs) {
   const user = await requireAuthenticatedUser(request);
@@ -70,16 +92,19 @@ export async function action({ request }: ActionArgs) {
 }
 
 export default function NewTransaction() {
-  const formRef = useRef<HTMLFormElement>(null);
-  const [transactionType, setTransactionType] = useState<string>('deposit');
-  const stacks = useLoaderData<typeof loader>();
-  const fetcher = useFetcher<SerializeFrom<typeof action>>();
-  const actionData = fetcher.data;
+  // const formRef = useRef<HTMLFormElement>(null);
+  // const [transactionType, setTransactionType] = useState<string>('deposit');
+  // const stacks = useLoaderData<typeof loader>();
+  // const fetcher = useFetcher<SerializeFrom<typeof action>>();
+  // const actionData = fetcher.data;
 
   return (
     <div className="fixed top-0 bottom-0 left-0 right-0 md:relative p-5 md:p-0">
       <h3 className="text-lg mb-3 divide-y-2 text-center">New Transaction</h3>
-      <fetcher.Form method="post" id="new-transaction" ref={formRef} className="space-y-4">
+      <FormContextProvider value={{ formValidations, errorMessages }}>
+        <Field name="description" label="description" />
+      </FormContextProvider>
+      {/* <fetcher.Form method="post" id="new-transaction" ref={formRef} className="space-y-4">
         {actionData?.errors?.formErrors?.map((message) => (
           <ErrorText>{message}</ErrorText>
         ))}
@@ -157,7 +182,7 @@ export default function NewTransaction() {
             Cancel
           </Link>
         </div>
-      </fetcher.Form>
+      </fetcher.Form> */}
     </div>
   );
 }
