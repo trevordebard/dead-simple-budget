@@ -1,6 +1,6 @@
 import { Prisma } from '.prisma/client';
 import { db } from '~/lib/db.server';
-import { recalcToBeBudgeted } from '../../budget/utils/budget.server';
+import { recalcToBeBudgeted } from '../budget/budget-utils.server';
 
 export async function createTransactionAndUpdBudget(
   transactionData: Prisma.TransactionUncheckedCreateInput,

@@ -5,16 +5,11 @@ import { z } from 'zod';
 import { Stack, StackCategory } from '.prisma/client';
 import { db } from '~/lib/db.server';
 import { Button } from '~/components/button';
-import { centsToDollars, dollarsToCents } from '~/lib/modules/money/money-utils';
-import { requireAuthenticatedUser } from '~/lib/modules/user/utils/user.server';
-import { updateStack } from '~/lib/server/stack.server';
+import { centsToDollars, dollarsToCents } from '~/lib/modules/money';
+import { requireAuthenticatedUser } from '~/lib/modules/user';
+import { updateStack } from '~/lib/modules/stacks';
 import { ErrorText } from '~/components/error-text';
-import {
-  ActionResponse,
-  DeleteStackSchema,
-  SaveStackSchema,
-  validateAction,
-} from '~/lib/modules/validation/validation';
+import { ActionResponse, DeleteStackSchema, SaveStackSchema, validateAction } from '~/lib/modules/validation';
 
 const badRequest = (data: ActionResponse<ActionData>) => json(data, { status: 400 });
 

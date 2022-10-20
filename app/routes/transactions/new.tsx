@@ -6,11 +6,11 @@ import { useRef, useState } from 'react';
 import { db } from '~/lib/db.server';
 import { Button } from '~/components/button';
 import { Budget } from '.prisma/client';
-import { dollarsToCents } from '~/lib/modules/money/money-utils';
-import { requireAuthenticatedUser } from '~/lib/modules/user/utils/user.server';
+import { dollarsToCents } from '~/lib/modules/money';
+import { requireAuthenticatedUser } from '~/lib/modules/user';
 import { ErrorText } from '~/components/error-text';
-import { ActionResponse, NewTransactionSchema, validateAction } from '~/lib/modules/validation/validation';
-import { createTransactionAndUpdBudget } from '~/lib/modules/transactions/utils/transaction.server';
+import { ActionResponse, NewTransactionSchema, validateAction } from '~/lib/modules/validation';
+import { createTransactionAndUpdBudget } from '~/lib/modules/transactions';
 
 export const loader = async ({ request }: LoaderArgs) => {
   const user = await requireAuthenticatedUser(request);

@@ -1,5 +1,5 @@
 import { Budget } from '@prisma/client';
-import { db } from '../../../db.server';
+import { db } from '../../db.server';
 
 type RecalcInput = { budget?: Budget; budgetId?: string };
 export async function recalcToBeBudgeted(input: RecalcInput) {

@@ -7,13 +7,11 @@ import { PlusCircleIcon } from '@heroicons/react/outline';
 import z from 'zod';
 import { db } from '~/lib/db.server';
 import { ContentAction, ContentLayout, ContentMain } from '~/components/layout';
-import { recalcToBeBudgeted } from '~/lib/modules/budget/utils/budget.server';
-import CategorizedStacks from '../lib/modules/stack-categories/components/categorized-stacks';
-import { requireAuthenticatedUser } from '~/lib/modules/user/utils/user.server';
-import { BudgetTotal } from '~/lib/modules/budget/components/budget-total';
-import { dollarsToCents } from '~/lib/modules/money/money-utils';
-import { createCategoriesOptimistically } from '~/lib/modules/stack-categories/utils/stack-category';
-import { createStack } from '~/lib/modules/stacks/utils/stack.server';
+import { recalcToBeBudgeted, BudgetTotal } from '~/lib/modules/budget';
+import { CategorizedStacks, createCategoriesOptimistically } from '~/lib/modules/stack-categories';
+import { requireAuthenticatedUser } from '~/lib/modules/user';
+import { dollarsToCents } from '~/lib/modules/money';
+import { createStack } from '~/lib/modules/stacks';
 import { Button } from '~/components/button';
 
 export async function loader(args: LoaderArgs) {

@@ -7,11 +7,11 @@ import { typedjson, useTypedActionData, useTypedLoaderData, redirect } from 'rem
 import { DateTime } from 'luxon';
 import { db } from '~/lib/db.server';
 import { Button } from '~/components/button';
-import { centsToDollars, dollarsToCents } from '~/lib/modules/money/money-utils';
-import { requireAuthenticatedUser } from '~/lib/modules/user/utils/user.server';
-import { ActionResponse, EditTransactionSchema, validateAction } from '~/lib/modules/validation/validation';
+import { centsToDollars, dollarsToCents } from '~/lib/modules/money';
+import { requireAuthenticatedUser } from '~/lib/modules/user';
+import { ActionResponse, EditTransactionSchema, validateAction } from '~/lib/modules/validation';
 import { ErrorText } from '~/components/error-text';
-import { editTransactionAndUpdBudget } from '~/lib/modules/transactions/utils/transaction.server';
+import { editTransactionAndUpdBudget } from '~/lib/modules/transactions';
 
 export async function loader({ request, params }: LoaderArgs) {
   const user = await requireAuthenticatedUser(request);

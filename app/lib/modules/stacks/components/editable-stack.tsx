@@ -1,6 +1,6 @@
 import { Stack } from '@prisma/client';
 import { Link, useFetcher } from '@remix-run/react';
-import { centsToDollars } from '~/lib/modules/money/money-utils';
+import { centsToDollars } from '~/lib/modules/money';
 
 export function EditableStack({ stack }: { stack: Stack }) {
   // using fetcher to avoid redirect

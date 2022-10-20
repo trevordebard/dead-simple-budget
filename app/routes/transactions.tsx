@@ -6,9 +6,9 @@ import { Link, Outlet } from '@remix-run/react';
 import { Stack, Transaction } from '.prisma/client';
 import { ContentAction, ContentLayout, ContentMain } from '~/components/layout';
 import { db } from '~/lib/db.server';
-import { centsToDollars } from '~/lib/modules/money/money-utils';
+import { centsToDollars } from '~/lib/modules/money';
 
-import { requireAuthenticatedUser } from '~/lib/modules/user/utils/user.server';
+import { requireAuthenticatedUser } from '~/lib/modules/user';
 
 export async function loader({ request }: LoaderArgs) {
   const user = await requireAuthenticatedUser(request);

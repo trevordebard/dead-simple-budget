@@ -1,9 +1,7 @@
 import { Authenticator, GoogleStrategy } from 'remix-auth';
 import { User } from '@prisma/client';
-import { sessionStorage } from '~/lib/modules/auth/session.server';
-import { findOrCreateUser } from '~/lib/modules/user/utils/user.server';
-
-export const authenticator = new Authenticator<User>(sessionStorage);
+import { sessionStorage } from '~/lib/modules/auth';
+import { findOrCreateUser } from '~/lib/modules/user';
 
 if (!process.env.GOOGLE_CLIENT_SECRET) {
   throw new Error('Missing GOOGLE_CLIENT_SECRET env');
@@ -15,6 +13,8 @@ if (!process.env.AUTH_CALLBACK_URL) {
   throw new Error('Missing AUTH_CALLBACK_URL env');
 }
 
+const authenticator = new Authenticator<User>(sessionStorage);
+
 authenticator.use(
   new GoogleStrategy(
     {
@@ -25,3 +25,5 @@ authenticator.use(
     async (_, __, ___, profile) => findOrCreateUser(profile.emails[0].value)
   )
 );
+
+export { authenticator };

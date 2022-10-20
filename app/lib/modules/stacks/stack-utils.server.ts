@@ -1,5 +1,23 @@
-import { db } from '../db.server';
-import { recalcToBeBudgeted } from '../modules/budget/utils/budget.server';
+import { Budget } from '@prisma/client';
+import { db } from '~/lib/db.server';
+import { recalcToBeBudgeted } from '../budget/budget-utils.server';
+
+export async function createStack(budgetId: Budget['id'], stack: { label: string }) {
+  const { label } = stack;
+  const newStack = await db.stack.create({
+    data: {
+      label,
+      category: {
+        connectOrCreate: {
+          where: { label_budgetId: { label: 'Miscellaneous', budgetId } },
+          create: { label: 'Miscellaneous', budgetId },
+        },
+      },
+      budget: { connect: { id: budgetId } },
+    },
+  });
+  return newStack;
+}
 
 type UpdateFields = {
   stackId: string;
