@@ -1,7 +1,7 @@
 import { ActionFunction, json, LoaderArgs } from '@remix-run/node';
 import { Form, Outlet, useLoaderData, useTransition } from '@remix-run/react';
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure';
 import { useEffect, useRef, useState } from 'react';
+import * as Accordion from '@radix-ui/react-accordion';
 import { resetServerContext } from 'react-beautiful-dnd';
 import { PlusCircleIcon } from '@heroicons/react/outline';
 import z from 'zod';
@@ -95,27 +95,31 @@ export default function BudgetPage() {
     <ContentLayout>
       <ContentMain>
         <BudgetTotal budget={data.budget} />
-        <Disclosure open={isDisclosureOpen} onChange={() => setIsDisclosureOpen(!isDisclosureOpen)}>
-          <div className="py-2">
-            <DisclosureButton className="outline-none text-left w-full">
-              <div className="flex space-x-1 text-gray-900 hover:text-gray-600 items-center">
-                <PlusCircleIcon className="w-5 h-5" />
-                <p>Category</p>
-              </div>
-            </DisclosureButton>
-            <DisclosurePanel>
-              <Form method="post" id="add-category-form">
-                <div className="flex justify-between space-x-4 items-center">
-                  <input type="text" name="new-category" placeholder="New Category Name" />
-                  <input type="hidden" name="budgetId" value={data.budget.id} />
-                  <Button type="submit" variant="outline" className="border" name="_action" value="add-category">
-                    Add
-                  </Button>
+        <Accordion.Root type="single" collapsible>
+          <Accordion.Item value="add-category-accordion">
+            <Accordion.Header>
+              <Accordion.Trigger >
+                <div className="flex space-x-1 text-gray-900 hover:text-gray-600 items-center">
+                  <PlusCircleIcon className="w-5 h-5" />
+                  <p>Category</p>
                 </div>
-              </Form>
-            </DisclosurePanel>
-          </div>
-        </Disclosure>
+              </Accordion.Trigger>
+            </Accordion.Header>
+            <Accordion.Content >
+              <Accordion.Item value="add-category-form">
+                <Form method="post" id="add-category-form">
+                  <div className="flex justify-between space-x-4 items-center">
+                    <input type="text" name="new-category" placeholder="New Category Name" />
+                    <input type="hidden" name="budgetId" value={data.budget.id} />
+                    <Button type="submit" variant="outline" className="border" name="_action" value="add-category">
+                      Add
+                    </Button>
+                  </div>
+                </Form>
+              </Accordion.Item>
+            </Accordion.Content>
+          </Accordion.Item>
+        </Accordion.Root>
         {isAddingStack ? (
           <CategorizedStacks
             categorized={createCategoriesOptimistically(data.categorized, transition.submission.formData)}
@@ -136,7 +140,7 @@ export default function BudgetPage() {
       <ContentAction>
         <Outlet />
       </ContentAction>
-    </ContentLayout>
+    </ContentLayout >
   );
 }
 
