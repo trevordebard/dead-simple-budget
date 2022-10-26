@@ -3,8 +3,9 @@ import { authenticator } from '~/lib/modules/auth';
 
 export const loader: LoaderFunction = async ({ request }) => {
   const user = await authenticator.isAuthenticated(request);
-  if (user) return redirect('/budget');
-  return null;
+  return await authenticator.isAuthenticated(request, {
+    successRedirect: "/budget",
+  });
 };
 export default function Login() {
   return (

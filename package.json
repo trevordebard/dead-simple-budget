@@ -29,7 +29,8 @@
     "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^18.2.0",
     "remix": "^1.7.0",
-    "remix-auth": "^2.5.0-0",
+    "remix-auth": "^3.3.0",
+    "remix-auth-google": "^1.1.0",
     "remix-typedjson": "^0.1.2",
     "tailwindcss-radix": "^2.6.1",
     "zod": "^3.18.0"
