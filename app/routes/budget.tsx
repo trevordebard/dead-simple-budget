@@ -98,14 +98,14 @@ export default function BudgetPage() {
         <Accordion.Root type="single" collapsible>
           <Accordion.Item value="add-category-accordion">
             <Accordion.Header>
-              <Accordion.Trigger >
+              <Accordion.Trigger>
                 <div className="flex space-x-1 text-gray-900 hover:text-gray-600 items-center">
                   <PlusCircleIcon className="w-5 h-5" />
                   <p>Category</p>
                 </div>
               </Accordion.Trigger>
             </Accordion.Header>
-            <Accordion.Content >
+            <Accordion.Content>
               <Accordion.Item value="add-category-form">
                 <Form method="post" id="add-category-form">
                   <div className="flex justify-between space-x-4 items-center">
@@ -140,7 +140,7 @@ export default function BudgetPage() {
       <ContentAction>
         <Outlet />
       </ContentAction>
-    </ContentLayout >
+    </ContentLayout>
   );
 }
 

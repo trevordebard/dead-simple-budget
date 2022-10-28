@@ -3,10 +3,10 @@ import { json, LoaderFunction, MetaFunction } from '@remix-run/node';
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useCatch } from '@remix-run/react';
 import * as React from 'react';
 import { User } from '@prisma/client';
-import styles from './styles/tailwind.css';
 import globalStylesUrl from '~/styles/global.css';
 import { getAuthenticatedUser } from '~/lib/modules/user';
 import { Nav } from '~/components/nav';
+import styles from './styles/tailwind.css';
 
 export type RootLoaderData = {
   user: User | null;

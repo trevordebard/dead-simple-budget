@@ -1,10 +1,9 @@
-import { LoaderFunction, redirect } from '@remix-run/node';
+import { LoaderFunction } from '@remix-run/node';
 import { authenticator } from '~/lib/modules/auth';
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const user = await authenticator.isAuthenticated(request);
-  return await authenticator.isAuthenticated(request, {
-    successRedirect: "/budget",
+  return authenticator.isAuthenticated(request, {
+    successRedirect: '/budget',
   });
 };
 export default function Login() {

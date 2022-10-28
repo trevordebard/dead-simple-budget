@@ -5,8 +5,8 @@ export const loader: LoaderFunction = () => redirect('/login');
 
 export const action: ActionFunction = async ({ request }) => {
   // return authenticator.authenticate('google', request);
-  return await authenticator.authenticate("google", request, {
-    successRedirect: "/budget",
-    failureRedirect: "/login"
+  return authenticator.authenticate('google', request, {
+    successRedirect: '/budget',
+    failureRedirect: '/login',
   });
 };
