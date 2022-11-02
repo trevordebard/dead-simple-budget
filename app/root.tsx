@@ -3,10 +3,9 @@ import { json, LoaderFunction, MetaFunction } from '@remix-run/node';
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useCatch } from '@remix-run/react';
 import * as React from 'react';
 import { User } from '@prisma/client';
-import globalStylesUrl from '~/styles/global.css';
 import { getAuthenticatedUser } from '~/lib/modules/user';
 import { Nav } from '~/components/nav';
-import styles from './styles/tailwind.css';
+import styles from './styles/app.css';
 
 export type RootLoaderData = {
   user: User | null;
@@ -30,10 +29,7 @@ export const meta: MetaFunction = () => {
 
 // https://remix.run/api/app#links
 export const links: LinksFunction = () => {
-  return [
-    { rel: 'stylesheet', href: globalStylesUrl },
-    { rel: 'stylesheet', href: styles },
-  ];
+  return [{ rel: 'stylesheet', href: styles }];
 };
 
 // https://remix.run/api/conventions#default-export
