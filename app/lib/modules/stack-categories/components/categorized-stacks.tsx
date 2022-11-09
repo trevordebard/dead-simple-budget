@@ -93,10 +93,19 @@ function CategorizedStacks({ categorized }: { categorized: CategoryWithStack[] }
           }}
         >
           <div className="flex flex-col space-y-4">
-            {categorizedStacks.map((c) => {
+            {categorizedStacks.map((c, i) => {
               return (
                 <div key={c.id}>
-                  <h2 className="font-bold">{c.label}</h2>
+                  <div className="flex justify-between">
+                    <h2 className="font-bold">{c.label}</h2>
+                    {i === 0 ? (
+                      <div className="flex space-x-2">
+                        <div className="w-20 font-light text-right">Allocated</div>
+                        <div className="w-20 font-light text-right">Available</div>
+                        <div className="w-4" />
+                      </div>
+                    ) : null}
+                  </div>
                   <div>
                     <DroppableList droppableId={c.id} key={c.id}>
                       {c.Stack.sort((a, b) => a.position - b.position).map((stack, index) => (
