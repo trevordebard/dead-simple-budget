@@ -1,13 +1,13 @@
 import { ActionFunction, json, LoaderArgs } from '@remix-run/node';
 import { Form, Outlet, useLoaderData, useTransition } from '@remix-run/react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import * as Accordion from '@radix-ui/react-accordion';
 import { resetServerContext } from 'react-beautiful-dnd';
 import { PlusCircleIcon } from '@heroicons/react/outline';
 import z from 'zod';
 import { db } from '~/lib/db.server';
 import { ContentAction, ContentLayout, ContentMain } from '~/components/layout';
-import { recalcToBeBudgeted, BudgetTotal } from '~/lib/modules/budget';
+import { recalcToBeBudgeted, BudgetTotal, moveMoney } from '~/lib/modules/budget';
 import { CategorizedStacks, createCategoriesOptimistically } from '~/lib/modules/stack-categories';
 import { requireAuthenticatedUser } from '~/lib/modules/user';
 import { dollarsToCents } from '~/lib/modules/money';
@@ -25,7 +25,7 @@ export async function loader(args: LoaderArgs) {
     include: { stackCategories: { include: { Stack: true } } },
   });
 
-  if (!categorized || categorized.length < 1) {
+  if (!categorized || categorized.length < 1 || !user || !budget) {
     throw Error('hmm');
   }
 
@@ -38,12 +38,7 @@ export async function loader(args: LoaderArgs) {
 const zPossibleActions = z.enum(['add-stack', 'add-category', 'edit-stack', 'update-total']);
 
 export const action: ActionFunction = async ({ request }) => {
-  const user = await requireAuthenticatedUser(request);
-  const budget = await db.budget.findFirst({ where: { userId: user.id } });
-
-  if (!budget) {
-    throw Error('TODO');
-  }
+  await requireAuthenticatedUser(request);
 
   const formData = await request.formData();
   const rawAction = formData.get('_action');
@@ -76,7 +71,6 @@ export const action: ActionFunction = async ({ request }) => {
 // https://remix.run/guides/routing#index-routes
 export default function BudgetPage() {
   const data = useLoaderData<typeof loader>();
-  const [isDisclosureOpen, setIsDisclosureOpen] = useState(false);
   const transition = useTransition();
   const isAddingStack = transition.submission && transition.submission.formData.get('_action') === 'add-stack';
   const addStackFormRef = useRef<HTMLFormElement>(null);
@@ -90,7 +84,6 @@ export default function BudgetPage() {
   if (!data.budget || !data.categorized) {
     return null;
   }
-
   return (
     <ContentLayout>
       <ContentMain>
@@ -167,14 +160,15 @@ async function editStackAction(formData: FormData) {
   const amount = formData.get('amount') as string;
   const stackId = formData.get('stackId') as string;
   const budgetId = formData.get('budgetId') as string;
-  // Loop through form data because input elements will have different keys
 
-  await db.stack.update({
-    where: { id: stackId },
-    data: { amount: dollarsToCents(amount) },
-  });
+  const stack = await db.stack.findUnique({ where: { id: stackId } });
+  if (!stack) {
+    throw Error('Stack not found');
+  }
+  const diff = stack.amount - Math.abs(dollarsToCents(amount));
 
-  await recalcToBeBudgeted({ budgetId });
+  // await recalcToBeBudgeted({ budgetId });
+  moveMoney({ from: stackId, budgetId, amount: diff });
 }
 
 async function addCategoryAction(formData: FormData) {
