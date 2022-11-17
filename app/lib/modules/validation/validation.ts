@@ -50,7 +50,7 @@ export const DeleteStackSchema = z.object({
   stackId: z.string(),
 });
 
-export const SaveStackSchema = z.object({
+export const EditStackSchema = z.object({
   stackId: z.string().min(1, 'Required'),
   label: z.string().min(1, 'Required'),
   amount: z.preprocess(

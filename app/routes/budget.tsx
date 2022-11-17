@@ -7,7 +7,7 @@ import { PlusCircleIcon } from '@heroicons/react/outline';
 import z from 'zod';
 import { db } from '~/lib/db.server';
 import { ContentAction, ContentLayout, ContentMain } from '~/components/layout';
-import { recalcToBeBudgeted, BudgetTotal, moveMoney } from '~/lib/modules/budget';
+import { recalcToBeBudgeted, BudgetTotal } from '~/lib/modules/budget';
 import { CategorizedStacks, createCategoriesOptimistically } from '~/lib/modules/stack-categories';
 import { requireAuthenticatedUser } from '~/lib/modules/user';
 import { dollarsToCents } from '~/lib/modules/money';
@@ -54,9 +54,6 @@ export const action: ActionFunction = async ({ request }) => {
       break;
     case 'add-stack':
       addStackAction(formData);
-      break;
-    case 'edit-stack':
-      editStackAction(formData);
       break;
     case 'update-total':
       updateTotalAction(formData);
@@ -153,22 +150,6 @@ async function updateTotalAction(formData: FormData) {
   const newBudget = await db.budget.update({ where: { id: budgetId }, data: { total: dollarsToCents(total) } });
   const recalcedBudget = await recalcToBeBudgeted({ budget: newBudget });
   return recalcedBudget;
-}
-
-async function editStackAction(formData: FormData) {
-  // TODO: verify stack id and budget id belong to authenticated user
-  const amount = formData.get('amount') as string;
-  const stackId = formData.get('stackId') as string;
-  const budgetId = formData.get('budgetId') as string;
-
-  const stack = await db.stack.findUnique({ where: { id: stackId } });
-  if (!stack) {
-    throw Error('Stack not found');
-  }
-  const diff = stack.amount - Math.abs(dollarsToCents(amount));
-
-  // await recalcToBeBudgeted({ budgetId });
-  moveMoney({ from: stackId, budgetId, amount: diff });
 }
 
 async function addCategoryAction(formData: FormData) {

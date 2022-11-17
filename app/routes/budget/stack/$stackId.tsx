@@ -9,10 +9,10 @@ import { centsToDollars, dollarsToCents } from '~/lib/modules/money';
 import { requireAuthenticatedUser } from '~/lib/modules/user';
 import { updateStack } from '~/lib/modules/stacks';
 import { ErrorText } from '~/components/error-text';
-import { ActionResponse, DeleteStackSchema, SaveStackSchema, validateAction } from '~/lib/modules/validation';
+import { ActionResponse, DeleteStackSchema, EditStackSchema, validateAction } from '~/lib/modules/validation';
 
 const badRequest = (data: ActionResponse<ActionData>) => json(data, { status: 400 });
-
+type ActionData = z.infer<typeof EditStackSchema>;
 interface LoaderData {
   stack: Stack & {
     category: StackCategory | null;
@@ -35,8 +35,7 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   return { stack, categories };
 };
 
-type ActionData = z.infer<typeof SaveStackSchema>;
-const PossibleActionsEnum = z.enum(['save-stack', 'delete-stack']);
+const PossibleActionsEnum = z.enum(['edit-stack', 'delete-stack']);
 type StackIdAction = z.infer<typeof PossibleActionsEnum>;
 
 // TODO: verify the stacks being modified belong to the logged in user
@@ -45,9 +44,9 @@ export const action: ActionFunction = async ({ request }) => {
 
   const formAction: StackIdAction = PossibleActionsEnum.parse(form.get('_action'));
 
-  if (formAction === 'save-stack') {
+  if (formAction === 'edit-stack') {
     const { formData, errors } = await validateAction({
-      schema: SaveStackSchema,
+      schema: EditStackSchema,
       formData: form,
     });
 
@@ -130,7 +129,7 @@ export default function StackId() {
             </select>
           </div>
           <fieldset disabled={transition.state !== 'idle'} className="flex flex-col items-center space-y-2">
-            <Button name="_action" value="save-stack" type="submit" variant="primary" className="w-full">
+            <Button name="_action" value="edit-stack" type="submit" variant="primary" className="w-full">
               {transition.state === 'submitting' ? 'Saving' : 'Save Stack'}
             </Button>
             <div className="flex justify-end space-x-1 w-full">

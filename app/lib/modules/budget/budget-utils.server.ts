@@ -47,16 +47,9 @@ type MoveMoneyInput = MoveMoneyWithBudgetIdInput | MoveMoneyWithStackIdInput;
 export async function moveMoney(input: MoveMoneyInput) {
   let targetStack;
   if (!input.to) {
+    // TODO: Promise.all
     await db.stack.update({ data: { amount: { decrement: input.amount } }, where: { id: input.from } });
     await db.budget.update({ data: { toBeBudgeted: { increment: input.amount } }, where: { id: input.budgetId } });
-
-    // const toBeBudgeted = await db.stack.findUnique({
-    //   where: { label_budgetId: { label: 'To Be Budgeted', budgetId: input.budgetId } },
-    // });
-    // if (!toBeBudgeted) {
-    //   throw Error('This should never happen');
-    // }
-    // targetStack = toBeBudgeted.id;
   } else {
     targetStack = input.to;
     await db.stack.update({ data: { amount: { decrement: input.amount } }, where: { id: input.from } });
