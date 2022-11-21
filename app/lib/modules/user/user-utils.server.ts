@@ -36,6 +36,7 @@ async function createUser(email: string) {
               data: [
                 { label: 'Necessities', position: 10 },
                 { label: 'Fun Money', position: 20 },
+                { label: 'Hidden', position: -1 },
               ],
             },
           },
@@ -70,6 +71,20 @@ async function createUser(email: string) {
             { label: 'Eating Out', stackCategoryId: category.id, budgetId: category.budgetId, position: 10 },
             { label: 'Vacation', stackCategoryId: category.id, budgetId: category.budgetId, position: 20 },
             { label: 'Online Purchases', stackCategoryId: category.id, budgetId: category.budgetId, position: 30 },
+          ],
+        })
+      );
+    } else if (category.label === 'Hidden') {
+      newStackPromises.push(
+        db.stack.createMany({
+          data: [
+            {
+              label: 'To Be Budgeted',
+              amount: 0,
+              position: -1,
+              stackCategoryId: category.id,
+              budgetId: category.budgetId,
+            },
           ],
         })
       );

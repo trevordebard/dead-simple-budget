@@ -5,7 +5,7 @@ import { PencilAltIcon } from '@heroicons/react/outline';
 import { XIcon, CheckIcon } from '@heroicons/react/solid';
 import { centsToDollars } from '~/lib/modules/money';
 
-export function BudgetTotal({ budget }: { budget: Budget }) {
+export function BudgetTotal({ budget, toBeBudgeted }: { budget: Budget; toBeBudgeted: number }) {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const transition = useTransition();
   const submit = useSubmit();
@@ -90,7 +90,7 @@ export function BudgetTotal({ budget }: { budget: Budget }) {
         </span>
       </h2>
       <h2>
-        <span className="font-medium">${centsToDollars(budget.toBeBudgeted)}</span> to be budgeted
+        <span className="font-medium">${centsToDollars(toBeBudgeted)}</span> to be budgeted
       </h2>
     </div>
   );

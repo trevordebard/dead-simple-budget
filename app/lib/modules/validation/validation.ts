@@ -21,9 +21,6 @@ export async function validateAction<Schema>({ schema, formData }: ValidationInp
     return { formData: input, errors: null };
   } catch (e) {
     const errors = e as ZodError<Schema>;
-    console.log('--------');
-    console.log(e);
-    console.log('--------');
     return {
       errors: errors.flatten(),
     };
@@ -35,7 +32,7 @@ export const NewTransactionSchema = z.object({
   description: z.string().min(1, 'Required'),
   amount: z.preprocess(
     (num) => parseFloat(z.string().parse(num).replace(',', '')), // strip commas and convert to number
-    z.number({ invalid_type_error: 'Expected a number' }).min(1, 'Required')
+    z.number({ invalid_type_error: 'Expected a number' })
   ),
   date: z.preprocess((d) => DateTime.fromISO(d as string, { zone: 'UTC' }).toJSDate(), z.date()),
   type: z.enum(['withdrawal', 'deposit']),
@@ -55,7 +52,7 @@ export const EditStackSchema = z.object({
   label: z.string().min(1, 'Required'),
   amount: z.preprocess(
     (num) => parseFloat(z.string().parse(num).replace(',', '')), // strip commas and convert to number
-    z.number({ invalid_type_error: 'Expected a number' }).min(1, 'Required')
+    z.number({ invalid_type_error: 'Expected a number' })
   ),
   categoryId: z.string().min(1),
 });

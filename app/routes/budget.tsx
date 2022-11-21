@@ -8,7 +8,7 @@ import z from 'zod';
 import { db } from '~/lib/db.server';
 import { ContentAction, ContentLayout, ContentMain } from '~/components/layout';
 import { recalcToBeBudgeted, BudgetTotal } from '~/lib/modules/budget';
-import { CategorizedStacks, createCategoriesOptimistically } from '~/lib/modules/stack-categories';
+import { CategorizedStacks, createCategoriesOptimistically, tCategorizedStacks } from '~/lib/modules/stack-categories';
 import { requireAuthenticatedUser } from '~/lib/modules/user';
 import { dollarsToCents } from '~/lib/modules/money';
 import { createStack } from '~/lib/modules/stacks';
@@ -22,8 +22,8 @@ export async function loader(args: LoaderArgs) {
   });
   const budget = await db.budget.findFirst({
     where: { userId: user.id },
-    include: { stackCategories: { include: { Stack: true } } },
   });
+  const toBeBudgeted = getToBeBudgeted(categorized);
 
   if (!categorized || categorized.length < 1 || !user || !budget) {
     throw Error('hmm');
@@ -32,7 +32,7 @@ export async function loader(args: LoaderArgs) {
   // Required for server rendering the drag and drop stack categories
   resetServerContext();
 
-  return json({ categorized, user, budget });
+  return json({ categorized, user, budget, toBeBudgeted });
 }
 
 const zPossibleActions = z.enum(['add-stack', 'add-category', 'edit-stack', 'update-total']);
@@ -84,7 +84,7 @@ export default function BudgetPage() {
   return (
     <ContentLayout>
       <ContentMain>
-        <BudgetTotal budget={data.budget} />
+        <BudgetTotal budget={data.budget} toBeBudgeted={data.toBeBudgeted.amount} />
         <Accordion.Root type="single" collapsible>
           <Accordion.Item value="add-category-accordion">
             <Accordion.Header>
@@ -158,4 +158,13 @@ async function addCategoryAction(formData: FormData) {
 
   const newCategory = await db.stackCategory.create({ data: { label, budgetId } });
   return newCategory;
+}
+
+function getToBeBudgeted(categorized: tCategorizedStacks) {
+  const toBeBudgeted = categorized.find((c) => c.label === 'Hidden')?.Stack.find((s) => s.label === 'To Be Budgeted');
+  if (!toBeBudgeted) {
+    // Create it
+    throw Error('This should not happen');
+  }
+  return toBeBudgeted;
 }

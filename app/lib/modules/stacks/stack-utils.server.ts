@@ -1,6 +1,6 @@
 import { Budget } from '@prisma/client';
 import { db } from '~/lib/db.server';
-import { recalcToBeBudgeted } from '../budget/budget-utils.server';
+import { moveMoney } from '../budget/budget-utils.server';
 
 export async function createStack(budgetId: Budget['id'], stack: { label: string }) {
   const { label } = stack;
@@ -21,23 +21,20 @@ export async function createStack(budgetId: Budget['id'], stack: { label: string
 
 type UpdateFields = {
   stackId: string;
-  amount?: number;
-  label?: string;
+  amount: number;
+  label: string;
   categoryId?: string;
 };
 
-type UpdateOptions = {
-  recalcToBeBudgeted?: boolean;
-};
-export async function updateStack(data: UpdateFields, options: UpdateOptions = { recalcToBeBudgeted: true }) {
+export async function updateStack(data: UpdateFields) {
   const { stackId, categoryId, label, amount } = data;
   const updatedStack = await db.stack.update({
     where: { id: stackId },
-    data: { amount, label, stackCategoryId: categoryId },
+    data: { label, stackCategoryId: categoryId },
     include: { budget: true },
   });
-  if (options.recalcToBeBudgeted) {
-    await recalcToBeBudgeted({ budget: updatedStack.budget });
-  }
+  const diff = updatedStack.amount - Math.abs(amount);
+  moveMoney({ from: stackId, budgetId: updatedStack.budgetId, amount: diff });
+
   return updatedStack;
 }

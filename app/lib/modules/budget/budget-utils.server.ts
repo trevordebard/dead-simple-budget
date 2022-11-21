@@ -46,10 +46,14 @@ type MoveMoneyInput = MoveMoneyWithBudgetIdInput | MoveMoneyWithStackIdInput;
 
 export async function moveMoney(input: MoveMoneyInput) {
   let targetStack;
+
   if (!input.to) {
     // TODO: Promise.all
+    await db.stack.update({
+      where: { label_budgetId: { budgetId: input.budgetId, label: 'To Be Budgeted' } },
+      data: { amount: { increment: input.amount } },
+    });
     await db.stack.update({ data: { amount: { decrement: input.amount } }, where: { id: input.from } });
-    await db.budget.update({ data: { toBeBudgeted: { increment: input.amount } }, where: { id: input.budgetId } });
   } else {
     targetStack = input.to;
     await db.stack.update({ data: { amount: { decrement: input.amount } }, where: { id: input.from } });
