@@ -35,6 +35,15 @@ model Stack {
   @@unique([label, budgetId])
 }
 
+model StackActivityLog {
+  id          String   @id @default(cuid())
+  fromStackId String
+  toStackId   String
+  amount      Int
+  created_at  DateTime @default(now())
+  stackId     String?
+}
+
 model Transaction {
   id                 String   @id @default(cuid())
   plaidTransactionId String?  @unique
@@ -61,7 +70,6 @@ model User {
 model Budget {
   id              String          @id @default(cuid())
   total           Int             @default(0)
-  toBeBudgeted    Int             @default(0)
   stacks          Stack[]
   transactions    Transaction[]
   bankAccounts    BankAccout[]

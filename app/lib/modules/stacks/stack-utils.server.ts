@@ -33,8 +33,17 @@ export async function updateStack(data: UpdateFields) {
     data: { label, stackCategoryId: categoryId },
     include: { budget: true },
   });
-  const diff = updatedStack.amount - Math.abs(amount);
-  moveMoney({ from: stackId, budgetId: updatedStack.budgetId, amount: diff });
+  let diff = updatedStack.amount - Math.abs(amount);
+  diff = Math.abs(diff);
+
+  // if adding money to the stack
+  if (updatedStack.amount < amount) {
+    moveMoney({ to: stackId, amount: diff, budgetId: updatedStack.budgetId, moveType: 'FROM_TO_BE_BUDGETED' });
+  }
+  // if removing money from stack
+  else if (updatedStack.amount > amount) {
+    moveMoney({ from: stackId, budgetId: updatedStack.budgetId, amount: diff, moveType: 'TO_TO_BE_BUDGETED' });
+  }
 
   return updatedStack;
 }
