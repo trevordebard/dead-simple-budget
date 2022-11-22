@@ -17,15 +17,18 @@ export async function recalcToBeBudgeted(input: RecalcInput) {
     throw Error('Invalid input. Budget or budgetId required');
   }
 
-  const stackAggregation = await db.stack.aggregate({ _sum: { amount: true }, where: { budgetId: budget.id } });
+  const stackAggregation = await db.stack.aggregate({
+    _sum: { amount: true },
+    where: { budgetId: budget.id, AND: { label: { not: 'To Be Budgeted' } } },
+  });
   const sumOfStacks = stackAggregation._sum.amount || 0;
   const toBeBudgeted = budget.total - sumOfStacks;
 
-  const updateResponse = await db.budget.update({
-    where: { id: budget.id },
-    data: { toBeBudgeted },
+  const toBeBudgetedStack = await db.stack.update({
+    where: { label_budgetId: { budgetId: budget.id, label: 'To Be Budgeted' } },
+    data: { amount: toBeBudgeted },
   });
-  return updateResponse;
+  return toBeBudgetedStack;
 }
 
 interface MoveMoneyBase {
@@ -45,18 +48,19 @@ interface MoveMoneyWithStackIdInput extends MoveMoneyBase {
 type MoveMoneyInput = MoveMoneyWithBudgetIdInput | MoveMoneyWithStackIdInput;
 
 export async function moveMoney(input: MoveMoneyInput) {
-  let targetStack;
-
   if (!input.to) {
     // TODO: Promise.all
-    await db.stack.update({
+    const toBeBudgeted = await db.stack.update({
       where: { label_budgetId: { budgetId: input.budgetId, label: 'To Be Budgeted' } },
       data: { amount: { increment: input.amount } },
     });
     await db.stack.update({ data: { amount: { decrement: input.amount } }, where: { id: input.from } });
+    await db.stackActivityLog.create({
+      data: { amount: input.amount, fromStackId: input.from, toStackId: toBeBudgeted.id },
+    });
   } else {
-    targetStack = input.to;
     await db.stack.update({ data: { amount: { decrement: input.amount } }, where: { id: input.from } });
-    await db.stack.update({ data: { amount: { increment: input.amount } }, where: { id: targetStack } });
+    await db.stack.update({ data: { amount: { increment: input.amount } }, where: { id: input.to } });
+    await db.stackActivityLog.create({ data: { amount: input.amount, toStackId: input.to, fromStackId: input.from } });
   }
 }

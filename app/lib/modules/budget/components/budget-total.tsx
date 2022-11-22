@@ -18,7 +18,7 @@ export function BudgetTotal({ budget, toBeBudgeted }: { budget: Budget; toBeBudg
   ) {
     const newTotal = transition.submission.formData.get('total');
     const change = Number(newTotal) - budget.total / 100;
-    const newToBeBudgeted = budget.toBeBudgeted / 100 + change;
+    const newToBeBudgeted = toBeBudgeted / 100 + change;
     return (
       <div className="text-xl flex flex-col items-center">
         <h2>
