@@ -5,6 +5,7 @@ import { useFetcher } from '@remix-run/react';
 import { DraggableItem } from '~/components/beautiful-dnd-wrappers/draggable-item';
 import { DroppableList } from '~/components/beautiful-dnd-wrappers/droppable-list';
 import { EditableStack, recalcStackPositions } from '~/lib/modules/stacks';
+import { tSpendingSummary } from '~/lib/modules/transactions';
 
 export type CategoryWithStack = Prisma.StackCategoryGetPayload<{ include: { Stack: true } }>;
 
@@ -69,7 +70,13 @@ const handleStackDrag = (result: DropResult, categories: CategoryWithStack[]): H
   return { updatedCategories: categoriesResult };
 };
 
-function CategorizedStacks({ categorized }: { categorized: CategoryWithStack[] }) {
+function CategorizedStacks({
+  categorized,
+  spendingSummary,
+}: {
+  categorized: CategoryWithStack[];
+  spendingSummary: tSpendingSummary;
+}) {
   const [categorizedStacks, setCategorizedStacks] = useState<CategoryWithStack[]>(categorized);
   const fetcher = useFetcher();
 
@@ -111,7 +118,10 @@ function CategorizedStacks({ categorized }: { categorized: CategoryWithStack[] }
                       <DroppableList droppableId={c.id} key={c.id}>
                         {c.Stack.sort((a, b) => a.position - b.position).map((stack, index) => (
                           <DraggableItem id={stack.id} index={index} key={stack.id}>
-                            <EditableStack stack={stack} />
+                            <EditableStack
+                              stack={stack}
+                              totalSpent={spendingSummary.find((s) => s.stackId === stack.id)?._sum.amount ?? 0}
+                            />
                           </DraggableItem>
                         ))}
                       </DroppableList>

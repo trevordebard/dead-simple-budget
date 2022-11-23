@@ -16,13 +16,26 @@ import { Button } from '~/components/button';
 
 export async function loader(args: LoaderArgs) {
   const user = await requireAuthenticatedUser(args.request);
-  const categorized = await db.stackCategory.findMany({
-    where: { budget: { user: { id: user.id } } },
-    include: { Stack: true },
-  });
+
   const budget = await db.budget.findFirst({
     where: { userId: user.id },
   });
+
+  if (!budget) {
+    throw Error('Unable to find budget');
+  }
+
+  const categorized = await db.stackCategory.findMany({
+    where: { budget: { id: budget.id } },
+    include: { Stack: true },
+  });
+
+  const spendingSummary = await db.transaction.groupBy({
+    by: ['stackId'],
+    where: { budgetId: budget.id },
+    _sum: { amount: true },
+  });
+
   const toBeBudgeted = getToBeBudgeted(categorized);
 
   if (!categorized || categorized.length < 1 || !user || !budget) {
@@ -32,7 +45,7 @@ export async function loader(args: LoaderArgs) {
   // Required for server rendering the drag and drop stack categories
   resetServerContext();
 
-  return json({ categorized, user, budget, toBeBudgeted });
+  return json({ categorized, user, budget, toBeBudgeted, spendingSummary });
 }
 
 const zPossibleActions = z.enum(['add-stack', 'add-category', 'edit-stack', 'update-total']);
@@ -113,9 +126,10 @@ export default function BudgetPage() {
         {isAddingStack ? (
           <CategorizedStacks
             categorized={createCategoriesOptimistically(data.categorized, transition.submission.formData)}
+            spendingSummary={data.spendingSummary}
           />
         ) : (
-          <CategorizedStacks categorized={data.categorized} />
+          <CategorizedStacks categorized={data.categorized} spendingSummary={data.spendingSummary} />
         )}
         <Form method="post" id="add-stack-form" className="mt-5" ref={addStackFormRef}>
           <fieldset disabled={transition.state !== 'idle'} className="flex">

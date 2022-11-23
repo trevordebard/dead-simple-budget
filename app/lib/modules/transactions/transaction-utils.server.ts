@@ -2,52 +2,11 @@ import { Prisma } from '.prisma/client';
 import { db } from '~/lib/db.server';
 import { recalcToBeBudgeted } from '../budget/budget-utils.server';
 
-export async function createTransactionAndUpdBudget(
-  transactionData: Prisma.TransactionUncheckedCreateInput,
-  budgetId: string
-) {
-  const { amount, stackId } = transactionData;
-
+export async function createTransaction(transactionData: Prisma.TransactionUncheckedCreateInput) {
   // Create transaction
-  const createTransactionPromise = db.transaction.create({
+  const transaction = await db.transaction.create({
     data: transactionData,
   });
-
-  // TODO: the below database calls should probably be done in a $transaction
-
-  // Update stack amount
-  let updateStackPromise;
-  let updatedBudgetPromise;
-  if (stackId) {
-    updateStackPromise = db.stack.update({
-      where: { id: stackId },
-      data: { amount: { increment: amount }, budget: { update: { total: { increment: amount } } } },
-      include: { budget: true },
-    });
-  } else {
-    // Only update budget total
-    updatedBudgetPromise = db.budget.update({
-      where: {
-        id: budgetId,
-      },
-      data: {
-        total: { increment: amount },
-      },
-    });
-  }
-
-  const [transaction, stack, updatedBudget] = await Promise.all([
-    createTransactionPromise,
-    updateStackPromise,
-    updatedBudgetPromise,
-  ]);
-
-  // Recalc to be budgeted
-  if (updatedBudget) {
-    await recalcToBeBudgeted({ budget: updatedBudget });
-  } else if (stack?.budget) {
-    await recalcToBeBudgeted({ budget: stack.budget });
-  }
 
   return transaction;
 }

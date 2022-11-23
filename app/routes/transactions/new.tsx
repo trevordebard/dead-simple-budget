@@ -10,7 +10,7 @@ import { dollarsToCents } from '~/lib/modules/money';
 import { requireAuthenticatedUser } from '~/lib/modules/user';
 import { ErrorText } from '~/components/error-text';
 import { ActionResponse, NewTransactionSchema, validateAction } from '~/lib/modules/validation';
-import { createTransactionAndUpdBudget } from '~/lib/modules/transactions';
+import { createTransaction } from '~/lib/modules/transactions';
 
 export const loader = async ({ request }: LoaderArgs) => {
   const user = await requireAuthenticatedUser(request);
@@ -60,7 +60,7 @@ export async function action({ request }: ActionArgs) {
       date,
       type,
     };
-    await createTransactionAndUpdBudget(newTransactionInput, budget.id);
+    await createTransaction(newTransactionInput);
     return redirect('/transactions');
   } catch (e) {
     console.error(e);

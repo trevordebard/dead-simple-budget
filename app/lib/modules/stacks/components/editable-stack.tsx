@@ -4,7 +4,7 @@ import { centsToDollars } from '~/lib/modules/money';
 import { DotsVerticalIcon } from '@heroicons/react/solid';
 import * as React from 'react';
 
-export function EditableStack({ stack }: { stack: Stack }) {
+export function EditableStack({ stack, totalSpent }: { stack: Stack; totalSpent: number }) {
   // using fetcher to avoid redirect
   const stackFetcher = useFetcher();
 
@@ -35,7 +35,7 @@ export function EditableStack({ stack }: { stack: Stack }) {
             className="w-24 text-right p-1 border-none my-1 bg-inherit hover:bg-gray-200"
             onBlur={submitForm}
           />
-          <div className="w-20 text-right">{centsToDollars(stack.amount)}</div>
+          <div className="w-20 text-right">{centsToDollars(stack.amount + totalSpent)}</div>
           <Link to={`/budget/stack/${stack.id}`} className="text-gray-600">
             <DotsVerticalIcon className="w-5 h-5 inline mb-1 cursor-pointer text-zinc-400 hover:text-purple-600" />
           </Link>
