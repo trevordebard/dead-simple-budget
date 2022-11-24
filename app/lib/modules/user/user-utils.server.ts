@@ -30,7 +30,6 @@ async function createUser(email: string) {
       Budget: {
         create: {
           total: 0,
-          toBeBudgeted: 0,
           stackCategories: {
             createMany: {
               data: [
