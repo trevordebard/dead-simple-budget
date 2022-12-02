@@ -71,7 +71,7 @@ export async function action({ request }: ActionArgs) {
 
 export default function NewTransaction() {
   const formRef = useRef<HTMLFormElement>(null);
-  const [transactionType, setTransactionType] = useState<string>('deposit');
+  const [transactionType, setTransactionType] = useState<string>('withdrawal');
   const stacks = useLoaderData<typeof loader>();
   const fetcher = useFetcher<SerializeFrom<typeof action>>();
   const actionData = fetcher.data;
@@ -131,7 +131,7 @@ export default function NewTransaction() {
           <input type="hidden" name="type" id="trans-type" value={transactionType} />
           <ToggleGroup.Root
             type="single"
-            defaultValue="deposit"
+            defaultValue="withdrawal"
             className="inline-flex rounded-md w-full"
             onValueChange={(val) => setTransactionType(val)}
           >
