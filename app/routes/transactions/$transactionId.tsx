@@ -11,7 +11,7 @@ import { centsToDollars, dollarsToCents } from '~/lib/modules/money';
 import { requireAuthenticatedUser } from '~/lib/modules/user';
 import { ActionResponse, EditTransactionSchema, validateAction } from '~/lib/modules/validation';
 import { ErrorText } from '~/components/error-text';
-import { editTransactionAndUpdBudget } from '~/lib/modules/transactions';
+import { editTransaction } from '~/lib/modules/transactions';
 
 export async function loader({ request, params }: LoaderArgs) {
   const user = await requireAuthenticatedUser(request);
@@ -51,12 +51,11 @@ export async function action({ request, params }: ActionArgs) {
 
   const amountInCents = dollarsToCents(amount);
 
-  editTransactionAndUpdBudget({
+  await editTransaction({
     description,
     amount: amountInCents,
     id,
     stackId,
-    budget,
     type,
     date,
   });

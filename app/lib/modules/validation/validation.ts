@@ -34,10 +34,15 @@ export const NewTransactionSchema = z.object({
     (num) => parseFloat(z.string().parse(num).replace(',', '')), // strip commas and convert to number
     z.number({ invalid_type_error: 'Expected a number' })
   ),
-  date: z.preprocess((d) => DateTime.fromISO(d as string, { zone: 'UTC' }).toJSDate(), z.date()),
+  date: z
+    .string()
+    .min(1, 'Required')
+    .transform((d) => DateTime.fromFormat(d, 'yyyy-MM-dd').toJSDate())
+    .or(z.date()),
   type: z.enum(['withdrawal', 'deposit']),
 });
 
+// z.preprocess((d) => DateTime.fromISO(d as string, { zone: 'UTC' }).toJSDate(), z.date()),
 export const EditTransactionSchema = NewTransactionSchema.extend({
   stackId: z.nullable(z.string()),
   id: z.string(),
