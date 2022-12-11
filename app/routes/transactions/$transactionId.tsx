@@ -1,23 +1,19 @@
-import { ActionFunction, json, LoaderFunction, redirect } from '@remix-run/node';
-import { Form, Link, useActionData, useLoaderData, useParams, useTransition } from '@remix-run/react';
+import { ActionArgs, LoaderArgs } from '@remix-run/node';
+import { Form, Link, useParams, useTransition } from '@remix-run/react';
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
 import { useEffect, useState } from 'react';
-import z from 'zod';
-import type { Transaction, Stack } from '@prisma/client';
-import { db } from '~/utils/db.server';
+import { z } from 'zod';
+import { typedjson, useTypedActionData, useTypedLoaderData, redirect } from 'remix-typedjson';
+import { DateTime } from 'luxon';
+import { db } from '~/lib/db.server';
 import { Button } from '~/components/button';
-import { centsToDollars, dollarsToCents } from '~/utils/money-fns';
-import { editTransactionAndUpdBudget } from '~/utils/server/index.server';
-import { requireAuthenticatedUser } from '~/utils/server/user-utils.server';
-import { ActionResponse, EditTransactionSchema, validateAction } from '~/utils/shared/validation';
+import { centsToDollars, dollarsToCents } from '~/lib/modules/money';
+import { requireAuthenticatedUser } from '~/lib/modules/user';
+import { ActionResponse, EditTransactionSchema, validateAction } from '~/lib/modules/validation';
 import { ErrorText } from '~/components/error-text';
+import { editTransaction } from '~/lib/modules/transactions';
 
-interface LoaderData {
-  transaction?: Transaction;
-  stacks: Stack[];
-}
-
-export const loader: LoaderFunction = async ({ params, request }) => {
+export async function loader({ request, params }: LoaderArgs) {
   const user = await requireAuthenticatedUser(request);
   const transactionPromise = db.transaction.findFirst({
     where: { id: String(params.transactionId), budget: { userId: user.id } },
@@ -26,13 +22,13 @@ export const loader: LoaderFunction = async ({ params, request }) => {
 
   const [transaction, stacks] = await Promise.all([transactionPromise, stacksPromise]);
 
-  return json({ transaction, stacks });
-};
+  return typedjson({ transaction, stacks });
+}
 
 type ActionData = z.infer<typeof EditTransactionSchema>;
-const badRequest = (data: ActionResponse<ActionData>) => json(data, { status: 400 });
+const badRequest = (data: ActionResponse<ActionData>) => typedjson(data, { status: 400 });
 
-export const action: ActionFunction = async ({ request, params }) => {
+export async function action({ request, params }: ActionArgs) {
   const user = await requireAuthenticatedUser(request);
 
   // TODO:z Refactor side effects below into separate function
@@ -42,7 +38,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     throw Error('TODO');
   }
   const rawFormData = await request.formData();
-  const { formData, errors } = await validateAction<ActionData>({
+  const { formData, errors } = await validateAction({
     formData: rawFormData,
     schema: EditTransactionSchema,
   });
@@ -51,29 +47,28 @@ export const action: ActionFunction = async ({ request, params }) => {
     return badRequest({ errors });
   }
 
-  const { description, amount, stackId, type, id } = formData;
+  const { description, amount, stackId, type, id, date } = formData;
 
   const amountInCents = dollarsToCents(amount);
 
-  editTransactionAndUpdBudget({
+  await editTransaction({
     description,
     amount: amountInCents,
     id,
     stackId,
-    budget,
     type,
+    date,
   });
 
   return redirect('/transactions');
-};
+}
 
 export default function TransactionIdPage() {
-  const { transaction, stacks } = useLoaderData<LoaderData>();
+  const { transaction, stacks } = useTypedLoaderData<typeof loader>();
   const [transactionType, setTransactionType] = useState<string>(transaction?.type || 'deposit');
   const { transactionId } = useParams();
-  const actionData = useActionData<ActionResponse<ActionData>>();
+  const actionData = useTypedActionData<typeof action>();
   const transition = useTransition();
-
   useEffect(() => {
     if (transaction?.type) {
       setTransactionType(transaction?.type);
@@ -87,9 +82,7 @@ export default function TransactionIdPage() {
     <div className="fixed top-0 bottom-0 left-0 right-0 md:relative p-5 md:p-0">
       <h3 className="text-lg mb-3 divide-y-2 text-center">Edit Transaction</h3>
       {actionData?.errors?.formErrors
-        ? actionData.errors.formErrors.map((message: string) => {
-          return <ErrorText>{message}</ErrorText>;
-        })
+        ? actionData.errors.formErrors.map((message: string) => <ErrorText>{message}</ErrorText>)
         : null}
       <Form method="post" key={transaction.id}>
         <div className="space-y-4">
@@ -138,9 +131,24 @@ export default function TransactionIdPage() {
             </select>
           </div>
           <div>
+            <label htmlFor="date">
+              Date{' '}
+              {actionData?.errors?.fieldErrors?.date && (
+                <ErrorText>{actionData?.errors?.fieldErrors.date[0]}</ErrorText>
+              )}
+            </label>
+            <input
+              required
+              type="date"
+              name="date"
+              id="date-input"
+              className="block w-full"
+              defaultValue={DateTime.fromJSDate(transaction.date, { zone: 'UTC' }).toFormat('yyyy-MM-dd')}
+            />
+          </div>
+          <div>
             <input type="hidden" name="type" id="trans-type" value={transactionType} />
             <input type="hidden" name="id" id="transactionId" value={transactionId} />
-
             {actionData?.errors?.fieldErrors?.type && <ErrorText>{actionData.errors.fieldErrors.type[0]}</ErrorText>}
             <ToggleGroup.Root
               type="single"

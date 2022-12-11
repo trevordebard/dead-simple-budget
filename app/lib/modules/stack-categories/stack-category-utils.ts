@@ -1,4 +1,4 @@
-import { CategoryWithStack } from '~/components/categorized-stacks';
+import { CategoryWithStack } from '~/lib/modules/stack-categories';
 
 // This function can be used to optimistically generate a Stack Categories array when I new stack is created
 export function createCategoriesOptimistically(

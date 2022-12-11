@@ -3,18 +3,22 @@ import { useState } from 'react';
 import { Form, useSubmit, useTransition } from '@remix-run/react';
 import { PencilAltIcon } from '@heroicons/react/outline';
 import { XIcon, CheckIcon } from '@heroicons/react/solid';
-import { centsToDollars } from '~/utils/money-fns';
+import { centsToDollars } from '~/lib/modules/money';
 
-export function BudgetTotal({ budget }: { budget: Budget }) {
+export function BudgetTotal({ budget, toBeBudgeted }: { budget: Budget; toBeBudgeted: number }) {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const transition = useTransition();
   const submit = useSubmit();
 
-  // Optimistic UI response
-  if (transition.submission) {
+  // // Optimistic UI response
+  if (
+    transition.location?.pathname === '/budget' &&
+    transition.submission &&
+    !!transition.submission.formData.get('total')
+  ) {
     const newTotal = transition.submission.formData.get('total');
     const change = Number(newTotal) - budget.total / 100;
-    const newToBeBudgeted = budget.toBeBudgeted / 100 + change;
+    const newToBeBudgeted = toBeBudgeted / 100 + change;
     return (
       <div className="text-xl flex flex-col items-center">
         <h2>
@@ -86,7 +90,7 @@ export function BudgetTotal({ budget }: { budget: Budget }) {
         </span>
       </h2>
       <h2>
-        <span className="font-medium">${centsToDollars(budget.toBeBudgeted)}</span> to be budgeted
+        <span className="font-medium">${centsToDollars(toBeBudgeted)}</span> to be budgeted
       </h2>
     </div>
   );

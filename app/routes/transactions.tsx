@@ -1,21 +1,16 @@
-import { LoaderFunction } from '@remix-run/node';
-import { Form, Link, Outlet, useLoaderData } from '@remix-run/react';
-import { useState } from 'react';
+import { LoaderArgs } from '@remix-run/node';
 import { DateTime } from 'luxon';
 import { CurrencyDollarIcon } from '@heroicons/react/outline';
+import { typedjson, useTypedLoaderData } from 'remix-typedjson';
+import { Link, Outlet } from '@remix-run/react';
 import { Stack, Transaction } from '.prisma/client';
 import { ContentAction, ContentLayout, ContentMain } from '~/components/layout';
-import { db } from '~/utils/db.server';
-import { centsToDollars } from '~/utils/money-fns';
+import { db } from '~/lib/db.server';
+import { centsToDollars } from '~/lib/modules/money';
 
-import { requireAuthenticatedUser } from '~/utils/server/user-utils.server';
+import { requireAuthenticatedUser } from '~/lib/modules/user';
 
-type LoaderData = {
-  transactions: (Transaction & {
-    stack: Stack | null;
-  })[];
-};
-export const loader: LoaderFunction = async ({ request }): Promise<LoaderData> => {
+export async function loader({ request }: LoaderArgs) {
   const user = await requireAuthenticatedUser(request);
   const budget = await db.budget.findFirst({ where: { userId: user.id } });
 
@@ -24,11 +19,11 @@ export const loader: LoaderFunction = async ({ request }): Promise<LoaderData> =
   }
 
   const transactions = await db.transaction.findMany({ where: { budgetId: budget.id }, include: { stack: true } });
-  return { transactions };
-};
+  return typedjson({ transactions });
+}
 
 export default function TransactionsPage() {
-  const { transactions } = useLoaderData<LoaderData>();
+  const { transactions } = useTypedLoaderData<typeof loader>();
 
   return (
     <ContentLayout>
@@ -84,40 +79,8 @@ export function TransactionCard({ transaction }: iTransactionCardProps) {
       </div>
       <div>
         <p className="text-right">${centsToDollars(amount)}</p>
-        <p className="text-zinc-600">{DateTime.fromISO(String(date)).toFormat('yyyy-MM-dd')}</p>
+        <p className="text-zinc-600">{DateTime.fromJSDate(date, { zone: 'UTC' }).toFormat('yyyy-MM-dd')}</p>
       </div>
     </div>
-  );
-}
-
-export function EditableTransactionCard({ transaction }: iTransactionCardProps) {
-  const { description, amount, stack } = transaction;
-  const [isEditing, setIsEditing] = useState<boolean>(false);
-  return (
-    <Form method="post" className="border-b hover:bg-slate-100 md:py-2" onFocus={() => setIsEditing(true)}>
-      <input type="hidden" value={transaction.id} name="transaction-id" />
-      <div className="flex justify-between">
-        <div className="flex flex-col">
-          <input
-            name="description"
-            defaultValue={description}
-            className="bg-transparent hover:bg-slate-300 p-2 rounded-md"
-          />
-          <input name="stack" defaultValue={stack} className="bg-transparent hover:bg-slate-300 p-2 rounded-md" />
-        </div>
-        <div className="text-right flex flex-col">
-          <input name="amount" defaultValue={amount} className="bg-transparent hover:bg-slate-300 p-2 rounded-md" />
-          <input name="amount" defaultValue="2021-12-13" className="bg-transparent hover:bg-slate-300 p-2 rounded-md" />
-        </div>
-      </div>
-      {isEditing ? (
-        <button
-          type="submit"
-          className="flex items-center justify-center px-2 py-1 text-sm border border-gray-300 rounded-lg hover:border-green-600 hover:bg-green-100 focus:border-green-500"
-        >
-          Save
-        </button>
-      ) : null}
-    </Form>
   );
 }

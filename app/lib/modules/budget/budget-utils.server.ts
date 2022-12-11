@@ -1,5 +1,5 @@
 import { Budget } from '@prisma/client';
-import { db } from '../db.server';
+import { db } from '../../db.server';
 
 type RecalcInput = { budget?: Budget; budgetId?: string };
 export async function recalcToBeBudgeted(input: RecalcInput) {
@@ -17,13 +17,16 @@ export async function recalcToBeBudgeted(input: RecalcInput) {
     throw Error('Invalid input. Budget or budgetId required');
   }
 
-  const stackAggregation = await db.stack.aggregate({ _sum: { amount: true }, where: { budgetId: budget.id } });
+  const stackAggregation = await db.stack.aggregate({
+    _sum: { amount: true },
+    where: { budgetId: budget.id, AND: { label: { not: 'To Be Budgeted' } } },
+  });
   const sumOfStacks = stackAggregation._sum.amount || 0;
   const toBeBudgeted = budget.total - sumOfStacks;
 
-  const updateResponse = await db.budget.update({
-    where: { id: budget.id },
-    data: { toBeBudgeted },
+  const toBeBudgetedStack = await db.stack.update({
+    where: { label_budgetId: { budgetId: budget.id, label: 'To Be Budgeted' } },
+    data: { amount: toBeBudgeted },
   });
-  return updateResponse;
+  return toBeBudgetedStack;
 }

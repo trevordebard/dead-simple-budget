@@ -1,7 +1,7 @@
 import { Prisma, User } from '@prisma/client';
 import { redirect } from '@remix-run/node';
-import { authenticator } from '~/auth/auth.server';
-import { db } from '../db.server';
+import { authenticator } from '~/lib/modules/auth/auth.server';
+import { db } from '../../db.server';
 
 export async function getAuthenticatedUser(request: Request): Promise<User | null> {
   const user = await authenticator.isAuthenticated(request);
@@ -30,12 +30,12 @@ async function createUser(email: string) {
       Budget: {
         create: {
           total: 0,
-          toBeBudgeted: 0,
           stackCategories: {
             createMany: {
               data: [
                 { label: 'Necessities', position: 10 },
                 { label: 'Fun Money', position: 20 },
+                { label: 'Hidden', position: -1 },
               ],
             },
           },
@@ -70,6 +70,20 @@ async function createUser(email: string) {
             { label: 'Eating Out', stackCategoryId: category.id, budgetId: category.budgetId, position: 10 },
             { label: 'Vacation', stackCategoryId: category.id, budgetId: category.budgetId, position: 20 },
             { label: 'Online Purchases', stackCategoryId: category.id, budgetId: category.budgetId, position: 30 },
+          ],
+        })
+      );
+    } else if (category.label === 'Hidden') {
+      newStackPromises.push(
+        db.stack.createMany({
+          data: [
+            {
+              label: 'To Be Budgeted',
+              amount: 0,
+              position: -1,
+              stackCategoryId: category.id,
+              budgetId: category.budgetId,
+            },
           ],
         })
       );

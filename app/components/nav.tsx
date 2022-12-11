@@ -1,5 +1,5 @@
 import { Link } from '@remix-run/react';
-import { useRootData } from '~/utils/use-root-data';
+import { useRootData } from '~/lib/hooks/use-root-data';
 import { Button } from './button';
 
 export function Nav() {
