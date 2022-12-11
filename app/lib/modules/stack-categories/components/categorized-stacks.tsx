@@ -108,8 +108,8 @@ function CategorizedStacks({
                       <h2 className="font-bold">{c.label}</h2>
                       {i === 0 ? (
                         <div className="flex space-x-2">
-                          <div className="w-20 font-light text-right">Allocated</div>
-                          <div className="w-20 font-light text-right">Available</div>
+                          <div className="w-24 text-right">Allocated</div>
+                          <div className="w-24 font-bold text-right px-2">Available</div>
                           <div className="w-4" />
                         </div>
                       ) : null}
