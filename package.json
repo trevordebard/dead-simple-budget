@@ -6,14 +6,14 @@
   "scripts": {
     "build": "npm run build:css && prisma generate && remix build",
     "vercel-build": "npm run build:css && prisma generate && prisma migrate deploy && remix build ",
-    "build:css": "css -i ./app/styles/tailwind.css -o ./app/styles/tailwind-output.css",
+    "build:css": "tailwindcss -i ./styles/app.css -o ./app/styles/app.css",
     "dev": "concurrently \"npm run dev:css\" \"remix dev\"",
     "dev:css": "tailwindcss -w -i ./styles/app.css -o app/styles/app.css",
     "lint": "eslint 'app/**' --fix --ext .js,.jsx,.ts,.tsx ."
   },
   "dependencies": {
     "@heroicons/react": "^1.0.5",
-    "@prisma/client": "^4.5.0",
+    "@prisma/client": "^4.7.1",
     "@radix-ui/react-accordion": "^1.0.1",
     "@radix-ui/react-dialog": "^1.0.2",
     "@radix-ui/react-toggle-group": "^1.0.1",
