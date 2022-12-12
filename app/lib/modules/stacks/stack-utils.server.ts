@@ -37,11 +37,11 @@ export async function updateStack(data: UpdateFields) {
 
   // if adding money to the stack
   if (updatedStack.amount < amount) {
-    moveMoney({ to: stackId, amount: diff, budgetId: updatedStack.budgetId, moveType: 'FROM_TO_BE_BUDGETED' });
+    await moveMoney({ to: stackId, amount: diff, budgetId: updatedStack.budgetId, moveType: 'FROM_TO_BE_BUDGETED' });
   }
   // if removing money from stack
   else if (updatedStack.amount > amount) {
-    moveMoney({ from: stackId, budgetId: updatedStack.budgetId, amount: diff, moveType: 'TO_TO_BE_BUDGETED' });
+    await moveMoney({ from: stackId, budgetId: updatedStack.budgetId, amount: diff, moveType: 'TO_TO_BE_BUDGETED' });
   }
 
   return updatedStack;
