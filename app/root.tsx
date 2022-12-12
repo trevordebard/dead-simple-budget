@@ -1,6 +1,6 @@
 import type { LinksFunction } from '@remix-run/node';
 import { json, LoaderFunction, MetaFunction } from '@remix-run/node';
-import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useCatch } from '@remix-run/react';
+import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useCatch, useLocation } from '@remix-run/react';
 import * as React from 'react';
 import { User } from '@prisma/client';
 import { getAuthenticatedUser } from '~/lib/modules/user';
@@ -101,10 +101,22 @@ function Document({ children, title }: { children: React.ReactNode; title?: stri
       </head>
       <body className="w-screen h-screen  ">
         {children}
-        <ScrollRestoration />
+        <ConditionalScrollRestoration />
         <Scripts />
         {process.env.NODE_ENV === 'development' && <LiveReload />}
       </body>
     </html>
   );
+}
+
+function ConditionalScrollRestoration() {
+  const location = useLocation();
+  if (
+    location.state != null &&
+    typeof location.state === 'object' &&
+    (location.state as { scroll: boolean }).scroll === false
+  ) {
+    return null;
+  }
+  return <ScrollRestoration />;
 }
