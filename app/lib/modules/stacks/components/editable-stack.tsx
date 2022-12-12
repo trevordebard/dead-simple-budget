@@ -18,7 +18,6 @@ export function EditableStack({ stack, totalSpent }: { stack: Stack; totalSpent:
       <input type="hidden" name="stackId" value={stack.id} />
       <input type="hidden" name="categoryId" value={stack.stackCategoryId || -1} />
       <input type="hidden" name="budgetId" value={stack.budgetId} />
-      <input type="hidden" name="label" value={stack.budgetId} />
       <div className="flex items-center justify-between hover:bg-gray-100 rounded-md">
         <input
           type="text"
