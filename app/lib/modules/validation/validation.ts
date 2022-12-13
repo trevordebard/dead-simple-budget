@@ -14,7 +14,7 @@ type ValidationInput<T> = {
   formData: FormData;
 };
 
-export async function validateAction<Schema>({ schema, formData }: ValidationInput<Schema>) {
+export function validateAction<Schema>({ schema, formData }: ValidationInput<Schema>) {
   const body = Object.fromEntries(formData);
   try {
     const input = schema.parse(body) as Schema;

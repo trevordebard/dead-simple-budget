@@ -45,7 +45,7 @@ export const action: ActionFunction = async ({ request }) => {
   const formAction: StackIdAction = PossibleActionsEnum.parse(form.get('_action'));
 
   if (formAction === 'edit-stack') {
-    const { formData, errors } = await validateAction({
+    const { formData, errors } = validateAction({
       schema: EditStackSchema,
       formData: form,
     });
@@ -67,7 +67,7 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   if (formAction === 'delete-stack') {
-    const { formData, errors } = await validateAction<z.infer<typeof DeleteStackSchema>>({
+    const { formData, errors } = validateAction<z.infer<typeof DeleteStackSchema>>({
       schema: DeleteStackSchema,
       formData: form,
     });

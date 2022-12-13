@@ -37,7 +37,7 @@ export async function action({ request }: ActionArgs) {
 
   const rawFormData = await request.formData();
   try {
-    const { formData, errors } = await validateAction({
+    const { formData, errors } = validateAction({
       schema: NewTransactionSchema,
       formData: rawFormData,
     });
