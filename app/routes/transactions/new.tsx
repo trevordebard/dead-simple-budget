@@ -5,12 +5,13 @@ import { z } from 'zod';
 import { useRef, useState } from 'react';
 import { db } from '~/lib/db.server';
 import { Button } from '~/components/button';
-import { Budget } from '.prisma/client';
+import { Budget } from '@prisma/client';
 import { dollarsToCents } from '~/lib/modules/money';
 import { requireAuthenticatedUser } from '~/lib/modules/user';
 import { ErrorText } from '~/components/error-text';
 import { ActionResponse, NewTransactionSchema, validateAction } from '~/lib/modules/validation';
 import { createTransaction } from '~/lib/modules/transactions';
+import { DateTime } from 'luxon';
 
 export const loader = async ({ request }: LoaderArgs) => {
   const user = await requireAuthenticatedUser(request);
@@ -75,6 +76,7 @@ export default function NewTransaction() {
   const stacks = useLoaderData<typeof loader>();
   const fetcher = useFetcher<SerializeFrom<typeof action>>();
   const actionData = fetcher.data;
+  const isSubmitting = fetcher.state !== 'idle';
 
   return (
     <div className="fixed top-0 bottom-0 left-0 right-0 md:relative p-5 md:p-0">
@@ -108,10 +110,13 @@ export default function NewTransaction() {
               <ErrorText>{actionData?.errors?.fieldErrors.stackId[0]}</ErrorText>
             )}
           </label>
-          <select name="stackId" id="stackId" className="w-full">
-            <option selected disabled>
-              Choose a Stack
-            </option>
+          <select
+            name="stackId"
+            id="stackId"
+            className="w-full"
+            defaultValue={stacks.find((s) => s.label === 'To Be Budgeted')?.id}
+          >
+            <option disabled>Choose a Stack</option>
             {stacks?.map((stack) => (
               <option value={stack.id} key={stack.id}>
                 {stack.label}
@@ -124,7 +129,14 @@ export default function NewTransaction() {
             Date{' '}
             {actionData?.errors?.fieldErrors?.date && <ErrorText>{actionData?.errors?.fieldErrors.date[0]}</ErrorText>}
           </label>
-          <input required type="date" name="date" id="date-input" className="block w-full" />
+          <input
+            required
+            type="date"
+            name="date"
+            id="date-input"
+            className="block w-full"
+            defaultValue={DateTime.now().toFormat('yyyy-MM-dd')}
+          />
         </div>
         <div>
           {actionData?.errors?.fieldErrors?.type && <ErrorText>{actionData?.errors?.fieldErrors?.type[0]}</ErrorText>}
@@ -150,9 +162,11 @@ export default function NewTransaction() {
           </ToggleGroup.Root>
         </div>
         <div className="flex flex-col items-center space-y-2">
-          <Button type="submit" variant="outline" className="w-full">
-            Add Transaction
-          </Button>
+          <fieldset className="w-full" disabled={isSubmitting}>
+            <Button type="submit" variant="outline" className="w-full">
+              Add Transaction
+            </Button>
+          </fieldset>
           <Link to="/transactions" className="hover:text-purple-700">
             Cancel
           </Link>
