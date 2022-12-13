@@ -45,7 +45,6 @@ export default function App() {
   const state = React.useMemo<'idle' | 'loading'>(
     function getGlobalState() {
       const states = [transition.state, ...fetchers.map((fetcher) => fetcher.state)];
-      console.log(states.every((s) => s === 'idle'));
       if (states.every((s) => s === 'idle')) return 'idle';
       return 'loading';
     },
