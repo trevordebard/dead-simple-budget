@@ -3,16 +3,16 @@ import { Form, Link, useActionData, useLoaderData, useTransition } from '@remix-
 import { TrashIcon, XIcon } from '@heroicons/react/solid';
 import { z } from 'zod';
 import { Stack, StackCategory } from '.prisma/client';
-import { db } from '~/utils/db.server';
+import { db } from '~/lib/db.server';
 import { Button } from '~/components/button';
-import { centsToDollars, dollarsToCents } from '~/utils/money-fns';
-import { requireAuthenticatedUser } from '~/utils/server/user-utils.server';
-import { updateStack } from '~/utils/server/stack.server';
+import { centsToDollars, dollarsToCents } from '~/lib/modules/money';
+import { requireAuthenticatedUser } from '~/lib/modules/user';
+import { updateStack } from '~/lib/modules/stacks';
 import { ErrorText } from '~/components/error-text';
-import { ActionResponse, DeleteStackSchema, SaveStackSchema, validateAction } from '~/utils/shared/validation';
+import { ActionResponse, DeleteStackSchema, EditStackSchema, validateAction } from '~/lib/modules/validation';
 
 const badRequest = (data: ActionResponse<ActionData>) => json(data, { status: 400 });
-
+type ActionData = z.infer<typeof EditStackSchema>;
 interface LoaderData {
   stack: Stack & {
     category: StackCategory | null;
@@ -35,8 +35,7 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   return { stack, categories };
 };
 
-type ActionData = z.infer<typeof SaveStackSchema>;
-const PossibleActionsEnum = z.enum(['save-stack', 'delete-stack']);
+const PossibleActionsEnum = z.enum(['edit-stack', 'delete-stack']);
 type StackIdAction = z.infer<typeof PossibleActionsEnum>;
 
 // TODO: verify the stacks being modified belong to the logged in user
@@ -45,9 +44,9 @@ export const action: ActionFunction = async ({ request }) => {
 
   const formAction: StackIdAction = PossibleActionsEnum.parse(form.get('_action'));
 
-  if (formAction === 'save-stack') {
+  if (formAction === 'edit-stack') {
     const { formData, errors } = await validateAction({
-      schema: SaveStackSchema,
+      schema: EditStackSchema,
       formData: form,
     });
 
@@ -88,7 +87,7 @@ export default function StackId() {
   const transition = useTransition();
 
   return (
-    <div className="fixed top-0 bottom-0 left-0 right-0 md:relative p-5 md:p-0">
+    <div className="fixed top-0 bottom-0 left-0 right-0 md:relative p-5 md:p-0 bg-white">
       <h3 className="text-lg mb-3 divide-y-2 text-center">Edit Stack</h3>
       {actionData?.errors?.formErrors
         ? actionData.errors.formErrors.map((message: string) => <ErrorText>{message}</ErrorText>)
@@ -130,7 +129,7 @@ export default function StackId() {
             </select>
           </div>
           <fieldset disabled={transition.state !== 'idle'} className="flex flex-col items-center space-y-2">
-            <Button name="_action" value="save-stack" type="submit" variant="primary" className="w-full">
+            <Button name="_action" value="edit-stack" type="submit" variant="primary" className="w-full">
               {transition.state === 'submitting' ? 'Saving' : 'Save Stack'}
             </Button>
             <div className="flex justify-end space-x-1 w-full">

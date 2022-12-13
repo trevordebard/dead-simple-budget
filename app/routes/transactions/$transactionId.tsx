@@ -5,13 +5,13 @@ import { useEffect, useState } from 'react';
 import { z } from 'zod';
 import { typedjson, useTypedActionData, useTypedLoaderData, redirect } from 'remix-typedjson';
 import { DateTime } from 'luxon';
-import { db } from '~/utils/db.server';
+import { db } from '~/lib/db.server';
 import { Button } from '~/components/button';
-import { centsToDollars, dollarsToCents } from '~/utils/money-fns';
-import { editTransactionAndUpdBudget } from '~/utils/server/index.server';
-import { requireAuthenticatedUser } from '~/utils/server/user-utils.server';
-import { ActionResponse, EditTransactionSchema, validateAction } from '~/utils/shared/validation';
+import { centsToDollars, dollarsToCents } from '~/lib/modules/money';
+import { requireAuthenticatedUser } from '~/lib/modules/user';
+import { ActionResponse, EditTransactionSchema, validateAction } from '~/lib/modules/validation';
 import { ErrorText } from '~/components/error-text';
+import { editTransaction } from '~/lib/modules/transactions';
 
 export async function loader({ request, params }: LoaderArgs) {
   const user = await requireAuthenticatedUser(request);
@@ -51,12 +51,11 @@ export async function action({ request, params }: ActionArgs) {
 
   const amountInCents = dollarsToCents(amount);
 
-  editTransactionAndUpdBudget({
+  await editTransaction({
     description,
     amount: amountInCents,
     id,
     stackId,
-    budget,
     type,
     date,
   });

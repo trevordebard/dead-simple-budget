@@ -30,9 +30,22 @@ model Stack {
   category        StackCategory? @relation(fields: [stackCategoryId], references: [id])
   budget          Budget         @relation(fields: [budgetId], references: [id], onDelete: Cascade)
 
-  Transaction Transaction[]
+  Transaction          Transaction[]
+  StackActivityLogFrom StackActivityLog[] @relation("fromStackId")
+  StackActivityLogTo   StackActivityLog[] @relation("toStackId")
 
   @@unique([label, budgetId])
+}
+
+model StackActivityLog {
+  id          String   @id @default(cuid())
+  fromStack   Stack    @relation(name: "fromStackId", fields: [fromStackId], references: [id])
+  fromStackId String
+  toStack     Stack    @relation(name: "toStackId", fields: [toStackId], references: [id])
+  toStackId   String
+  amount      Int
+  created_at  DateTime @default(now())
+  stackId     String?
 }
 
 model Transaction {
@@ -61,7 +74,6 @@ model User {
 model Budget {
   id              String          @id @default(cuid())
   total           Int             @default(0)
-  toBeBudgeted    Int             @default(0)
   stacks          Stack[]
   transactions    Transaction[]
   bankAccounts    BankAccout[]
