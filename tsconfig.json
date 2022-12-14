@@ -1,45 +1,21 @@
 {
+  "include": ["remix.env.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"],
   "compilerOptions": {
-    // ...
-    "noEmit": true,
-    "baseUrl": ".",
-    "rootDir": ".",
-    "typeRoots": [
-      "node_modules/@types",
-      "types"
-    ],
-    "plugins": [
-      {
-        "name": "nexus/typescript-language-service"
-      }
-    ],
-    "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": false,
-    "forceConsistentCasingInFileNames": true,
+    "lib": ["DOM", "DOM.Iterable", "ES2019"],
     "esModuleInterop": true,
-    "module": "esnext",
+    "jsx": "react-jsx",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "isolatedModules": true,
-    "downlevelIteration": true, // needed for getStacksByCategory
-    "jsx": "preserve",
-    "incremental": true
-  },
-  // ...
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    ".",
-    "types.d.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+    "target": "ES2019",
+    "strict": true,
+    "paths": {
+      "~/*": ["./app/*"]
+    },
+    "baseUrl": ".",
+    "noEmit": true,
+    "allowJs": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true
+  }
 }
