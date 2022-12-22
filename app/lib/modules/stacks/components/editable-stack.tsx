@@ -4,21 +4,44 @@ import { centsToDollars } from '~/lib/modules/money';
 import { DotsVerticalIcon } from '@heroicons/react/solid';
 import * as React from 'react';
 import clsx from 'clsx';
+import { ErrorText } from '~/components/error-text';
+import { useState, useRef, useEffect } from 'react';
 
 export function EditableStack({ stack, totalSpent }: { stack: Stack; totalSpent: number }) {
   // using fetcher to avoid redirect
   const stackFetcher = useFetcher();
+  const [error, setError] = useState();
   const available = centsToDollars(stack.amount + totalSpent);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    if (stackFetcher?.data?.errors?.formErrors && stackFetcher?.submission?.action.startsWith(`/budget/stack/`)) {
+      setError(stackFetcher.data.errors.formErrors);
+    }
+  }, [stackFetcher]);
+
   const submitForm = (e: React.FocusEvent<HTMLInputElement, Element>) => {
     stackFetcher.submit(e.currentTarget.form);
   };
+
   return (
-    <stackFetcher.Form method="post" action={`/budget/stack/${stack.id}`} key={stack.id}>
+    <stackFetcher.Form
+      method="post"
+      action={`/budget/stack/${stack.id}`}
+      key={stack.id}
+      ref={formRef}
+      onFocus={() => setError(null)}
+    >
       <input type="hidden" name="_action" value="edit-stack" />
       <input type="hidden" name="stackId" value={stack.id} />
       <input type="hidden" name="categoryId" value={stack.stackCategoryId || -1} />
       <input type="hidden" name="budgetId" value={stack.budgetId} />
-      <div className="flex items-center justify-between hover:bg-gray-100 rounded-md">
+      <div
+        className={clsx(
+          'flex items-center justify-between hover:bg-gray-100 rounded-md',
+          error && 'border border-red-600'
+        )}
+      >
         <input
           type="text"
           name="label"
@@ -26,7 +49,7 @@ export function EditableStack({ stack, totalSpent }: { stack: Stack; totalSpent:
           defaultValue={stack.label}
           className="p-1 border-none my-1 bg-inherit hover:bg-gray-200"
         />
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2" key={stack.amount}>
           <input
             type="text"
             name="amount"
@@ -35,7 +58,8 @@ export function EditableStack({ stack, totalSpent }: { stack: Stack; totalSpent:
             className="w-24 text-right p-1 border-none my-1 bg-inherit hover:bg-gray-200"
             onBlur={submitForm}
           />
-          <div className={clsx(['flex justify-end w-24 text-right font-semibold'])}>
+
+          <div className="flex justify-end w-24 text-right font-semibold">
             <div className={clsx('rounded-md px-2', stack.amount + totalSpent < 0 && 'text-red-700 bg-red-300')}>
               {available}
             </div>
@@ -45,6 +69,9 @@ export function EditableStack({ stack, totalSpent }: { stack: Stack; totalSpent:
           </Link>
         </div>
       </div>
+      {stackFetcher?.data?.errors?.fieldErrors?.amount ? (
+        <ErrorText>{stackFetcher?.data?.errors?.fieldErrors.amount[0]}</ErrorText>
+      ) : null}
     </stackFetcher.Form>
   );
 }

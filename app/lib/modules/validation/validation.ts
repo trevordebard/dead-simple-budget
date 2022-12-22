@@ -1,5 +1,6 @@
 import { z, ZodError, ZodSchema } from 'zod';
 import { DateTime } from 'luxon';
+import { evaluate } from 'mathjs';
 
 // TODO: find a new file for this
 export type ActionResponse<FormSchema> = {
@@ -30,10 +31,7 @@ export function validateAction<Schema>({ schema, formData }: ValidationInput<Sch
 export const NewTransactionSchema = z.object({
   stackId: z.nullable(z.string().optional()), // TODO: make not nullable once default select value is figured out
   description: z.string().min(1, 'Required'),
-  amount: z.preprocess(
-    (num) => parseFloat(z.string().parse(num).replace(',', '')), // strip commas and convert to number
-    z.number({ invalid_type_error: 'Expected a number' })
-  ),
+  amount: validateAmount(),
   date: z
     .string()
     .min(1, 'Required')
@@ -55,9 +53,25 @@ export const DeleteStackSchema = z.object({
 export const EditStackSchema = z.object({
   stackId: z.string().min(1, 'Required'),
   label: z.string().min(1, 'Required'),
-  amount: z.preprocess(
-    (num) => parseFloat(z.string().parse(num).replace(',', '')), // strip commas and convert to number
-    z.number({ invalid_type_error: 'Expected a number' })
-  ),
+  amount: validateAmount(),
+  // amount: z.preprocess((a) => evaluate(z.coerce.string().parse(a).replace(',', '')), z.coerce.number({ coerce: true })),
   categoryId: z.string().min(1),
 });
+
+function validateAmount() {
+  return z.string().transform((val) => {
+    try {
+      // calculates any math expressions
+      return evaluate(val.replace(',', ''));
+    } catch (e) {
+      console.error(e);
+      throw new ZodError([
+        {
+          message: 'Only use numbers or math expressions',
+          code: 'custom',
+          path: ['amount'],
+        },
+      ]);
+    }
+  });
+}
