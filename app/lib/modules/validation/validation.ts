@@ -34,9 +34,8 @@ export const NewTransactionSchema = z.object({
   amount: validateAmount(),
   date: z
     .string()
-    .min(1, 'Required')
-    .transform((d) => DateTime.fromFormat(d, 'yyyy-MM-dd').toJSDate())
-    .or(z.date()),
+    .regex(/\d{4}-\d{2}-\d{2}/, 'Use date format yyyy-mm-dd')
+    .transform((d) => DateTime.fromFormat(d, 'yyyy-MM-dd').toJSDate()),
   type: z.enum(['withdrawal', 'deposit']),
 });
 
@@ -54,7 +53,6 @@ export const EditStackSchema = z.object({
   stackId: z.string().min(1, 'Required'),
   label: z.string().min(1, 'Required'),
   amount: validateAmount(),
-  // amount: z.preprocess((a) => evaluate(z.coerce.string().parse(a).replace(',', '')), z.coerce.number({ coerce: true })),
   categoryId: z.string().min(1),
 });
 

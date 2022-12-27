@@ -2,7 +2,7 @@ import { ActionArgs, json, LoaderArgs, redirect, SerializeFrom } from '@remix-ru
 import { Link, useFetcher, useLoaderData } from '@remix-run/react';
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
 import { z } from 'zod';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { db } from '~/lib/db.server';
 import { Button } from '~/components/button';
 import { Budget } from '@prisma/client';
@@ -71,7 +71,6 @@ export async function action({ request }: ActionArgs) {
 }
 
 export default function NewTransaction() {
-  const formRef = useRef<HTMLFormElement>(null);
   const [transactionType, setTransactionType] = useState<string>('withdrawal');
   const stacks = useLoaderData<typeof loader>();
   const fetcher = useFetcher<SerializeFrom<typeof action>>();
@@ -81,7 +80,7 @@ export default function NewTransaction() {
   return (
     <div className="fixed top-0 bottom-0 left-0 right-0 md:relative p-5 md:p-0">
       <h3 className="text-lg mb-3 divide-y-2 text-center">New Transaction</h3>
-      <fetcher.Form method="post" id="new-transaction" ref={formRef} className="space-y-4">
+      <fetcher.Form method="post" id="new-transaction" className="space-y-4">
         {actionData?.errors?.formErrors?.map((message) => (
           <ErrorText>{message}</ErrorText>
         ))}

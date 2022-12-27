@@ -2,7 +2,7 @@ import { ActionFunction, json, LoaderFunction, redirect } from '@remix-run/node'
 import { Form, Link, useActionData, useLoaderData, useTransition } from '@remix-run/react';
 import { TrashIcon, XIcon } from '@heroicons/react/solid';
 import { z } from 'zod';
-import { Stack, StackCategory } from '.prisma/client';
+import { Stack, StackCategory } from '@prisma/client';
 import { db } from '~/lib/db.server';
 import { Button } from '~/components/button';
 import { centsToDollars, dollarsToCents } from '~/lib/modules/money';
@@ -55,7 +55,6 @@ export const action: ActionFunction = async ({ request }) => {
     }
 
     const { amount: amountInput, stackId, categoryId, label } = formData;
-
     try {
       const amount = dollarsToCents(amountInput);
       await updateStack({ amount, stackId, categoryId, label });
