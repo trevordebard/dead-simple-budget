@@ -32,10 +32,7 @@ export const NewTransactionSchema = z.object({
   stackId: z.nullable(z.string().optional()), // TODO: make not nullable once default select value is figured out
   description: z.string().min(1, 'Required'),
   amount: validateAmount(),
-  date: z
-    .string()
-    .regex(/\d{4}-\d{2}-\d{2}/, 'Use date format yyyy-mm-dd')
-    .transform((d) => DateTime.fromFormat(d, 'yyyy-MM-dd').toJSDate()),
+  date: z.coerce.date({}),
   type: z.enum(['withdrawal', 'deposit']),
 });
 
