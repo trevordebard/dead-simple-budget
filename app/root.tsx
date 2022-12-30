@@ -1,6 +1,9 @@
+import NProgress from 'nprogress';
+import nProgressStyles from 'nprogress/nprogress.css';
+
 import type { LinksFunction } from '@remix-run/node';
 import { json, LoaderFunction, MetaFunction } from '@remix-run/node';
-import { Links, LiveReload, Meta, Outlet, Scripts, useCatch } from '@remix-run/react';
+import { Links, LiveReload, Meta, Outlet, Scripts, useCatch, useFetchers, useTransition } from '@remix-run/react';
 import * as React from 'react';
 import { User } from '@prisma/client';
 import { getAuthenticatedUser } from '~/lib/modules/user';
@@ -29,12 +32,29 @@ export const meta: MetaFunction = () => {
 
 // https://remix.run/api/app#links
 export const links: LinksFunction = () => {
-  return [{ rel: 'stylesheet', href: styles }];
+  return [
+    { rel: 'stylesheet', href: styles },
+    { rel: 'stylesheet', href: nProgressStyles },
+  ];
 };
 
-// https://remix.run/api/conventions#default-export
-// https://remix.run/api/conventions#route-filenames
 export default function App() {
+  const transition = useTransition();
+  const fetchers = useFetchers();
+
+  const state = React.useMemo<'idle' | 'loading'>(
+    function getGlobalState() {
+      const states = [transition.state, ...fetchers.map((fetcher) => fetcher.state)];
+      if (states.every((s) => s === 'idle')) return 'idle';
+      return 'loading';
+    },
+    [transition.state, fetchers]
+  );
+
+  React.useEffect(() => {
+    if (state === 'loading') NProgress.start();
+    if (state === 'idle') NProgress.done();
+  }, [state]);
   return (
     <Document>
       <div className="px-5 md:px-10">

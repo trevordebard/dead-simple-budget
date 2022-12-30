@@ -1,5 +1,6 @@
 import { z, ZodError, ZodSchema } from 'zod';
 import { DateTime } from 'luxon';
+import { evaluate } from 'mathjs';
 
 // TODO: find a new file for this
 export type ActionResponse<FormSchema> = {
@@ -14,7 +15,7 @@ type ValidationInput<T> = {
   formData: FormData;
 };
 
-export async function validateAction<Schema>({ schema, formData }: ValidationInput<Schema>) {
+export function validateAction<Schema>({ schema, formData }: ValidationInput<Schema>) {
   const body = Object.fromEntries(formData);
   try {
     const input = schema.parse(body) as Schema;
@@ -30,15 +31,8 @@ export async function validateAction<Schema>({ schema, formData }: ValidationInp
 export const NewTransactionSchema = z.object({
   stackId: z.nullable(z.string().optional()), // TODO: make not nullable once default select value is figured out
   description: z.string().min(1, 'Required'),
-  amount: z.preprocess(
-    (num) => parseFloat(z.string().parse(num).replace(',', '')), // strip commas and convert to number
-    z.number({ invalid_type_error: 'Expected a number' })
-  ),
-  date: z
-    .string()
-    .min(1, 'Required')
-    .transform((d) => DateTime.fromFormat(d, 'yyyy-MM-dd').toJSDate())
-    .or(z.date()),
+  amount: validateAmount(),
+  date: z.coerce.date({}),
   type: z.enum(['withdrawal', 'deposit']),
 });
 
@@ -55,9 +49,24 @@ export const DeleteStackSchema = z.object({
 export const EditStackSchema = z.object({
   stackId: z.string().min(1, 'Required'),
   label: z.string().min(1, 'Required'),
-  amount: z.preprocess(
-    (num) => parseFloat(z.string().parse(num).replace(',', '')), // strip commas and convert to number
-    z.number({ invalid_type_error: 'Expected a number' })
-  ),
+  amount: validateAmount(),
   categoryId: z.string().min(1),
 });
+
+function validateAmount() {
+  return z.string().transform((val) => {
+    try {
+      // calculates any math expressions
+      return evaluate(val.replace(',', ''));
+    } catch (e) {
+      console.error(e);
+      throw new ZodError([
+        {
+          message: 'Only use numbers or math expressions',
+          code: 'custom',
+          path: ['amount'],
+        },
+      ]);
+    }
+  });
+}

@@ -2,7 +2,7 @@ import { ActionFunction, json, LoaderFunction, redirect } from '@remix-run/node'
 import { Form, Link, useActionData, useLoaderData, useTransition } from '@remix-run/react';
 import { TrashIcon, XIcon } from '@heroicons/react/solid';
 import { z } from 'zod';
-import { Stack, StackCategory } from '.prisma/client';
+import { Stack, StackCategory } from '@prisma/client';
 import { db } from '~/lib/db.server';
 import { Button } from '~/components/button';
 import { centsToDollars, dollarsToCents } from '~/lib/modules/money';
@@ -45,7 +45,7 @@ export const action: ActionFunction = async ({ request }) => {
   const formAction: StackIdAction = PossibleActionsEnum.parse(form.get('_action'));
 
   if (formAction === 'edit-stack') {
-    const { formData, errors } = await validateAction({
+    const { formData, errors } = validateAction({
       schema: EditStackSchema,
       formData: form,
     });
@@ -55,7 +55,6 @@ export const action: ActionFunction = async ({ request }) => {
     }
 
     const { amount: amountInput, stackId, categoryId, label } = formData;
-
     try {
       const amount = dollarsToCents(amountInput);
       await updateStack({ amount, stackId, categoryId, label });
@@ -67,7 +66,7 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   if (formAction === 'delete-stack') {
-    const { formData, errors } = await validateAction<z.infer<typeof DeleteStackSchema>>({
+    const { formData, errors } = validateAction<z.infer<typeof DeleteStackSchema>>({
       schema: DeleteStackSchema,
       formData: form,
     });
