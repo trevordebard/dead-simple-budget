@@ -39,9 +39,9 @@ model Stack {
 
 model StackActivityLog {
   id          String   @id @default(cuid())
-  fromStack   Stack    @relation(name: "fromStackId", fields: [fromStackId], references: [id])
+  fromStack   Stack    @relation(name: "fromStackId", fields: [fromStackId], references: [id], onDelete: Cascade)
   fromStackId String
-  toStack     Stack    @relation(name: "toStackId", fields: [toStackId], references: [id])
+  toStack     Stack    @relation(name: "toStackId", fields: [toStackId], references: [id], onDelete: Cascade)
   toStackId   String
   amount      Int
   created_at  DateTime @default(now())

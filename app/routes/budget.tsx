@@ -236,7 +236,7 @@ async function addStackAction(formData: FormData): Promise<ActionResult> {
     }
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2002') {
-        return { status: 'error', errors: [{ message: 'A category with that name already exists' }], formErrors: null };
+        return { status: 'error', errors: [{ message: 'A stack with that name already exists' }], formErrors: null };
       }
       return { status: 'error', errors: [{ message: 'An unexpected database error occurred' }], formErrors: null };
     }
@@ -272,9 +272,6 @@ async function updateTotalAction(formData: FormData): Promise<ActionResult> {
       };
     }
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
-      if (err.code === 'P2002') {
-        return { status: 'error', errors: [{ message: 'A category with that name already exists' }], formErrors: null };
-      }
       return { status: 'error', errors: [{ message: 'An unexpected database error occurred' }], formErrors: null };
     }
     return {
