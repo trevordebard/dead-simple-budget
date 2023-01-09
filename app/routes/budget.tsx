@@ -1,18 +1,26 @@
-import { ActionFunction, json, LoaderArgs } from '@remix-run/node';
-import { Form, Outlet, useLoaderData, useTransition } from '@remix-run/react';
+import { ActionArgs, json, LoaderArgs, TypedResponse } from '@remix-run/node';
+import { Form, Outlet, useActionData, useLoaderData, useTransition } from '@remix-run/react';
 import { useEffect, useRef } from 'react';
 import * as Accordion from '@radix-ui/react-accordion';
 import { resetServerContext } from 'react-beautiful-dnd';
 import { PlusCircleIcon } from '@heroicons/react/outline';
-import z from 'zod';
+import z, { ZodError } from 'zod';
 import { db } from '~/lib/db.server';
 import { ContentAction, ContentLayout, ContentMain } from '~/components/layout';
-import { recalcToBeBudgeted, BudgetTotal } from '~/lib/modules/budget';
-import { CategorizedStacks, createCategoriesOptimistically, tCategorizedStacks } from '~/lib/modules/stack-categories';
+import { BudgetTotal, recalcToBeBudgeted } from '~/lib/modules/budget';
+import {
+  addCategory,
+  CategorizedStacks,
+  createCategoriesOptimistically,
+  tCategorizedStacks,
+} from '~/lib/modules/stack-categories';
 import { requireAuthenticatedUser } from '~/lib/modules/user';
-import { dollarsToCents } from '~/lib/modules/money';
-import { createStack } from '~/lib/modules/stacks';
 import { Button } from '~/components/button';
+import { Prisma } from '@prisma/client';
+import { ErrorText } from '~/components/error-text';
+import { ActionResult } from '~/lib/utils/response-types';
+import { createStack } from '~/lib/modules/stacks';
+import { dollarsToCents } from '~/lib/modules/money';
 
 export async function loader(args: LoaderArgs) {
   const user = await requireAuthenticatedUser(args.request);
@@ -50,7 +58,7 @@ export async function loader(args: LoaderArgs) {
 
 const zPossibleActions = z.enum(['add-stack', 'add-category', 'edit-stack', 'update-total']);
 
-export const action: ActionFunction = async ({ request }) => {
+export const action = async ({ request }: ActionArgs): Promise<TypedResponse<ActionResult>> => {
   await requireAuthenticatedUser(request);
 
   const formData = await request.formData();
@@ -58,29 +66,42 @@ export const action: ActionFunction = async ({ request }) => {
   const parsedAction = zPossibleActions.safeParse(rawAction);
 
   if (!parsedAction.success) {
-    throw Error('TODO');
+    return json({ errors: ['Unable to read data'] }, { status: 500 });
   }
 
   switch (parsedAction.data) {
-    case 'add-category':
-      addCategoryAction(formData);
-      break;
-    case 'add-stack':
-      addStackAction(formData);
-      break;
-    case 'update-total':
-      updateTotalAction(formData);
-      break;
-    default:
-      console.error('this should not happen');
+    case 'add-category': {
+      const resp = await addCategoryAction(formData);
+      if (resp.status === 'error') {
+        return json(resp, { status: 400 });
+      }
+      return json(resp);
+    }
+    case 'add-stack': {
+      const response = await addStackAction(formData);
+      if (response.status === 'error') {
+        return json(response, { status: 500 });
+      }
+      return json(response);
+    }
+    case 'update-total': {
+      const response = await updateTotalAction(formData);
+      if (response.status === 'error') {
+        return json(response, { status: 500 });
+      }
+      return json(response);
+    }
+    default: {
+      const response = json({ status: 'error', errors: [{ message: 'Invalid action' }] }, { status: 400 });
+      return response;
+    }
   }
-
-  return json({ success: true }, { status: 200 });
 };
 
 // https://remix.run/guides/routing#index-routes
 export default function BudgetPage() {
   const data = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
   const transition = useTransition();
   const isAddingStack = transition.submission && transition.submission.formData.get('_action') === 'add-stack';
   const addStackFormRef = useRef<HTMLFormElement>(null);
@@ -94,10 +115,14 @@ export default function BudgetPage() {
   if (!data.budget || !data.categorized) {
     return null;
   }
+
   return (
     <ContentLayout>
       <ContentMain>
         <BudgetTotal budget={data.budget} toBeBudgeted={data.toBeBudgeted.amount} />
+        {actionData?.status === 'error' && actionData.errors
+          ? actionData?.errors.map((msg) => <ErrorText>{msg.message}</ErrorText>)
+          : null}
         <Accordion.Root type="single" collapsible>
           <Accordion.Item value="add-category-accordion">
             <Accordion.Header>
@@ -112,7 +137,7 @@ export default function BudgetPage() {
               <Accordion.Item value="add-category-form">
                 <Form method="post" id="add-category-form">
                   <div className="flex justify-between space-x-4 items-center">
-                    <input type="text" name="new-category" placeholder="New Category Name" />
+                    <input type="text" name="label" placeholder="New Category Name" />
                     <input type="hidden" name="budgetId" value={data.budget.id} />
                     <Button type="submit" variant="outline" className="border" name="_action" value="add-category">
                       Add
@@ -134,7 +159,7 @@ export default function BudgetPage() {
         <Form method="post" id="add-stack-form" className="mt-5" ref={addStackFormRef}>
           <fieldset disabled={transition.state !== 'idle'} className="flex">
             <input type="hidden" name="budgetId" value={data.budget.id} />
-            <input type="text" name="new-stack" required placeholder="New Stack Name" className="mr-2" />
+            <input type="text" name="newStack" required placeholder="New Stack Name" className="mr-2" />
             <Button type="submit" className="whitespace-nowrap" name="_action" value="add-stack">
               Add Stack
             </Button>
@@ -148,30 +173,37 @@ export default function BudgetPage() {
   );
 }
 
-async function addStackAction(formData: FormData) {
-  // TODO: verify stack id and budget id belong to authenticated user
-  const budgetId = formData.get('budgetId') as string;
-  const label = String(formData.get('new-stack'));
-  const newStack = await createStack(budgetId, { label });
-  return newStack;
-}
+const AddCategoryFormSchema = z.object({
+  label: z.string(),
+  budgetId: z.string(),
+});
 
-async function updateTotalAction(formData: FormData) {
-  // TODO: verify stack id and budget id belong to authenticated user
-  const total = Number(formData.get('total'));
-  const budgetId = formData.get('budgetId') as string;
-
-  const newBudget = await db.budget.update({ where: { id: budgetId }, data: { total: dollarsToCents(total) } });
-  const recalcedBudget = await recalcToBeBudgeted({ budget: newBudget });
-  return recalcedBudget;
-}
-
-async function addCategoryAction(formData: FormData) {
-  const label = String(formData.get('new-category'));
-  const budgetId = formData.get('budgetId') as string;
-
-  const newCategory = await db.stackCategory.create({ data: { label, budgetId } });
-  return newCategory;
+// function should return errors or formErrors
+async function addCategoryAction(formData: FormData): Promise<ActionResult> {
+  const body = Object.fromEntries(formData);
+  try {
+    const parsed = AddCategoryFormSchema.parse(body);
+    const category = await addCategory({ budgetId: parsed.budgetId, label: parsed.label });
+    return { status: 'success', data: category };
+  } catch (err) {
+    if (err instanceof ZodError) {
+      return {
+        status: 'error',
+        formErrors: err.flatten(),
+      };
+    }
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      if (err.code === 'P2002') {
+        return { status: 'error', errors: [{ message: 'A category with that name already exists' }], formErrors: null };
+      }
+      return { status: 'error', errors: [{ message: 'An unexpected database error occurred' }], formErrors: null };
+    }
+    return {
+      status: 'error',
+      errors: [{ message: 'An unknown error occurred while creating stack category' }],
+      formErrors: null,
+    };
+  }
 }
 
 function getToBeBudgeted(categorized: tCategorizedStacks) {
@@ -181,4 +213,74 @@ function getToBeBudgeted(categorized: tCategorizedStacks) {
     throw Error('This should not happen');
   }
   return toBeBudgeted;
+}
+
+const AddStackFormSchema = z.object({
+  budgetId: z.string(),
+  newStack: z.string(),
+});
+async function addStackAction(formData: FormData): Promise<ActionResult> {
+  // TODO: verify stack id and budget id belong to authenticated user
+  try {
+    const body = Object.fromEntries(formData);
+    const validatedForm = AddStackFormSchema.parse(body);
+    const newStack = await createStack(validatedForm.budgetId, { label: validatedForm.newStack });
+
+    return { status: 'success', data: newStack };
+  } catch (err) {
+    if (err instanceof ZodError) {
+      return {
+        status: 'error',
+        formErrors: err.flatten(),
+      };
+    }
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      if (err.code === 'P2002') {
+        return { status: 'error', errors: [{ message: 'A category with that name already exists' }], formErrors: null };
+      }
+      return { status: 'error', errors: [{ message: 'An unexpected database error occurred' }], formErrors: null };
+    }
+    return {
+      status: 'error',
+      errors: [{ message: 'An unknown error occurred while creating stack' }],
+      formErrors: null,
+    };
+  }
+}
+
+const UpdateTotalFormSchema = z.object({
+  total: z.coerce.number(),
+  budgetId: z.string(),
+});
+
+async function updateTotalAction(formData: FormData): Promise<ActionResult> {
+  // TODO: verify stack id and budget id belong to authenticated user
+  try {
+    const body = Object.fromEntries(formData);
+    const validatedForm = UpdateTotalFormSchema.parse(body);
+    const { total, budgetId } = validatedForm;
+    const newBudget = await db.budget.update({ where: { id: budgetId }, data: { total: dollarsToCents(total) } });
+
+    // TODO: more side effects may be needed here?
+    const recalcedBudget = await recalcToBeBudgeted({ budget: newBudget });
+    return { status: 'success', data: recalcedBudget };
+  } catch (err) {
+    if (err instanceof ZodError) {
+      return {
+        status: 'error',
+        formErrors: err.flatten(),
+      };
+    }
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      if (err.code === 'P2002') {
+        return { status: 'error', errors: [{ message: 'A category with that name already exists' }], formErrors: null };
+      }
+      return { status: 'error', errors: [{ message: 'An unexpected database error occurred' }], formErrors: null };
+    }
+    return {
+      status: 'error',
+      errors: [{ message: 'An unknown error occurred while creating stack' }],
+      formErrors: null,
+    };
+  }
 }

@@ -1,29 +1,33 @@
 import { z, ZodError, ZodSchema } from 'zod';
-import { DateTime } from 'luxon';
 import { evaluate } from 'mathjs';
 
-// TODO: find a new file for this
-export type ActionResponse<FormSchema> = {
-  errors?: {
-    fieldErrors?: Partial<Record<keyof FormSchema, string[]>>;
-    formErrors?: string[];
-  };
-};
-
-type ValidationInput<T> = {
+type FormValidationInput<T> = {
   schema: ZodSchema<T>;
   formData: FormData;
 };
 
-export function validateAction<Schema>({ schema, formData }: ValidationInput<Schema>) {
+type FormValidationResult<T> =
+  | {
+      data: T;
+      status: 'success';
+      formErrors?: never;
+    }
+  | {
+      status: 'error';
+      formErrors: z.typeToFlattenedError<T, string>;
+      data?: T;
+    };
+
+export function validateForm<Schema>({ schema, formData }: FormValidationInput<Schema>): FormValidationResult<Schema> {
   const body = Object.fromEntries(formData);
   try {
-    const input = schema.parse(body) as Schema;
-    return { formData: input, errors: null };
+    const input = schema.parse(body);
+    return { data: input, status: 'success' };
   } catch (e) {
     const errors = e as ZodError<Schema>;
     return {
-      errors: errors.flatten(),
+      status: 'error',
+      formErrors: errors.flatten(),
     };
   }
 }

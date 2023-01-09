@@ -8,7 +8,7 @@ import { centsToDollars } from '~/lib/modules/money';
 
 import { requireAuthenticatedUser } from '~/lib/modules/user';
 import { Stack, Transaction } from '@prisma/client';
-import { NewTransactionSchema, validateAction } from '~/lib/modules/validation';
+import { NewTransactionSchema, validateForm } from '~/lib/modules/validation';
 
 export async function loader({ request }: LoaderArgs) {
   const user = await requireAuthenticatedUser(request);
@@ -33,18 +33,20 @@ export default function TransactionsPage() {
   let optimisticTransaction;
   for (const f of fetchers) {
     if (f.submission && f.submission.action.startsWith(`/transactions/new`)) {
-      const { formData, errors } = validateAction({
+      // TODO: consider not using zod to validate client side to avoid shipping to client
+      const validationResult = validateForm({
         schema: NewTransactionSchema,
         formData: f.submission.formData,
       });
-      if (!errors) {
+
+      if (!validationResult.formErrors) {
         optimisticTransaction = {
-          ...formData,
+          ...validationResult.data,
           stack: {
             label: 'Pending...',
           },
-          date: DateTime.fromJSDate(formData.date).toFormat('yyyy-MM-dd'),
-          amount: Number(centsToDollars(formData.amount)) || 0,
+          date: DateTime.fromJSDate(validationResult.data.date).toFormat('yyyy-MM-dd'),
+          amount: Number(centsToDollars(validationResult.data.amount)) || 0,
         };
       }
     }
@@ -112,7 +114,7 @@ export function TransactionCard({ transaction }: iTransactionCardProps) {
       </div>
       <div>
         <p className="text-right">${centsToDollars(amount)}</p>
-        <p className="text-zinc-600">{date && DateTime.fromISO(date).toFormat('yyyy-MM-dd')}</p>
+        <p className="text-zinc-600">{date && DateTime.fromISO(date, { zone: 'UTC' }).toFormat('yyyy-MM-dd')}</p>
       </div>
     </div>
   );

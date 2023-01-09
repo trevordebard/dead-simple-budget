@@ -1,7 +1,6 @@
-import { ActionArgs, json, LoaderArgs, redirect, SerializeFrom } from '@remix-run/node';
+import { ActionArgs, json, LoaderArgs, redirect, SerializeFrom, TypedResponse } from '@remix-run/node';
 import { Link, useFetcher, useLoaderData } from '@remix-run/react';
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
-import { z } from 'zod';
 import { useState } from 'react';
 import { db } from '~/lib/db.server';
 import { Button } from '~/components/button';
@@ -9,9 +8,10 @@ import { Budget } from '@prisma/client';
 import { dollarsToCents } from '~/lib/modules/money';
 import { requireAuthenticatedUser } from '~/lib/modules/user';
 import { ErrorText } from '~/components/error-text';
-import { ActionResponse, NewTransactionSchema, validateAction } from '~/lib/modules/validation';
+import { NewTransactionSchema, validateForm } from '~/lib/modules/validation';
 import { createTransaction } from '~/lib/modules/transactions';
 import { DateTime } from 'luxon';
+import { ActionResult } from '~/lib/utils/response-types';
 
 export const loader = async ({ request }: LoaderArgs) => {
   const user = await requireAuthenticatedUser(request);
@@ -20,33 +20,29 @@ export const loader = async ({ request }: LoaderArgs) => {
   return json(stacks);
 };
 
-type ActionData = z.infer<typeof NewTransactionSchema>;
-const badRequest = (data: ActionResponse<ActionData>) => json(data, { status: 400 });
-
-export async function action({ request }: ActionArgs) {
+export async function action({ request }: ActionArgs): Promise<TypedResponse<ActionResult>> {
   const user = await requireAuthenticatedUser(request);
   let budget: Budget | null;
   try {
     budget = await db.budget.findFirst({ where: { userId: user.id } });
   } catch (e) {
-    return badRequest({ errors: { formErrors: ['Unable to find budget for user'] } });
+    return json({ status: 'error', errors: [{ message: 'Unable to find budget' }] }, { status: 500 });
   }
   if (!budget) {
-    return badRequest({ errors: { formErrors: ['Unable to find budget for user'] } });
+    return json({ status: 'error', errors: [{ message: 'Unable to find budget' }] }, { status: 500 });
   }
 
   const rawFormData = await request.formData();
   try {
-    const { formData, errors } = validateAction({
+    const validatedForm = validateForm({
       schema: NewTransactionSchema,
       formData: rawFormData,
     });
-    if (errors) {
-      console.error(errors);
-      return badRequest({ errors });
+    if (validatedForm.status === 'error') {
+      return json({ formErrors: validatedForm.formErrors, status: 'error' });
     }
 
-    const { description, amount, stackId, type, date } = formData;
+    const { description, amount, stackId, type, date } = validatedForm.data;
     let amountInCents = dollarsToCents(amount);
 
     if (type === 'withdrawal') {
@@ -66,7 +62,7 @@ export async function action({ request }: ActionArgs) {
   } catch (e) {
     console.error(e);
 
-    return badRequest({ errors: { formErrors: ['There was a problem creating transaction'] } });
+    return json({ status: 'error', errors: [{ message: 'There was a problem creating the transaction' }] });
   }
 }
 
@@ -76,28 +72,27 @@ export default function NewTransaction() {
   const fetcher = useFetcher<SerializeFrom<typeof action>>();
   const actionData = fetcher.data;
   const isSubmitting = fetcher.state !== 'idle';
+  const formIsInError = actionData?.status === 'error';
 
   return (
     <div className="fixed top-0 bottom-0 left-0 right-0 md:relative p-5 md:p-0">
       <h3 className="text-lg mb-3 divide-y-2 text-center">New Transaction</h3>
       <fetcher.Form method="post" id="new-transaction" className="space-y-4">
-        {actionData?.errors?.formErrors?.map((message) => (
-          <ErrorText>{message}</ErrorText>
-        ))}
+        {formIsInError && actionData.errors?.map((err) => <ErrorText>{err.message}</ErrorText>)}
         <div>
           <label htmlFor="description">
             Description{' '}
-            {actionData?.errors?.fieldErrors?.description && (
-              <ErrorText>{actionData?.errors.fieldErrors.description[0]}</ErrorText>
+            {formIsInError && actionData.formErrors?.fieldErrors?.description && (
+              <ErrorText>{actionData?.formErrors.fieldErrors.description[0]}</ErrorText>
             )}
           </label>
-          <input required type="text" name="description" id="description-input" />
+          <input type="text" name="description" id="description-input" />
         </div>
         <div>
           <label htmlFor="amount">
             Amount{' '}
-            {actionData?.errors?.fieldErrors?.amount && (
-              <ErrorText>{actionData?.errors?.fieldErrors.amount[0]}</ErrorText>
+            {formIsInError && actionData?.formErrors?.fieldErrors?.amount && (
+              <ErrorText>{actionData?.formErrors?.fieldErrors.amount[0]}</ErrorText>
             )}
           </label>
           <input required type="text" name="amount" id="amount-input" />
@@ -105,8 +100,8 @@ export default function NewTransaction() {
         <div>
           <label htmlFor="stackId">
             Stack{' '}
-            {actionData?.errors?.fieldErrors?.stackId && (
-              <ErrorText>{actionData?.errors?.fieldErrors.stackId[0]}</ErrorText>
+            {formIsInError && actionData?.formErrors?.fieldErrors?.stackId && (
+              <ErrorText>{actionData?.formErrors?.fieldErrors.stackId[0]}</ErrorText>
             )}
           </label>
           <select
@@ -126,7 +121,9 @@ export default function NewTransaction() {
         <div>
           <label htmlFor="date">
             Date{' '}
-            {actionData?.errors?.fieldErrors?.date && <ErrorText>{actionData?.errors?.fieldErrors.date[0]}</ErrorText>}
+            {formIsInError && actionData?.formErrors?.fieldErrors?.date && (
+              <ErrorText>{actionData?.formErrors?.fieldErrors.date[0]}</ErrorText>
+            )}
           </label>
           <input
             required
@@ -138,7 +135,9 @@ export default function NewTransaction() {
           />
         </div>
         <div>
-          {actionData?.errors?.fieldErrors?.type && <ErrorText>{actionData?.errors?.fieldErrors?.type[0]}</ErrorText>}
+          {formIsInError && actionData?.formErrors?.fieldErrors?.type && (
+            <ErrorText>{actionData?.formErrors?.fieldErrors?.type[0]}</ErrorText>
+          )}
           <input type="hidden" name="type" id="trans-type" value={transactionType} />
           <ToggleGroup.Root
             type="single"
