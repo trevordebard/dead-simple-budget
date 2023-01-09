@@ -6,17 +6,18 @@ import * as React from 'react';
 import clsx from 'clsx';
 import { ErrorText } from '~/components/error-text';
 import { useState, useRef, useEffect } from 'react';
+import { ActionResult, FormErrors } from '~/lib/utils/response-types';
 
 export function EditableStack({ stack, totalSpent }: { stack: Stack; totalSpent: number }) {
   // using fetcher to avoid redirect
-  const stackFetcher = useFetcher();
-  const [error, setError] = useState();
+  const stackFetcher = useFetcher<ActionResult>();
+  const [error, setError] = useState<FormErrors>();
   const available = centsToDollars(stack.amount + totalSpent);
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
-    if (stackFetcher?.data?.errors?.formErrors && stackFetcher?.submission?.action.startsWith(`/budget/stack/`)) {
-      setError(stackFetcher.data.errors.formErrors);
+    if (stackFetcher?.data?.status === 'error' && stackFetcher?.submission?.action.startsWith(`/budget/stack/`)) {
+      setError(stackFetcher?.data?.formErrors);
     }
   }, [stackFetcher]);
 
@@ -69,8 +70,8 @@ export function EditableStack({ stack, totalSpent }: { stack: Stack; totalSpent:
           </Link>
         </div>
       </div>
-      {stackFetcher?.data?.errors?.fieldErrors?.amount ? (
-        <ErrorText>{stackFetcher?.data?.errors?.fieldErrors.amount[0]}</ErrorText>
+      {stackFetcher.data?.status === 'error' && stackFetcher?.data?.formErrors?.fieldErrors?.amount ? (
+        <ErrorText>{stackFetcher.data.formErrors.fieldErrors.amount[0]}</ErrorText>
       ) : null}
     </stackFetcher.Form>
   );
