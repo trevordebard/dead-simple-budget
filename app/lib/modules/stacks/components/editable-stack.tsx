@@ -18,6 +18,8 @@ export function EditableStack({ stack, totalSpent }: { stack: Stack; totalSpent:
   useEffect(() => {
     if (stackFetcher?.data?.status === 'error' && stackFetcher?.submission?.action.startsWith(`/budget/stack/`)) {
       setError(stackFetcher?.data?.formErrors);
+    } else if (stackFetcher?.state === 'submitting' || stackFetcher.state === 'loading') {
+      setError(null);
     }
   }, [stackFetcher]);
 

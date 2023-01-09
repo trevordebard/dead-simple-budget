@@ -75,6 +75,7 @@ export const action = async ({ request }: ActionArgs): Promise<TypedResponse<Act
     try {
       await db.stack.delete({ where: { id: validatedForm.data.stackId } });
     } catch (e) {
+      console.error(e);
       return json({ status: 'error', errors: [{ message: 'Unable to delete stack' }] }, { status: 500 });
     }
     return redirect('/budget');
