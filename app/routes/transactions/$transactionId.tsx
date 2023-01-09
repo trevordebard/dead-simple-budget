@@ -1,17 +1,17 @@
-import { ActionArgs, LoaderArgs } from '@remix-run/node';
-import { Form, Link, useParams, useTransition } from '@remix-run/react';
+import { ActionArgs, json, LoaderArgs, redirect, TypedResponse } from '@remix-run/node';
+import { Form, Link, useActionData, useLoaderData, useParams, useTransition } from '@remix-run/react';
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
 import { useEffect, useState } from 'react';
-import { z } from 'zod';
-import { typedjson, useTypedActionData, useTypedLoaderData, redirect } from 'remix-typedjson';
 import { DateTime } from 'luxon';
 import { db } from '~/lib/db.server';
 import { Button } from '~/components/button';
 import { centsToDollars, dollarsToCents } from '~/lib/modules/money';
 import { requireAuthenticatedUser } from '~/lib/modules/user';
-import { ActionResponse, EditTransactionSchema, validateAction } from '~/lib/modules/validation';
+import { EditTransactionSchema, validateForm } from '~/lib/modules/validation';
 import { ErrorText } from '~/components/error-text';
 import { editTransaction } from '~/lib/modules/transactions';
+import { ActionResult } from '~/lib/utils/response-types';
+import { Prisma } from '@prisma/client';
 
 export async function loader({ request, params }: LoaderArgs) {
   const user = await requireAuthenticatedUser(request);
@@ -22,52 +22,68 @@ export async function loader({ request, params }: LoaderArgs) {
 
   const [transaction, stacks] = await Promise.all([transactionPromise, stacksPromise]);
 
-  return typedjson({ transaction, stacks });
+  return json({ transaction, stacks });
 }
 
-type ActionData = z.infer<typeof EditTransactionSchema>;
-const badRequest = (data: ActionResponse<ActionData>) => typedjson(data, { status: 400 });
-
-export async function action({ request, params }: ActionArgs) {
+export async function action({ request, params }: ActionArgs): Promise<TypedResponse<ActionResult>> {
   const user = await requireAuthenticatedUser(request);
 
-  // TODO:z Refactor side effects below into separate function
   const budget = await db.budget.findFirst({ where: { userId: user.id } });
 
   if (!budget || !params.transactionId) {
-    throw Error('TODO');
+    console.error(`Required parameters were not provided. Budget: ${budget}, transactionId: ${params.transactionId}`);
+    return json({ status: 'error', errors: [{ message: 'An unexpected error occurred' }] });
   }
   const rawFormData = await request.formData();
-  const { formData, errors } = await validateAction({
+  const validationResult = validateForm({
     formData: rawFormData,
     schema: EditTransactionSchema,
   });
 
-  if (errors) {
-    return badRequest({ errors });
+  if (validationResult.status === 'error') {
+    const resp: ActionResult = { formErrors: validationResult.formErrors, status: 'error' };
+    return json(resp, { status: 400 });
   }
 
-  const { description, amount, stackId, type, id, date } = formData;
+  const { description, amount, stackId, type, id, date } = validationResult.data;
 
   const amountInCents = dollarsToCents(amount);
-
-  await editTransaction({
-    description,
-    amount: amountInCents,
-    id,
-    stackId,
-    type,
-    date,
-  });
+  try {
+    await editTransaction({
+      description,
+      amount: amountInCents,
+      id,
+      stackId,
+      type,
+      date,
+    });
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      if (err.code === 'P2002') {
+        return json(
+          { status: 'error', errors: [{ message: 'A duplicate transaction was added' }], formErrors: null },
+          { status: 400 }
+        );
+      }
+      return json(
+        {
+          status: 'error',
+          errors: [{ message: 'An unexpected database error occurred' }],
+          formErrors: null,
+        },
+        { status: 500 }
+      );
+    }
+  }
 
   return redirect('/transactions');
 }
 
 export default function TransactionIdPage() {
-  const { transaction, stacks } = useTypedLoaderData<typeof loader>();
+  const { transaction, stacks } = useLoaderData<typeof loader>();
   const [transactionType, setTransactionType] = useState<string>(transaction?.type || 'deposit');
   const { transactionId } = useParams();
-  const actionData = useTypedActionData<typeof action>();
+  const actionData = useActionData<typeof action>();
   const transition = useTransition();
   useEffect(() => {
     if (transaction?.type) {
@@ -81,25 +97,23 @@ export default function TransactionIdPage() {
   return (
     <div className="fixed top-0 bottom-0 left-0 right-0 md:relative p-5 md:p-0">
       <h3 className="text-lg mb-3 divide-y-2 text-center">Edit Transaction</h3>
-      {actionData?.errors?.formErrors
-        ? actionData.errors.formErrors.map((message: string) => <ErrorText>{message}</ErrorText>)
-        : null}
+      {actionData?.status === 'error' ? actionData?.errors?.map((err) => <ErrorText>{err.message}</ErrorText>) : null}
       <Form method="post" key={transaction.id}>
         <div className="space-y-4">
           <div>
             <label htmlFor="description" className="inline-block mb-1">
               Description{' '}
-              {actionData?.errors?.fieldErrors?.description && (
-                <ErrorText>{actionData.errors.fieldErrors.description[0]}</ErrorText>
+              {actionData?.status === 'error' && actionData?.formErrors?.fieldErrors?.description && (
+                <ErrorText>{actionData?.formErrors.fieldErrors.description[0]}</ErrorText>
               )}
             </label>
-            <input type="text" name="description" required defaultValue={transaction.description} />
+            <input type="text" name="description" defaultValue={transaction.description} />
           </div>
           <div>
             <label htmlFor="amount" className="inline-block mb-1">
               Amount{' '}
-              {actionData?.errors?.fieldErrors?.amount && (
-                <ErrorText>{actionData.errors.fieldErrors.amount[0]}</ErrorText>
+              {actionData?.status === 'error' && actionData?.formErrors?.fieldErrors?.amount && (
+                <ErrorText>{actionData?.formErrors.fieldErrors.amount[0]}</ErrorText>
               )}
             </label>
             <input
@@ -112,8 +126,8 @@ export default function TransactionIdPage() {
           <div>
             <label htmlFor="stackId" className="inline-block mb-1">
               Stack{' '}
-              {actionData?.errors?.fieldErrors?.stackId && (
-                <ErrorText>{actionData.errors.fieldErrors.stackId[0]}</ErrorText>
+              {actionData?.status === 'error' && actionData?.formErrors?.fieldErrors?.stackId && (
+                <ErrorText>{actionData?.formErrors.fieldErrors.stackId[0]}</ErrorText>
               )}
             </label>
             <select
@@ -133,8 +147,8 @@ export default function TransactionIdPage() {
           <div>
             <label htmlFor="date">
               Date{' '}
-              {actionData?.errors?.fieldErrors?.date && (
-                <ErrorText>{actionData?.errors?.fieldErrors.date[0]}</ErrorText>
+              {actionData?.status === 'error' && actionData?.formErrors?.fieldErrors?.date && (
+                <ErrorText>{actionData?.formErrors.fieldErrors.date[0]}</ErrorText>
               )}
             </label>
             <input
@@ -143,13 +157,17 @@ export default function TransactionIdPage() {
               name="date"
               id="date-input"
               className="block w-full"
-              defaultValue={DateTime.fromJSDate(transaction.date, { zone: 'UTC' }).toFormat('yyyy-MM-dd')}
+              defaultValue={
+                transaction.date && DateTime.fromISO(transaction.date, { zone: 'UTC' }).toFormat('yyyy-MM-dd')
+              }
             />
           </div>
           <div>
             <input type="hidden" name="type" id="trans-type" value={transactionType} />
             <input type="hidden" name="id" id="transactionId" value={transactionId} />
-            {actionData?.errors?.fieldErrors?.type && <ErrorText>{actionData.errors.fieldErrors.type[0]}</ErrorText>}
+            {actionData?.status === 'error' && actionData?.formErrors?.fieldErrors?.type && (
+              <ErrorText>{actionData.formErrors.fieldErrors.type[0]}</ErrorText>
+            )}
             <ToggleGroup.Root
               type="single"
               value={transactionType}

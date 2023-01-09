@@ -1,19 +1,16 @@
 # TODO
 
-
-
 ## Miscellaneous
 - [x] Store money in cents
 - [x] Remove commas from inputs that contain numbers 
 - [ ] Create README
 - [x] Refactor index.server functions into separate files
 - [x] Change root index / to redirect to /budget instead of /login
-- [ ] Form validation for server errors
 - [x] Cleanup UI for first time users
 - [ ] Animate Outlets coming in and out
 - [ ] Figure out how to secure edit stack/transaction actions to ensure the authenticated user can only edit their own transactions
   - or determine if a POSt request to the page would be blocked from an outside source
-- [ ] Explore PlanetScale & fly.io db free tiers and cleanup unused DigitalOcean assets
+- [ ] Add disable prop w/ styles to Button
 
 ## User
 - [x] Give users example stacks and transaction when their account is first created
@@ -33,7 +30,7 @@
 
 ## Transactions
 - [ ] Edit transaction should have delete button
-- [ ] Sort transactions by date on /transactions
+- [x] Sort transactions by date on /transactions
 - [x] Create transaction side effects
   - [x] Remove full budget from AuthenticatedUser
 - [x] Create transaction stack input should be dropdown
@@ -47,7 +44,6 @@
 - [x] Edit transaction should have ability to modify deposit/withdrawal
 - [ ] Import transactions from bank
 - [x] There should be an option to remove stack/select no stack when editing a transaction
-- [ ] Inline edit transaction?
 
 ## Stacks
 - [x] Edit stack side effects
