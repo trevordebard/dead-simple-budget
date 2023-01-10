@@ -1,10 +1,13 @@
-import { ActionFunction, LoaderFunction, redirect } from '@remix-run/node';
-import { Form, useLoaderData } from '@remix-run/react';
-import { StackCategory } from '.prisma/client';
+import { ActionArgs, json, LoaderFunction, redirect, TypedResponse } from '@remix-run/node';
+import { Form, useActionData, useLoaderData } from '@remix-run/react';
+import { Prisma, StackCategory } from '@prisma/client';
 import { db } from '~/lib/db.server';
 import { Button } from '~/components/button';
 import { requireAuthenticatedUser } from '~/lib/modules/user';
 import { deleteStackCateogry } from '~/lib/modules/stack-categories';
+import { z } from 'zod';
+import { ActionResult } from '~/lib/utils/response-types';
+import { ErrorText } from '~/components/error-text';
 
 interface LoaderData {
   category: StackCategory;
@@ -24,7 +27,9 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   return { category };
 };
 
-export const action: ActionFunction = async ({ request, params }) => {
+const UpdateStackCategoryFormSchema = z.object({ label: z.string() });
+
+export const action = async ({ request, params }: ActionArgs): Promise<TypedResponse<ActionResult>> => {
   const user = await requireAuthenticatedUser(request);
   const budget = await db.budget.findFirst({ where: { userId: user.id } });
 
@@ -32,28 +37,55 @@ export const action: ActionFunction = async ({ request, params }) => {
     return redirect('/login');
   }
   const form = await request.formData();
-
-  if (form.get('_method') === 'delete') {
-    await deleteStackCateogry({ budgetId: budget.id, categoryId: params.stackCategoryId });
-    return redirect('/budget');
+  const formAction = form.get('_action');
+  const body = Object.fromEntries(form);
+  if (formAction === 'delete') {
+    try {
+      await deleteStackCateogry({ budgetId: budget.id, categoryId: params.stackCategoryId });
+      return redirect('/budget');
+    } catch (err) {
+      console.error(err);
+      return json({ status: 'error', errors: [{ message: 'There was an issue deleting stack category' }] });
+    }
   }
-  const label = String(form.get('stack-category'));
-
-  await db.stackCategory.update({ where: { id: params.stackCategoryId }, data: { label } });
-
-  return redirect('/budget');
+  if (formAction === 'update') {
+    try {
+      const { label } = UpdateStackCategoryFormSchema.parse(body);
+      await db.stackCategory.update({ where: { id: params.stackCategoryId }, data: { label } });
+      return redirect('/budget');
+    } catch (err) {
+      if (err instanceof Prisma.PrismaClientKnownRequestError) {
+        if (err.code === 'P2002') {
+          return json({
+            status: 'error',
+            errors: [{ message: 'A category with that name already exists' }],
+            formErrors: null,
+          });
+        }
+        return json({
+          status: 'error',
+          errors: [{ message: 'An unexpected database error occurred' }],
+          formErrors: null,
+        });
+      }
+    }
+  }
+  return json({ status: 'error', errors: [{ message: 'Unsupported action' }] });
 };
 
 export default function StackCategoryId() {
   const { category } = useLoaderData<LoaderData>();
+  const actionData = useActionData<typeof action>();
+
   return (
     <div className="space-y-4">
+      {actionData?.status === 'error' ? actionData?.errors?.map((err) => <ErrorText>{err.message}</ErrorText>) : null}
       <Form method="post" key={category.id}>
         <div className="space-y-4">
-          <input type="hidden" name="_method" value="update" />
+          <input type="hidden" name="_action" value="update" />
           <div>
-            <label htmlFor="stack-category">Stack Category</label>
-            <input type="text" name="stack-category" defaultValue={category.label} />
+            <label htmlFor="label">Stack Category</label>
+            <input type="text" name="label" defaultValue={category.label} />
           </div>
           <Button type="submit" className="w-full">
             Save
@@ -61,7 +93,7 @@ export default function StackCategoryId() {
         </div>
       </Form>
       <Form method="post" key={category.label} className="flex flex-col">
-        <input type="hidden" name="_method" value="delete" />
+        <input type="hidden" name="_action" value="delete" />
         <Button type="submit" variant="danger">
           Delete
         </Button>
