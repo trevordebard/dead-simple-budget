@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { db } from '~/lib/db.server';
+import { recalcToBeBudgeted } from '../budget';
 import { EditTransactionSchema, NewTransactionSchema } from '../validation';
 
 interface CreateTransactionInput extends z.infer<typeof NewTransactionSchema> {
@@ -40,12 +41,14 @@ export async function createTransaction(transactionData: CreateTransactionInput)
   // });
 
   const [transaction] = await db.$transaction([createTransactionPromise, updatedBudgetPromise]);
+  await recalcToBeBudgeted({ budgetId: transaction.budgetId });
 
   return transaction;
 }
 
 type EditTransactionInput = z.infer<typeof EditTransactionSchema>;
 
+// TODO: handle case where stack changes
 export async function editTransaction(transaction: EditTransactionInput) {
   let { amount } = transaction;
   const { date, description, type } = transaction;
@@ -57,8 +60,19 @@ export async function editTransaction(transaction: EditTransactionInput) {
   const existingTransaction = await db.transaction.findFirstOrThrow({ where: { id: transaction.id } });
   let diff = 0;
 
+  // check if amount has changed
   if ((existingTransaction.amount || existingTransaction.amount === 0) && existingTransaction.amount !== amount) {
     diff = existingTransaction.amount - amount;
+  }
+
+  // check if stack has changed
+  if (existingTransaction.stackId !== transaction.stackId) {
+    // TODO: in the future when there are multiple budgets, how will changing the stack or amount impact old budgets?
+    // idea: maybe there should be a "locked" flag on transactions. After
+    // maybe there is a concept of a global stack balance and a monthly stack balance
+    // anytime a transaction is added, it affects the global stack balance
+    //  Basically each month your "allocated" amount resets, but your available amount is based on the global amount for that stack
+    // allocated, in, out are monthly. available is based on monthly available + leftovers from previous month
   }
 
   await db.transaction.update({
@@ -71,4 +85,6 @@ export async function editTransaction(transaction: EditTransactionInput) {
       budget: { connect: { id: existingTransaction.budgetId }, update: { total: { decrement: diff } } },
     },
   });
+
+  await recalcToBeBudgeted({ budgetId: existingTransaction.budgetId });
 }

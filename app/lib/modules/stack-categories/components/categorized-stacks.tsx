@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client';
 import { useEffect, useState } from 'react';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
-import { useFetcher } from '@remix-run/react';
+import { Link, useFetcher } from '@remix-run/react';
 import { DraggableItem } from '~/components/beautiful-dnd-wrappers/draggable-item';
 import { DroppableList } from '~/components/beautiful-dnd-wrappers/droppable-list';
 import { EditableStack, recalcStackPositions } from '~/lib/modules/stacks';
@@ -105,7 +105,9 @@ function CategorizedStacks({
                 return (
                   <div key={c.id}>
                     <div className="flex justify-between">
-                      <h2 className="font-bold">{c.label}</h2>
+                      <h2 className="font-bold">
+                        <Link to={`stack-category/${c.id}`}>{c.label}</Link>
+                      </h2>
                       {i === 0 ? (
                         <div className="flex space-x-2">
                           <div className="w-24 text-right">Allocated</div>
